@@ -1,0 +1,29 @@
+<section class="split-screen projects-tasks" style="height: 100%;" *ngIf="!state.isLoading">
+	<aside [class.split-part]="state.selectedTask" class="split-part" style="width: 100%;">
+		<div class="recon-sticky-layout" style="height: 100%;">
+			<div class="recon-scroll-body">
+				<ng-container>
+                    <div class="global-grid task-grid  with-out-margin with-table-gaps actions-grid ag-no-striped"
+                        style="height: 100%;"
+						*ngIf="state.tasksDetails.list.length">
+						<ag-grid-angular [ngStyle]="{'visibility': isVisible ? 'visible' : 'hidden'}"
+							class="ag-theme-balham" [gridOptions]="gridOptions" style="height: 100%">
+						</ag-grid-angular>
+					</div>
+					<div *ngIf="!state.tasksDetails.list.length">No Records</div>
+				</ng-container>
+			</div>
+		</div>
+
+	</aside>
+
+	<aside class="split-part" *ngIf="state.selectedTask">
+		<router-outlet></router-outlet>
+	</aside>
+</section>
+
+<div class="spinner-view" *ngIf="state.isLoading">
+	<div class="empty-screen">
+		<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+	</div>
+</div>

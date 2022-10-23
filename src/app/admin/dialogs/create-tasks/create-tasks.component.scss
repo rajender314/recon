@@ -1,0 +1,22 @@
+::ng-deep .user-type{
+    &.p-t{
+    margin: 24px 0;
+            label{
+            color: rgba(23, 43, 77, 0.6) !important;
+            font-weight: 400 !important;
+            font-size: 14px !important;
+            line-height: 1;
+            padding: 0;
+            margin-bottom: 4px;
+        }
+    }
+}
+
+.departments{
+    label{
+        padding: 5px 0;
+    }
+}
+.p-t{
+    padding-top: 16px;
+}

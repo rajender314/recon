@@ -1,0 +1,20 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+<mat-dialog-content>
+	<form [formGroup]="createFormGroup" class="form-flex" autocomplete="off">
+		<div class="ak-field-group">
+			<label for="name">User Role</label>
+			<input type="text" class="ak-field-text" id="name" name="name" formControlName="name" maxlength="64">
+			<div class="pi-error" *ngIf="f.name.hasError('required') && submitted">Please Enter User Role</div>
+			<div class="pi-error" *ngIf="!f.name.hasError('required') && duplicateError">User Role {{duplicateError}}</div>
+		</div>
+	</form>
+</mat-dialog-content>
+<mat-dialog-actions>
+	<button pi-button color="subtle" (click)="closeDialog()">Cancel</button>
+	<button pi-button color="primary" (click)="saveDetails(createFormGroup)" [disabled]="createFormGroup.pristine">Save</button>
+</mat-dialog-actions>

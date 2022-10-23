@@ -1,0 +1,16 @@
+::ng-deep app-form-builder{
+    display: flex;
+    flex: 1;
+    .fb-wrapper{flex: 1;}
+    .sub-fields{
+        position: relative;
+        .sub-field-item{
+            display: flex;align-items: center;margin-bottom: 16px;
+        }
+    }
+    .delimiter{
+        position: absolute;/*right: 8px;*/ left: 100%;margin-left: 4px;
+        color: rgba(23, 43, 77, 0.5);
+        padding: 2px;background: rgba(23, 43, 77, 0.1);border-radius: 2px;
+    }
+}

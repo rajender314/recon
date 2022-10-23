@@ -1,0 +1,75 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title style="text-transform: capitalize;" [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+
+<mat-dialog-content>
+	<div class="send-estimate-form" [formGroup]="formGroup">
+		<!-- *ngIf="!state.loader" -->
+		<div>
+			<pi-select label="To: " placeholder="Select Users" [options]="dropdowns.to" idKey="id"
+				nameKey="primary_email" [multi]="true" formControlName="to_emails">
+			</pi-select>
+			<div class="msgs">
+				<div class="pi-error" *ngIf="formGroup.controls.to_emails.hasError('required') && submitted">Please
+					Select Users</div>
+			</div>
+		</div>
+		<div>
+			<pi-select label="Cc:" placeholder="Enter email id" [options]="dropdowns.cc" [multi]="true"
+				idKey="primary_email" nameKey="primary_email" formControlName="cc" [createNew]="true"></pi-select>
+		</div>
+		<div>
+			<pi-form-field label="Subject: ">
+				<input type="text" pi-input formControlName="subject" />
+			</pi-form-field>
+		</div>
+		<div>
+			<pi-form-field label="Description">
+				<textarea pi-input minRows="6" maxRows="6" formControlName="message"></textarea>
+				<div class="msgs">
+					<div class="pi-error" *ngIf="!(((formGroup.value.message).trim()).length) && !(formGroup.value.file_ids.length || uploadData?.files?.length) && submitted">Please
+						enter Description</div>
+				</div>
+			</pi-form-field>
+		</div>
+		<div>
+			<pi-select label="Attachments" placeholder="Select from project files" [options]="dropdowns.jobFiles"
+				[multi]="true" formControlName="file_ids" nameKey="file_name">
+			</pi-select>
+			<div class="msgs">
+				<div class="pi-error" *ngIf="!(formGroup.value.file_ids.length || uploadData?.files?.length) && !(((formGroup.value.message).trim()).length) && submitted">Please
+					select Attachments or upload new Attachment</div>
+			</div>
+		</div>
+		<div class="file-upload">
+			<div class="pi-form-field">
+				<label>Upload New Files</label>
+				<!-- [ngClass]="{'file-over': hasDropZoneOver}" -->
+				<div ng2FileDrop [uploader]="uploader"
+					class="file-upload-zone">
+					<input id="attachment" [accept]="allowedMimeType.toString()" type="file" ng2FileSelect [uploader]="uploader" [hidden]="true" multiple />
+					Drop files here to attach, or &nbsp;<label for="attachment" class="browse-file">Browse</label>
+				</div>
+			</div>
+			<div class="files-sec">
+				<div *ngFor="let file of uploadData.files;let i = index" class="files">
+					<img src="" alt="">
+					<i class="pixel-icons icon-{{file.type}}"></i>
+					<span [innerHtml]="file.original_name"></span>
+					<span class="close" (click)="removeAttachment(i)">
+						<i class="pixel-icons icon-close-slim"></i>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="p-t-25">
+	<button pi-button mat-dialog-close [innerHtml]="buttons.no"></button>
+	<button pi-button color="primary" (click)="onSubmit()" style="text-transform: capitalize;" [innerHtml]="buttons.yes"
+		[disabled]="formGroup.pristine"></button>
+</mat-dialog-actions>

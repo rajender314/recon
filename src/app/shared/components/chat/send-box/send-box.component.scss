@@ -1,0 +1,67 @@
+.chat-box{
+    display: flex;
+    border: 2px solid #e7e8f4;
+    background-color: #f6f7fb;
+    border-radius: 5px;
+    .upload-box{
+        display: flex;
+        align-items: flex-end;
+        width: 40px;
+        justify-content: center;
+        cursor: pointer;
+        border-right: 1px solid #e7e8f4;
+        .icon-add-icon{
+            font-size: 17px;
+            height: 18px;
+            width: 18px;
+            margin-bottom: 10px;
+            color: rgba(23, 43, 77, 0.6);
+        }
+        &:hover{
+            border-right: 1px solid #d3dff1;
+            background: #e0e6ef;
+        }
+    }
+    .chat-area{
+        flex: 1;
+        .pi-form-field{
+            margin: 0;
+            max-width: 100%;
+        }
+        textarea{
+            border: none;
+            background: none;
+            padding: 10px;
+            &:focus{
+                box-shadow: none;
+            }
+        }
+    }
+    .chat-actions{
+        display: flex;
+        align-items: flex-end;
+        .send{
+            margin-bottom: 4px;
+            margin-right: 4px;
+            background-color: #f6f7fb;
+            padding: 0;
+            min-width: 60px;
+            &:hover{
+                background-color: #e0e6ef;
+            }
+        }
+    }
+    &.active{
+        border: 2px solid #3240a1;
+        background-color: #ffffff;
+        .chat-actions .send{
+            background-color: #ffffff;
+        }
+    }
+}
+::ng-deep .file-from{
+    padding: 0px 15px;
+    line-height: 40px;
+    margin: 10px 0px 4px;
+    color: #7e8a9d;
+}

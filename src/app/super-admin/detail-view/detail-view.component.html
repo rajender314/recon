@@ -1,0 +1,39 @@
+<div class="right-section">
+  <header class="head-section">
+    <div class="w-100 d-flex flex-column justify-content-between">
+      <div class="w-100 d-flex align-items-center justify-content-between ">
+        <aside class="left-header d-flex flex-width">
+          <h1> {{tab?.name}}</h1>
+        </aside>
+      </div>
+    </div>
+  </header>
+  <div class="right-content">
+    <div *ngIf="tab.grid" class="global-grid no-actions-grid with-out-margin ag-no-striped ag-full-width-grid">
+      <ag-grid-angular [class.invisible]="loading" class="ag-theme-balham" style="height: calc(100vh - 74px);" [gridOptions]="gridOptions" [rowData]="rowData">
+      </ag-grid-angular>
+    </div>
+    <div class="email-notifications" *ngIf="!tab.grid && !loading">
+        <!-- <form [formGroup]="formGroup"> -->
+        <form [formGroup]="formGroup" class="form-flex" autocomplete="off">
+          <pi-field-group label="Email Notifications" direction="column">
+              <pi-form-field label="Send Emails">
+                  <input type="radio" value="1" pi-input formControlName="email_notification" name="email_notification" />
+              </pi-form-field>
+              <pi-form-field label="Stop all out going Emails">
+                  <input type="radio" value="0" pi-input formControlName="email_notification" name="email_notification" />
+              </pi-form-field>
+          </pi-field-group>
+        </form>
+      <div class="footer">
+        <button pi-button color="subtle" (click)="cancel()">Cancel</button>
+        <button pi-button color="primary" (click)="save()">Save</button>
+      </div>
+    </div>
+    <div class="spinner-view" *ngIf="loading">
+      <div class="empty-screen">
+        <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+      </div>
+    </div>
+  </div>
+</div>

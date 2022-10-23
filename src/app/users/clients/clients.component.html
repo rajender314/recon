@@ -1,0 +1,268 @@
+<pi-master-detail-view [showDetail]="state.showDetail" class="details-wrapper">
+    <pi-master-view class="left-section">
+        <div class="left-header">
+            <span class="my-pixel-icon blue">
+                <i class="pixel-icons icon-pn-user"></i>
+            </span>
+
+            <h3 mat-button [matMenuTriggerFor]="menu">
+                <span class="detail-orgname text-ellipsis">{{state.selectedTab.label}}</span>
+                <i class="pixel-icons icon-arrow-down"></i>
+            </h3>
+
+            <mat-menu #menu="matMenu" yPosition="below" [overlapTrigger]="false" class="user-type">
+                <mat-nav-list>
+                        <ng-container *ngFor="let tab of state.tabs">
+                                <mat-list-item *ngIf="tab.show">
+                                    <a matLine href="#{{tab.route}}">
+                                        <!-- <span matListIcon class="my-pixel-icon">
+                                        <i class="pixel-icons"></i>
+                                      </span> -->
+                                        {{ tab.label }}
+                                    </a>
+                                </mat-list-item>
+                        </ng-container>
+                </mat-nav-list>
+            </mat-menu>
+            <!-- <div class="actions"> -->
+                <button pi-button class="icon-button-wrapper" (click)="addUser()">
+                    <i class="pixel-icons icon-plus"></i>
+                </button>
+            <!-- </div> -->
+        </div>
+        <app-search [search]="state.search" (onSearch)="onSearch($event)"></app-search>
+
+        <div class="total-info">
+            <!-- Total {{state.selectedTab.displayLabel}}: {{state.leftNavCount}} -->
+            <span class="filter" [matMenuTriggerFor]="statusFilter">{{state.leftNavCount+" "+((state.selectedFilter.label!="All")?state.selectedFilter.label:"")+"
+                Users"}}
+                <i class="pixel-icons icon-arrow-down"></i>
+            </span>
+            <mat-menu #statusFilter="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+                <button mat-menu-item *ngFor="let status of state.statusFilter" (click)="changeFilter(status)">{{status.label}}</button>
+            </mat-menu>
+        </div>
+
+        <div class="left-content" [class.spinner]="state.loader || !state.leftNavList?.length" infiniteScroll [infiniteScrollDistance]="2"
+            [infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false">
+            <mat-spinner diameter="45" class="md" *ngIf="state.loader"></mat-spinner>
+
+            <div class="no-data" [hidden]="state.loader || state.leftNavList?.length || state.search.value!=''">No {{state.selectedTab.displayLabel}}
+                Found
+            </div>
+
+            <div class="no-data" *ngIf="!state.loader && !state.leftNavList?.length && state.search.value!=''">No Search
+                Results Found</div>
+
+            <mat-list *ngIf="!state.loader">
+                <app-users-list [data]="state.leftNavList" [selected]="state.selectedItem" (trigger)="getSelectedUser($event); showDetails();"></app-users-list>
+            </mat-list>
+        </div>
+
+    </pi-master-view>
+
+    <pi-detail-view class="right-section">
+        <div class="right-header">
+            <div class="info">
+                <div class="info-left">
+                    <div fxLayout="column" class="image-upload org-upload">
+                        <label (click)="uploadLogo()" class="browse-file">
+                            <a>{{(state.selectedItem?.logo=='')?"Browse":"Change"}}</a>
+                        </label>
+                        <div class="images" *ngIf="state.selectedItem?.logo!=''">
+                            <img [src]="state.selectedItem?.logo" alt="Logo">
+                        </div>
+                    </div>
+                    <div class="user-left-info">
+                        <!-- <h4 (click)="hideDetails()">
+                            <span (click)="hideDetails()">Users</span>
+                            <span class="slash-char">/</span>
+                            <div class="user-name-edit">
+                                {{state.selectedTab.label}}
+                            </div>
+                        </h4>
+                        <h3>{{state.selectedItem?.name}}</h3> -->
+                        <pi-breadcrumb> 
+                                <pi-breadcrumb-item label="Users" (click)="hideDetails()"></pi-breadcrumb-item>
+                                <pi-breadcrumb-item>{{ state.selectedTab?.label }}</pi-breadcrumb-item>
+                            </pi-breadcrumb>
+                            <h3>{{state.selectedItem?.name}}</h3>
+                        </div> 
+                </div>
+                <mat-slide-toggle color="primary" [checked]="state.selectedItem?.status" (change)="changeOrgStatus()"></mat-slide-toggle>
+
+            </div>
+            <section class="nav-bar" *ngIf="state.selectedItem?.css=='user'">
+                <nav mat-tab-nav-bar>
+                    <div class="tab-group">
+                        <a mat-tab-link (click)="setActiveTab(link)" *ngFor="let link of state.detailTabs" [active]="link.type==state.activeTab.type">
+                            {{link.label}} </a>
+                    </div>
+                </nav>
+            </section>
+        </div>
+        <div class="right-content">
+
+            <mat-spinner diameter="45" class="md" *ngIf="state.detailsLoader"></mat-spinner>
+
+            <section *ngIf="!state.detailsLoader">
+                <div class="general-details">
+                    <div *ngIf="state.activeTab.type==5">
+                        <div class="no-permission" *ngIf="!state.permissions['external_apps']?.length">No Permissions Found</div>
+                        <div *ngIf="state.permissions['external_apps']?.length" class="content-wrapper">
+                            <div class="ak-field-group">
+                                <app-permission *ngIf="state.permissions['external_apps']" prop="key" [id]="state.selectedItem['id']" [group]="ivieForm.controls['external_apps']"
+                                    [headers]="dropdowns.headers" [data]="state.permissions['external_apps']"></app-permission>
+                            </div>
+                        </div>
+                        <div *ngIf="state.permissions['external_apps']?.length" class="fixed-footer">
+                            <button pi-button class="cancel" (click)="resetForm()">Cancel</button>
+                            <button class="m-l-15" pi-button color="primary" (click)="saveRoleUsers(ivieForm)" [disabled]="ivieForm.pristine">Save</button>
+                        </div>
+                    </div>
+                    <div *ngIf="state.activeTab.type==2">
+                        <!-- No Job Access Found -->
+                        <div *ngIf="!state.permissions['job_access'] || !state.permissions['job_access']?.length || !state.permissions['job_access'][0]?.items?.length">No
+                            Job Access Found</div>
+                        <div class="content-wrapper" *ngIf="state.permissions['job_access'] && state.permissions['job_access']?.length && state.permissions['job_access'][0]?.items?.length">
+                            <div class="ak-field-group">
+                                <app-permission *ngIf="state.permissions['job_access']" prop="key" [group]="ivieForm.controls['job_access']" [headers]="dropdowns.headers"
+                                    [data]="state.permissions['job_access'][0].items"></app-permission>
+                            </div>
+                            <!-- <div class="ak-field-group">
+                                <app-permission *ngIf="state.permissions['job_access']" prop="key" [group]="ivieForm.controls['job_access']" [headers]="dropdowns.headers"
+                                    [data]="state.permissions['job_access'][1].items"></app-permission>
+                            </div> -->
+                        </div>
+                        <div class="footer" *ngIf="state.permissions['job_access'] && state.permissions['job_access']?.length && state.permissions['job_access'][0]?.items?.length">
+                            <button pi-button class="cancel" (click)="resetForm()">Cancel</button>
+                            <button pi-button color="primary" (click)="saveRoleUsers(ivieForm)" [disabled]="ivieForm.pristine">Save</button>
+                        </div>
+                    </div>
+                    <div class="add-user" *ngIf="state.activeTab.type==0 && state.selectedItem?.css!='user'">
+                        <button pi-button color="primary" (click)="addUser()">Add User</button>
+                    </div>
+                    <form [formGroup]="ivieForm" *ngIf="state.activeTab.type==0 && state.selectedItem?.css=='user'" class="form-flex" autocomplete="off">
+                        <div class="detail-section" *ngFor="let group of state.contact_profile">
+                            <div class="view-mode" *ngIf="!group.edit">
+                                <ng-container *ngFor="let field of group.section">
+                                    <div class="view-section">
+                                        <label class="label">{{field.label}}</label>
+                                        <div class="value text-ellipsis" *ngIf="field.type!='select'">{{ivieForm?.controls[field.name]?.value}}</div>
+                                        <div class="value text-ellipsis" *ngIf="field.type=='select'">{{getSelectionData(field.options,
+                                            ivieForm?.controls[field.name].value)?.name}}
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <div class="view-section-multi">
+                                    <div class="view-section-left">
+                                        <ng-container *ngFor="let field of group.emails">
+                                            <div class="view-section">
+                                                <label class="label">{{field.type}}</label>
+                                                <div class="value text-ellipsis">{{field.email}}</div>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                    <div class="view-section-right">
+                                        <ng-container *ngFor="let field of group.phone_numbers">
+                                            <div class="view-section">
+                                                <label class="label">{{field.type}}</label>
+                                                <div class="value text-ellipsis">{{field.phone}}</div>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="edit-section" *ngIf="group.edit">
+                                <ng-container *ngFor="let field of group.section">
+                                    <div class="ak-field-group">
+                                        <label class="label">{{field.label}}</label>
+                                        <div class="value" *ngIf="field.type=='readonly'">{{field.value}}</div>
+                                        <input type="text" *ngIf="field.type=='text' || field.type=='email'" (input)="removeDuplicateError()" class="ak-field-text"
+                                            [name]="field.name" formControlName="{{field.name}}">
+                                        <span *ngIf="field.suggestion">{{field.suggestion}}</span>
+                                        <input type="text" *ngIf="field.type=='currency'" class="ak-field-text" [name]="field.name" formControlName="{{field.name}}">
+                                        <div class="actions" *ngIf="field.addMore">
+                                            <button mat-icon-button (click)="addBookKeeper()" class="array-button plus">
+                                                <i class="pixel-icons icon-plus"></i>
+                                            </button>
+                                        </div>
+                                        <select type="text" *ngIf="field.type=='select'" class="ak-field-select" formControlName="{{field.name}}">
+                                            <ng-container *ngFor="let option of state[field.options]">
+                                                <option *ngIf="true" [value]="option.id">{{option.name}}</option>
+                                            </ng-container>
+                                        </select>
+                                        <div class="pi-error" *ngIf="ivieForm.controls[field.name].hasError('required') && submitted">Please
+                                            Enter {{field.label}}</div>
+                                        <div class="pi-error" *ngIf="field.type=='email' && duplicateError">{{duplicateErrorMsg}}</div>
+                                        <div class="pi-error" *ngIf="!ivieForm.controls[field.name].hasError('required') && submitted && ivieForm.controls[field.name].hasError('pattern')">Please
+                                            Enter Valid Email</div>
+                                    </div>
+                                </ng-container>
+                                <div class="container-group">
+                                    <div formArrayName="emails">
+                                        <div *ngFor="let list of mailListArray.controls;let i = index" [formGroupName]="i" class="inline-space-bw">
+                                            <button pi-icon-button class="array-button" color="subtle">
+                                                <i class="pixel-icons icon-minus" (click)="removeMail(i)"></i>
+                                            </button>
+                                            <button pi-icon-button class="array-button m-r" color="subtle">
+                                                <i class="pixel-icons icon-plus" (click)="addMail()"></i>
+                                            </button>
+
+                                            <pi-select label="Email" class="p-t-0 email" [options]="emailAddressTypes" formControlName="type"></pi-select>
+                                            <pi-form-field label="Enter Email" class="p-t-0 email">
+                                                <input type="text" pi-input (input)="emailValidation(list)" formControlName="email">
+                                                <div class="pi-error" *ngIf="list.value.invalid">Please Enter Valid Email</div>
+                                            </pi-form-field>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="container-group">
+                                    <div formArrayName="phone_numbers">
+                                        <div *ngFor="let list of numberListArray.controls;let i = index" [formGroupName]="i" class="inline-space-bw">
+
+                                            <button pi-icon-button class="array-button" color="subtle">
+                                                <i class="pixel-icons icon-minus" (click)="removeNumber(i)"></i>
+                                            </button>
+
+                                            <button pi-icon-button class="array-button m-r" color="subtle">
+                                                <i class="pixel-icons icon-plus" (click)="addNumber()"></i>
+                                            </button>
+                                            <pi-select label="Phone" class="p-t-0 phone" [options]="phoneNumberTypes" formControlName="type"></pi-select>
+                                            <pi-form-field label="Enter Number" class=" p-t-0 phone">
+                                                <input type="text" pi-input type="text" [appPriceFormat]="phoneNumberConfig" min="0" maxlength="10" (input)="phoneNumberValidation($event, list)"
+                                                    formControlName="phone">
+                                                <div class="pi-error" *ngIf="list.value.invalid">Please Enter Valid Number</div>
+                                            </pi-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="actions" *ngIf="group.is_editable && !group.edit">
+                                <i class="pixel-icons icon-pencil" (click)="editSection(group)"></i>
+                            </div>
+
+                            <div class="actions multiple" *ngIf="group.is_editable && group.edit">
+                                <button pi-button class="cancel" (click)="cancelChanges(group)">Cancel</button>
+                                <button pi-button color="primary" (click)="save(ivieForm,group)" [disabled]="ivieForm.pristine">Save</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </section>
+        </div>
+
+
+        <div class="no-result-flex" *ngIf="!state.leftNavList.length && !state.detailsLoader && 
+        state.search.value!=''">
+            <p>No Client found for your search string
+                <b>'{{state.search.value}}'</b>
+            </p>
+        </div>
+
+    </pi-detail-view>
+</pi-master-detail-view>

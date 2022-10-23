@@ -1,0 +1,49 @@
+<div class="primary-layout-detail">
+  <header >
+    <div class="w-100 d-flex align-items-center justify-content-center flex-column">
+    <div class="w-100">
+        <app-breadcrumb [list]="state.breadcrumbs"></app-breadcrumb>
+    </div>
+     
+    <div class="w-100 d-flex align-items-center justify-content-between ">
+      <aside class="left-header d-flex flex-width">      
+      <!-- <i class="pixel-icons icon-arrow" (click)="changeMasterView()"></i> -->
+      <h1>Analyze Bids</h1>
+      </aside>
+      <aside class="d-flex right-header flex-width justify-content-end">
+          <button class="m-l-15 btn-switching-icon expand-collapse-btn"  (click)="shortView()" [matTooltip]="((state.expandAll)?'Collapse All':'Expand All')"><i *ngIf="state.expandAll" class="pixel-icons icon-arrow-right"></i> <i *ngIf="!state.expandAll" class="pixel-icons icon-arrow-down"></i></button>
+          <!-- <button pi-button (click)="shortView()" style="margin-right: 15px;">{{(state.expandAll)?"Collapse All":"Expand All"}}</button> 
+          <button pi-button (click)="export()">Export</button>-->
+          <button class="m-l-15 btn-switching-icon xls-btn"  (click)="export()" matTooltip="Export as .xls"><i class="pixel-icons icon-export-excel"></i></button>
+          <app-search (onSearch)="onSearch($event)" class="m-l-15"></app-search>
+      </aside>
+    </div>
+  </div>
+  </header>
+  <div class="primary-layout-detail-body flex-column padding-20">
+      <div class="spinner-view"  *ngIf="state.loader">
+          <div class="empty-screen">
+            <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+          </div>                
+        </div>
+      <!-- <mat-spinner diameter="45" class="md" *ngIf="state.loader"></mat-spinner> -->
+      <div class="analyze-bids-content"  [ngClass]="{'hide-ag':state.loader || !griRowData.length}">
+          <div class="global-grid with-out-margin ag-no-striped" style="height: calc(100vh - 74px);">
+              <ag-grid-angular class="ag-theme-balham" [gridOptions]="gridOptions" style="height: 100%;"></ag-grid-angular>
+              <!-- <div class="no-data" *ngIf="!gridOptions?.rowData?.length">No Data Found</div> -->
+            </div>
+      </div>
+  </div>
+</div>
+
+
+<div class="no-data-screen" *ngIf="!state.loader && !griRowData.length">
+  <div class="empty-screen">
+    <div class="icon-info-holder">
+        <div class="icon"><i class="pixel-icons icon-post-bids"></i></div>
+        <p class="alert-message">No Analyze Bids</p>
+    </div>
+    
+
+  </div>
+</div>

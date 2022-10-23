@@ -1,0 +1,33 @@
+<!-- <div class="statuses">
+	<div class="heading">
+		<a routerLink="/admin/">Admin</a>
+		<div class="secondary">
+			<h4>Task Statuses</h4>
+		</div>
+	</div>
+	<ag-grid-angular class="ag-theme-balham" [gridOptions]="gridOptions">
+	</ag-grid-angular>
+</div> -->
+
+<div class="primary-layout">
+		<pi-detail-view>
+			<section class="primary-layout-detail">
+				<header>
+					<div class="w-100 d-flex align-items-center justify-content-between primary-max-screen-width">
+						<aside class="left-header d-flex flex-width">
+							<a routerLink="/admin/" style="padding-bottom: 4px;">Admin</a>
+							<h1>Task Statuses</h1>
+						</aside>
+						<!-- <aside class="d-flex right-header flex-width justify-content-end">
+						</aside> -->
+					</div>
+				</header>
+				<div class="primary-layout-detail-body flex-column padding-20">
+					<div class="primary-max-screen-width global-grid with-table-gaps with-out-margin actions-grid ag-no-striped ag-full-width-grid">
+							<ag-grid-angular class="ag-theme-balham" [gridOptions]="gridOptions"></ag-grid-angular>
+					</div>
+				</div>
+			</section>
+		</pi-detail-view>
+	
+	</div>

@@ -1,0 +1,197 @@
+<pi-master-detail-view class="recon-admin-layout" [showDetail]="showView">
+
+	<pi-master-view class="admin-sidebar">
+		<div class="sidebar-header">
+			<!-- <span class="my-pixel-icon {{whichSchedule == 1 ? 'green' : 'yellow'}}">
+				<i class="pixel-icons icon-{{scheduleName + 's' | lowercase}}"></i>
+			</span> -->
+			<div class="page-breadcrumb">
+				<app-admin-popover class="left-hdr-comp" [bgColor]="whichSchedule == 1 ? 'green' : 'yellow'" [icon]="(whichSchedule == 1 ? 'icon-' + scheduleName + '-fill' : 'icon-' + scheduleName + 's') | lowercase"
+				 [primary]="'Admin'" [activeState]="whichSchedule == 1 ? '' : 'Milestones'" [secondary]="whichSchedule == 1 ? scheduleName + 's' : selectedMilestoneType?.label"
+				 [data]="adminDashboard"></app-admin-popover>
+			</div>
+
+
+			<div class="icon-button-actions" *ngIf="(whichSchedule == 1 && APP.permissions.system_access.tasks=='edit') || (whichSchedule == 2 && APP.permissions.system_access.milestones=='edit')">
+
+				<button pi-icon-button class="icon-button-wrapper" (click)="openAddDialog()">
+					<i class="pixel-icons icon-plus"></i>
+				</button>
+				<button pi-icon-button class="icon-button-wrapper m-l-6" [matMenuTriggerFor]="menu">
+					<i class="pixel-icons icon-more-horizontal"></i>
+				</button>
+				<mat-menu #menu="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+					<button mat-menu-item (click)="export()">Export</button>
+				</mat-menu>
+			</div>
+			<app-search (onSearch)="onSearch($event)"></app-search>
+		</div>
+
+		<div class="head">
+			<div matBadgeOverlap="false" matBadgePosition="before" class="mat-badge-center">
+				<span [matMenuTriggerFor]="statusFilter">
+					<span>{{totalCount}}</span>
+					<span>{{statusBy}} {{totalCount == 1 ? (whichSchedule == 1 ? 'Task' : selectedMilestoneType?.name) :
+						(whichSchedule == 1 ? 'Tasks' : selectedMilestoneType?.label)}}</span>
+					<mat-icon>expand_more</mat-icon>
+				</span>
+				<mat-menu #statusFilter="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before">
+					<button mat-menu-item *ngFor="let status of dropdowns.statusFilter" (click)="onApplyFilter('status', status)">{{status.label}}</button>
+				</mat-menu>
+			</div>
+			<div class="sorting">
+				<span class="sort-action {{sortBy | lowercase}}" (click)="onApplyFilter('sort')">{{sortBy}}</span>
+			</div>
+		</div>
+		<div class="d-flex align-center justify-content-center w-100" *ngIf="isLoading" style="height: 80%;flex: 1;justify-content: center;align-items: center;">
+			<mat-spinner diameter="24" class="md"></mat-spinner>
+
+		</div>
+		<div class="sidebar-body">
+			<div class="sidebar-content" [class.spinner]="isLoading || !tasksList?.length" infiniteScroll
+			 [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false">
+				<div class="body">
+					<!-- <mat-spinner diameter="45" class="md" *ngIf="isLoading"></mat-spinner> -->
+
+					<div class="no-data" [hidden]="isLoading || tasksList?.length">
+						<div class="d-flex align-center justify-content-center w-100" style="min-height: 300px;flex: 1;
+						justify-content: center;align-items: center;">No
+							{{whichSchedule == 1 ? 'Task' : selectedMilestoneType?.name}} Found</div>
+					</div>
+					<div class="menu-container" *ngIf="!isLoading">
+						<ul class="single-list">
+							<li *ngFor="let list of tasksList" [class.active]="selectedTask?.id === list.id" [class.disable]="!list.status"
+							 (click)="onSelectItem(list);changeMasterView()">
+								<span [title]="list.name">{{list.name}}</span>
+							</li>
+						</ul>
+					</div>
+					<!-- <mat-list *ngIf="!isLoading">
+					<mat-list-item *ngFor="let list of tasksList" [class.active]="selectedTask?.id === list.id" [class.disable]="!list.status"
+					 (click)="onSelectItem(list);changeMasterView()">
+						<span [title]="list.name">{{list.name}}</span>
+					</mat-list-item>
+				</mat-list> -->
+				</div>
+			</div>
+		</div>
+
+	</pi-master-view>
+
+	<pi-detail-view class="admin-content">
+		<div class="no-data-screen spinner-view" *ngIf="!tasksList?.length && !isLoading">
+			<div class="empty-screen">
+				<div class="icon-info-holder" *ngIf="param.search?.length">
+					<div class="icon">
+						<i class="pixel-icons icon-search"></i>
+					</div>
+					<p class="alert-message text-center" style="text-align: center;">No {{whichSchedule == 1 ? 'Task' : selectedMilestoneType?.name}} found for your search string <br />
+						<b style="color: #172b4d;">'{{param.search}}'</b>
+					</p>
+				</div>
+				<div class="icon-info-holder">
+					<ng-container *ngIf="!param.search?.length">
+						<div class="icon">
+							<i class="pixel-icons icon-cost-codes"></i>
+						</div>
+						<p class="alert-message text-center" style="text-align: center;">No {{whichSchedule == 1 ? 'Task' : selectedMilestoneType?.name}} found</p>
+					</ng-container>
+					<button pi-button color="primary" (click)="openAddDialog(param.search)" *ngIf="((whichSchedule == 1 && APP.permissions.system_access.tasks=='edit') || (whichSchedule == 2 && APP.permissions.system_access.milestones=='edit'))">
+							+ Add New {{whichSchedule == 1 ? 'Task' : selectedMilestoneType?.name}}</button>
+				</div>
+
+			</div>
+		</div>
+		<section class="admin-fixed-layout">
+			<ng-container *ngIf="tasksList?.length  ">
+				<!-- <div class="right-header" *ngIf="selectedTask">
+				<app-breadcrumb [list]="breadcrumbs"></app-breadcrumb>
+				<div class="info">
+					<mat-icon class="back-link" (click)="changeMasterView()">arrow_back</mat-icon>
+					<h2 [innerHtml]="selectedTask.name"></h2>
+				</div>
+			</div> -->
+				<header class="header" *ngIf="selectedTask">
+					<div class="w-100 d-flex flex-column justify-content-between">
+						<app-breadcrumb [list]="breadcrumbs"></app-breadcrumb>
+						<div class="w-100 d-flex align-items-center justify-content-between ">
+							<aside class="left-header d-flex flex-width">
+								<h1 [innerHtml]="selectedTask.name"></h1>
+							</aside>
+							<aside class="d-flex right-header justify-content-end flex-width">
+							</aside>
+						</div>
+					</div>
+				</header>
+
+				<div class="scroll-body" [class.has-spinner]="fetchingDetails || isLoading" *ngIf="selectedTask">
+					<!-- <div class="no-result-flex" *ngIf="!tasksList?.length && !isLoading">
+						<p *ngIf="param.search?.length">No {{whichSchedule == 1 ? 'Task' : selectedMilestoneType?.name}} found for your
+							search string <br />
+							<b>'{{param.search}}'</b>
+						</p>
+						<p *ngIf="!param.search?.length">No {{whichSchedule == 1 ? 'Task' : selectedMilestoneType?.name}} found</p>
+						<button pi-button color="primary" (click)="openAddDialog(param.search)" *ngIf="((whichSchedule == 1 && APP.permissions.system_access.tasks=='edit') || (whichSchedule == 2 && APP.permissions.system_access.milestones=='edit'))">+
+							Add New {{whichSchedule == 1 ? 'Task' : selectedMilestoneType?.name}}</button>
+					</div> -->
+					<div class="spinner-view" *ngIf="fetchingDetails || isLoading">
+						<div class="empty-screen">
+							<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+						</div>
+					</div>
+					<!-- <mat-spinner diameter="45" class="md" *ngIf="fetchingDetails || isLoading"></mat-spinner> -->
+					<form *ngIf="!isLoading && !fetchingDetails" [formGroup]="tasksForm" class="form-flex" autocomplete="off">
+						<pi-form-field [label]="(whichSchedule == 1 ? 'Task' : selectedMilestoneType?.name) + ' Name'">
+							<input type="text" pi-input name="name" [disabled]="(whichSchedule == 1 && APP.permissions.system_access.tasks!='edit') || (whichSchedule == 2 && APP.permissions.system_access.milestones!='edit')"
+							 formControlName="name" maxlength="64" />
+							<div class="msgs">
+								<div class="pi-error" *ngIf="f.name.hasError('required') && submitted">Please Enter {{whichSchedule == 1 ?
+									'Task' : selectedMilestoneType?.name}} Name</div>
+								<div class="pi-error" *ngIf="!f.name.hasError('required') && duplicateError">{{(whichSchedule == 1 ? 'Task' :
+									selectedMilestoneType?.name) + ' ' +
+									duplicateError}}</div>
+							</div>
+						</pi-form-field>
+
+						<pi-select label="Status" [options]="dropdowns.statusList" [disabled]="(whichSchedule == 1 && APP.permissions.system_access.tasks!='edit') || (whichSchedule == 2 && APP.permissions.system_access.milestones!='edit')"
+						 formControlName="status"></pi-select>
+
+						<pi-form-field label="Description">
+							<textarea pi-input name="description" [disabled]="(whichSchedule == 1 && APP.permissions.system_access.tasks!='edit') || (whichSchedule == 2 && APP.permissions.system_access.milestones!='edit')"
+							 formControlName="description" maxlength="1024"></textarea>
+							<span class="field-note">Enter text of 1024 characters or less.</span>
+						</pi-form-field>
+
+						<div class="ak-field-group user-type">
+							<label for="">User types that can
+								<b>Access</b> this milestone</label>
+							<div class="custome-options-view">
+								<app-permission [readonly]="(whichSchedule == 1 && APP.permissions.system_access.tasks!='edit') || (whichSchedule == 2 && APP.permissions.system_access.milestones!='edit')"
+								 *ngIf="dropdowns.organizations" [group]="tasksForm.controls.org_type_id" [headers]="dropdowns.headers" [data]="dropdowns.organizations"></app-permission>
+							</div>
+						</div>
+
+						<div class="ak-field-group departments">
+							<label for="">Department users that can
+								<b>Assign</b> this Milestone</label>
+							<div class="custome-options-view">
+								<app-check-departments [readonly]="(whichSchedule == 1 && APP.permissions.system_access.tasks!='edit') || (whichSchedule == 2 && APP.permissions.system_access.milestones!='edit')"
+								 *ngIf="dropdowns.departments.length" [group]="tasksForm.controls.department_ids" [data]="dropdowns?.departments"></app-check-departments>
+							</div>
+						</div>
+						<app-modified-user-info [modifiedInfo]="selectedTask"></app-modified-user-info>
+					</form>
+				</div>
+				<div class="footer" *ngIf="!fetchingDetails && selectedTask && ((whichSchedule == 1 && APP.permissions.system_access.tasks=='edit') || (whichSchedule == 2 && APP.permissions.system_access.milestones=='edit'))">
+					<div class="admin-max-footer" style="max-width: 1100px;">
+						<button pi-button (click)="resetForm(selectedTask)">Cancel</button>
+						<button pi-button class="m-l-15" color="primary" (click)="saveDetails(tasksForm)" [disabled]="tasksForm.pristine">Save</button>
+					</div>
+				</div>
+			</ng-container>
+
+
+		</section>
+	</pi-detail-view>
+
+</pi-master-detail-view>

@@ -1,0 +1,21 @@
+::ng-deep .invoice-content{
+    .ag-cell-wrapper{
+        &.ag-row-group{
+            align-items: center;
+        }
+        &.ag-row-group-indent-1{
+            padding-left: 78px;
+        }
+    }
+    .user-product-service{
+        height: 100%;
+        padding-top: 0;
+    }
+    .status-cell, .cost-cell{
+        display: flex;
+        align-items: center;
+        >span{
+            line-height: 1;
+        }
+    }
+}

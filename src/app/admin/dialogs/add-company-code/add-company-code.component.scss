@@ -1,0 +1,40 @@
+@import "../../../../assets/styles/mixins";
+
+.form-wrapper{
+    color: rgba(23, 43, 77, 0.8);
+}
+.field-title{
+    display: flex;
+    margin: 25px 0 10px 0;
+    color: rgba(23, 43, 77, 0.6);
+    @include regularFont;
+}
+
+.business-rules-block{
+    border: 1px dashed #dfe1e6;
+    padding: 0 16px 16px;
+    .chk-radio{
+        padding-top: 0 !important;
+        .pi-form-field{margin-top: 10px;}
+        label{
+            color: rgba(23, 43, 77, 0.6);
+        }
+    }
+    .push-nets{
+        display: flex;
+        align-items: baseline;
+        margin-top:0;
+        .pi-form-field:not(:first-child){margin-left: 8px;}
+    }
+    .wrap-content{
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        margin-top: 16px;
+        .ak-field-text{
+            max-width: 50px;
+            margin: 0px 5px;
+            text-align: right;
+        }
+    }
+}

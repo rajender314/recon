@@ -1,0 +1,103 @@
+<div class="primary-layout-detail">
+	<header>
+		<div class="w-100 d-flex align-items-center justify-content-between">
+			<aside class="left-header d-flex  flex-width">
+				<!-- <i class="pixel-icons icon-arrow" (click)="changeMasterView()"></i> -->
+				<h1 [innerHtml]="state.activeState.title"></h1>
+			</aside>
+			<aside class="d-flex right-header flex-width  justify-content-end">
+				<!-- *ngIf="state.pagination.search.length ? true : (state.loader || state.jobs.list.length)"> -->
+				<!-- <button class="filter-icon-btn icon-buttons" pi-button><i class="pixel-icons icon-filter-new"></i></button> -->
+				<app-search (onSearch)="searchList($event)"></app-search>
+				<!-- <a class="m-l-15" (click)="showFilter('show')"><i class="pixel-icons icon-filter-new"></i>
+					<span>Filters</span></a> -->
+				<!-- <button class="m-l-15" pi-button (click)="createTask()">Add Task</button> -->
+			</aside>
+		</div>
+	</header>
+	<div class="primary-layout-detail-body flex-column">
+		<div class="padding-20" style="height: calc(100vh - 62px);">
+			<div class="custom-tabing-page">
+				<nav mat-tab-nav-bar [disableRipple]="true">
+					<div class="tab-group" style="flex: 1">
+						<a mat-tab-link [routerLink]="tab.link" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive" *ngFor="let tab of state.tabs">
+							{{tab.label}} </a>
+					</div>
+				</nav>
+				<div style="height: calc(100% - 40px);">
+					<router-outlet></router-outlet>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="side-nav-container" *ngIf="state.displayFilter">
+	<div class="overlay" (click)="showFilter('show')"></div>
+	<div class="side-nav" [class.active]="state.displayFilter">
+		<div class="filter-container">
+			<div class="filter-title">
+				<h2>Filters</h2>
+			</div>
+			<div class="side-nav-filters proj-filter catg-menu">
+				<mat-accordion>
+					<mat-expansion-panel *ngFor="let filter of state.filters.tabs" (opened)="menuOpened(filter.key)"
+						(closed)="menuClosed(filter.key)" [expanded]="state.filters.expansionPanel[filter.key]"
+						hideToggle="true">
+						<mat-expansion-panel-header expandedHeight="40px" collapsedHeight="40px">
+							<mat-panel-title>
+								<div class="mat-t">
+									<i class="pixel-icons icon-arrow-down"
+										[ngClass]="state.filters.expansionPanel[filter.key] ? 'icon-arrow-down' : 'icon-arrow-right'"></i>
+									<span [innerHtml]="filter.label"></span>
+
+								</div>
+							</mat-panel-title>
+						</mat-expansion-panel-header>
+
+						<ng-container>
+
+							<ng-container *ngIf="filter.type == 'checkbox'">
+								<div class="container">
+									<div class="hdr-actions">
+										<pi-form-field [label]="'Select All'">
+											<input type="checkbox" pi-input
+												[(ngModel)]="state.filters.selectAll[filter.key]"
+												[(indeterminate)]="indeterminate" (change)="selectAll(filter.key)" />
+										</pi-form-field>
+										<span class="clear-all" (click)="menuActions('clear', filter.key)">Clear
+											All</span>
+									</div>
+									<div class="content-list">
+										<div class="content-list-visible">
+											<pi-form-field [label]="option.name"
+												*ngFor="let option of state.dropdowns[filter.key]">
+												<input type="checkbox" pi-input
+													[(ngModel)]="state.filters.modelValues[filter.key][option.id]"
+													(change)="change(filter.key)" />
+											</pi-form-field>
+										</div>
+									</div>
+								</div>
+							</ng-container>
+
+							<ng-container *ngIf="filter.type == 'select'">
+								<pi-select [nameKey]="filter.nameKey || 'name'" [label]="filter.label"
+									[options]="state.dropdowns[filter.key]" [multi]="filter.multi">
+									<!-- [formControlName]="filter.key" -->
+								</pi-select>
+							</ng-container>
+
+							<div class="footer">
+								<button pi-button
+									(click)="state.filters.expansionPanel[filter.key]=false">Cancel</button>
+								<button pi-button color="primary"
+									(click)="saveFilter(filter.key);state.filters.expansionPanel[filter.key]=false">Save</button>
+							</div>
+						</ng-container>
+					</mat-expansion-panel>
+				</mat-accordion>
+			</div>
+		</div>
+	</div>
+</div>

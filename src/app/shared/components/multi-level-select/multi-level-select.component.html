@@ -1,0 +1,35 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <mat-spinner diameter="45" class="md" *ngIf="isLoading"></mat-spinner>
+  <ng-container *ngIf="data.type == 'list'">
+    <app-multi-level-grouping [title]="data.tab || 'Tasks'" *ngIf="!isLoading" [options]="options">
+    </app-multi-level-grouping>
+  </ng-container>
+  <ng-container *ngIf="data.type == 'grid'">
+    <ng-container *ngIf="!isLoading">
+      <div class="box">
+        <div class="box-header">
+          <app-search (onSearch)="searchList($event)"></app-search>
+          <div class="col-field-multiple">
+            <pi-form-field [label]="nav.label" *ngFor="let nav of options.navs"
+              [class.active]="nav.label == options.selectedNav">
+              <input type="radio" pi-input name="nav_tab" (change)="changeSelection(options.selectedNav)" [(ngModel)]="options.selectedNav"
+                [value]="nav.value" />
+            </pi-form-field>
+          </div>
+        </div>
+      </div>
+      <ag-grid-angular style="height: 300px" class="ag-theme-balham" [gridOptions]="gridOptions">
+      </ag-grid-angular>
+    </ng-container>
+  </ng-container>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+  <button pi-button (click)="cancel()">Cancel</button>
+  <button pi-button color="primary" (click)="save()">Save</button>
+</mat-dialog-actions>

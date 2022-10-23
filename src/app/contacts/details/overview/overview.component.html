@@ -1,0 +1,139 @@
+<mat-spinner *ngIf="state.loader" diameter="36"></mat-spinner>
+<div *ngIf="!state.loader" class="h-100">
+	<div class="overview-container d-flex flex-column h-100">
+		<div class="d-flex h-100 w-100">
+			<div class="left-section p-r-15 p-t-15">
+				<div class="edit-label" [ngClass]="{'show-field-header':showField }">
+					<div class="images-dropzone" *ngIf="(state.selected?.logo!='' && state.selected?.logo!='0')">
+						<img [src]="state.selected?.logo" alt="Logo">
+					</div>      
+					<label class="my-pixel-icon contact-pink"
+						*ngIf="(state.selected?.logo=='' || state.selected?.logo=='0')">
+						<i class="pixel-icons icon-clients-contacts-tab"></i>
+					</label>
+					<div *ngIf="!showField" class="type org-name-edit text-ellipsis" [title]="state.selected?.name">
+						<span>{{state.selected?.name}}</span>
+						<i *ngIf="state.editable" (click)="prefillOrg(state.selected?.name);showField = true;"
+							class="material-icons icon-edit">edit</i>
+					</div>
+					<pi-form-field [label]=" " *ngIf="showField">
+						<input #orgName type="text" pi-input name="name" maxlength="64" [formControl]="org_name" />
+						<div class="btn-actions">
+							<button pi-icon-button>
+								<i (click)="editOrg(org_name.value,state.selected?.name);showField = false;"
+									class="pixel-icons icon-select"></i>
+							</button>
+							<button pi-icon-button>
+								<i (click)="cancelOrgEdit();showField = false;" class="pixel-icons icon-close-slim"></i>
+							</button>
+						</div>
+					</pi-form-field>
+				</div>
+				<div class="right-line"></div>
+				<h3 class="sub-title">Client</h3>
+				<div class="overview-cards ">
+					<div class="card-ui l-pink">
+						<div class="card-sec">
+							<span class="overview-address">Billable address</span>
+							<span class="overview-count"
+								[innerHtml]="state.details.overview_info?.billable_address">2</span>
+						</div>
+					</div>
+					<div class="card-ui l-green">
+						<div class="card-sec">
+							<span class="overview-address">Estimate address</span>
+							<span class="overview-count"
+								[innerHtml]="state.details.overview_info?.estimate_address">2</span>
+						</div>
+					</div>
+					<div class="card-ui l-blue">
+						<div class="card-sec">
+							<span class="overview-address">Shipping address</span>
+							<span class="overview-count"
+								[innerHtml]="state.details.overview_info?.shipping_address">2</span>
+						</div>
+					</div>
+				</div>
+				<div class="project-no">
+					<span>{{state.selected.org_type == 3 ? 'Vendor Code' : 'Project No. Prefix'}}</span>
+					<h4 [innerHtml]="state.details.overview_info?.project_prefix || '--'">albvctg</h4>
+				</div>
+				<div class="credit-approval">
+					<pi-form-field label="Pending Credit Approval">
+						<input type="checkbox" pi-input [disabled]="!state.editable"/>
+					</pi-form-field>
+				</div>
+				<div class="sub-organization" [class.in-loader]="state.subOrgs.loader">
+					<mat-spinner id="orgSpinner" *ngIf="state.subOrgs.loader" diameter="20"></mat-spinner>
+					<h3>Sub Organizations</h3>
+					<div class="organization-values" *ngFor="let org of state.subOrgs.list | slice: 0:5">
+						<i class="pixel-icons icon-sub-organisations"></i>
+						<span>{{org.name}}</span>
+					</div>
+					<div class="show-more" *ngIf="state.subOrgs.list.length > 5">
+						<span (click)="changeRoute('sub-orgs')">Show More</span>
+					</div>
+					<div style="color: #a5adba;" *ngIf="!state.subOrgs.list.length">No Sub Organizations Added</div>
+				</div>
+			</div>
+			<div class="right-section p-l-15 p-t-15">
+				<div class="right-overview-wrapper">
+					<div class="select-status">
+						<pi-select label="Status" [options]="state.status" (onChange)="changeOrgStatus()" [disabled]="!state.statusEditable"
+							[ngModel]="state.selected?.status" class="custom-pi-select hide-cursor"></pi-select>
+					</div>
+					<div class="website">
+						<div class="websites-container">
+							<h3>Websites<span class="pi-error" *ngIf="state.websiteError.length">Please Enter
+									Valid
+									Website</span></h3>
+							<section>
+								<form [formGroup]="websitesForm" class="form-flex" autocomplete="off">
+									<mat-list formArrayName="website">
+										<mat-list-item *ngFor="let list of websitesArray.controls;let i = index"
+											[formGroupName]="i" (click)="editWebsite(list,$event)">
+											<div class="website" *ngIf="!list.get('edit').value">
+												{{list.get('website').value}}</div>
+											<pi-form-field label="">
+												<input type="text" pi-input #website *ngIf="list.get('edit').value"
+													(input)="validateWebsite(list)" (blur)="cancelWebsite(list,$event)"
+													formControlName="website" [disabled]="!state.editable">
+											</pi-form-field>
+											<div>
+												<button pi-icon-button *ngIf="this.websitesArray.value.length>1" [disabled]="!state.editable"
+													(click)="removeWebsite(list,$event)" class="array-button minus">
+													<i class="pixel-icons icon-minus"></i>
+												</button>
+												<button pi-icon-button class="array-button plus" [disabled]="!state.editable"
+													(click)="addWebsite($event)">
+													<i class="pixel-icons icon-plus"></i>
+												</button>
+											</div>
+										</mat-list-item>
+									</mat-list>
+								</form>
+							</section>
+						</div>
+					</div>
+					<div class="contact" [class.in-loader]="state.contacts.loader">
+						<mat-spinner id="contactSpinner" *ngIf="state.contacts.loader" diameter="20"></mat-spinner>
+						<h3>Contacts</h3>
+						<div class="contact-list" *ngFor="let item of state.contacts.list | slice: 0:5; let i = index">
+							<div class="contact-icon">
+								<span></span>
+							</div>
+							<div class="contact-content">
+								<span [innerHtml]="item.fullname"></span>
+								<span>Account Director</span>
+							</div>
+						</div>
+						<div class="show-more" *ngIf="state.contacts.list.length > 5">
+							<span (click)="changeRoute('contacts')">Show More</span>
+						</div>
+						<div style="color: #a5adba;" *ngIf="!state.contacts.list.length">No Contacts Added</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

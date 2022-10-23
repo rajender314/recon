@@ -1,0 +1,32 @@
+@import "../../../assets/styles/mixins";
+
+.btn-section{
+    text-align: center;
+    padding: 26px;
+    button{
+        i{@include iconSize(14px);margin-right: 4px;}
+    }
+    .seperator{margin: 30px auto;width: 100%;border-bottom: 1px solid #ddd;
+        &::before{
+            background: #fff;
+            content: 'OR';
+            top: 10px;
+            padding: 0 10px;
+            position: relative;
+            margin: 0 auto;
+        }
+    }
+}
+
+.footer{
+    border-top: 1px solid #cdcdcd;
+    margin: 24px 0 0;
+    padding:24px 0;
+    text-align: right;
+    button{
+        min-width: 98px;
+        justify-content: center;
+        height: 2.5em;
+        &:last-child{margin-left: 16px;}
+    }
+}

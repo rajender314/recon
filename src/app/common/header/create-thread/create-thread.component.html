@@ -1,0 +1,53 @@
+<div class="create-thread-container">
+
+  <h3 class="title">Create Message</h3>
+
+  <div class="thread-content">
+    <form [formGroup]="form" autocomplete="off">
+
+      <pi-select label="Project*" placeholder="Select Project" nameKey="name" [options]="jobsList" [multi]="false" [minSearchLength]="jobsList.length > 1000 ? 3 : null" 
+        formControlName="jobs_id" [disabled]="!isNew" (onChange)="getProjectFiles($event)"></pi-select>
+
+      <pi-select label="To" [options]="userList" nameKey="label" [multi]="true" formControlName="users"></pi-select>
+      <pi-form-field label="Subject">
+        <input type="text" pi-input formControlName="subject" />
+      </pi-form-field>
+      <pi-form-field label="Message">
+        <textarea minRows="10" maxRows="10" pi-input formControlName="message"></textarea>
+      </pi-form-field>
+       <pi-form-field *ngIf="showFiles">
+        <pi-select label=" " idKey="attachments_id" placeholder="Select from project files"  [options]="filesList" [multi]="true"
+          formControlName="files" nameKey="file_name">
+        </pi-select>
+      </pi-form-field>
+      <div class="file-upload">
+        <div class="uploads">
+          <div ng2FileDrop [ngClass]="{'file-over': hasDropZoneOver}" [uploader]="uploader"
+            class="file-drop-zone">
+            <input id="attachment" type="file" ng2FileSelect [uploader]="uploader" [hidden]="true" [accept]="allowedMimeType.toString()"
+              multiple />
+            <label for="attachment" class="browse-file">
+              <i class="pixel-icons icon-plus"></i> Upload new Files:
+            </label>
+          </div>
+          <div class="files-sec">
+            <div *ngFor="let file of uploadData.files;let i = index" class="files">
+              <i class="pixel-icons icon-{{file.type}}"></i>
+              <span [innerHtml]="file.original_name"></span>
+              <span class="close" (click)="removeAttachment(i)">
+                <i class="pixel-icons icon-close-slim"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="actions-footer">
+    <div class="flex"></div>
+    <button pi-button color="subtle" (click)="dialogRef.close()">Cancel</button>
+    <button pi-button color="primary" (click)="create()" [disabled]="!form.valid">Create</button>
+  </div>
+
+</div>

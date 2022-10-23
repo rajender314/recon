@@ -1,0 +1,73 @@
+<div class="primary-layout-detail">
+    <header class="w-100 d-flex align-items-center justify-content-between " *ngIf="!state.loader && state.estimates.length">
+        <div class="w-100 d-flex align-items-center justify-content-center flex-column">
+            <div class="w-100"><app-breadcrumb [list]="state.breadcrumbs"></app-breadcrumb></div>
+            <div class="w-100 d-flex align-items-center justify-content-between ">
+                <aside class="left-header flex-column d-flex flex-width">
+                    <h1>Estimates </h1>
+                </aside>
+                <aside class="estimates-menu-detail d-flex right-header flex-width justify-content-end">
+                    <!-- <app-search [search]="state.search" class="custom-search" (onSearch)="searchList($event)"></app-search> -->
+                    <!-- <div class="plain-select-ui">
+                        <pi-select [options]="state.revisions" (onChange)="revisionChange()" [(ngModel)]="state.selectedRevision"></pi-select>
+                   </div> -->
+                   <ng-container *ngIf="gridApi?.getSelectedRows()?.length && state.allowEditable && state.jobActive && (APP.permissions.job_access.post_estimates=='yes' || APP.permissions.job_access.send_estimate=='yes' ) ">
+                    <button class="m-l-15" pi-button color="primary" (click)="postEstimate()" *ngIf="APP.permissions.job_access.post_estimates=='yes' && state.enablePostEstimate">Post Estimate</button>
+                     <button class="m-l-15" pi-button color="primary" (click)="sendEstimate()" *ngIf="APP.permissions.job_access.send_estimate=='yes' && state.enableSendEstimate">Send Estimate</button>
+                     <button class="m-l-15 approve-btn" pi-button color="primary" (click)="approveEstimate()" *ngIf="APP.permissions.job_access.estimates=='approve' && state.enableApproveEstimate">Approve Estimate</button>
+                     <button class="m-l-15 un-approve" pi-button color="primary" (click)="unapproveEstimate()" *ngIf="state.enableUnapproveEstimate && APP.permissions.job_access.estimates=='approve'">Unapprove Estimate</button>
+                 </ng-container>
+                    <ng-container *ngIf="gridApi?.getSelectedRows()?.length && APP.permissions.job_access.export_estimate == 'yes' ? true : false"> 
+                        <button class="m-l-15" pi-button (click)="exportEstimate()">Export</button>
+                    </ng-container>
+                   
+                    <div class="m-l-15 btn-group basic-group-btns">
+						<button class="first-child" *ngIf="state.allowEditable" (click)="addEstimate()">Add</button>
+						<div class="btn-group">
+							<button class="last-child" mat-button [matMenuTriggerFor]="menu">
+								<i class="pixel-icons icon-arrow-down"></i>
+							</button>
+							<mat-menu #menu="matMenu" xPosition="before" class="drop-menu-ui">
+								<a *ngIf="APP.permissions.job_access.add_estimate == 'yes'" (click)="addEstimate()">Add Estimate</a>
+                            
+                                <a *ngIf="APP.permissions.job_access.clone_estimates=='yes' && state.estimates.length" (click)="cloneEstimate()">Clone Estimate</a>
+                            </mat-menu>
+						</div>
+                    </div>                    
+                    <!-- <button class="m-l-15" pi-button color="primary" *ngIf="state.allowEditable && APP.permissions.job_access.clone_estimates=='yes' && state.projectStatusID!='5' && state.estimates.length" (click)="cloneEstimate()">Clone Estimate</button> -->
+                    <!-- <button class="m-l-15" pi-button color="primary" *ngIf="state.allowEditable && ((APP.permissions.job_access.edit_cancelled_jobs=='yes' && state.projectStatusID=='5') || state.projectStatusID!='5')" (click)="addEstimate()">Add Estimate</button> -->
+                </aside>
+            </div>
+        </div>
+    </header>
+    <div class="primary-layout-detail-body flex-column padding-20">
+        <!-- <mat-spinner diameter="45" class="md" *ngIf="state.loader"></mat-spinner> -->
+        <div class="spinner-view" *ngIf="state.loader">
+            <div class="empty-screen">
+                <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+            </div>
+        </div>
+        <div style="height: calc(100vh - 74px);"  class="primary-max-screen-width global-grid with-table-gaps estimates-grid with-out-margin actions-grid with-check-boxs ag-no-striped ag-full-width-grid" >
+            <!-- [class.show-footer]="gridApi?.getSelectedRows()?.length && state.allowEditable" -->
+            <ag-grid-angular style="height: 100%;" *ngIf="!state.loader" class="ag-theme-balham" [gridOptions]="gridOptions"></ag-grid-angular>
+        </div>
+    </div>
+    <!-- <div class="animated-footer padding-20" *ngIf="gridApi?.getSelectedRows()?.length && state.allowEditable && state.jobActive && (APP.permissions.job_access.post_estimates=='yes' || APP.permissions.job_access.send_estimate=='yes' ) ">
+        <div class="primary-max-screen-width justify-content-end d-flex">
+            <button class="m-l-15" pi-button color="primary" (click)="postEstimate()" *ngIf="APP.permissions.job_access.post_estimates=='yes' && state.enablePostEstimate">Post Estimate</button>
+            <button class="m-l-15" pi-button color="primary" (click)="sendEstimate()" *ngIf="APP.permissions.job_access.send_estimate=='yes' && state.enableSendEstimate">Send Estimate</button>
+            <button class="m-l-15" pi-button color="primary" (click)="approveEstimate()" *ngIf="APP.permissions.job_access.estimates=='approve' && state.enableApproveEstimate">Approve Estimate</button>
+            <button class="m-l-15" pi-button color="primary" (click)="unapproveEstimate()" *ngIf="state.enableUnapproveEstimate">Unapprove Estimate</button>
+        </div>
+    </div> -->
+</div>
+<!-- <div class="estimates-footer"></div> -->
+<div class="no-data-screen" *ngIf="!state.loader && !state.estimates.length">
+    <div class="empty-screen">
+        <div class="icon-info-holder">
+            <div class="icon"><i class="pixel-icons icon-pn-estimates"></i></div>
+            <p class="alert-message">No Estimates</p>
+        </div>
+        <button pi-icon-button color="primary" *ngIf="state.allowEditable && APP.permissions.job_access.add_estimate == 'yes'" (click)="addEstimate()">+ Add Estimate</button>
+    </div>
+</div>

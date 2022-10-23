@@ -1,0 +1,83 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+<mat-dialog-content>
+	<form [formGroup]="createFormGroup" class="form-flex" autocomplete="off">
+
+		<div *ngIf="data.formFields.length">
+			<div *ngFor="let field of data.formFields">
+				<ng-container *ngIf="field.type == 'select'">
+					<pi-select [label]="field.label" [options]="data.dropdowns[field.options]" [multi]="field.multi" [formControlName]="field.key"></pi-select>
+					<div class="msgs">
+						<div class="pi-error" *ngIf="createFormGroup.controls[field.key].hasError('required') && submitted">Please Select
+							{{field.label}}</div>
+					</div>
+				</ng-container>
+				<ng-container *ngIf="field.type == 'text'">
+					<pi-form-field [label]="field.label">
+						<input type="text" pi-input [name]="field.key" [formControlName]="field.key" *ngIf="field.key != 'name'" />
+						<input type="text" pi-input [name]="field.key" [formControlName]="field.key" *ngIf="field.key == 'name'" maxlength="64" />
+						<div class="pi-error" *ngIf="!f.name.hasError('required') && duplicateError">{{data.label}} {{duplicateError}}</div>
+						<div class="msgs">
+							<div class="pi-error" *ngIf="createFormGroup.controls[field.key].hasError('required') && submitted">Please Enter
+								{{field.label}}</div>
+						</div>
+					</pi-form-field>
+				</ng-container>
+				<ng-container *ngIf="field.type == 'textarea'">
+					<pi-form-field [label]="field.label">
+						<textarea pi-input [name]="field.key" [formControlName]="field.key" maxlength="1024"></textarea>
+						<span class="field-note">Enter text of 1024 characters or less.</span>
+					</pi-form-field>
+				</ng-container>
+			</div>
+		</div>
+
+		<div class="add-service p-t" *ngIf="data.flag == 'services'">
+			<app-permission *ngIf="data.dropdowns.departments" prop="id" [group]="createFormGroup.controls.departments"
+			 [headers]="data.dropdowns.headers" [data]="data.dropdowns.departments"></app-permission>
+		</div>
+
+		<div class="alias" *ngIf="data.flag == 'products'">
+			<div class="pi-error" *ngIf="aliases.controls.length == maxAliases">
+				<mat-icon>error_outline</mat-icon>
+				Products cannot have more than {{maxAliases}} aliases
+			</div>
+			<div class="header">
+				<span class="title">Alias</span>
+				<span>Status</span>
+			</div>
+			<div class="body" formArrayName="alias">
+				<div *ngFor="let alias of aliases.controls;let i = index" class="alias-box">
+					<div [formGroupName]="i" class="flex-row">
+						<div class="input">
+							<input type="text" class="ak-field-text" formControlName="name">
+							<div class="pi-error" *ngIf="aliasValidation[aliases.controls[i].get('id').value]" [innerHtml]="aliasValidation[aliases.controls[i].get('id').value]"></div>
+						</div>
+						<mat-slide-toggle color="primary" formControlName="status"></mat-slide-toggle>
+						<div class="actions">
+							<i (click)="removeControl(i)" [class.disable]="aliases.controls.length == 1" class="pixel-icons icon-minus remove"></i>
+							<i (click)="addControl()" [class.disable]="aliases.controls.length == maxAliases" class="pixel-icons icon-plus add"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="departments p-t" *ngIf="data.flag == 'departments'">
+			<label for="">Department users that can
+				<b>Access</b> this Distribution Type</label>
+			<app-check-departments *ngIf="data.dropdowns.departments" prop="id" [group]="createFormGroup.controls.departments"
+			 [data]="data.dropdowns.departments"></app-check-departments>
+		</div>
+	</form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+		<div class="pi-error" *ngIf="serverError">{{serverError}}</div>
+	<span style="flex: 1"></span>
+	<button pi-button (click)="closeDialog()">Cancel</button>
+	<button pi-button color="primary" (click)="saveDetails(createFormGroup)" [disabled]="createFormGroup.pristine">Save</button>
+</mat-dialog-actions>

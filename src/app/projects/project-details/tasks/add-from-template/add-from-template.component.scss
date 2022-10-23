@@ -1,0 +1,80 @@
+::ng-deep .import-template {    
+    .mat-horizontal-stepper-header-container{
+        display: none;
+    }
+    overflow: hidden;
+    transition-duration: 0.5s;
+    position: relative;
+    &.step-0 {
+        // height: 500px;
+         width: 100%;
+         height:100%;        
+        .mat-dialog-content {
+            // background:red !important;
+        ::ng-deep .global-grid .ag-layout-normal.ag-body-viewport .ag-row{            
+            .icon-company-codes{
+                margin-left: 0;
+            }
+        }
+    }
+    }
+    
+    &.step-1 {
+        width: 100%;
+        height:100%;
+        .mat-dialog-content {
+            // height: calc(100% - 106px);
+            .mat-stepper-horizontal {
+                height: 100%;
+                overflow-y: auto;
+            }
+            ::ng-deep .global-grid{
+                .ag-cell.lh-50{
+                    line-height: 50px !important;
+                    .ak-field-checkbox+label::after{
+                        top: 15px !important;
+                    }
+                    i.icon-sub-task{
+                        height: 50px;
+                        line-height: 50px;
+                    }
+                    .pi-form-field{
+                        margin-top: 6px;
+                    }
+                    .pi-form-field + .error{
+                        position: absolute;
+                        bottom: 2px;
+                        font-size: 12px;
+                        line-height: 1;
+                        background: #fff;                        
+                    }
+                    ::ng-deep .template-assignee-cell .custom-arrow .dropdown{
+                        top: 6px;
+                    }
+                    ::ng-deep .template-pi-field .pi-form-field .pi-field {
+                        height: 100%;
+                        height: 36px;
+                        line-height: 38px;
+                    }
+                    ::ng-deep .template-pi-field .pi-form-field .pi-field .owl-picker-toggle {
+                        right: 8px;
+                    }
+                    ::ng-deep .template-pi-field {
+                        height: 100%;
+                        position: relative;
+                        height: 50px;
+                    }
+                    .ag-cell-custome-actions{
+                        i{
+                            &.icon-notes{
+                                font-size: 18px;
+                                height: 18px;
+                                width: 18px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

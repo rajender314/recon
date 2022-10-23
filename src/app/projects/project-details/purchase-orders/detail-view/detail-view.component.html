@@ -1,0 +1,830 @@
+<div class="primary-layout-detail">
+	<header class="tab-header">
+		<div class="w-100 d-flex flex-column">
+			<pi-breadcrumb>
+				<ng-container *ngFor="let item of state.breadcrumbs">
+					<pi-breadcrumb-item *ngIf="item.type == 'link'" [label]="item.label" [routerLink]="item.route">
+					</pi-breadcrumb-item>
+					<pi-breadcrumb-item *ngIf="item.type != 'link'" [label]="item.label"></pi-breadcrumb-item>
+					<!-- <pi-breadcrumb-item label="Purchase Orders"  href="/users"  ></pi-breadcrumb-item> -->
+				</ng-container>
+			</pi-breadcrumb>
+			<div class=" d-flex align-items-center">
+				<h1><span class="non-edit" [innerHtml]="state.selectedPO.po_no" class="title"></span>
+					<span class="status po_status status_{{state.selectedPO.po_status_id}}" [innerHtml]="state.selectedPO.po_status_name"></span></h1>
+			</div>
+			<div class="w-100 d-flex align-items-center justify-content-between ">
+				<aside class="left-header d-flex flex-width">
+
+					<div class="cust-nav-tab" *ngIf="!state.initialLoading">
+						<nav>
+							<div class="tab-group">
+								<a class="mat-tab-link" (click)="onTabChange(tab)" *ngFor="let tab of state.tabs" [class.active]="tab.id == state.activeTab">{{tab.label}}</a>
+							</div>
+						</nav>
+					</div>
+				</aside>
+				<aside class="d-flex right-header small-btn-container flex-width justify-content-end" *ngIf="!state.isLoading">
+					<!-- <mat-menu #appMenu="matMenu"> -->
+					<div class="" *ngFor="let action of !state.isEditable ? state.detailActions : state.editActions">
+						<ng-container *ngIf="action.visible && action.show">
+
+							<ng-container *ngIf="action.type == 'button' && state.allowEditable">
+								<button class="m-l-15" pi-button [innerHtml]="action.label" (click)="performActions(action)"></button>
+							</ng-container>
+							<ng-container *ngIf="action.type == 'icon'">
+								<ng-container *ngIf="(!['edit','upload'].includes(action.key)) || (['edit','upload'].includes(action.key) && state.allowEditable) ">
+									<button class="m-l-15 btn-switching-icon" (click)="performActions(action)" [matTooltip]="action.icon_title">
+										<i class="pixel-icons {{action.icon_name}}"></i>
+									</button>
+								</ng-container>
+							</ng-container>
+							<!-- <button class="m-l-15 btn-switching-icon"
+								*ngIf="action.type == 'icon' && action.icon_name == 'icon-messages'"
+								(click)="toggleSideNav('messages')" [matTooltip]="action.icon_title"><i
+									class="pixel-icons {{action.icon_name}}"></i>
+							</button> -->
+							<!-- <button class="m-l-15 btn-switching-icon print" [matTooltip]="action.icon_title" (click)="performActions({key:'print'})" *ngIf="action.type == 'icon' && action.icon_name == 'icon-print'" >
+										<i class="pixel-icons {{action.icon_name}}"></i>
+									</button> -->
+							<!-- <button class="m-l-15 btn-switching-icon edit123"
+								*ngIf="action.type == 'icon' && action.icon_name == 'icon-pencil'"
+								(click)="performActions({key:'edit'})" [matTooltip]="action.icon_title"><i
+									class="pixel-icons {{action.icon_name}}"></i>
+							</button> -->
+							<!-- <button class="m-l-15 btn-switching-icon"
+								*ngIf="action.type == 'icon' && action.icon_name == 'icon-export-pdf'"
+								[matTooltip]="action.icon_title"><i class="pixel-icons {{action.icon_name}}"></i>
+							</button> -->
+							<!-- <button class="m-l-15 btn-switching-icon" [matTooltip]="action.icon_title"
+								(click)="performActions({key:'upload'})"
+								*ngIf="action.type == 'icon' && action.icon_name == 'icon-upload-new'">
+								<i class="pixel-icons {{action.icon_name}}"></i>
+							</button> -->
+						</ng-container>
+					</div>
+					<!-- </mat-menu> -->
+
+					<!-- <button mat-icon-button [matMenuTriggerFor]="appMenu">
+								<mat-icon>more_vert</mat-icon>
+							</button> -->
+
+					<button pi-button class="m-l-15" (click)="addPo()" *ngIf="state.poList.length == 1 && state.allowEditable">Add</button>
+
+					<app-search class="m-l-15" *ngIf="state.activeTab == 2 && invoices.list.length" (onSearch)="onSearch($event)">
+					</app-search>
+				</aside>
+			</div>
+
+
+
+		</div>
+	</header>
+	<div class="primary-layout-detail-body flex-column padding-20">
+		<div>
+			<section class="po-preview">
+				<!-- <div class="info" *ngIf="!state.isLoading">
+					<nav mat-tab-nav-bar [disableRipple]="true">
+						<div class="tab-group">
+							<div>
+								<a mat-tab-link (click)="onTabChange(tab)" *ngFor="let tab of state.tabs"
+									[active]="tab.id == state.activeTab">
+									{{tab.label}} </a>
+							</div>
+						</div>
+
+					</nav>
+				</div> -->
+				<div class="details" *ngIf="!state.isLoading" [class.edit-details-preview]="state.isEditable">
+					<ng-container *ngIf="state.activeTab == 1">
+						<div class="po-overview" [class.inline-edit-preview]="state.isEditable">
+
+							<!-- <div class="po-client-logo">
+								<div class="company-logo">
+									<span class="browse-file" *ngIf="state.isEditable">Change</span>
+									<div class="image">
+										<img src="" alt="">
+									</div>
+								</div>
+								<span class="non-edit" [innerHtml]="state.selectedPO.po_no" class="title"></span>
+								<span class="status status_{{state.selectedPO.po_status_id}}"
+									[innerHtml]="state.selectedPO.po_status_name"></span>
+							</div> -->
+							<div [formGroup]="POForm" class="form-container ">
+								<div class="w-100">
+									<div class="fields m-r-15">
+										<span class="field-name">Project No:</span>
+										<div class="view-field-wrapper">
+											<span class="non-edit" [innerHtml]="state.jobInfo?.job_no"></span>&nbsp;-&nbsp;
+											<span [innerHtml]="state.jobInfo?.job_title"></span>
+										</div>
+									</div>
+								</div>
+								<div class="w-100">
+									<div class="d-flex w-100 column-ui">
+										<ng-container *ngFor="let field of state.dateFields; let i = index">
+											<div class="fields col-4" *ngIf="field.type == 'date'">
+												<span class="field-name" [innerHtml]="field.label"></span>
+												<div class="view-field-wrapper" *ngIf="!field.is_edit">
+													<span *ngIf="field.type == 'date'">{{POForm.controls[field.key].value?(POForm.controls[field.key].value |
+														date:
+														'MMM dd, yyyy hh:mm a'):'--'}}</span>
+													<i *ngIf="field.can_edit && state.isEditable" class="pixel-icons icon-pencil" (click)="toggleInlineEdit(field)"></i>
+												</div>
+												<div class="edit-field-wrapper" *ngIf="field.is_edit">
+													<ng-container *ngIf="field.type == 'date'">
+														<pi-form-field [label]=" " class="date-field">
+															<input pi-input matInput [min]="field.minDate" [max]="field.maxDate" [owlDateTime]="i" [formControlName]="field.key"
+															 [owlDateTimeTrigger]="i" placeholder="Choose a date" readonly>
+															<div class="owl-picker-toggle">
+																<i class="pixel-icons icon-calendar" [owlDateTimeTrigger]="i"></i>
+															</div>
+															<owl-date-time #i [hour12Timer]="true"></owl-date-time>
+														</pi-form-field>
+													</ng-container>
+													<div class="actions">
+														<button pi-icon-button (click)="saveInlineEdit(field)">
+															<i class="pixel-icons icon-select" color=""></i>
+														</button>
+														<button pi-icon-button (click)="cancelInlineEdit(field)">
+															<i class="pixel-icons icon-close-slim"></i>
+														</button>
+													</div>
+												</div>
+											</div>
+											<div class="fields col-4" *ngIf="field.type != 'date'" [class.even]="i%2 ==0">
+												<ng-container>
+													<span class="field-name" [innerHtml]="field.label"></span>
+													<div class="view-field-wrapper in-edit" [class.non-edit]="field.can_edit && state.isEditable" *ngIf="!field.is_edit">
+														<span *ngIf="field.type != 'select' && field.type != 'textarea'">{{POForm.controls[field.key].value?POForm.controls[field.key].value:'--'}}</span>
+														<span *ngIf="field.type == 'select'">{{state.selectedPO[field.display_name] || '--'}}</span>
+														<span *ngIf="field.type == 'textarea'" [innerHtml]="POForm.controls[field.key].value?state.selectedPO[field.display_name]:'--'"></span>
+														<i *ngIf="field.can_edit && state.isEditable" class="pixel-icons icon-pencil" (click)="toggleInlineEdit(field)"></i>
+													</div>
+												</ng-container>
+												<div class="edit-field-wrapper " *ngIf="field.is_edit">
+													<ng-container *ngIf="field.type == 'text'">
+														<pi-form-field [label]=" ">
+															<input type="text" pi-input [formControlName]="field.key" />
+															<div class="msgs">
+																<div class="pi-error" *ngIf="POForm.controls[field.key].hasError('required') && state.submitted">
+																	Please Enter {{field.label}}
+																</div>
+															</div>
+														</pi-form-field>
+													</ng-container>
+													<ng-container *ngIf="field.type == 'select'">
+														<pi-select [nameKey]="field.nameKey || 'name'" [label]=" " [formControlName]="field.key" [options]="dropdowns[field.options]"
+														 [multi]="field.multi">
+														</pi-select>
+														<div class="msgs">
+															<div class="pi-error" *ngIf="POForm.controls[field.key].hasError('required') && state.submitted">
+																Please Select {{field.label}}</div>
+														</div>
+													</ng-container>
+													<ng-container *ngIf="field.type == 'textarea'">
+														<pi-form-field [label]=" ">
+															<textarea pi-input [name]="field.key" maxlength="1024" [formControlName]="field.key"></textarea>
+															<!-- <span class="field-note">Enter text of 1024 characters or less.</span> -->
+														</pi-form-field>
+													</ng-container>
+
+													<div class="actions">
+														<button pi-icon-button (click)="saveInlineEdit(field)">
+															<i class="pixel-icons icon-select" color=""></i>
+														</button>
+														<button pi-icon-button (click)="cancelInlineEdit(field)">
+															<i class="pixel-icons icon-close-slim"></i>
+														</button>
+													</div>
+												</div>
+											</div>
+										</ng-container>
+									</div>
+									<div class="d-flex w-100 column-ui">
+										<ng-container *ngFor="let field of state.formFields; let i=index">
+											<div class="fields col-4" *ngIf="field.type != 'none'" [class.even]="i%2 ==0">
+												<ng-container>
+													<span class="field-name" [innerHtml]="field.label"></span>
+													<div class="view-field-wrapper in-edit" [class.non-edit]="field.can_edit && state.isEditable" *ngIf="!field.is_edit">
+														<span *ngIf="field.type != 'select' && field.type != 'textarea'">{{POForm.controls[field.key].value?POForm.controls[field.key].value:'--'}}</span>
+														<span *ngIf="field.type == 'select'">{{state.selectedPO[field.display_name] || '--'}}</span>
+														<span *ngIf="field.type == 'textarea'" [innerHtml]="POForm.controls[field.key].value?state.selectedPO[field.display_name]:'--'"></span>
+														<i *ngIf="field.can_edit && state.isEditable" class="pixel-icons icon-pencil" (click)="toggleInlineEdit(field)"></i>
+													</div>
+												</ng-container>
+												<div class="edit-field-wrapper " *ngIf="field.is_edit">
+													<ng-container *ngIf="field.type == 'text'">
+														<pi-form-field [label]=" ">
+															<input type="text" pi-input [formControlName]="field.key" />
+															<div class="msgs">
+																<div class="pi-error" *ngIf="POForm.controls[field.key].hasError('required') && state.submitted">
+																	Please Enter {{field.label}}
+																</div>
+															</div>
+														</pi-form-field>
+													</ng-container>
+													<ng-container *ngIf="field.type == 'select'">
+														<pi-select [nameKey]="field.nameKey || 'name'" [label]=" " [formControlName]="field.key" [options]="dropdowns[field.options]"
+														 [multi]="field.multi">
+														</pi-select>
+														<div class="msgs">
+															<div class="pi-error" *ngIf="POForm.controls[field.key].hasError('required') && state.submitted">
+																Please Select {{field.label}}</div>
+														</div>
+													</ng-container>
+													<ng-container *ngIf="field.type == 'textarea'">
+														<pi-form-field [label]=" ">
+															<textarea pi-input [name]="field.key" maxlength="1024" [formControlName]="field.key"></textarea>
+															<!-- <span class="field-note">Enter text of 1024 characters or less.</span> -->
+														</pi-form-field>
+													</ng-container>
+
+													<div class="actions">
+														<button pi-icon-button (click)="saveInlineEdit(field)">
+															<i class="pixel-icons icon-select" color=""></i>
+														</button>
+														<button pi-icon-button (click)="cancelInlineEdit(field)">
+															<i class="pixel-icons icon-close-slim"></i>
+														</button>
+													</div>
+												</div>
+											</div>
+										</ng-container>
+										<div class="fields col-4">
+											<span class="field-name">Vendor</span>
+											<div class="view-field-wrapper">
+												<span class="non-edit" [innerHtml]="state.selectedPO.vendor_name"></span>
+											</div>
+										</div>
+									</div>
+									<div class="d-flex column-ui  w-100">
+										<div class="col-4 ">
+											<div class="fields m-r-15" (click)="state.isEditable ? changeAddress() : ''">
+												<ng-container>
+													<!-- <div *ngIf="POForm.controls.vendor_address_id.value || state.isEditable">
+															Image
+														</div> -->
+													<span class="field-name">Address</span>
+													<div *ngIf="POForm.controls.vendor_address_id.value">
+
+														<p [innerHtml]="state.selectedPO.vendor_address?.address1"></p>
+														<p [innerHtml]="state.selectedPO.vendor_address?.city"></p>
+														<p>
+															<span [innerHtml]="state.selectedPO.vendor_address?.state"></span>
+															-
+															<span [innerHtml]="state.selectedPO.vendor_address?.postal_code"></span>
+														</p>
+														<p [innerHtml]="state.selectedPO.vendor_address?.country"></p>
+													</div>
+													<div class="no-address-view" *ngIf="!POForm.controls.vendor_address_id.value">No
+														Address Found</div>
+												</ng-container>
+											</div>
+										</div>
+										<div class="col-8 ">
+											<ng-container *ngFor="let field of state.formFieldsNew; let i=index">
+												<div class="fields full-width-field" *ngIf="field.type != 'none'" [class.even]="i%2 ==0">
+													<ng-container>
+														<span class="field-name" [innerHtml]="field.label"></span>
+														<div class="view-field-wrapper in-edit" [class.non-edit]="field.can_edit && state.isEditable" *ngIf="!field.is_edit">
+															<span *ngIf="field.type != 'select' && field.type != 'textarea'">{{POForm.controls[field.key].value?POForm.controls[field.key].value:'--'}}</span>
+															<span *ngIf="field.type == 'select'">{{state.selectedPO[field.display_name] || '--'}}</span>
+															<span *ngIf="field.type == 'textarea'" [innerHtml]="POForm.controls[field.key].value?state.selectedPO[field.display_name]:'--'"></span>
+															<i *ngIf="field.can_edit && state.isEditable" class="pixel-icons icon-pencil" (click)="toggleInlineEdit(field)"></i>
+														</div>
+													</ng-container>
+													<div class="edit-field-wrapper " *ngIf="field.is_edit">
+														<ng-container *ngIf="field.type == 'text'">
+															<pi-form-field [label]=" ">
+																<input type="text" pi-input [formControlName]="field.key" />
+																<div class="msgs">
+																	<div class="pi-error" *ngIf="POForm.controls[field.key].hasError('required') && state.submitted">
+																		Please Enter {{field.label}}
+																	</div>
+																</div>
+															</pi-form-field>
+														</ng-container>
+														<ng-container *ngIf="field.type == 'select'">
+															<pi-select [nameKey]="field.nameKey || 'name'" [label]=" " [formControlName]="field.key" [options]="dropdowns[field.options]"
+															 [multi]="field.multi"></pi-select>
+															<div class="msgs">
+																<div class="pi-error" *ngIf="POForm.controls[field.key].hasError('required') && state.submitted">
+																	Please Select {{field.label}}</div>
+															</div>
+														</ng-container>
+														<ng-container *ngIf="field.type == 'textarea'">
+															<pi-form-field [label]=" ">
+																<textarea pi-input [name]="field.key" maxlength="1024" [formControlName]="field.key"></textarea>
+																<!-- <span class="field-note">Enter text of 1024 characters or less.</span> -->
+															</pi-form-field>
+														</ng-container>
+
+														<div class="actions">
+															<button pi-icon-button (click)="saveInlineEdit(field)">
+																<i class="pixel-icons icon-select" color=""></i>
+															</button>
+															<button pi-icon-button (click)="cancelInlineEdit(field)">
+																<i class="pixel-icons icon-close-slim"></i>
+															</button>
+														</div>
+													</div>
+												</div>
+											</ng-container>
+										</div>
+									</div>
+
+									<div class="d-flex column-ui w-100" *ngIf="state.isEditable">
+										<div class="fields col-4">
+											<pi-form-field label="Notify me before closing the Project">
+												<input type="checkbox" pi-input [formControlName]="'notify_me'" (change)="saveInlineEdit()" />
+											</pi-form-field>
+										</div>
+									</div>
+								</div>
+
+
+								<div class="w-50">
+
+								</div>
+
+							</div>
+						</div>
+						<div class="section-header">
+							<div class="left">
+								<p>Products / Services</p>
+							</div>
+							<div class="right">
+								<button class="m-l-15 button basic edit-table-btn" pi-icon-button *ngIf="state.isEditable" (click)="addPo(false)">Add
+									Products</button>
+							</div>
+						</div>
+						<div class="table-container global-grid with-out-margin">
+							<ag-grid-angular [ngStyle]="{'visibility': state.productServices.length ? 'visible' : 'hidden'}" class="purchase-orders-grid ag-theme-balham"
+							 [gridOptions]="previewGridOptions">
+							</ag-grid-angular>
+							<div style="margin-top: -43px;" *ngIf="!state.productServices.length" class=" strip-nodata">
+								No Products & Services
+								Found
+							</div>
+							<div class="total-section" *ngIf="state.productServices.length">
+								<span>Total: </span>&nbsp;
+								<span [innerHtml]="'$ ' + getBidTotal('view')"></span>
+							</div>
+
+							<div class="section-header">
+								<div class="left">
+									<p>Misc Expense</p>
+								</div>
+								<div class="right">
+
+									<ng-container *ngIf="state.isEditable">
+										<button pi-button *ngIf="state.miscExpenses.length" (click)="miscActions('remove')">Remove
+											All</button>
+										<button *ngIf="state.isEditable" class="m-l-15" pi-button (click)="miscActions('add')">Add
+											Misc.Expense</button>
+										<!-- <button class="m-l-15 mini-circle-button radius basic" pi-icon-button
+                                            [matMenuTriggerFor]="miscMenu">
+                                            <i class="pixel-icons icon-more-horizontal"></i>
+                                        </button>
+                                        <mat-menu #miscMenu="matMenu" [overlapTrigger]="false" yPosition="below"
+                                            xPosition="before" class="more-actions">
+                                            <button mat-menu-item (click)="miscActions('add')">Add Misc.Expense</button>
+                                            
+                                        </mat-menu> -->
+									</ng-container>
+								</div>
+							</div>
+
+							<div class="mics-expense" [class.full-width]="!state.miscExpenses.length">
+								<div *ngIf="!state.miscExpenses.length" class="no-data">No Misc - Expense Found...!
+								</div>
+								<div class="misc-item" *ngFor="let misc of state.miscExpenses; let i = index">
+									<div class="d-flex justify-content-between misc-item-row">
+										<div class="misc-action p-r-15">
+											<span *ngIf="!misc.isEdit" [innerHtml]="misc.misc_name"></span>
+											<pi-select *ngIf="misc.isEdit" [label]=" " [options]="dropdowns.miscTypes" [multi]="false" (onChange)="miscActions('change', i, $event)"
+											 [(ngModel)]="misc.misc_id">
+											</pi-select>
+										</div>
+										<div class="misc-disc-amount-holder">
+											<div class="misc-description p-r-15">
+												<span *ngIf="!misc.isEdit" [innerHtml]="misc.description"></span>
+												<pi-form-field *ngIf="misc.isEdit" [label]=" ">
+													<input type="text" pi-input [(ngModel)]="misc.description" />
+												</pi-form-field>
+											</div>
+											<div class="misc-amount">
+												<span *ngIf="!misc.isEdit" [innerHtml]="'$' + twoDecimals(misc.gross_amount)"></span>
+												<pi-form-field *ngIf="misc.isEdit" [label]=" ">
+													<input type="text" [appPriceFormat]="priceConfig" pi-input [(ngModel)]="misc.gross_amount" />
+												</pi-form-field>
+											</div>
+										</div>
+									</div>
+									<div class="group-buttons basic-group-btns btn-group small-btn-container">
+										<ng-container *ngIf="misc.isEdit">
+											<button class="mini-buttons radius-4 basic" pi-icon-button *ngIf="state.isEditable" (click)="miscActions('delete', i)">
+												<i class="pixel-icons icon-minus"></i>
+											</button>
+											<button class="mini-buttons radius-4 basic m-l-1" pi-icon-button *ngIf="state.isEditable" (click)="miscActions('save', i)">
+												<i class="pixel-icons icon-select "></i>
+											</button>
+										</ng-container>
+										<ng-container *ngIf="state.isEditable && !misc.isEdit">
+											<button class="mini-buttons radius-4 basic" pi-icon-button *ngIf="state.isEditable" (click)="miscActions('edit', i)">
+												<i class="pixel-icons icon-pencil" style="font-size: 16px;width: 16px;height: 16px;margin: 0 auto;
+												position: relative;top: 0px;line-height: 16px;"></i>
+											</button>
+										</ng-container>
+									</div>
+								</div>
+								<div class="total-section justify-content-end" style="margin-bottom: 0;" *ngIf="state.miscExpenses.length">
+									<div class="d-flex justify-content-end">
+										<span>Total: </span>&nbsp;
+										<span [innerHtml]="'$ ' + getMiscTotal('view')"></span>
+									</div>
+								</div>
+							</div>
+							<div class="total-section justify-content-end" *ngIf="state.productServices.length || state.miscExpenses.length">
+								<div class="d-flex justify-content-end">
+									<span>Grand Total: </span>&nbsp;
+									<span [innerHtml]="'$ ' + getGrandTotal('view')"></span>
+								</div>
+							</div>
+
+							<div class="total-section justify-content-end">
+								<div class="d-flex justify-content-end">
+									<span>Actual Amount: </span>&nbsp;
+									<span [innerHtml]="'$ ' + getActualAmount()"></span>
+								</div>
+							</div>
+
+						</div>
+
+						<div class="timeline-container">
+							<header>
+								<div class="title">Timeline</div>
+								<div class="add-timeline" *ngIf="state.isEditable">
+									<button pi-button color="subtle" class="m-r-15" (click)="addMilestone()"><i class="pixel-icons icon-plus"></i>Add
+										Timeline
+									</button>
+								</div>
+							</header>
+							<!-- <div class="section-header">
+								<div class="left">
+									<h3>Timeline</h3>
+								</div>
+								<div class="right">
+									<ng-container *ngIf="state.isEditable">
+										<button pi-button (click)="addMilestone()">Add Timeline
+										</button>
+									</ng-container>
+								</div>
+							</div> -->
+							<div class="timeline-data-container">
+								<div *ngIf="!state.timeline.isLoading && state.timeline.list.length" class="timeline-content">
+									<div class="row" *ngFor="let task of state.timeline.list; let i = index;">
+										<div class="task-name">{{task.name}}</div>
+										<div class="due-date">
+											<!-- {{task.due_date}} -->
+											<span [innerHtml]="task.display_timeline_date" *ngIf="!state.isEditable"></span>
+											<pi-form-field [label]=" " class="date-field" *ngIf="state.isEditable">
+												<input pi-input matInput [min]="state.minDate" [owlDateTime]="picker" [(ngModel)]="task.timeline_date"
+												 [owlDateTimeTrigger]="picker" (dateTimeChange)="saveTimeline($event, task)" placeholder="Choose a date"
+												 readonly>
+												<div class="owl-picker-toggle">
+													<i class="pixel-icons icon-calendar" [owlDateTimeTrigger]="picker"></i>
+												</div>
+												<owl-date-time #picker [hour12Timer]="true"></owl-date-time>
+												<!-- (afterPickerClosed)="closePicker()" -->
+											</pi-form-field>
+										</div>
+										<div class="delete" [ngStyle]="{visibility: state.isEditable ? 'visible' : 'hidden'}">
+											<i class="pixel-icons icon-delete" #removeProjectPop="matMenuTrigger" [matMenuTriggerFor]="removeProject"></i>
+											<mat-menu #removeProject="matMenu" class="card-ui row-card colored bg-delete">
+												<div class="card row-card" (click)="$event.stopPropagation()">
+													<div class="card-header"><i class="pixel-icons icon-exclamation"></i></div>
+													<div class="card-body">
+														<h5 class="card-title">
+															{{task.is_milestones?'Delete Milestone':'Delete Task'}}</h5>
+														<p class="card-text">Are you sure you want to delete
+															{{task.is_milestones?'Milestone':'Task'}}?</p>
+														<div class="footer">
+															<a class="card-link text-btn" (click)="removeProjectPop.closeMenu()">Cancel</a>
+															<a class="card-link act-btn" (click)="removeProjectPop.closeMenu();deleteMilestone(task, i);">Delete</a>
+														</div>
+													</div>
+												</div>
+											</mat-menu>
+										</div>
+									</div>
+								</div>
+								<div class="no-data-screen" *ngIf="!state.timeline.isLoading && !state.timeline.list.length">
+									<div class="empty-screen">
+										<div class="icon-info-holder">
+											<div class="icon"><i class="pixel-icons icon-milestones"></i></div>
+											<p class="alert-message">No Tasks/Milestones Added</p>
+										</div>
+									</div>
+								</div>
+								<div *ngIf="state.timeline.isLoading">
+									<div class="spinner-view">
+										<div class="empty-screen">
+											<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- <div class="section-header">
+							<div class="left">
+								<h3>Timeline</h3>
+							</div>
+							<div class="right">
+								<ng-container *ngIf="state.isEditable">
+									<button pi-button (click)="addMilestone()">Add Timeline
+									</button>
+								</ng-container>
+							</div>
+						</div>
+
+						<div class="timeline">
+							<div *ngIf="!state.timeline.length" class="strip-nodata">
+								No Tasks/Milestone Added
+							</div>
+							<div class="t-row" *ngFor="let timeline of state.timeline">
+								<span class="t-col" [innerHtml]="timeline.name"></span>
+								<span class="t-col" [innerHtml]="timeline.time"></span>
+							</div>
+						</div> -->
+					</ng-container>
+					<ng-container *ngIf="state.activeTab == 2">
+						<!-- <mat-spinner diameter="45" class="md" *ngIf="invoices.inProgress"></mat-spinner> -->
+						<ng-container *ngIf="!invoices.inProgress">
+
+							<!-- <button *ngIf="invoices.list.length" pi-button (click)="uploadInvoiceModal()">Upload
+                                Invoices</button> -->
+
+							<ul class="invoices-list">
+								<li *ngFor="let item of invoices.list; let i = index">
+									<div class="file-names">
+										<i class="pixel-icons icon-{{item.extension || 'file'}}"></i>
+										<span [innerHtml]="item.original_name"></span>
+									</div>
+									<div class="file-formate-size">
+										<span class="size">{{item.filesize / 1024 | number:'.2' }} KB</span>
+										<span class="file-actions">
+											<a [href]="item.link" download class="small-action-btns ">
+												<i class="pixel-icons icon-download"></i>
+											</a>
+											<button class="small-action-btns " (click)="delete('invoice', i)" *ngIf="state.allowEditable">
+												<i class="pixel-icons icon-delete"></i>
+											</button>
+										</span>
+									</div>
+								</li>
+
+							</ul>
+							<div class="empty-screen" *ngIf="!invoices.list.length" style="height: calc(100vh - 150px)">
+								<div class="icon-info-holder">
+									<div class="icon">
+										<i class="pixel-icons icon-invoices"></i>
+									</div>
+									<p class="alert-message"> No Invoices Found</p>
+
+								</div>
+								<button pi-button color="primary" *ngIf="state.allowEditable" (click)="uploadInvoiceModal()">Upload Invoices
+								</button>
+							</div>
+						</ng-container>
+					</ng-container>
+				</div>
+			</section>
+		</div>
+
+	</div>
+</div>
+<div class="spinner-view" *ngIf="state.isLoading || invoices.inProgress">
+	<div class="empty-screen">
+		<div class="icon-info-holder">
+			<mat-spinner diameter="38" class="md"></mat-spinner>
+		</div>
+	</div>
+</div>
+
+<div class="side-nav-container discussion-screen recon-side-dialog" *ngIf="state.showSideNav">
+	<div class="overlay" (click)="toggleSideNav()"></div>
+	<div class="side-nav" [class.active]="state.showSideNav">
+		<!-- <div class="info">
+			<i class="back-link pixel-icons icon-arrow" (click)="toggleSideNav()"></i>
+			<h2>{{state.sideNavView == 'messages' ? 'Discussion' : 'Vendor Invoices'}}</h2>
+		</div> -->
+		<header>
+			<div class="d-flex align-center">
+				<i class="back-link pixel-icons icon-arrow" (click)="toggleSideNav()"></i>
+				<h2>{{state.sideNavView == 'messages' ? 'Discussion' : 'Vendor Invoices'}}</h2>
+			</div>
+		</header>
+		<div class="discussions">
+			<ng-container *ngIf="state.sideNavView == 'messages'">
+				<div class="spinner-view" *ngIf="messages.inProgress">
+					<div class="empty-screen">
+						<div class="icon-info-holder">
+							<mat-spinner diameter="38" class="md"></mat-spinner>
+						</div>
+					</div>
+				</div>
+
+				<!-- <mat-spinner diameter="45" class="md" ></mat-spinner> -->
+				<ng-container *ngIf="!messages.inProgress">
+					<ng-container *ngIf="!messages.isNew">
+						<!-- <div class="list-group">
+                                    <div class="">
+                            
+                                    </div>
+                            
+                                </div> -->
+
+						<div class="list-group" *ngIf="!messages.noData" #messageListSection>
+							<div class="item" *ngFor="let msg of messages.list">
+								<div class="discussions-image">
+									<!-- <pi-avatar size="lg" appearance="circle"></pi-avatar> -->
+								</div>
+
+								<div class="data">
+									<h5>
+										<div class="user text-ellipsis" [innerHTML]="msg.created"></div>
+									</h5>
+									<div class="time">{{msg.created_date | fromNow}}</div>
+									<div class="msg">
+										<div class="plain" [innerHTML]="msg.message"></div>
+									</div>
+									<div class="attachments" *ngIf="msg.attachment?.length">
+										<div *ngFor="let atchmt of msg.attachment">
+											<div class="attachment-preview" *ngIf="atchmt.extension == 'jpg' || atchmt.extension == 'png' || atchmt.extension == 'jpeg'">
+												<div class="file-attached">
+													<img src="{{atchmt.preview_path}}" alt="attachment preview" /></div>
+												<div class="overlay">
+													<div class="content">
+														<span class="title">{{atchmt.original_name}}</span>
+														<div class="details">
+															<div style="display: flex;align-items: center;">
+																<i class="pixel-icons icon-{{atchmt.extension}}"></i>
+																<p>{{ atchmt.filesize/1024 | number:'.2' }} KB </p>
+															</div>
+															<span class="download-attachment" (click)="singleDownload(atchmt)">
+																<i class="pixel-icons icon-download"></i>
+															</span>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="discussions-file-details" *ngIf="atchmt.extension == 'zip' || atchmt.extension == 'pdf'">
+												<div class="file-types">
+													<i class="pixel-icons icon-{{atchmt.extension}}"></i>
+												</div>
+												<div class="file-names">
+													<p class="file-type-name">
+														<span class="title">{{atchmt.original_name}}</span>
+														<span>{{ atchmt.filesize/1024 | number:'.2' }} KB </span>
+													</p>
+												</div>
+												<span class="download-attachment" (click)="singleDownload(atchmt)">
+													<i class="pixel-icons icon-download"></i>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- <div class="no_data" *ngIf="messages.noData">No Messages Created!</div> -->
+
+						<div class="no-data-screen" *ngIf="messages.noData">
+							<div class="empty-screen">
+								<div class="icon-info-holder">
+									<div class="icon">
+										<i class="pixel-icons icon-pn-messages"></i>
+									</div>
+									<p class="no_data">No Messages Created Yet!</p>
+								</div>
+							</div>
+						</div>
+						<div class="footer">
+							<app-send-box [options]="{container: messageListContainer, jobs_id: state.projectID, thread_id: poThreadId}"
+							 (addMessage)="onMessageAdd($event)" (newMessage)="createNewMessage($event)" style="width: 100%;"></app-send-box>
+							<!-- <div class="msg-typeing">
+								<div class="text-msg">
+									<pi-form-field>
+										<textarea id="newMessage" pi-input placeholder="Message" rows="2" minRows="2"
+											maxRows="10" [(ngModel)]="messages.newMessage"
+											(focus)="messages.showButtons = true;"
+											(keydown)="onKeydown($event)"></textarea>
+									</pi-form-field>
+									<button class="restore-btn button" *ngIf="messages.showButtons"
+										(click)="messages.showButtons = false;">
+										<i class="material-icons">settings_backup_restore</i>
+									</button>
+								</div>
+								<div class="send-btn">
+									<button class="send-btn-action button" (click)="createMessage()">
+										<i class="material-icons">send</i>
+									</button>
+								</div>
+
+
+							</div> -->
+							<!-- <div class="job-attachments-list">
+                                <p><i class="material-icons">attachment</i> Attachments :</p>
+                                <a class="attachment-file"><i class="pixel-icons icon-pdf"></i> <span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                <a class="attachment-file"><i class="pixel-icons icon-png"></i><span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                <a class="attachment-file"><i class="pixel-icons icon-jpg"></i><span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                <a class="attachment-file"><i class="pixel-icons icon-gif"></i><span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                <a class="attachment-file"> <i class="pixel-icons icon-doc"></i><span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                <a class="attachment-file"><i class="pixel-icons icon-docx"></i><span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                <a class="attachment-file"> <i class="pixel-icons icon-txt"></i><span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                <a class="attachment-file"><i class="pixel-icons icon-xlsx"></i><span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                <a class="attachment-file"><i class="pixel-icons icon-zip"></i><span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                            </div> -->
+							<div *ngIf="messages.showButtons" class="job-attachments-list">
+								<!-- <div class="attachments"></div> -->
+								<div class="uploads">
+									<div ng2FileDrop [ngClass]="{'file-over': hasDropZoneOver}" [uploader]="uploader" class="file-drop-zone">
+										<input id="attachment" type="file" ng2FileSelect [uploader]="uploader" [hidden]="true" multiple />
+										<label for="attachment" class="browse-file">Upload New Files :
+											<span class="upload-file-discussion">
+												<i class="pixel-icons icon-plus-slim"></i>
+											</span>
+										</label>
+									</div>
+								</div>
+								<div class="files-sec">
+									<div *ngFor="let file of messages.uploadData.files;let i = index" class="attachment-file">
+										<img src="" alt="">
+										<i class="pixel-icons icon-{{file.type}}"></i>
+										<span [innerHtml]="file.original_name"></span>
+										<span class="remove-pill" (click)="removeAttachment(i)">
+											<i class="pixel-icons icon-close-slim"></i>
+										</span>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</ng-container>
+					<ng-container *ngIf="messages.isNew">
+						<div class="first-msg">
+							<div class="hello"></div>
+							<p>Hello</p>
+							<button pi-button color="primary" (click)="createDiscussion()">Create Discussion</button>
+						</div>
+
+					</ng-container>
+				</ng-container>
+			</ng-container>
+
+			<ng-container *ngIf="state.sideNavView != 'messages'">
+				<div class="spinner-view" *ngIf="invoices.inProgress">
+					<div class="empty-screen">
+						<div class="icon-info-holder">
+							<mat-spinner diameter="38" class="md"></mat-spinner>
+						</div>
+					</div>
+				</div>
+
+				<!-- <mat-spinner diameter="45" class="md" *ngIf="invoices.inProgress"></mat-spinner> -->
+				<ng-container *ngIf="!invoices.inProgress">
+					<div style="display: flex;" *ngFor="let item of invoices.list; let i = index">
+						<a [href]="item.link" download style="flex: 1">
+							<span [innerHtml]="item.original_name"></span>
+						</a>
+						<span (click)="delete('invoice', i)">x</span>
+					</div>
+					<button *ngIf="invoices.list.length" pi-button (click)="uploadInvoiceModal()">Upload Invoices
+					</button>
+					<div *ngIf="!invoices.list.length">
+						<div class="first-msg">
+							<div class="screen-invoices">
+								<i class="pixel-icons icon-invoices"></i>
+							</div>
+							<p> No Invoices Found</p>
+							<button pi-button color="primary" (click)="uploadInvoiceModal()">Upload Invoices</button>
+						</div>
+					</div>
+				</ng-container>
+			</ng-container>
+		</div>
+	</div>
+</div>

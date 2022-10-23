@@ -1,0 +1,95 @@
+<!-- <div class="import-template step-{{stepper.selectedIndex}}">
+  <div class="mat-dialog-heading">
+    <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+    <button mat-icon-button matDialogClose tabindex="-1">
+        <mat-icon>close</mat-icon>
+      </button>
+  </div>
+  <mat-dialog-content>
+    <mat-horizontal-stepper #stepper (selectionChange)="selectionChange($event)">
+      <mat-step>
+        <div class="analyze-bids-content global-grid with-out-margin ag-no-striped">
+          <ag-grid-angular class="ag-theme-balham" style="height: 319px;" [gridOptions]="gridOptions"></ag-grid-angular>
+        </div>
+      </mat-step>
+      <mat-step>
+        <div class="global-grid bid-grid task-grid with-out-margin with-table-gaps actions-grid ag-no-striped" style="height: calc(500px - 130px);">
+          <ag-grid-angular class="ag-theme-balham" style="height: 319px;" [gridOptions]="templateGridOptions" style="height: 100%;"></ag-grid-angular>
+        </div>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </mat-dialog-content>
+  <mat-dialog-actions class="p-t-20">
+    <ng-container *ngIf="stepper.selectedIndex == 0">
+      <button pi-button matDialogClose>Cancel</button>
+      <button pi-button color="primary" [disabled]="!gridApi?.getSelectedRows().length" (click)="stepper.next()">Select Task</button>
+    </ng-container>
+    <ng-container *ngIf="stepper.selectedIndex == 1">
+        <button pi-button (click)="stepper.previous()">Back</button>
+        <button pi-button color="primary" (click)="importTemplate()" [disabled]="!getSelectedRows().length">Import Template</button>
+    </ng-container>
+  </mat-dialog-actions>
+</div> -->
+
+<div class="primary-layout">
+  <div class="pi-detail-view">
+    <div class="primary-layout-detail">
+      <header>
+        <div class="w-100 d-flex align-items-center justify-content-between">
+          <aside class="left-header d-flex">
+            	<pi-breadcrumb>
+                  <ng-container *ngFor="let item of breadcrumbs">
+                    <pi-breadcrumb-item tabindex="-1" *ngIf="item.type == 'link'" [label]="item.label"
+                      [routerLink]="item.route" (click)="closeDialog()"></pi-breadcrumb-item>
+                    <pi-breadcrumb-item *ngIf="item.type != 'link'" [label]="item.label"></pi-breadcrumb-item>
+                  </ng-container>
+                </pi-breadcrumb>
+                <div class="d-flex " style="position: relative;">
+                    <div class="ag-cell-custome-actions" >
+                      <ul style="padding-top: 0;">
+                        <li style="margin-right: 0; margin-left: 0;" (click)="closeDialog()"><i
+                            class="pixel-icons icon-arrow"></i></li>
+                      </ul>
+                    </div>
+                    <h1 mat-dialog-title [innerHtml]="data.title"></h1>
+                  </div>
+          </aside>
+          <aside class="right-header d-flex">
+            <app-search (onSearch)="searchTemplates($event)" class="m-l-15"></app-search>
+            <button style="width:38px;height: 38px; line-height: 38px;position: relative;left: 13px;" mat-icon-button matDialogClose tabindex="-1"> <mat-icon>close</mat-icon> </button>
+          </aside>          
+        </div>
+      </header>
+      <div class="primary-layout-detail-body flex-column">
+        <div class="sidebar-layout padding-20">
+            <div class="import-template step-{{stepper.selectedIndex}}">
+                <mat-dialog-content style="max-height: 100%;">
+                    <mat-horizontal-stepper #stepper (selectionChange)="selectionChange($event)">
+                      <mat-step>
+                        <div class="analyze-bids-content global-grid with-out-margin ag-no-striped with-actions">
+                          <ag-grid-angular class="ag-theme-balham" style="height: calc(100vh - 120px);" [gridOptions]="gridOptions"></ag-grid-angular>
+                        </div>
+                      </mat-step>
+                      <mat-step>
+                        <div class="global-grid bid-grid task-grid with-out-margin with-table-gaps actions-grid ag-no-striped pinned-left with-actions"  >
+                          <ag-grid-angular class="ag-theme-balham" style="height: calc(100vh - 120px);" [gridOptions]="templateGridOptions"></ag-grid-angular>
+                        </div>
+                      </mat-step>
+                    </mat-horizontal-stepper>
+                  </mat-dialog-content>
+            </div>
+        </div>
+      </div>      
+      <mat-dialog-actions class="fixed-footer">
+          <ng-container *ngIf="stepper.selectedIndex == 0">
+            <button pi-button matDialogClose>Cancel</button>
+            <button pi-button color="primary" [disabled]="!gridApi?.getSelectedRows().length" (click)="stepper.next()">Next</button>
+          </ng-container>
+          <ng-container *ngIf="stepper.selectedIndex == 1">
+              <button pi-button (click)="stepper.previous()" [disabled]="promise">Back</button>
+              <button pi-button color="primary" (click)="importTemplate()" [disabled]="!getSelectedRows().length || promise">Import Template</button>
+          </ng-container>
+        </mat-dialog-actions>
+    </div>
+  </div>
+</div>

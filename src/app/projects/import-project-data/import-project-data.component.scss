@@ -1,0 +1,39 @@
+@import "../../../assets/styles/mixins";
+
+.seperator{
+    text-align: center;
+    p{margin: 20px 0 10px 0;}
+}
+.goToLink{
+    color: #0052cc;
+    margin: 10px auto;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 150px;
+    &:hover{
+        color: #136df3;    
+    }
+    i{
+        @include iconSize(12px);
+        margin-left: 4px;
+    }
+}
+
+.slider{position: relative;overflow: hidden;height: 300px;}
+
+.grid-content{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    .goToLink{
+        i{margin-right: 4px;margin-left: 0;}
+    }
+}
+
+

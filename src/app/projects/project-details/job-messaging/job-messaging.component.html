@@ -1,0 +1,698 @@
+<!-- <div class="mat-dialog-heading">
+	<div class="dialog-header">
+		<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	</div>
+	<button mat-icon-button (click)="close()" tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+<mat-dialog-content>
+	12333333
+</mat-dialog-content>
+<mat-dialog-actions class="mat-footer">
+	<button pi-button color="subtle" (click)="close()">Cancel</button>
+	<button pi-button color="primary" (click)="save()">Add</button>
+</mat-dialog-actions> -->
+
+<div class="primary-layout">
+	<div class="pi-detail-view">
+		<div class="primary-layout-detail">
+			<header>
+				<div class="w-100 d-flex align-items-center justify-content-between">
+					<aside class="left-header d-flex ">
+						<pi-breadcrumb>
+							<ng-container *ngFor="let item of data.breadcrumbs">
+								<pi-breadcrumb-item tabindex="-1" *ngIf="item.type == 'link'" [label]="item.label"
+									[routerLink]="item.route" (click)="closeDialog()">
+								</pi-breadcrumb-item>
+								<pi-breadcrumb-item *ngIf="item.type != 'link'" [label]="item.label">
+								</pi-breadcrumb-item>
+							</ng-container>
+						</pi-breadcrumb>
+						<div class="d-flex " style="position: relative;">
+							<div class="ag-cell-custome-actions">
+								<ul style="padding-top: 0;">
+									<li style="margin-right: 0; margin-left: 0;" (click)="closeDialog()"><i
+											class="pixel-icons icon-arrow"></i></li>
+								</ul>
+							</div>
+							<h1 mat-dialog-title [innerHtml]="data.title"></h1>
+						</div>
+					</aside>
+					<aside class="right-header d-flex">
+						<button mat-icon-button mat-dialog-close tabindex="-1"
+							style="width:38px;height: 38px; line-height: 38px;position: relative;left: 13px;">
+							<mat-icon>close</mat-icon>
+						</button>
+					</aside>
+				</div>
+			</header>
+			<pi-master-detail-view class="message-layout primary-layout" [showDetail]="true"
+				style="top: 67px;height: calc(100vh - 67px);">
+
+				<pi-master-view class="message-sidebar" style="width: 360px !important;height: 100%;">
+					<div class="message-top-header">
+						<div *ngIf="false" class="header">
+							<div class="messages-menu">
+								<pi-icon name="icon-messages" size="sm" background="#8E44AD" color="#FFF"></pi-icon>
+								<div class="info">
+									<!-- <h4 class="sub-title" *ngIf="subTitle">Admin</h4> -->
+									<h3 class="title" [matMenuTriggerFor]="menu">Messages <i
+											class="pixel-icons icon-arrow-down"></i></h3>
+
+									<span (click)="createDiscussion()" class="add-new-msg-new-btn"
+										matTooltip="Create Message"><i class="pixel-icons icon-plus"></i></span>
+
+								</div>
+							</div>
+							<mat-menu #menu="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="after"
+								class="more-actions">
+								<button mat-menu-item *ngFor="let tab of tabs" [class.active]="tab === selectedTab"
+									(click)="selectTab(tab)">{{tab.name}}</button>
+							</mat-menu>
+						</div>
+
+						<div class="search-sort">
+							<div class="header">
+								<div class="sort-label">Sort By: <span [matMenuTriggerFor]="menuTest">{{params.sort}}<i
+											class="pixel-icons icon-arrow-down"></i></span></div>
+								<div class="ag-cell-custome-actions">
+									<ul style="padding-top:0px;">
+										<li class="flag" [class.active]="params.flag == true" (click)="onFlag()"
+											matTooltip="{{params.flag == true?'Unflag Messages':'Flag Messages'}}"><i
+												class="pixel-icons icon-flag"></i></li>
+										<li class="unread" [class.active]="params.read == true" (click)="onUnread()"
+											matTooltip="{{params.read == true?'Read Messages':'Unread Messages'}}"
+											matTooltip=""><i class="pixel-icons icon-filter-new"></i></li>
+										<li class="reload" [class.active]="reload == true" (click)="onReload()"
+											matTooltip="Refresh"><i class="pixel-icons icon-reload"></i></li>
+									</ul>
+								</div>
+							</div>
+							<mat-menu #menuTest="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="after"
+								class="more-actions">
+								<button mat-menu-item *ngFor="let tab of sortList"
+									[class.active]="tab.value === params.sort"
+									(click)="onSort(tab.value)">{{tab.label}}</button>
+							</mat-menu>
+						</div>
+						<app-search class="p-l-r-16" (onSearch)="onSearch($event)"></app-search>
+					</div>
+					<div class="messages-list-left">
+						<div class="list" *ngIf="!noItems && !loader" infiniteScroll [infiniteScrollDistance]="2"
+							[infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false">
+							<div class="item" *ngFor="let item of threads" [class.active]="item === selectedThread"
+								(click)="selectListItem(item)">
+								<div class="item-left more-threads">
+									<div class="avator" *ngFor="let user of item.users | slice:0:(item.users.length>4?3:4)">
+										<pi-avatar style="width: 100%;height: 100%;font-size: 12px;line-height: 12px;" size="md" [user]="user" appearance="circle"></pi-avatar>
+									</div>
+									<div class="avator more" *ngIf="item.users.length > 4">
+										<span>+{{item.users.length - 3}}</span>
+									</div>
+								</div>
+								<div class="item-right">
+									<div class="info">
+											<div class="subject" [innerHTML]="item.users.length ? (item.users[item.users.length - 1].firstName + ' ' + item.users[item.users.length - 1].lastName) : item.tag" [class.bold]="item.unread_count!=0"></div>
+										<div class="time">{{item.thread_created_date | date:'MMM dd'}}</div>
+										<!--  | date:'shortTime' -->
+									</div>
+									<div class="sub-info">
+										<!-- <div class="sub-title" [innerHTML]="item.tag"></div> -->
+										<div class="title" [innerHtml]="item.jobs_no"></div>
+										<div class="icons-sec">
+											<div class="icons " style="height: 14px;">
+												<span *ngIf="item.is_flag">
+													<i class="pixel-icons icon-flag"></i>
+												</span>
+												<span class="unread active" *ngIf="item.unread_count!=0"></span>
+											</div>
+											<div class="count">
+												<span class="unread"
+													*ngIf="item.unread_count">{{item.unread_count}}</span>
+												<span class="total"
+													*ngIf="item.thread_count">{{item.thread_count}}</span>
+											</div>
+										</div>
+
+									</div>
+									<div class="message" [innerHTML]="item.subject"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<mat-spinner diameter="24" class="md" *ngIf="loader"></mat-spinner>
+					<div class="no_items" *ngIf="noItems && !loader">No Messages found</div>
+				</pi-master-view>
+
+				<pi-detail-view class="chat" style="height: 100%">
+					<div class="primary-layout-detail" style="min-height: 100%;">
+						<div class="detail-container" *ngIf="selectedThread">
+							<header>
+								<div class="w-100 d-flex    flex-column">
+									<pi-breadcrumb>
+										<!-- <pi-breadcrumb-item [title]="selectedThread.tag">{{selectedThread.tag}}
+										</pi-breadcrumb-item> -->
+										<ng-container *ngFor="let item of details.breadcrumbs">
+												<pi-breadcrumb-item *ngIf="item.type == 'link'" [label]="item.label" [routerLink]="item.route">
+												</pi-breadcrumb-item>
+												<pi-breadcrumb-item *ngIf="item.type != 'link'" [label]="item.label"></pi-breadcrumb-item>
+											</ng-container>
+									</pi-breadcrumb>
+
+									<div class="w-100 d-flex align-items-center justify-content-between ">
+										<aside class="left-header d-flex flex-width">
+
+											<h1 [title]="selectedThread.subject">{{selectedThread.subject}}</h1>
+										</aside>
+										<aside>
+											<div class="d-flex">
+												<div class="thread-actions"
+													*ngIf="!details.noData && !details.progress">
+													<div class="more-threads">
+														<div class="avator" *ngFor="let user of details.users.members | slice:0:(details.users.members.length>4?3:4)">
+																<pi-avatar size="md" [user]="user" appearance="circle"></pi-avatar>
+														</div>
+														<div class="avator more" *ngIf="details.users.members.length > 4">
+															<div class="md">+{{details.users.members.length - 3}}</div>
+														</div>
+													</div>
+													<ng-container *ngIf="false">
+														<ul [matMenuTriggerFor]="listUsersMenu"
+															[matMenuTriggerFor]="userListTrigger"
+															(menuClosed)="onMenuClosed()" (menuOpened)="onMenuOpened()">
+															<li>
+																<div class="avator"></div>
+															</li>
+															<li>
+																<div class="avator"></div>
+															</li>
+															<li>
+																<div class="avator"></div>
+															</li>
+														</ul>
+														<mat-menu #listUsersMenu="matMenu" xPosition="before"
+															class="users-menu">
+															<div style="height: 100%"
+																(click)="$event.stopPropagation()">
+																<div class="menu-actions">
+																	<app-search #appSearch
+																		[ngStyle]="{'visibility': selectedIndex == 1 ? 'visible' : 'hidden'}"
+																		(onSearch)="onSearch($event)"></app-search>
+																	<button pi-button
+																		(click)="onSelectionChange()">{{selectedIndex == 0 ? 'Add' : 'Save'}}</button>
+																</div>
+																<div *ngIf="selectedIndex == 0">
+																	<!-- <div class="list is-scroll"> -->
+																	<cdk-virtual-scroll-viewport
+																		style="min-height: 150px;max-height: 100%;"
+																		itemSize="38">
+																		<ng-container
+																			*cdkVirtualFor="let item of selected;let i = index">
+																			<div class="list-item">
+																				<div class="img-container">
+																					<!-- <div class="avator"></div> -->
+																					<pi-avatar size="md"
+																						[user]="userConfig"
+																						appearance="circle"></pi-avatar>
+																					<span class="name"
+																						[innerHtml]="item.label"></span>
+																				</div>
+																				<i class="pixel-icons icon-close-slim"
+																					(click)="removeUser(item, i)"></i>
+																			</div>
+																		</ng-container>
+																	</cdk-virtual-scroll-viewport>
+																	<!-- </div> -->
+																</div>
+																<div class="animated slideInRight"
+																	*ngIf="selectedIndex == 1">
+																	<!-- <div class="is-scroll"> -->
+																	<cdk-virtual-scroll-viewport
+																		style="min-height: 150px;max-height: 100%;"
+																		itemSize="38">
+																		<ng-container
+																			*cdkVirtualFor="let user of usersList">
+																			<pi-form-field label="{{user.label}}">
+																				<input type="checkbox" pi-input
+																					(change)="userSelection(user)"
+																					[(ngModel)]="user.selected" />
+																			</pi-form-field>
+																		</ng-container>
+																	</cdk-virtual-scroll-viewport>
+																	<!-- </div> -->
+																</div>
+															</div>
+														</mat-menu>
+													</ng-container>
+													<button class="m-l-15 btn-switching-icon"
+														matTooltip="Edit Recipients" (click)="toggleSidenav('show')"><i
+															class="pixel-icons icon-add-users"></i></button>
+													<button *ngIf="false" class="m-l-15 btn-switching-icon"
+														(click)="saveFlag({type:'archive',status:selectedThread.is_archive})"
+														matTooltip="{{selectedThread.is_archive?'Move to inbox':'Archive'}} "><i
+															class="pixel-icons icon-{{selectedThread.is_archive?'move-to-inbox':'archive'}}"></i></button>
+													<button *ngIf="false"
+														class="m-l-15 btn-switching-icon {{selectedThread.is_flag?'unflag':'flag'}}"
+														(click)="saveFlag({type:'flag',status:selectedThread.is_flag})"
+														matTooltip="{{selectedThread.is_flag?'Unflag':'Flag'}}"><i
+															class="pixel-icons icon-flag"></i></button>
+													<button pi-button color="primary"
+														style="text-transform: none !important;" class="m-l-15"
+														(click)="saveRead()"
+														[ngClass]="{'active': selectedThread.unread_count==0}">{{selectedThread.unread_count==0?"Mark as Unread":"Mark as Read"}}</button>
+												</div>
+											</div>
+										</aside>
+									</div>
+								</div>
+
+							</header>
+							<div class="flex-column primary-layout-detail-body padding-20">
+								<div class="section secondary-max-screen-width messages-thread-ui  "
+									#messageListSection>
+									<mat-spinner diameter="45" class="md" *ngIf="details.progress"></mat-spinner>
+									<div class="message-list" *ngIf="!details.noData && !details.progress">
+										<div class="item" *ngFor="let msg of details.messages;let i = index">
+											<pi-avatar size="lg" appearance="circle"></pi-avatar>
+											<div class="details">
+												<div class="info">
+													<div class="user text-ellipsis" [innerHTML]="msg.created"></div>
+													<div class="time">{{msg.created_date | fromNow}}</div>
+												</div>
+												<!-- <ng-container *ngIf="i == 0">
+														<div class="msg">
+																<div class="plain" *ngIf="details.selectedThread?.breadcrum_type == 5" [innerHTML]="'Please Login to the Vendors Management System to Bid for this Products and Services.'"></div>
+																<div class="plain" *ngIf="details.selectedThread?.breadcrum_type != 5" [innerHTML]="msg.message"></div>
+															</div>
+												</ng-container> -->
+												<ng-container>
+													<!--  *ngIf="i != 0" -->
+														<div class="msg">
+																<div class="plain" [innerHTML]="msg.message"></div>
+															</div>
+															<div class="attachments  {{msg['attachment_css']}}" *ngIf="msg.attachment?.length">
+																<div *ngFor="let atchmt of msg.attachment"
+																  class="asset-type-{{msg['attachment_css']}} {{atchmt.extension}}">
+																  <div class="attachment-preview" (click)="lightbox(msg.attachment, atchmt)"
+																    *ngIf="attachmentImageTypes.indexOf(atchmt.extension)>-1  && (msg['attachment_css']!='multiple-formats')">
+																    <div class="file-attached-in-msg">
+																      <div class="image-thumb-view-msg">
+																        <img src="{{atchmt.preview_path}}" alt="" />
+																      </div>
+																      <span class="download-attachment-image" (click)="singleDownload(atchmt)"><i
+																          class="pixel-icons icon-download"></i></span>
+																      <div class="overlay-file-name">
+																        <div class="content">
+																          <div style="display: flex;align-items: center; justify-content: center;">
+																            <i class="pixel-icons icons-formate icon-{{atchmt.extension}}"></i>
+																          </div>
+																          <div class="file-detail-names">
+																            <span class="title" matTooltip="{{atchmt.original_name}}">{{atchmt.original_name}}</span>
+																            <p>{{ atchmt.filesize/1024 | number:'.2' }} KB </p>
+																          </div>
+																        </div>
+																      </div>
+																    </div>
+
+																  </div>
+																  <div class="other-formate-files {{atchmt.extension}}" (click)="lightbox(msg.attachment, atchmt)"
+																    *ngIf="attachmentImageTypes.indexOf(atchmt.extension)>-1 && (msg['attachment_css'] == 'multiple-formats')">
+																    <div class="file-types images-list-for-message">
+																      <img style="max-width:100%;" src="{{atchmt.preview_path}}" alt="" />
+																    </div>
+																    <div class="file-names">
+																      <p class="file-type-name">
+																        <span class="title" matTooltip="{{atchmt.original_name}}">{{atchmt.original_name}}</span>
+																        <span>{{ atchmt.filesize/1024 | number:'.2' }} KB </span>
+																      </p>
+																    </div>
+																    <span class="download-attachment-image" (click)="singleDownload(atchmt)">
+																      <i class="pixel-icons icon-download"></i>
+																    </span>
+																  </div>
+																  <div class="other-formate-files" *ngIf="attachmentOtherTypes.indexOf(atchmt.extension)>-1">
+																    <div class="file-types">
+																      <i class="pixel-icons icon-{{atchmt.extension}}"></i>
+																    </div>
+																    <div class="file-names">
+																      <p class="file-type-name">
+																        <span class="title" matTooltip="{{atchmt.original_name}}">{{atchmt.original_name}}</span>
+																        <span>{{ atchmt.filesize/1024 | number:'.2' }} KB </span>
+																      </p>
+																    </div>
+																    <span class="download-attachment-image" (click)="singleDownload(atchmt)">
+																      <i class="pixel-icons icon-download"></i>
+																    </span>
+																  </div>
+																</div>
+															<!-- <div *ngFor="let atchmt of msg.attachment" class="asset-type-{{msg['attachment_css']}} {{atchmt.extension}}">
+																<div class="attachment-preview"
+																	*ngIf="atchmt.extension == 'jpg' || atchmt.extension == 'png' || atchmt.extension == 'jpeg'">
+																	<div class="file-attached">
+																		<img src="{{atchmt.preview_path}}" alt="attachment preview" /></div>
+																	<div class="overlay">
+																		<div class="content">
+																			<span class="title">{{atchmt.original_name}}</span>
+																			<div class="details">
+																				<div style="display: flex;align-items: center;">
+																					<i class="pixel-icons icon-{{atchmt.extension}}"></i>
+																					<p>{{ atchmt.filesize/1024 | number:'.2' }} KB </p>
+																				</div>
+																				<span class="download-attachment" (click)="singleDownload(atchmt)">
+																					<i class="pixel-icons icon-download"></i>
+																				</span>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																<div class="discussions-file-details" *ngIf="atchmt.extension == 'zip' || atchmt.extension == 'pdf'">
+																	<div class="file-types">
+																		<i class="pixel-icons icon-{{atchmt.extension}}"></i>
+																	</div>
+																	<div class="file-names">
+																		<p class="file-type-name">
+																			<span class="title">{{atchmt.original_name}}</span>
+																			<span>{{ atchmt.filesize/1024 | number:'.2' }} KB </span>
+																		</p>
+																	</div>
+																	<span class="download-attachment" (click)="singleDownload(atchmt)">
+																		<i class="pixel-icons icon-download"></i>
+																	</span>
+																</div>
+															</div> -->
+															</div>
+												</ng-container>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<!-- Side Nav -->
+								<div class="side-nav-container recipients" *ngIf="details.showRecipients">
+									<div class="overlay" (click)="toggleSidenav('show')"></div>
+									<div class="side-nav" [class.active]="details.showRecipients">
+										<div class="side-nav-header">
+											<h2 class="ft18 font-normal p-0">Edit Recipients</h2>
+											<i class="pixel-icons icon-close-slim" (click)="toggleSidenav('show')"></i>
+										</div>
+										<div class="side-nav-body">
+											<div class="section-container">
+
+												<mat-accordion>
+													<mat-expansion-panel>
+														<mat-expansion-panel-header collapsedHeight="40px"
+															expandedHeight="40px">
+															<mat-panel-title>
+																<i class="pixel-icons icon-user"></i>
+																<span>{{details.users.members.length}} Members</span>
+															</mat-panel-title>
+														</mat-expansion-panel-header>
+
+														<ng-template matExpansionPanelContent>
+															<mat-list *ngIf="details.users.members.length">
+																<mat-list-item
+																	*ngFor="let user of details.users.members | slice:0:details.show.usersCount">
+																	<div class="list-item">
+																		<span class="icon-container">
+																			<pi-avatar size="sm" [user]="user"
+																				appearance="circle">
+																			</pi-avatar>
+																			<span class="title"
+																				[innerHtml]="user.firstName + ' ' + user.lastName"></span>
+																		</span>
+																		<span class="action"
+																			[class.active]="details.selectedUser?.users_id == user.users_id">
+																			<i class="pixel-icons icon-delete"
+																				#deleteMenuPop="matMenuTrigger"
+																				[matMenuTriggerFor]="deleteMenu"
+																				(menuClosed)="details.selectedUser = null;"
+																				(menuOpened)="details.selectedUser = user">
+																			</i>
+																			<mat-menu #deleteMenu="matMenu"
+																				class="card-ui row-card colored bg-delete">
+
+																				<div class="card row-card"
+																					(click)="$event.stopPropagation()">
+																					<div class="card-header"><i
+																							class="pixel-icons icon-exclamation"></i>
+																					</div>
+																					<div class="card-body">
+																						<h5 class="card-title">Remove
+																							User</h5>
+																						<p class="card-text">Are you
+																							sure you want to remove
+																							user?</p>
+																						<div class="footer">
+																							<a class="card-link text-btn"
+																								(click)="deleteMenuPop.closeMenu()">Cancel</a>
+																							<a class="card-link act-btn"
+																								(click)="removeUser('members', 'users_id');deleteMenuPop.closeMenu();">Remove</a>
+																						</div>
+																					</div>
+																				</div>
+																			</mat-menu>
+																		</span>
+																	</div>
+																</mat-list-item>
+															</mat-list>
+															<div class="no-data" *ngIf="!details.users.members.length">
+																No Users
+																Added</div>
+															<div class="add-section">
+																<span
+																	*ngIf="details.users.members.length > details.show.usersCount"
+																	(click)="showAll('members', 'usersCount')">See All
+																	Members</span>
+																<button pi-button
+																	(click)="addRecipients('members')">Add User
+																	<!-- <i class="pixel-icons icon-plus"></i> -->
+																</button>
+															</div>
+														</ng-template>
+													</mat-expansion-panel>
+
+													<mat-expansion-panel>
+														<mat-expansion-panel-header>
+															<mat-panel-title>
+																<i class="pixel-icons icon-groups"></i>
+																<span>{{details.users.groups.length}} Groups</span>
+															</mat-panel-title>
+														</mat-expansion-panel-header>
+
+														<ng-template matExpansionPanelContent>
+															<mat-list *ngIf="details.users.groups.length">
+																<mat-list-item
+																	*ngFor="let group of details.users.groups | slice:0:details.show.groupsCount">
+																	<div class="list-item">
+																		<span class="icon-container">
+																			<div class="avator">
+																				<i class="pixel-icons icon-groups"></i>
+																			</div>
+																			<span class="title"
+																				[innerHtml]="group.name"></span>
+																		</span>
+																		<span class="action"
+																			[class.active]="details.selectedGroup?.id == group.id">
+																			<i class="pixel-icons icon-delete"
+																				#deleteMenuPopup="matMenuTrigger"
+																				[matMenuTriggerFor]="deleteMenuCard"
+																				(menuClosed)="details.selectedGroup = null;"
+																				(menuOpened)="details.selectedGroup = group">
+																			</i>
+																			<mat-menu #deleteMenuCard="matMenu"
+																				class="card-ui row-card colored bg-delete">
+
+																				<div class="card row-card"
+																					(click)="$event.stopPropagation()">
+																					<div class="card-header"><i
+																							class="pixel-icons icon-exclamation"></i>
+																					</div>
+																					<div class="card-body">
+																						<h5 class="card-title">Remove
+																							Group</h5>
+																						<p class="card-text">Are you
+																							sure you want to remove
+																							group?</p>
+																						<div class="footer">
+																							<a class="card-link text-btn"
+																								(click)="deleteMenuPopup.closeMenu()">Cancel</a>
+																							<a class="card-link act-btn"
+																								(click)="removeUser('groups', 'id');deleteMenuPopup.closeMenu();">Remove</a>
+																						</div>
+																					</div>
+																				</div>
+																			</mat-menu>
+																		</span>
+																	</div>
+																</mat-list-item>
+															</mat-list>
+															<div class="no-data" *ngIf="!details.users.groups.length">No
+																Groups
+																Added</div>
+															<div class="add-section">
+																<span
+																	*ngIf="details.users.groups.length > details.show.groupsCount"
+																	(click)="showAll('groups', 'usersCount')">See All
+																	Groups</span>
+																<button pi-button 
+																	(click)="addRecipients('groups')">Add Group
+																	<!-- <i class="pixel-icons icon-plus"></i> -->
+																</button>
+															</div>
+														</ng-template>
+													</mat-expansion-panel>
+												</mat-accordion>
+
+												<div *ngIf="false" class="section">
+													<div class="section-header">
+														<h4>TO</h4>
+														<button pi-icon-button matTooltip="Add"
+															class="icon-button-wrapper" (click)="addRecipients('user')">
+															<i class="pixel-icons icon-plus"></i>
+														</button>
+													</div>
+													<mat-list *ngIf="details.users.to.length">
+														<mat-list-item *ngFor="let user of details.users.to">
+															<div class="list-item">
+																<span>
+																	<!-- [matTooltip]="user.label" -->
+																	<pi-avatar size="sm" [user]="user"
+																		appearance="circle"></pi-avatar>
+																	{{user.firstName + ' ' + user.lastName}}
+																</span>
+																<span class="action">
+																	<i class="pixel-icons icon-delete"></i>
+																</span>
+															</div>
+														</mat-list-item>
+													</mat-list>
+													<div class="no-data" *ngIf="!details.users.to.length">No User Added
+													</div>
+												</div>
+												<div *ngIf="false" class="section">
+													<div class="section-header">
+														<h4>GROUP TO</h4>
+														<button pi-icon-button matTooltip="Add"
+															class="icon-button-wrapper"
+															(click)="addRecipients('group')">
+															<i class="pixel-icons icon-plus"></i>
+														</button>
+													</div>
+													<mat-list *ngIf="details.users.group_to.length">
+														<mat-list-item *ngFor="let user of details.users.group_to">
+															<div class="list-item">
+																<span>
+																	<!-- [matTooltip]="user.label" -->
+																	<!-- <pi-avatar size="sm" [user]="user" appearance="circle"></pi-avatar> -->
+																	<div class="avator">
+																		<i class="pixel-icons icon-groups"></i>
+																	</div>
+																	{{user.label}}
+																</span>
+																<span class="action">
+																	<i class="pixel-icons icon-delete"></i>
+																</span>
+															</div>
+														</mat-list-item>
+													</mat-list>
+													<div class="no-data" *ngIf="!details.users.group_to.length">No Group
+														Added</div>
+												</div>
+											</div>
+											<div class="footer" *ngIf="false">
+												<pi-form-field>
+													<textarea id="newMessage" pi-input placeholder="Add a Message"
+														rows="1" minRows="3" maxRows="3"
+														(keydown)="onKeydown($event)"></textarea>
+												</pi-form-field>
+												<div class="action">
+													<button pi-button class="m-r-15">Cancel</button>
+													<button pi-button color="primary">Save</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="no-data-screen" *ngIf="details.noData && !details.progress">
+								<div class="empty-screen">
+									<div class="icon-info-holder">
+										<div class="icon">
+											<i class="pixel-icons icon-messages"></i>
+										</div>
+										<p class="no_data">No Messages found</p>
+									</div>
+									<button *ngIf="false" pi-icon-button color="primary" (click)="createDiscussion()">+
+										Create
+										Discussion</button>
+								</div>
+							</div>
+							<div class="footer padding-20" *ngIf="!details.noData && !details.progress">
+								<div class="secondary-max-screen-width">
+									  <app-send-box
+									    [options]="{container: messageListContainer, jobs_id: data.jobs_id, thread_id:
+									    selectedThread.thread_id}"
+									    (addMessage)="onMessageAdd($event)"></app-send-box>
+									<!-- <pi-form-field>
+										<textarea id="newMessage" pi-input placeholder="Message" rows="1" minRows="1"
+											maxRows="10" [(ngModel)]="messages.newMessage"
+											(focus)="messages.showButtons = true;"
+											(keydown)="onKeydown($event)"></textarea>
+									</pi-form-field>
+									<div *ngIf="messages.showButtons">
+										<div class="job-attachments-list thread">
+										<div class="attachments"></div> -->
+											<!--<div class="uploads">
+												<div ng2FileDrop [ngClass]="{'file-over': hasDropZoneOver}"
+													[uploader]="uploader" class="file-drop-zone">
+													<input id="attachment" type="file" ng2FileSelect
+														[uploader]="uploader" [hidden]="true" multiple />
+													<label for="attachment" class="browse-file">Upload new Files: <span
+															class="upload-file-discussion"><i
+																class="pixel-icons icon-plus-slim"></i></span></label>
+												</div>
+											</div>
+											<div class="files-sec">
+												<div *ngFor="let file of messages.uploadData.files;let i = index"
+													class="attachment-file">
+													<img src="" alt="">
+													<i class="pixel-icons icon-{{file.type}}"></i>
+													<span [innerHtml]="file.original_name"></span>
+													<span class="remove-pill" (click)="removeAttachment(i)"><i
+															class="pixel-icons icon-close-slim"></i></span>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="action" *ngIf="messages.showButtons">
+										<button class="m-r-15" pi-button color="subtle"
+											(click)="close()">Cancel</button>
+										<button pi-button color="primary" (click)="createMessage()">Create</button>
+									</div> -->
+
+								</div>
+							</div>
+						</div>
+						<div class="no-data-screen" *ngIf="!selectedThread">
+							<div class="empty-screen">
+								<div class="icon-info-holder">
+									<div class="icon">
+										<i class="pixel-icons icon-messages"></i>
+									</div>
+									<p class="no_data">
+										{{params.search ? 'No Messages found' : 'Select a message from the list'}}</p>
+								</div>
+								<button *ngIf="false" pi-icon-button color="primary" (click)="createDiscussion()">+
+									Create
+									Discussion</button>
+							</div>
+						</div>
+					</div>
+				</pi-detail-view>
+
+			</pi-master-detail-view>
+
+		</div>
+	</div>
+</div>

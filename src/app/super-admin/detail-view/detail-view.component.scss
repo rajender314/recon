@@ -1,0 +1,11 @@
+::ng-deep ag-grid-angular.invisible{
+    visibility: hidden;
+}
+.email-notifications{
+    display: flex;
+    flex-direction: column;
+    padding: 10px 24px;
+    .footer{
+        margin-top: 20px;
+    }
+}

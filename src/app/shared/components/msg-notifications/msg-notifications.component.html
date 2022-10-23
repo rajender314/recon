@@ -1,0 +1,99 @@
+<div class="notification-container">
+	<div class="msg" [innerHtml]="msg.message"></div>
+	<div class="body">
+			<div class="project-info" style="flex: 0 0 65%;">
+					<div class="field-wrapper">
+						<ng-container *ngFor="let spec of msg.html_code.specDt">
+							<div class="fields multi-col">
+								<span class="field-name" [innerHtml]="spec.spectDt.label"></span>
+								<div class="view-field-wrapper">
+									<span *ngIf="spec.spectDt.key == 'dropdown'"
+										[innerHtml]="spec.form_save_values.display_name || '---'"></span>
+									<span *ngIf="spec.spectDt.key != 'dropdown'"
+										[innerHtml]="spec.form_save_values.value || '---'"></span>
+								</div>
+							</div>
+						</ng-container>
+					</div>
+				</div>
+				
+				<div class="project-info address" style="flex: 0 0 30%;">
+					<div class="field-wrapper">
+						<div class="fields">
+							<span class="field-name">Client Address</span>
+							<div class="view-field-wrapper">
+								<span *ngIf="msg.html_code.address.address1">{{msg.html_code.address.address1}}</span>
+								<span *ngIf="msg.html_code.address.address2">{{msg.html_code.address.address2}}</span>
+								<span *ngIf="msg.html_code.address.city">{{msg.html_code.address.city}}</span>
+								<span *ngIf="msg.html_code.address.state_id || msg.html_code.address.postal_code">
+									<span *ngIf="msg.html_code.address.state_id">{{msg.html_code.address.state_name}}</span>
+									<span *ngIf="msg.html_code.address.postal_code"> - </span>
+									<span *ngIf="msg.html_code.address.postal_code">{{msg.html_code.address.postal_code}}</span>
+								</span>
+								<span *ngIf="msg.html_code.address.country_id">{{msg.html_code.address.country_name}}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="project-info" style="flex: 1">
+					<a class='click_edit' (click)="editPrepress()">Edit</a>
+				</div>
+	</div>
+</div>
+
+<!-- <ng-container *ngIf="msg.css && msg.css=='Notify'">
+	<div class='msgthread_item msg_notify_t' *ngIf="msg.prepressInfo && msg.prepressInfo.msg">
+		<span class='txt' [innerHtml]="msg.prepressInfo.msg"></span>
+	</div>
+
+	<div class='msgthread_item msg_notify_t_info'>
+
+		<div class='t_info_half'>
+			<div class='t_info_box first'>
+				<div class='t_info_head'>Instructions/File Name</div>
+				<div class='t_info_body'>{{msg.prepressInfo.file_path}}</div>
+			</div>
+			<div class='t_info_box'>
+				<div class='t_info_head'>File Source</div>
+				<div class='t_info_body'>{{msg.prepressInfo.file_source}}</div>
+			</div>
+			<div class='t_info_box'>
+				<div class='t_info_head'>
+					{{(msg.prepressInfo.file_source == "Box")?msg.prepressInfo.file_source+" Link":((msg.prepressInfo.file_source == "RapidRemark")?msg.prepressInfo.file_source + " Job Name":msg.prepressInfo.file_source + " Number")}}
+				</div>
+				<div class='t_info_body'>{{msg.prepressInfo.job_name}}</div>
+			</div>
+		</div>
+		<div class='t_info_half'>
+			<div class='t_info_box first'>
+				<div class='t_info_head'>Client Address</div>
+				<div class='t_info_body' *ngIf="msg.prepressInfo.address1">{{msg.prepressInfo.address1}}</div>
+				<div class='t_info_body' *ngIf="msg.prepressInfo.address2">{{msg.prepressInfo.address2}}</div>
+				<div class='t_info_body' *ngIf="msg.prepressInfo.city">{{msg.prepressInfo.city}}</div>
+				<div class='t_info_body' *ngIf="msg.prepressInfo.state || msg.prepressInfo.zip">
+					<span *ngIf="msg.prepressInfo.state">{{msg.prepressInfo.state}}</span>
+					<span *ngIf="msg.prepressInfo.zip"> - </span>
+					<span *ngIf="msg.prepressInfo.zip">{{msg.prepressInfo.zip}}</span>
+				</div>
+				<div class='t_info_body' *ngIf="msg.prepressInfo.country">{{msg.prepressInfo.country}}</div>
+			</div>
+		</div>
+		<div class='t_info_half'>
+			<div class='t_info_head'>Products/Services</div>
+			<div class='t_info_services_list'>
+				<ng-container *ngIf="msg.prepressInfo.services.length">
+					<ng-container *ngFor="let product of msg.prepressInfo.services">
+						<div class='t_info_pro'><i class='p-icn-xs'></i><span>{{product.label}}</span></div>
+						<div class='t_info_ser' *ngFor="let service of product.children"><i
+								class='s-icn-xs'></i><span>{{service.label}}</span></div>
+					</ng-container>
+				</ng-container>
+				<ng-container *ngIf="!msg.prepressInfo.services.length">
+					<div class='t_info_body'>--</div>
+				</ng-container>
+			</div>
+		</div>
+		<a class='click_edit' (click)="editPrepress()" rel='{{msg.prepressInfo.jpk_id}}'>Edit</a>
+	</div>
+</ng-container> -->

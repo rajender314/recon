@@ -1,0 +1,99 @@
+.right-header {
+    border-bottom: none !important;
+}
+.form-specs {
+.tasks-list{
+    max-width: 600px;
+    margin-top:10px;
+    margin-bottom: 6px;
+    .task-row{
+        display: flex;
+        width: 100%;
+        .task-container{
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-top: 1px;
+            padding-bottom: .5rem;
+            width: 100%;
+            border-bottom: 1px dashed #ebedf2;
+            ::ng-deep app-form-builder{
+                .pi-form-field{
+                    margin-top: 0px;
+                } 
+            }           
+            i{
+                &.icon-drag{
+                    font-size: 15px;
+                    height: 21px;
+                    cursor: pointer;
+                    width: 21px;
+                    margin-right: 4px;
+                    line-height: 22px;
+                    text-align: center;
+                    border-radius: 3px;
+                }
+                &:hover{
+                    background: #ebedf2;
+                }
+            }
+            .task-menu{
+                width: 3rem;
+                // -webkit-box-flex: 1;
+                // -ms-flex-positive: 1;
+                // flex-grow: 1;
+                text-align: right;
+                font-weight: 500;
+                font-size: 1.1rem;
+                margin-left: 10px;
+                .ak-button{
+                    padding: 0px;
+                }
+                i{
+                    &.icon-more-horizontal{
+                        font-size: 18px;
+                        height: 18px;
+                    }
+                }
+            }
+        }
+    }
+}
+}
+.padg{
+    // padding: 0 16px;
+    @media screen and (min-width:960px){
+        // padding: 0 30px;
+    }
+}
+.form-specs .form-flex .field-wrapper .ak-button{
+    min-width: 46px;
+    i{
+        font-size: 14px;
+        height: 14px;
+        width: 14px;
+        &.icon-more-horizontal{
+            font-size: 16px;
+            height: 16px;
+            width: 16px;
+        }
+    }
+}
+
+.add-specs{
+    position: absolute;
+    top: 4px;
+    right: 16px;
+    z-index: 999;
+    &:focus{
+        box-shadow: 0 0 0 2px rgba(38,132,255,.6) inset;
+    }
+}
+.icon-button-actions{
+    position: absolute;
+    top: 48px;
+    right: 10px;
+}
+.fixed-footer{
+    margin-top: 20px;
+}

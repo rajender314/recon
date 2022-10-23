@@ -1,0 +1,51 @@
+<pi-master-detail-view class="message-layout primary-layout" [showDetail]="selectedThread">
+
+  <pi-master-view class="message-sidebar">
+    <app-thread-list (onSelect)="onThreadSelect($event)" (onTabSelect)="onTabSelect($event)" [thread]="selectedThread" 
+    (onThreadSelect)="onMultiThreadSelection($event)" [threadActionName]="threadActionName"></app-thread-list>
+  </pi-master-view>
+
+  <pi-detail-view class="chat">
+      <div class="no-data-screen messenger-multiple-select" style="z-index: 12;" *ngIf="selectedThreadCount !=0">
+          <div class="empty-screen">
+            <div class="icon-info-holder">
+            </div>
+            <div style="max-width: 980px; width: 100%; padding: 0 20px;">
+              <div class="row justify-content-center">
+                <div class="select-option">
+                  <div class="msg-action-icon">
+                    <span style="display: inline-block;width: 16px; height: 16px; background: #6877e3; border-radius: 50%;"></span>
+                  </div>
+                  <button pi-button color="subtle" class="msgs-action-event" (click)="threadAction('unread')">Mark as Unread</button>
+                </div>
+                <div class="select-option">
+                    <div class="msg-action-icon">
+                    <span style="display: inline-block;width: 16px; height: 16px; background: #b2bac8; border-radius: 50%;"></span>
+                    
+                    </div>
+                    <button pi-button color="subtle" class="msgs-action-event" (click)="threadAction('read')">Mark as Read</button>
+                  </div>
+                  <div class="select-option">
+                      <div class="msg-action-icon">
+                          <i class="pixel-icons icon-flag" style="color: #b2bac8;"></i>
+                      </div>
+                      <button pi-button color="subtle" class="msgs-action-event" (click)="threadAction('unflag')">Unflag</button>
+                    </div>
+                    <div class="select-option">
+                        <div class="msg-action-icon">
+                          <i class="pixel-icons icon-flag"  style="color: #f44336;"></i>
+                        </div>
+                        <button pi-button color="subtle" class="msgs-action-event" (click)="threadAction('flag')">Flag</button>
+                      </div>
+              </div>
+              <span style="display: block;max-width: 510px;height: 1px;background: #d4d8e0;margin: 20px auto;"></span>
+  
+            </div>
+  
+            <button pi-icon-button color="primary" (click)="threadAction('archive')">Archive</button>
+          </div>
+        </div>
+    <app-thread-detail [thread]="selectedThread" [tab]="selectedTab" (onThreadChange)="onThreadChange($event)" *ngIf="selectedThread && selectedThreadCount == 0"></app-thread-detail>
+  </pi-detail-view>
+
+</pi-master-detail-view>

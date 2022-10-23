@@ -1,0 +1,99 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <i class="pixel-icons icon-close-slim"></i>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="contactsForm" class="form-flex" autocomplete="off">
+    <pi-field-group>
+      <pi-form-field label="First Name">
+        <input type="text" pi-input id="first_name" name="first_name" formControlName="first_name">
+        <div class="pi-error" *ngIf="contactsForm.controls.first_name.hasError('required') && submitted">Please Enter
+          First Name</div>
+      </pi-form-field>
+      <pi-form-field label="Last Name">
+        <input type="text" pi-input id="last_name" name="last_name" formControlName="last_name">
+        <div class="pi-error" *ngIf="contactsForm.controls.last_name.hasError('required') && submitted">Please Enter
+          Last Name</div>
+      </pi-form-field>
+    </pi-field-group>
+
+    <pi-field-group>
+      <pi-select label="Designation" [options]="data.designations" formControlName="designations_id"></pi-select>
+      <pi-select label="Department" [options]="data.departments" formControlName="departments_id"></pi-select>
+    </pi-field-group>
+
+    <pi-field-group>
+      <pi-select label="Contact Type" [options]="data.contact_types" formControlName="contact_types_id"></pi-select>
+      <pi-form-field label="Primary Email">
+        <input type="text" pi-input id="primary_email" (input)="removeError()" name="primary_email" formControlName="primary_email">
+        <div class="pi-error" *ngIf="contactsForm.controls.primary_email.hasError('required') && submitted">Please
+          Enter Primary Email</div>
+        <div class="pi-error" *ngIf="!contactsForm.controls.primary_email.hasError('required') && submitted && contactsForm.controls.primary_email.hasError('pattern')">Please
+          Enter Valid Email</div>
+        <div class="pi-error" *ngIf="duplicateError">{{duplicateErrorMsg}}</div>
+      </pi-form-field>
+    </pi-field-group>
+
+    <!-- <div class="field-groups-2">
+            <div class="">
+              <label for="contact_type">Timezone</label>
+              <select type="text" class="ak-field-select" id="contact_type" name="contact_type" formControlName="timezone">
+                <option *ngFor="let type of data.contact_types" [value]="type.id">{{type.name}}</option>
+              </select>
+            </div>
+          </div> -->
+
+    <pi-form-field label="Include contact at Parent Org" class="edit_check">
+      <input type="checkbox" pi-input formControlName="parent_org" />
+    </pi-form-field>
+    <pi-select label="Sub Orgs" [options]="data.subOrgsList" formControlName="sub_orgs" [multi]="true"></pi-select>
+    <div class=" container-group">
+      <div formArrayName="emails">
+        <div *ngFor="let list of mailListArray.controls;let i = index" [formGroupName]="i" class="inline-space-bw">
+          <pi-select label="Email" class="p-t-0 email" [options]="data.emailAddressTypes" formControlName="type"></pi-select>
+          <pi-form-field label="Enter Email" class="p-t-0 email max-w-36 m-l-16 p-relative">
+            <input type="text" pi-input (input)="emailValidation(list)" formControlName="email">
+            <div class="pi-error p-absolute" *ngIf="list.value.invalid">Please Enter Valid Email</div>
+          </pi-form-field>
+          <div class="d-flex align-items-center h-38 m-l-15">
+            <button pi-icon-button class="array-button icon-button-wrapper">
+              <i class="pixel-icons icon-minus" (click)="removeMail(i)"></i>
+            </button>
+            <button pi-icon-button class="array-button icon-button-wrapper m-l-6">
+              <i class="pixel-icons icon-plus" (click)="addMail()"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class=" container-group">
+      <div formArrayName="phone_numbers">
+        <div *ngFor="let list of numberListArray.controls;let i = index" [formGroupName]="i" class="inline-space-bw">
+          <pi-select label="Phone" class="p-t-0 phone" [options]="data.phoneNumberTypes" formControlName="type"></pi-select>
+          <pi-form-field label="Enter Number" class=" p-t-0 phone max-w-36 m-l-16 p-relative">
+            <input type="text" pi-input type="text" [appPriceFormat]="numberConfig" min="0" maxlength="10" (input)="phoneNumberValidation($event, list)"
+              formControlName="phone">
+            <div class="pi-error p-absolute" *ngIf="list.value.invalid">Please Enter Valid Number</div>
+          </pi-form-field>
+            <div class="d-flex align-items-center h-38 m-l-15">
+              <button pi-icon-button class="array-button icon-button-wrapper">
+                <i class="pixel-icons icon-minus" (click)="removeNumber(i)"></i>
+              </button>
+
+              <button pi-icon-button class="array-button icon-button-wrapper m-l-6">
+                <i class="pixel-icons icon-plus" (click)="addNumber()"></i>
+              </button>
+            </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+  <button pi-button color="subtle" (click)="closeDialog()">Cancel</button>
+  <button pi-button color="primary" (click)="saveContact(contactsForm)" [disabled]="contactsForm.pristine">Save</button>
+</mat-dialog-actions>

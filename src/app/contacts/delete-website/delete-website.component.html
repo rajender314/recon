@@ -1,0 +1,13 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <div class="prompt-msg">Are you sure you want to delete &nbsp;<b>{{data.name}}</b>?</div>
+</mat-dialog-content>
+<mat-dialog-actions class="btn-actions">
+  <button pi-button color="subtle" (click)="closeDialog()">Cancel</button>
+  <button pi-button color="primary" (click)="saveOrganization()" [innerHtml]="data.title"></button>
+</mat-dialog-actions>

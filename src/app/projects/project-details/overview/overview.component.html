@@ -1,0 +1,317 @@
+<div class="primary-layout-detail">
+    <header>
+        <div class="w-100 d-flex align-items-center justify-content-center flex-column">
+            <div class="w-100">
+                <pi-breadcrumb>
+                    <ng-container *ngFor="let item of breadcrumbs">
+                        <pi-breadcrumb-item *ngIf="item.type == 'link'" label="Projects" [routerLink]="item.route">
+                        </pi-breadcrumb-item>
+                        <pi-breadcrumb-item *ngIf="item.type != 'link'" [innerHtml]="item.label"></pi-breadcrumb-item>
+                    </ng-container>
+                </pi-breadcrumb>
+            </div>
+            <div class="w-100 d-flex justify-content-between align-items-center">
+                <aside class="left-header d-flex flex-width">
+                    <h1>Overview</h1>
+                </aside>
+                <!-- <aside class="d-flex right-header flex-width justify-content-end">
+                    <app-search></app-search>
+                </aside> -->
+            </div>
+
+
+
+
+            <!-- (onSearch)="searchList($event)" -->
+
+        </div>
+    </header>
+
+    <div class="primary-layout-detail-body flex-column" style="min-height: calc(100vh - 2px); overflow: hidden;">
+        <div class="sidebar-layout">
+            <aside class="sidebar-content padding-20" style="height: calc(100vh - 76px);">
+                <!-- <div class="products-services-overview">
+                    <div class="alert-notifications warning-notification">
+                            <i class="pixel-icons icon-exclamation"></i>Products & Services not added yet
+                        </div>
+                        <div class="alert-notifications warning-notification">
+                            <i class="pixel-icons icon-exclamation"></i>Custom attributes not added yet
+                        </div>
+            </div> -->
+                <div class="project-type-overview" style="display:none;">
+                    <p>Project Type</p>
+                    <h4 class="ptype-value"><i class="pixel-icons icon-laptop"></i> <span>Digital</span></h4>
+                </div>
+                <div class="client-info-holder">
+                    <h2 class="overview-heading" style="display: none;">Client Info</h2>
+
+                    <div class="client-info" style="margin-top: 10px;">
+                        <div class="client-cell">
+                            <label>Client Company</label>
+                            <span [innerHtml]="overviewDetails?.org_name">Jewel Osco</span>
+                        </div>
+                        <div class="client-cell">
+                            <label>Company Code</label>
+                            <span [innerHtml]="overviewDetails?.company_code_name">GreenLeaf</span>
+                        </div>
+                        <div class="client-cell">
+                            <label>Project Coordinator(s)</label>
+                            <span [innerHtml]="overviewDetails?.job_coordinators_name">Diana Swiatek</span>
+                        </div>
+
+                    </div>
+                    <div class="client-others">
+                        <a class="more-details" [routerLink]="clientsRoute"><span>MORE DETAILS</span> <i class="pixel-icons icon-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div style="display:none;">
+                    <h2 class="overview-heading">Spent Time</h2>
+                    <div class="">
+                        <span><i class="pixel-icons icon-clock"></i>150.20 hours</span>
+                        <span class="spent-time-actions">
+                            <a>Log time</a> | <a>Details</a>
+                        </span>
+                    </div>
+                </div>
+
+
+
+
+                <div class="sub-section" style="display:none;">
+                    <label>STATUS</label>
+                    <div>status bar comes here</div>
+                </div>
+
+                <div class="green-section" style="display:none;">
+                    <p>
+                        <i class="pixel-icons icon-refresh"></i>
+                        <span>This project is set to recur every week</span>
+                        <i class="pixel-icons icon-pencil"></i>
+                    </p>
+                    <p>ITEMS: Products, Tasks, Estimates</p>
+                </div>
+
+
+
+                <div class="sub-section" style="display:none;">
+                    <h2>Estimates</h2>
+                    <div class="content">
+                        <a class="estimate-copy">
+                            <span>$258,090</span>
+                            <span class="is-approved"><i class="pixel-icons icon-select"></i></span>
+                        </a>
+                        <a class="estimate-copy">
+                            <span>$258,090</span>
+                        </a>
+                        <a class="estimate-copy">
+                            <span>$258,090</span>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="sub-section" style="display:none;">
+                    <h2>Recent Files</h2>
+                    <div class="content no-bg-color">
+                        <div class="row">
+                            <span><i class="pixel-icons icon-recent-notes"></i>3221 Gig Harbor Radio Remote Availability
+                                SIGNED
+                            </span>
+                            <span>0.05 MB</span>
+                        </div>
+                        <div class="row">
+                            <span><i class="pixel-icons icon-recent-notes"></i>Broadcast SOP_04_14_2017</span>
+                            <span>0.05 MB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-section" style="display:none;">
+                    <h2>Related Projects</h2>
+                    <a class="add-related-proj"><i class="pixel-icons icon-plus"></i>Add Related Project</a>
+                </div>
+
+                <div class="sub-section" style="display:none;">
+                    <h2>Project Team</h2>
+                    <div class="content users-info no-bg-color">
+                        <div class="field-row">
+                            <div class="form-field">
+                                <i class="pixel-icons icon-pn-user"></i>
+                                <div>
+                                    <p>Michele Lauer</p>
+                                    <i>Client Initiator</i>
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <i class="pixel-icons icon-pn-user"></i>
+                                <div>
+                                    <p>Jorge Noe</p>
+                                    <i>Client Service</i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="related-projects-ui">
+                    <div style="display: flex;justify-content: space-between;height: 36px;align-items: flex-end;"><h3 style="padding-bottom: 0px; padding-top: 0px;">Related Projects</h3><button pi-icon-button color="primary"  (click)="createRelatedProjects()">+ Create Related Projects</button></div>
+                    <div class="rel-pro-holder">
+                        <div class="rel-pro-list">
+                            <div class="cards-ui">
+                            <ng-container *ngIf="!state.relatedJobsLoader">
+                                <div class="rel-job-card"  *ngFor="let project of state.relatedProjects">
+                                        <div class="card mb-0" (click)="goToJob(project)">
+                                            <div class="card-body p-3 d-flex "> 
+                                                    <div class="media-list-icon"><i class="pixel-icons icon-pn-projects"></i></div>                                               
+                                            <div class="wrapper w-100">                                              
+                                                <div class="media-list-data w-100">                               
+                                                        <p (click)="goToJob(project)">{{project.job_title}}</p>
+                                                        <small (click)="goToJob(project)">{{project.job_no}} <span class="long-arrow-cercle"><i class="pixel-icons icon-right-arrow"></i></span></small>
+                                                        <span class="media-action" style="top: -3px;"  #removeProjectPop="matMenuTrigger" [matMenuTriggerFor]="removeProject">
+                                                    <i class="pixel-icons icon-delete"></i>   </span>
+                                                     </div>
+                                                    <mat-menu #removeProject="matMenu" class="card-ui row-card colored bg-delete" xPosition="before" >
+                                                        <div class="card row-card" (click)="$event.stopPropagation()">
+                                                            <div class="card-header"><i class="pixel-icons icon-exclamation"></i></div>
+                                                            <div class="card-body">
+                                                                <h5 class="card-title">Delete Related Project</h5>
+                                                                <p class="card-text">Are you sure you want to delete Related Project?</p>
+                                                                <div class="footer">
+                                                                    <a class="card-link text-btn" (click)="removeProjectPop.closeMenu()">Cancel</a>
+                                                                    <a class="card-link act-btn" (click)="deleteJob(project);removeProjectPop.closeMenu();">Delete</a></div>
+                                                            </div>
+                                                        </div>
+                                                    </mat-menu>
+                                            </div>
+                                        </div>
+                                        </div>                                    
+                                </div>
+                            </ng-container>
+
+                            <div style="display:block; margin: 0 auto; width: 100%;"  *ngIf="!state.relatedProjects.length && !state.relatedJobsLoader"> 
+                                    <div  class="empty-screen"><div  class="icon-info-holder" style="position: relative; top: 0px;"><div class="icon"><i class="pixel-icons icon-pn-projects" style="margin-right: 0;"></i>
+                                    </div><p class="alert-message" style="margin-bottom: 0px;     margin-top: 2px;">No Related Projects Added!</p>
+                                    </div>
+                                    </div>                    
+                                </div>
+                               
+                            </div>
+                            <div class="related-projects-actions" *ngIf="false">
+                                <div class="more" style="margin-left: 23px" (click)="createRelatedProjects()"  *ngIf="!state.relatedJobsLoader">
+                                    <span>Create Related Projects</span><i class="pixel-icons icon-arrow-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <app-job-stories></app-job-stories>
+                <!-- <app-old-job-stories></app-old-job-stories>                  -->
+            </aside>
+            <aside *ngIf="false" class="sidebar task-overview padding-20 p-t-20 relative" style="position: relative; padding-right: 0 !important;">
+                <!-- <div class="info-container">
+                    <h3>CLIENT INFO</h3>
+                    <div class="section">
+                        <p>Client Company</p>
+                        <p>Jewel Osco</p>
+                    </div>
+                    <div class="section">
+                        <p>Client Company</p>
+                        <p>Jewel Osco</p>
+                    </div>
+                    <div class="section">
+                        <p>Client Company</p>
+                        <p>Jewel Osco</p>
+                    </div>
+                    <div class="more">
+                        <span>MORE DETAILS</span><i class="pixel-icons icon-arrow-right"></i>
+                    </div>
+                </div>
+                <hr>
+                <div class="info-container with-icon">
+                    <h3>CLIENT INFO</h3>
+                    <div class="section">
+                        <i class="pixel-icons icon-pn-estimates"></i>
+                        <div class="content-wrapper">
+                            <p>Client Company</p>
+                            <p>Jewel Osco</p>
+                        </div>
+                    </div>
+                    <div class="section">
+                            <i class="pixel-icons icon-pn-estimates"></i>
+                            <div class="content-wrapper">
+                                <p>Client Company</p>
+                                <p>Jewel Osco</p>
+                            </div>
+                        </div>
+                        <div class="section">
+                                <i class="pixel-icons icon-pn-estimates"></i>
+                                <div class="content-wrapper">
+                                    <p>Client Company</p>
+                                    <p>Jewel Osco</p>
+                                </div>
+                            </div>
+
+                    <div class="more">
+                        <span>MORE DETAILS</span><i class="pixel-icons icon-arrow-right"></i>
+                    </div>
+                </div> -->
+               
+                <div class="info-container with-icon related-projects w-100" >
+                    
+                    <h3 *ngIf="!state.relatedJobsLoader">Related Projects</h3>
+                    <div class="related-jobs-container" [class.spinner]="state.relatedJobsLoader">
+                        <ng-container *ngIf="!state.relatedJobsLoader">
+                            <ul class="media-list-actions">
+                            <li class="added-Item" *ngFor="let project of state.relatedProjects">
+                                <div class="media-list-icon"><i class="pixel-icons icon-pn-projects"></i></div>
+                                <div class="media-list-data w-100">                               
+                                    <p (click)="goToJob(project)">{{project.job_title}}</p>
+                                    <small (click)="goToJob(project)">{{project.job_no}} <span class="long-arrow-cercle"><i class="pixel-icons icon-right-arrow"></i></span></small>
+                                    <span class="media-action" style="top: -3px;"  #removeProjectPop="matMenuTrigger" [matMenuTriggerFor]="removeProject">
+                                <i class="pixel-icons icon-delete"></i>   </span>
+                                 </div>
+                                <mat-menu #removeProject="matMenu" class="card-ui row-card colored bg-delete" xPosition="before" >
+                                    <div class="card row-card" (click)="$event.stopPropagation()">
+                                        <div class="card-header"><i class="pixel-icons icon-exclamation"></i></div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">Delete Related Project</h5>
+                                            <p class="card-text">Are you sure you want to delete Related Project?</p>
+                                            <div class="footer">
+                                                <a class="card-link text-btn" (click)="removeProjectPop.closeMenu()">Cancel</a>
+                                                <a class="card-link act-btn" (click)="deleteJob(project);removeProjectPop.closeMenu();">Delete</a></div>
+                                        </div>
+                                    </div>
+                                </mat-menu>
+                            </li>
+                        </ul>                           
+                        </ng-container>
+                        <div class="spinner-view" *ngIf="state.relatedJobsLoader">
+                            <div class="empty-screen">
+                                <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="no-data-screen spinner-view" *ngIf="!state.relatedProjects.length && !state.relatedJobsLoader"> 
+                            <div  class="empty-screen"><div  class="icon-info-holder" style="position: relative; top: -30px;"><div class="icon"><i class="pixel-icons icon-pn-projects" style="margin-right: 0;"></i>
+                            </div><p class="alert-message" >No Related Projects Added!</p>
+                            <button pi-icon-button color="primary"  (click)="createRelatedProjects()">+ Create Related Projects</button></div>
+                            </div>                    
+                        </div>
+                    <div class="more" style="margin-left: 23px" (click)="createRelatedProjects()"  *ngIf="!state.relatedJobsLoader">
+                        <span>Create Related Projects</span><i class="pixel-icons icon-arrow-right"></i>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</div>
+<!-- <div class="info-section" style="display:none;">
+    <h2>Tasks</h2>
+    <p class="yellow">PENDING</p>
+    <div><i class="pixel-icons icon-tasks"></i>10</div>
+    <p class="green">COMPLETED</p>
+    <div><i class="pixel-icons icon-tasks"></i>4</div>
+    <p class="red">OVERVIEW</p>
+    <div><i class="pixel-icons icon-tasks"></i>6</div>
+    <span><i class="pixel-icons icon-recents"></i> Recent Activity</span>
+</div> -->

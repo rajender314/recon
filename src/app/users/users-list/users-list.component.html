@@ -1,0 +1,14 @@
+<ng-container *ngFor="let list of data">
+    <mat-list-item class="users" *ngIf="!list.search">
+     <div class="info">
+        <div class="list-item {{list.css}}" [class.disable]="!list.status" [class.active]="(selected?.id === list?.id || selected?.contact_id === list?.contact_id) && selected?.name === list.name" (click)="getSelectedUser(list)">
+          <i *ngIf="list.css == 'org'" class="pixel-icons icon-company-codes"></i>
+          <i *ngIf="list.css == 'sub-org'" class="pixel-icons icon-sub-organisations"></i>
+          <i *ngIf="list.css == 'user'" class="pixel-icons icon-pn-user"></i>
+          {{list.name}}
+        </div>
+        <app-users-list [data]="list.users" [selected]="selected" (trigger)="getSelectedUser($event)"></app-users-list>
+        <app-users-list [data]="list.children" [selected]="selected" (trigger)="getSelectedUser($event)"></app-users-list>
+     </div>
+   </mat-list-item>
+</ng-container>

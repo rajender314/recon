@@ -1,0 +1,73 @@
+<div class="primary-layout-detail">
+	<div class="spinner-view" *ngIf="state.isLoading">
+		<div class="empty-screen">
+			<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+		</div>
+	</div>
+	<header>
+		<div class="w-100 d-flex justify-content-center flex-column">
+			<pi-breadcrumb>
+				<ng-container *ngFor="let item of state.breadcrumbs">
+					<pi-breadcrumb-item *ngIf="item.type == 'link'" label="Projects" [routerLink]="item.route"></pi-breadcrumb-item>
+					<pi-breadcrumb-item *ngIf="item.type != 'link'" [innerHtml]="item.label"></pi-breadcrumb-item>
+				</ng-container>
+			</pi-breadcrumb>
+			<div class="w-100 d-flex align-items-center justify-content-between ">
+				<aside class="left-header d-flex flex-width">
+
+					<h1 [innerHtml]="state.title"> <i class="pixel-icons icon-arrow" (click)="changeMasterView()"></i> Distribution
+						List</h1>
+				</aside>
+				<aside class="d-flex right-header flex-width justify-content-end" *ngIf="state.allowEditable">
+					<button pi-button class="m-l-15" (click)="addDialog('kit')">Add Kit List</button>
+					<button pi-button color="primary" class="m-l-15" (click)="addDialog('list')">Add Distribution List</button>
+				</aside>
+			</div>
+		</div>
+
+	</header>
+	<div class="sidebar-layout ">
+		<!-- <mat-spinner diameter="45" class="md" *ngIf="state.isLoading"></mat-spinner> -->
+		<aside class="sidebar" @listAnimate *ngIf="!state.isLoading">
+			<mat-list>
+				<mat-list-item *ngFor="let item of state.distributionList;let i = index" [class.active]="state.selectedItem.id === item.id"
+				 (click)="selectItem(item)">
+					<div class="distribution-item" *ngIf="!item.is_edit">
+						<span [title]="item.name">{{item.name}}</span>
+						<!-- <span style="flex: 1"></span> -->
+						<span *ngIf="i != 0 && state.allowEditable">
+							<i class="pixel-icons icon-pencil" (click)="$event.stopPropagation();performActions('edit', item, i)"></i>
+							<i class="pixel-icons icon-delete" (click)="$event.stopPropagation();performActions('delete', item, i)"></i>
+						</span>
+					</div>
+					<div class="distribution-item" *ngIf="item.is_edit">
+						<pi-form-field [label]=" ">
+							<input #myInput type="text" pi-input [formControl]="distroName" (click)="$event.stopPropagation()" (blur)="updateDistroName(distroName, item)"
+							 (keyup.enter)="updateDistroName(distroName, item)" />
+							<div class="msgs">
+								<div class="pi-error" *ngIf="distroName.hasError('required') && state.submitted">
+									Please Enter Distro Name
+								</div>
+							</div>
+						</pi-form-field>
+					</div>
+				</mat-list-item>
+			</mat-list>
+		</aside>
+		<aside class="sidebar-content padding-right-20 distro-grid" @listAnimate *ngIf="!state.isLoading">
+			<div class="kits-title" *ngIf="state.distributionList.length">
+				<h3>Kits</h3><button pi-button class="small-btn" *ngIf="state.allowEditable" (click)="addDialog('kit', state.selectedItem)">Add
+					Distribution Kit</button>
+			</div>
+			<div class="no-kits" *ngIf="state.distributionList.length && !state.kitList.length">No Kits Added</div>
+			<ng-container *ngIf="state.distributionList.length">
+				<ag-grid-angular [ngStyle]="{height: (state.kitList.length ? 'calc(100vh - 120px)' : 'calc(100vh - 180px)')}" class="collapsed-grid ag-theme-balham distribution-grid"
+				 style="height: inherit;" [gridOptions]="gridOptions"></ag-grid-angular>
+			</ng-container>
+		</aside>
+
+	</div>
+
+
+
+</div>

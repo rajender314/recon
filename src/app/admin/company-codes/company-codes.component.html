@@ -1,0 +1,472 @@
+<pi-master-detail-view class="recon-admin-layout" [showDetail]="showView">
+  <pi-master-view class="admin-sidebar">
+    <div class="sidebar-header">
+      <!-- <span class="my-pixel-icon pink">
+        <i class="pixel-icons icon-company-codes"></i>
+      </span> -->
+      <div class="page-breadcrumb">
+        <app-admin-popover class="left-hdr-comp" class="align-items" [bgColor]="'pink'" [icon]="'icon-company-codes'"
+          [primary]="'Admin'" [secondary]="'Company Codes'" [data]="adminDashboard"></app-admin-popover>
+      </div>
+      <div class="icon-button-actions" *ngIf="APP.permissions.system_access.company_codes=='edit'">
+        <button pi-icon-button class="icon-button-wrapper" (click)="openAddDialog()">
+          <i class="pixel-icons icon-plus"></i>
+        </button>
+      </div>
+      <app-search (onSearch)="onSearch($event)"></app-search>
+    </div>
+    <!-- <div class="left-content" [class.spinner]="isLoading || !companyCodesList?.length"> -->
+    <div class="head">
+      <div matBadgeOverlap="false" matBadgePosition="before" class="mat-badge-center">
+        <span [matMenuTriggerFor]="statusFilter">
+          <span>{{totalCount}}</span>
+          <span>{{statusBy+(totalCount==1?" Company Code":" Company Codes")}}</span>
+          <mat-icon>expand_more</mat-icon>
+        </span>
+        <mat-menu #statusFilter="matMenu" class="more-actions" [overlapTrigger]="false" yPosition="below" xPosition="before">
+          <button mat-menu-item *ngFor="let status of dropdowns.statusFilter" (click)="onApplyFilter('status', status)">{{status.label}}</button>
+        </mat-menu>
+      </div>
+      <div class="sorting">
+        <span class="sort-action {{sortBy | lowercase}}" (click)="onApplyFilter('sort')">{{sortBy}}</span>
+      </div>
+    </div>
+    <!-- <div class="head company-code" style="border-top: none; ">
+      <h3 mat-button [matMenuTriggerFor]="companyCodesMenu" class="d-flex">
+        <span class="detail-orgname text-ellipsis">{{selectedCompanyCode?.name}}</span>
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </h3>
+      <mat-menu #companyCodesMenu="matMenu" yPosition="below" [overlapTrigger]="false" class="dropdown-list">
+        <button mat-menu-item (click)="changeCompanyCode(list)" *ngFor="let list of companyCodesList">
+          {{ list.name }}
+        </button>
+      </mat-menu>
+    </div> -->
+    <!-- infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false" -->
+    <div class="sidebar-body">
+      <div class="d-flex align-center justify-content-center w-100" *ngIf="isLoading" style="height: 80%;flex: 1;justify-content: center;align-items: center;">
+        <mat-spinner diameter="24" class="md"></mat-spinner>
+      </div>
+      <!-- <mat-spinner diameter="45" class="md" *ngIf="isLoading"></mat-spinner> -->
+      <div class="sidebar-content" [class.spinner]="isLoading || !companyCodesList?.length">
+        <div class="body">
+          <div class="no-data" [hidden]="isLoading || companyCodesList?.length">
+            <div class="d-flex align-center justify-content-center w-100" style="min-height: 300px;flex: 1;justify-content: center;align-items: center;">
+              No Company Codes Found
+            </div>
+          </div>
+          <div class="menu-container nested-menu">
+            <ul class="has-sub-list" *ngIf="!isLoading">
+              <li [class.default]="'0' == product?.id" *ngFor="let product of companyCodesList" [class.test]="product.children?.length && !product.showChildren">
+                <div (click)="onSelectItem(product);changeMasterView()" class="parent item-list" [class.active]="product.id == selectedService?.id">
+                  <i *ngIf="(product.children && product.children.length)" (click)="toggleChildCompanyCodes(product, $event)"
+                    class="pixel-icons {{product.showChildren?'icon-arrow-right':'icon-arrow-down'}}"> </i>
+                  <span *ngIf="!(product.children && product.children.length)" class="no-children"></span>
+                  <span class="markup-txt" title="{{product.name}}">
+                    <i class="pixel-icons icon-company-codes"></i><span>{{product.name}}</span>
+                  </span>
+                  <!-- <span class="reset-action" (click)="$event.stopPropagation();resetDefaults()"><i class="pixel-icons icon-reload"></i></span> -->
+                </div>
+                <ul *ngIf="product.children?.length && !product.showChildren" class="test00">
+                  <li *ngFor="let service of product.children">
+                    <div (click)="onSelectItem(service);changeMasterView()" class="parent item-list sub-company-code" [class.active]="service.id == selectedService?.id">
+                      <i *ngIf="(service.children && service.children.length)" (click)="toggleChildCompanyCodes(service, $event)"
+                        class="pixel-icons {{service.showChildren?'icon-arrow-right':'icon-arrow-down'}}">
+                      </i>
+                      <span *ngIf="!(service.children && service.children.length)" class="no-children"></span>
+                      <span class="markup-txt" title="{{service.name}}">
+                        <i class="pixel-icons icon-company-codes"></i><span>{{service.name}}</span>
+                      </span>
+                      <!-- <span class="reset-action" (click)="$event.stopPropagation();resetDefaults()"><i class="pixel-icons icon-reload"></i></span> -->
+                    </div>
+                    <ul *ngIf="service.children?.length && !service.showChildren">
+                      <li *ngFor="let subOrg of service.children" [class.active]="subOrg.id == selectedService?.id"
+                        (click)="onSelectItem(subOrg);changeMasterView()">
+                        <span class="no-children"></span>
+                        <span class="markup-txt item-list sub-company-code" title="{{subOrg.name}}">
+                          <i class="pixel-icons icon-company-codes"></i><span>{{subOrg.name}}</span>
+
+                        </span>
+                        <!-- <span class="reset-action" (click)="$event.stopPropagation();resetDefaults()"><i class="pixel-icons icon-reload"></i></span> -->
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <!-- <div class="no-data" [hidden]="isLoading || companyCodesList?.length>1">No Organizations Found</div> -->
+          </div>
+        </div>
+      </div>
+      <!-- <div class="no-data" [hidden]="isLoading || companyCodesList?.length">No Company Codes Found</div> -->
+
+      <!-- <div *ngIf="!isLoading">
+          <ul class="item-list">
+            <li *ngFor="let product of companyCodesList">
+              <div class="parent">
+                <i *ngIf="(product.children && product.children.length)" (click)="toggleChildCompanyCodes(product, $event)"
+                  class="pixel-icons {{product.showChildren?'icon-arrow-right':'icon-arrow-down'}}">
+                </i>
+                <span *ngIf="!(product.children && product.children.length)" class="no-children"></span>
+                <span><i class="pixel-icons icon-company-codes"></i>{{product.name}}</span>
+              </div>
+              <ul *ngIf="product.children?.length && !product.showChildren">
+                <li *ngFor="let service of product.children" [class.active]="service.id == selectedService?.id" (click)="onSelectItem(service);changeMasterView()">
+                  <span>
+                    <i class="pixel-icons icon-sub-organisations"></i>
+                    {{service.name}}
+                  </span>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div> -->
+
+    </div>
+
+
+  </pi-master-view>
+
+  <pi-detail-view class="admin-content">
+    <section class="admin-fixed-layout">
+      <div class="no-result-flex no-search-value" *ngIf="!companyCodesList?.length && !isLoading">
+        <p class="no-search-content" *ngIf="param.search?.length">No Company Codes found for your search string <br />
+          <b>'{{param.search}}'</b>
+        </p>
+        <p *ngIf="!param.search?.length">No Company Codes found</p>
+        <button pi-button color="primary" (click)="openAddDialog(param.search)" *ngIf="APP.permissions.system_access.company_codes=='edit'">+
+          Add New Company Codes</button>
+      </div>
+      <div class="spinner-view" *ngIf="detailsLoader">
+        <div class="empty-screen">
+          <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+        </div>
+      </div>
+      <!-- <mat-spinner diameter="45" class="md" *ngIf="detailsLoader"></mat-spinner> -->
+      <!-- <div class="right-header" *ngIf="selectedService?.id">
+      <app-breadcrumb [list]="breadcrumbs"></app-breadcrumb>
+      <div class="info">
+        <mat-icon class="back-link" (click)="changeMasterView()">arrow_back</mat-icon>
+        <h2 [innerHtml]="selectedService?.name"></h2>
+        <app-search *ngIf="activeTab==5" (onSearch)="searchProducts($event)"></app-search>
+      </div>
+    </div> -->
+      <header class=" header tab-header" *ngIf="selectedService?.id">
+        <div class="w-100 d-flex flex-column justify-content-between">
+          <app-breadcrumb [list]="breadcrumbs"></app-breadcrumb>
+          <div class="w-100 d-flex align-items-center justify-content-between">
+            <!-- <aside class="left-header d-flex flex-width"> -->
+            <h1 [innerHtml]="selectedService?.name"></h1>
+            <!-- </aside>
+            <aside class="d-flex right-header justify-content-end flex-width"> -->
+            <!-- <app-search *ngIf="activeTab==5" (onSearch)="searchProducts($event)"></app-search> -->
+            <!-- </aside> -->
+          </div>
+          <div class="w-100 d-flex align-items-center justify-content-between">
+            <aside class="left-header flex-column d-flex w-100">
+              <nav *ngIf="selectedService?.id" mat-tab-nav-bar class="nav-bar" [disableRipple]="true">
+                <div class="tab-group">
+                  <a mat-tab-link (click)="onTabChange(index)" *ngFor="let link of state.tabs;let index = index"
+                    [active]="activeTab == index">
+                    {{link.label}} </a>
+                </div>
+              </nav>
+            </aside>
+          </div>
+        </div>
+      </header>
+      <div class="scroll-body" [class.padding-0]="activeTab==4 && !detailsLoader"  *ngIf="selectedService?.id">
+        <div class="w-100">
+          <div [formGroup]="formsGroup">
+            <!-- Details Tab Content -->
+            <ng-container *ngIf="activeTab==0 && !detailsLoader">
+             
+              <div class="form-wrapper padg">
+                <pi-form-field label="Company Code Name">
+                  <input autocomplete="" pi-input maxlength="64" type="text" (input)="removeDuplicate()" id="name" name="name"
+                    formControlName="name" [disabled]="APP.permissions.system_access.company_codes!='edit'">
+                  <div class="pi-error" *ngIf="formsGroup.controls.name.hasError('required') && submitted">Please Enter
+                    Company Code Name</div>
+                </pi-form-field>
+                <ng-container>
+                  <pi-select [options]="StatusFilter" label="Status" formControlName="status" [disabled]="APP.permissions.system_access.company_codes!='edit'"></pi-select>
+                </ng-container>
+
+                <pi-form-field label="Description">
+                  <textarea pi-input rows="3" id="description" name="description" formControlName="description"
+                    [disabled]="APP.permissions.system_access.company_codes!='edit'" maxlength="1024"></textarea>
+                </pi-form-field>
+
+                <pi-form-field label="Job Prefix">
+                  <input autocomplete="" pi-input type="text" maxlength="2" id="job_prefix" name="job_prefix"
+                    formControlName="job_prefix" [disabled]="APP.permissions.system_access.company_codes!='edit'">
+                  <div class="pi-error" *ngIf="formsGroup.controls.job_prefix.hasError('required') && submitted">Please
+                    Enter Job Prefix</div>
+                </pi-form-field>
+
+                <!--<div class="business-rules-container">
+                             <div class="business-rules-label ak-field-group">
+                              <label>Business Rules</label>
+                            </div> -->
+                <label class="field-title">Business Rules</label>
+                <div class="business-rules-block">
+
+                  <div class="chk-radio">
+                    <pi-form-field label="Allow MIO">
+                      <input type="checkbox" pi-input formControlName="allow_mio" [disabled]="APP.permissions.system_access.company_codes!='edit'" />
+                    </pi-form-field>
+                  </div>
+
+                  <div class="chk-radio">
+                    <pi-form-field label="Calculate taxes from Avalara">
+                      <input type="checkbox" pi-input formControlName="check_avalara" [disabled]="APP.permissions.system_access.company_codes!='edit'" />
+                    </pi-form-field>
+                  </div>
+
+                  <div class="chk-radio">
+                    <pi-form-field label="Invoices need all PO's processed to be finalized">
+                      <input type="checkbox" pi-input formControlName="invoice_need" [disabled]="APP.permissions.system_access.company_codes!='edit'" />
+                    </pi-form-field>
+                  </div>
+
+                  <div class="chk-radio push-nets">
+                    <pi-form-field label="Push nets to GP">
+                      <input type="checkbox" pi-input formControlName="net_push_gp" [disabled]="APP.permissions.system_access.company_codes!='edit'" />
+                    </pi-form-field>
+                    <pi-form-field class="chk-radio" [label]="'PO'" *ngIf="formsGroup.controls['net_push_gp'].value">
+                      <input type="radio" pi-input name="po_actual_amount" formControlName="po_actual_amount"
+                        [disabled]="APP.permissions.system_access.company_codes!='edit'" [value]="0" />
+                    </pi-form-field>
+                    <pi-form-field class="chk-radio" [label]="'Actual'" *ngIf="formsGroup.controls['net_push_gp'].value">
+                      <input type="radio" pi-input name="po_actual_amount" formControlName="po_actual_amount"
+                        [disabled]="APP.permissions.system_access.company_codes!='edit'" [value]="1" />
+                    </pi-form-field>
+                    <pi-form-field label="If no Actual, use PO" *ngIf="formsGroup.controls['net_push_gp'].value && formsGroup.controls['po_actual_amount'].value==1">
+                      <input type="checkbox" pi-input formControlName="no_actual_use_po" [disabled]="APP.permissions.system_access.company_codes!='edit'" />
+                    </pi-form-field>
+                  </div>
+
+                  <div class=" chk-radio">
+                    <pi-form-field [label]="option.value" *ngFor="let option of syncOptions">
+                      <input type="radio" pi-input name="sync" formControlName="sync" [disabled]="APP.permissions.system_access.company_codes!='edit'"
+                        [value]="option.id" />
+                    </pi-form-field>
+                  </div>
+                  <pi-select [options]="distributionTypes" label="Default Distribution Type" id="distribution_id" name="distribution_id"
+                    formControlName="distribution_id" [disabled]="APP.permissions.system_access.company_codes!='edit'"></pi-select>
+                  <div class="pi-error" *ngIf="formsGroup.controls.distribution_id.hasError('required') && submitted">Please
+                    Select Distribution Type</div>
+
+
+                  <pi-form-field label="Corp Co">
+                    <input autocomplete="" pi-input type="text" maxlength="9" pi-input id="corp_co" name="corp_co"
+                      formControlName="corp_co" [disabled]="APP.permissions.system_access.company_codes!='edit'">
+                    <div class="pi-error" *ngIf="formsGroup.controls.corp_co.hasError('required') && submitted">Please
+                      Enter Corp Co</div>
+                  </pi-form-field>
+
+                  <div class="wrap-content">
+                    <label for="due_days">The Final Bill Due Date should be</label>
+                    <pi-form-field label=" ">
+                      <input type="text" pi-input type="text" [appPriceFormat]="numberConfig" id="due_days"
+                        formControlName="due_days" [disabled]="APP.permissions.system_access.company_codes!='edit'">
+                    </pi-form-field>
+                    <label for="due_days">days from delivery due date</label>
+                    <div class="pi-error" *ngIf="formsGroup.controls.due_days.hasError('required') && submitted">Please
+                      Enter final bill due days</div>
+                  </div>
+
+                  <pi-select label="Default Group for final bill due task" [options]="groupTypes" id="group_id" name="group_id"
+                    formControlName="group_id" [disabled]="APP.permissions.system_access.company_codes!='edit'"></pi-select>
+
+                </div>
+
+                <app-modified-user-info [modifiedInfo]="formsGroup.value"></app-modified-user-info>
+                <!-- </div> -->
+              
+               
+              </div>
+              
+            </ng-container>
+         
+
+            <!-- Estimates Tab Content -->
+            <ng-container *ngIf="activeTab==1 && !detailsLoader">
+              <div class="form-wrapper tinymce-content padg">
+                <div fxLayout="column" class="image-upload org-upload">
+                  <label (click)="uploadLogo()" *ngIf="APP.permissions.system_access.company_codes=='edit'" class="browse-file">
+                    <a>{{(templateData.logo=='')?"Browse":"Change"}}</a>
+                  </label>
+                  <div class="images" *ngIf="templateData.logo!=''">
+                    <img [src]="templateData.logo" alt="Logo">
+                  </div>
+                </div>
+
+                <!-- <div class="ak-field-group">
+                          <input type="text" class="ak-field-text" formControlName="name">
+                        </div> -->
+                <pi-form-field class="custom-input">
+                  <input type="text" pi-input formControlName="name" [disabled]="APP.permissions.system_access.company_codes!='edit'">
+                </pi-form-field>
+              </div>
+
+              <div class="editor-section" style="margin-top:16px;">
+                <label class="field-title" style="margin-bottom:10px;">Terms and Conditions</label>
+                <!-- <editor formControlName="estimate" [init]="{plugins: 'link'}"></editor> -->
+
+                <editor formControlName="description" [disabled]="APP.permissions.system_access.company_codes!='edit'"
+                  [init]="{plugins: 'link'}"></editor>
+              </div>
+
+              <!-- <quill-editor [modules]="quillConfig"></quill-editor> -->
+              <!-- <div class="fixed-footer m-r-l marg bx-shadow" *ngIf="APP.permissions.system_access.company_codes=='edit'">
+                <button pi-button class="cancel" (click)="resetForm()">Cancel</button>
+                <button class="m-l-15" pi-button color="primary" (click)="saveTemplate()" [disabled]="formsGroup.pristine">Save</button>
+              </div> -->
+            </ng-container>
+            <!-- PO Tab Content -->
+            <ng-container *ngIf="activeTab==2 && !detailsLoader">
+              <div class="form-wrapper tinymce-content padg">
+                <div fxLayout="column" class="image-upload org-upload">
+                  <label *ngIf="APP.permissions.system_access.company_codes=='edit'" (click)="uploadLogo()" class="browse-file">
+                    <a>{{(templateData.logo=='')?"Browse":"Change"}}</a>
+                  </label>
+                  <div class="images" *ngIf="templateData.logo!=''">
+                    <img [src]="templateData.logo" alt="Logo">
+                  </div>
+                </div>
+                <pi-form-field class="custom-input">
+                  <input type="text" pi-input class="ak-field-text" formControlName="name" [disabled]="APP.permissions.system_access.company_codes!='edit'">
+                </pi-form-field>
+                <!-- <div class="ak-field-group">
+                          <input type="text" class="ak-field-text" formControlName="name">
+                        </div> -->
+              </div>
+
+              <div class="editor-section"  style="margin-top:16px;">
+                <label class="field-title" style="margin-bottom:10px;">Terms and Conditions</label>
+                <editor formControlName="description" [disabled]="APP.permissions.system_access.company_codes!='edit'"
+                  [init]="{plugins: 'link'}"></editor>
+              </div>
+              <!-- <div class="fixed-footer m-r-l marg bx-shadow" *ngIf="APP.permissions.system_access.company_codes=='edit'">
+                <button pi-button class="cancel" (click)="resetForm()">Cancel</button>
+                <button class="m-l-15" pi-button color="primary" (click)="saveTemplate()" [disabled]="formsGroup.pristine">Save</button>
+              </div> -->
+            </ng-container>
+
+            <!-- Inovoice Tab Content -->
+            <ng-container *ngIf="activeTab==3 && !detailsLoader">
+              <div class="form-wrapper tinymce-content padg">
+                <div fxLayout="column" class="image-upload org-upload">
+                  <label *ngIf="APP.permissions.system_access.company_codes=='edit'" (click)="uploadLogo()" class="browse-file">
+                    <a>{{(templateData.logo=='')?"Browse":"Change"}}</a>
+                  </label>
+                  <div class="images" *ngIf="templateData.logo!=''">
+                    <img [src]="templateData.logo" alt="Logo">
+                  </div>
+                </div>
+                <pi-form-field class="custom-input">
+                  <input type="text" pi-input formControlName="name" [disabled]="APP.permissions.system_access.company_codes!='edit'">
+                </pi-form-field>
+                <!-- <div class="ak-field-group">
+                          <input type="text" class="ak-field-text" formControlName="name">
+                        </div> -->
+              </div>
+              <div class="editor-section" style="margin-top:16px;">
+                <label class="field-title" style="margin-bottom:10px;">Terms and Conditions</label>
+                <editor formControlName="description" [disabled]="APP.permissions.system_access.company_codes!='edit'"
+                  [init]="{plugins: 'link'}"></editor>
+              </div>
+              <!-- <div class="fixed-footer m-r-l marg bx-shadow" *ngIf="APP.permissions.system_access.company_codes=='edit'">
+                <button pi-button class="cancel" (click)="resetForm()">Cancel</button>
+                <button class="m-l-15" pi-button color="primary" (click)="saveTemplate()" [disabled]="formsGroup.pristine">Save</button>
+              </div> -->
+            </ng-container>
+
+            <!-- Client Access Tab Content -->
+            <ng-container *ngIf="activeTab==4 && !detailsLoader">
+              <div class="content-wrapper client-access padg">
+                <app-client-access [readonly]="APP.permissions.system_access.company_codes!='edit'" [getApi]="'getCompanyClientAccess'"
+                  [saveApi]="'saveCompanyClientAccess'" [id]="selectedService?.id" [organizations]="clientAccess"></app-client-access>
+              </div>
+            </ng-container>
+
+            <!-- Markup Tab Content -->
+            <ng-container *ngIf="activeTab==5">
+              <div class="heading page-five-header">
+                <div mat-button [matMenuTriggerFor]="companyCodesMenu">
+                  <span class="cc-name text-ellipsis">{{selectedCompanyCode?.name}}</span>
+                  <i class="pixel-icons icon-arrow-down"></i>
+                </div>
+
+                <mat-menu #companyCodesMenu="matMenu" yPosition="below" [overlapTrigger]="false" class="dropdown-list more-actions">
+                  <button mat-menu-item (click)="changeCompanyCode(list)" *ngFor="let list of companyCodes">
+                    {{ list.name }}
+                  </button>
+                </mat-menu>
+                <div class="general-markup">
+                  <label>Markup: </label>
+                  <span (keydown)="changeMarkup($event)" (blur)="editOrg($event)" contenteditable="true">{{general_markup}}</span>
+                  <!-- <span [appPriceFormat]="numberConfig"
+                              (blur)="editOrg($event)"
+                              contenteditable="true">{{general_markup}}</span> -->
+                  <!-- <div class="ak-field-group">
+                                  <label for="markup">Markup</label>
+                                  <input type="text" [appPriceFormat]="numberConfig" class="ak-field-text" id="markup" name="markup" formControlName="markup">
+                                  <div class="pi-error" *ngIf="submitted && addressForm.controls.markup.hasError('required')">Please Enter Markup</div>
+                                </div> -->
+                </div>
+              </div>
+              <div class="grid-container padg" *ngIf="!detailsLoader">
+                <div class="global-grid company-codes-grid with-out-margin with-table-gaps actions-grid ag-no-striped">
+                  <ag-grid-angular class="ag-theme-balham" [gridOptions]="gridOptions"></ag-grid-angular>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+      <ng-container *ngIf="activeTab==0 && !detailsLoader">
+          <div class="footer" *ngIf="APP.permissions.system_access.company_codes=='edit'">
+            <div class="admin-max-footer justify-content-between">
+                <div class="pi-error">
+                 <span *ngIf="duplicateError"> Company Code {{duplicateError}}</span>
+                </div>
+                    <div>
+              <button pi-button class="cancel" (click)="resetForm()">Cancel</button>
+              <button class="m-l-15" pi-button color="primary" (click)="saveDetails()" [disabled]="formsGroup?.pristine">Save</button>
+            </div>
+            </div>
+          </div>
+      </ng-container>
+      <ng-container *ngIf="activeTab==1 && !detailsLoader">
+     <div class="footer"  *ngIf="APP.permissions.system_access.company_codes=='edit'">
+        <div class="admin-max-footer" style="max-width: 1100px;">
+          <button pi-button class="cancel" (click)="resetForm()">Cancel</button>
+          <button class="m-l-15" pi-button color="primary" (click)="saveTemplate()" [disabled]="formsGroup.pristine">Save</button>
+        </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="activeTab==2 && !detailsLoader">
+        <div class="footer" *ngIf="APP.permissions.system_access.company_codes=='edit'">
+            <div class="admin-max-footer" style="max-width: 1100px;">
+          <button pi-button class="cancel" (click)="resetForm()">Cancel</button>
+          <button class="m-l-15" pi-button color="primary" (click)="saveTemplate()" [disabled]="formsGroup.pristine">Save</button>
+              </div>
+        </div>
+      </ng-container>
+  <!-- Inovoice Tab Content -->
+  <ng-container *ngIf="activeTab==3 && !detailsLoader">
+      <div class="footer" *ngIf="APP.permissions.system_access.company_codes=='edit'">
+          <div class="admin-max-footer" style="max-width: 1100px;">
+          <button pi-button class="cancel" (click)="resetForm()">Cancel</button>
+          <button class="m-l-15" pi-button color="primary" (click)="saveTemplate()" [disabled]="formsGroup.pristine">Save</button>
+        </div>
+      </div>
+      </ng-container>
+
+
+    </section>
+  </pi-detail-view>
+
+</pi-master-detail-view>

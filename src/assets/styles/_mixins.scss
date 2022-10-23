@@ -1,0 +1,44 @@
+@import 'variables';
+
+@mixin get-primary-colors() {
+    background-color: $primary-color;
+    color: #fff;
+}
+
+@mixin iconSize($property) {
+    font-size: $property;
+    width: $property;
+    height: $property;
+}
+
+@mixin regularFont(){
+    font-family: "SF-Pro-Text-Regular", Sans-Serif;
+}
+@mixin mediumFont(){
+    font-family: "SF-Pro-Text-Medium", Sans-Serif;
+}
+@mixin semiBoldFont(){
+    font-family: "SF-Pro-Text-Semibold", Sans-Serif;
+}
+@mixin regularFont{
+    font-family: "SF-Pro-Text-Regular", Sans-Serif;
+  }
+  @mixin light-font {
+    font-family: "SF-Pro-Text-Light", Sans-Serif;
+  }
+  @mixin regular-font {
+    font-family: "SF-Pro-Text-Regular", Sans-Serif;
+  }
+  @mixin medium-font {
+    font-family: "SF-Pro-Text-Medium", Sans-Serif;
+  }
+  @mixin semibold-font {
+    font-family: "SF-Pro-Text-Semibold", Sans-Serif;
+  }
+  @mixin bold-font {
+    font-family: "SF-Pro-Text-Bold", Sans-Serif;
+  }
+  @mixin heavy-font {
+    font-family: "SF-Pro-Text-Heavy", Sans-Serif;
+  }
+  

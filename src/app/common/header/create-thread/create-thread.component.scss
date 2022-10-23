@@ -1,0 +1,65 @@
+.create-thread-container {
+    .title {
+        padding: 0;
+    }
+    .pi-form-field {
+        max-width: 700px;
+    }
+    .actions-footer {
+        margin-top: 16px;
+        display: flex;
+        button {
+            margin-right: 16px;
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+
+    .file-upload {
+        max-width: 650px;
+        .uploads{
+            padding: 10px 0;
+            i{
+                font-size: 14px;width: 14px;height: 14px;
+                position: relative;top: 1px;color: rgba(23, 43, 77, 0.5);
+                &:hover{color: rgba(23, 43, 77, 1);}
+            }
+            .browse-file{
+                cursor: pointer;
+                &:hover{
+                    color: rgba(23, 43, 77, 1);
+                    i{color: rgba(23, 43, 77, 1);}
+                }
+            }
+            .file-drop-zone{
+                color: #848D97;
+            }
+            .files-sec{
+                margin-left: 12px;
+                .files{
+                    background: #f1f2f4;
+                    display: inline-block;
+                    padding: 4px 10px;
+                    border: 1px solid #ccd2da;
+                    border-radius: 4px;
+                    margin: 5px;
+                    span{
+                        font-size: 12px;
+                    }
+                    .close{
+                        position: relative;
+                        top: 2px;
+                        left: 4px;
+                        cursor: pointer;
+                    }
+                }
+            } 
+        }
+    }
+
+    .thread-content{
+        height: calc(100vh - 200px);
+        overflow-y: auto;
+    }
+}

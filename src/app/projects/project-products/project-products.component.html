@@ -1,0 +1,103 @@
+<div class="products">
+	<div class="heading">
+		<h2>Products</h2>
+		<span style="flex: 1"></span>
+		<div class="actions">
+			<a pi-link-button color="subtle" (click)="productActions('clone', 'add')">Clone</a>
+			<a pi-link-button color="subtle" (click)="productActions('import', 'add')">Import</a>
+			<button pi-button (click)="productActions('add', 'add')">Add Product</button>
+			<app-search (onSearch)="search($event)"></app-search>
+		</div>
+	</div>
+
+	<div class="products-list">
+
+		<mat-spinner diameter="45" class="md parent-spinner" *ngIf="state.isLoading"></mat-spinner>
+
+		<div *ngIf="!state.isLoading">
+		<div class="prd-list-item" *ngFor="let prod of state.products; let i = index">
+			<div class="list-header" (click)="onSelectItem('product', prod)">
+				<i class="pixel-icons {{prod.isOpen ? 'icon-arrow-down' : 'icon-arrow-right'}}"></i>
+				<i class="pixel-icons icon-inventory"></i>
+				<span [innerHtml]="prod.product_name"></span>
+
+				<div class="row-actions" (click)="$event.stopPropagation()">
+					<i [matMenuTriggerFor]="menu2" class="pixel-icons icon-more-horizontal"></i>
+					<mat-menu #menu2="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+						<button mat-menu-item (click)="productActions('addService', 'add', prod)">Add Service</button>
+						<button mat-menu-item>Cancel Product</button>
+						<button mat-menu-item (click)="productActions('removeProduct', 'remove', i)">Remove Product</button>
+					</mat-menu>
+				</div>
+			</div>
+
+			<ng-container *ngIf="prod.isOpen">
+				<mat-spinner diameter="45" class="md" *ngIf="state.fetchingData"></mat-spinner>
+				<div class="sub-list" *ngFor="let serv of prod.services; let j = index">
+					<div class="list-header" (click)="onSelectItem('service', prod, serv)">
+						<i class="pixel-icons arrow {{serv.isOpen ? 'icon-arrow-down' : 'icon-arrow-right'}}"></i>
+						<i class="pixel-icons icon-orders"></i>
+						<span [innerHtml]="serv.job_service_name"></span>
+						<div class="row-actions" (click)="$event.stopPropagation()">
+							<i class="pixel-icons icon-pencil" (click)="performAction('edit', serv, prod)"></i>
+							<span class="rev-sort" [matMenuTriggerFor]="menu3">
+								<span>R {{serv.selectedRevision || serv.revisions.length - 1}}</span>
+								<i class="pixel-icons icon-triangle-arrow-up"></i>
+								<i class="pixel-icons icon-triangle-arrow"></i>
+							</span>
+							<mat-menu #menu3="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+								<button mat-menu-item *ngFor="let rev of serv.revisions" (click)="changeRevision(rev, prod, serv)">R {{rev}}</button>
+							</mat-menu>
+
+							<i [matMenuTriggerFor]="menu4" class="pixel-icons icon-more-horizontal"></i>
+							<mat-menu #menu4="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+								<button mat-menu-item>Cancel Service</button>
+								<button mat-menu-item>Edit Spec Order</button>
+								<button mat-menu-item (click)="productActions('removeService', 'remove', i, j)">Remove Service</button>
+							</mat-menu>
+						</div>
+					</div>
+					
+					<span class="options-label" [ngClass]="{'disabled-label' : !serv.isOpen}">Option:</span>
+					<mat-tab-group [ngClass]="{'disabled-tab' : !serv.isOpen}" [disableRipple]="true" dynamicHeight [selectedIndex]="serv.selectedIndex"
+					 (selectedIndexChange)="onTabChange(prod, serv, $event)">
+						<mat-tab (click)="$event.stopPropagation()" [label]="tab.option_no" *ngFor="let tab of serv.options" [disabled]="!serv.isOpen">
+							<div class="prdt-content inline-form" *ngIf="serv.isOpen">
+								<div *ngIf="!state.fetchingSpecs">
+									<div *ngFor="let spec of tab.specs; let l = index">
+										<app-form-builder [config]="spec" [form]="optionsGroup.controls[tab.id].controls.form_save_values.controls[l]"></app-form-builder>
+									</div>
+									<span *ngIf="!tab.specs.length">Specs not available</span>
+									<div class="actions" *ngIf="serv.selectedIndex != undefined ? optionsGroup.controls[serv.options[serv.selectedIndex].id]?.enabled : false">
+										<a (click)="addSpecs(prod, serv)">
+											<i class="pixel-icons icon-plus-slim"></i>Add Specs
+										</a>
+										<div>
+											<button pi-button (click)="performAction('cancel', serv)">cancel</button>
+											<button pi-button color="primary" (click)="performAction('save', serv)" [disabled]="serv.selectedIndex != undefined ? optionsGroup.controls[serv.options[serv.selectedIndex].id]?.pristine : true">Save</button>
+											<button pi-button (click)="performAction('new', serv)">Save to New Revision</button>
+											<button pi-button (click)="performAction('submit', serv)">Submit Revision</button>
+										</div>
+									</div>
+									
+								</div>
+							</div>
+						</mat-tab>
+						<mat-tab disabled *ngIf="serv.isOpen && !state.fetchingSpecs && optionsGroup.controls[serv.options[serv.selectedIndex].id]?.enabled">
+							<ng-template mat-tab-label>
+								<a class="add-tab" (click)="addOption(prod, serv)">
+									<i class="pixel-icons icon-plus-slim"></i>
+								</a>
+							</ng-template>
+						</mat-tab>
+					</mat-tab-group>
+					
+				</div>
+				<div *ngIf="!state.fetchingData && !prod.services.length">Nothing to show</div>
+			</ng-container>
+		</div>
+
+		<div class="no-data" *ngIf="!state.products.length">Products not available</div>
+		</div>
+	</div>
+</div>

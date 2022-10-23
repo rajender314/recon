@@ -1,0 +1,33 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup" class="form-flex" autocomplete="off">
+    <pi-select label="XR Code" [options]="xr_codes" formControlName="cost_code_id"></pi-select>
+    <div class="pi-error" *ngIf="formGroup.controls.cost_code_id.hasError('required') && submitted">Please Select XR
+      Code</div>
+    <pi-form-field label="Name">
+      <input autocomplete="" pi-input type="text" id="name" name="name" formControlName="name">
+      <div class="pi-error" *ngIf="formGroup.controls.name.hasError('required') && submitted">Please Enter Name</div>
+    </pi-form-field>
+
+    <pi-form-field class="percentage-suggestion" label="Percentage (%)<span class='error-suggestion'>* Percentage should not be greater than {{numberConfig.maxNumber}}</span>">
+
+      <input autocomplete="" pi-input [appPriceFormat]="numberConfig" (input)="percentageChange()" type="text" id="percentage"
+        name="percentage" formControlName="percentage">
+      <div class="pi-error" *ngIf="formGroup.controls.percentage.hasError('required') && submitted">Please Enter
+        Percentage</div>
+    </pi-form-field>
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25 d-flex justify-content-between">
+  <div class="pi-error"> {{duplicateError}}</div>
+  <div>
+    <button pi-button (click)="close()">Cancel</button>
+    <button pi-button color="primary" (click)="save(formGroup)" [disabled]="formGroup.pristine">Save</button>
+  </div>
+</mat-dialog-actions>

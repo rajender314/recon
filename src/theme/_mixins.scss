@@ -1,0 +1,99 @@
+@import "_fonts";
+
+// Font Mixins
+
+@mixin regularFont{
+  // font-family: "SF-Pro-Text-Regular", Sans-Serif;
+  font-family: "SFProText-Regular", Sans-Serif;  
+}
+@mixin light-font {
+  // font-family: "SF-Pro-Text-Light", Sans-Serif;
+  font-family: "SFProText-Light", Sans-Serif;  
+}
+@mixin regular-font {
+  // font-family: "SF-Pro-Text-Regular", Sans-Serif;
+  font-family: "SFProText-Regular", Sans-Serif;
+}
+@mixin medium-font {
+  // font-family: "SF-Pro-Text-Medium", Sans-Serif;
+  font-family: "SFProText-Medium", Sans-Serif;  
+}
+@mixin semibold-font {
+  // font-family: "SF-Pro-Text-Semibold", Sans-Serif;
+  font-family: "SFProText-Semibold", Sans-Serif;
+}
+@mixin bold-font {
+  // font-family: "SF-Pro-Text-Bold", Sans-Serif;
+    font-family: "SFProText-Bold", Sans-Serif;    
+}
+@mixin heavy-font {
+  // font-family: "SF-Pro-Text-Heavy", Sans-Serif;
+  font-family: "SFProText-Heavy", Sans-Serif;
+}
+
+// Flex mixins
+// @mixin flex {
+//   display: -webkit-flex;
+//   display: flex;
+// }
+
+//Typography
+@mixin font-size-extra-small {
+  font-size: 12px;
+}
+@mixin font-size-small {
+  font-size: 14px;
+}
+@mixin font-size-regular {
+  font-size: 16px;
+}
+@mixin font-size-x-regular {
+  font-size: 18px;
+}
+@mixin font-size-large {
+  font-size: 21px;
+}
+@mixin font-size-x-large {
+  font-size: 28px;
+}
+@mixin font-size-xx-large {
+  font-size: 32px;
+}
+@mixin font-size-xxx-large {
+  font-size: 38px;
+}
+@mixin font-size-xxxx-large {
+  font-size: 48px;
+}
+
+// margins
+@mixin m-l-15 {
+  margin-left: 15px;
+}
+
+//buttons
+@mixin min-icon-button {
+  width: 50px;
+  height: 50px;
+}
+
+//layout
+
+@mixin full-width-height {
+  width: 100%;
+  height: 100%;
+}
+
+// s
+
+@mixin box-shadow-none {
+  box-shadow: none;
+}
+
+// text-ellipsis
+
+@mixin text-ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}

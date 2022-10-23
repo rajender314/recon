@@ -1,0 +1,79 @@
+::ng-deep .users{
+    height: auto !important; /*80px;*/
+    display: flex;
+    .mat-list-item-content{
+        width: 100%;
+        padding: 0 !important;
+        .icon{
+            height: 60px;
+            width: 60px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            border: 1px solid #cbcdd5;
+        }
+        .info{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            /*margin-left: 10px;*/
+            overflow: hidden;
+            .list-item{
+                overflow: hidden;
+                white-space: nowrap;
+                word-wrap: break-word;
+                text-overflow: ellipsis;
+                height: 36px; /*40px;*/
+                display: flex;
+                align-items: center;
+                padding: 0 10px;
+                border-radius: 5px;
+                &:hover, &.active{
+                    background: #eceef7;
+                }
+                .pixel-icons{
+                    width: 16px;
+                    height: 16px;
+                    font-size: 16px;
+                    margin-right: 8px;
+                }
+            }
+            .designation, .departments, .user_role, .email{
+                color: #8c8d90;
+            }
+            .user-info{
+                display: flex;
+            }
+            .users{
+                .mat-list-item-content{
+                    .info{
+                        .list-item{
+                            padding-left: 30px;
+                            .pixel-icons{
+                                font-size: 14px;
+                                width: 14px;
+                                margin-left: 4px;
+                                height: 14px;
+                                &.icon-sub-organisations{
+                                    font-size: 13px;text-align: center;
+                                }
+                            }
+                        }
+                        .users{
+                            .mat-list-item-content{
+                                .info{
+                                    .list-item{
+                                        padding-left: 46px;
+                                        .pixel-icons{margin-left: 8px;}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    &:hover, &:active{
+        background-color: transparent !important;
+    }
+}

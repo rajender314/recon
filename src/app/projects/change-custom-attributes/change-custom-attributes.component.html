@@ -1,0 +1,34 @@
+<div class="mat-dialog-heading">
+    <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+    <button mat-icon-button mat-dialog-close tabindex="-1">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <mat-dialog-content>
+    <form [formGroup]="createFormGroup" *ngIf="!loader" class="form-flex" autocomplete="off">
+      <div *ngIf="data.formFields.length">
+        <div *ngFor="let field of data.formFields">
+          <ng-container *ngIf="field.key == 'dropdown'">
+            <pi-select [label]="field.label" [options]="field.options" [formControlName]="field.id"></pi-select>
+          </ng-container>
+          <ng-container *ngIf="field.key == 'single_line_text'">
+            <pi-form-field [label]="field.label">
+              <input type="text" pi-input [formControlName]="field.id" maxlength="64" />
+            </pi-form-field>
+          </ng-container>
+        </div>
+      </div>
+      <div class="empty-custom-screen" *ngIf="!data.formFields.length">
+        <p>No Custom Attributes Added</p>
+      </div>
+    </form>
+    <div class="spinner-view" *ngIf="loader">
+        <div class="empty-screen">
+            <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+        </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions class="p-t-25">
+    <button pi-button (click)="closeDialog()">Cancel</button>
+    <button pi-button color="primary" (click)="saveDetails(createFormGroup)" [disabled]="createFormGroup?.pristine || loader">Save</button>
+  </mat-dialog-actions>

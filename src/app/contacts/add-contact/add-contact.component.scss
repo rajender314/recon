@@ -1,0 +1,12 @@
+@import "../../../theme/contacts";
+
+.inline-space-bw {
+    display: flex;
+    align-items: flex-end;
+    .email,
+    .phone {
+        flex: 1;
+    }
+}
+
+

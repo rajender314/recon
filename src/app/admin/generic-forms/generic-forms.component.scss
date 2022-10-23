@@ -1,0 +1,141 @@
+.form-specs {
+    .tasks-list{
+        max-width: 600px;
+        margin-top:10px;
+        margin-bottom: 6px;
+        .task-row{
+            display: flex;
+            width: 100%;
+            .task-container{
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+                padding-top: 1px;
+                padding-bottom: .5rem;
+                width: 100%;
+                border-bottom: 1px dashed #ebedf2;
+                ::ng-deep app-form-builder{
+                    .pi-form-field{
+                        margin-top: 0px;
+                    } 
+                }           
+                i{
+                    &.icon-drag{
+                        font-size: 15px;
+                        height: 21px;
+                        cursor: pointer;
+                        width: 21px;
+                        margin-right: 4px;
+                        line-height: 22px;
+                        text-align: center;
+                        border-radius: 3px;
+                    }
+                    &:hover{
+                        background: #ebedf2;
+                    }
+                }
+                .task-menu{
+                    width: 3rem;
+                    // -webkit-box-flex: 1;
+                    // -ms-flex-positive: 1;
+                    // flex-grow: 1;
+                    text-align: right;
+                    font-weight: 500;
+                    font-size: 1.1rem;
+                    margin-left: 10px;
+                    .ak-button{
+                        padding: 0px;
+                    }
+                    i{
+                        &.icon-more-horizontal{
+                            font-size: 18px;
+                            height: 18px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    }
+
+.left-content{
+    .body{padding: 8px 0;
+        ul{
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            li{
+                padding: 5px 16px;
+                color: rgba(23, 43, 77, 0.8);
+                i, .icon-filler{
+                    position: relative;top: 1px;margin-right: 4px;
+                    font-size: 12px;width: 12px;height: 12px;display: inline-flex;
+                }
+                .group-title{
+                    padding: 4px 0;
+                    cursor: pointer;
+                }
+                ul{/*margin-left: 20px;*/
+                    li{
+                        border-radius: 5px;
+                        cursor: pointer;
+                        padding: 8px 16px 8px 40px;
+
+                        &:hover, &.active{
+                            background-color: #eceef7;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+.fixed-footer{
+    padding: 10px 20px;
+}
+.right-header {
+    border-bottom: none !important;
+}
+.right-content{
+    .form-specs{
+        padding-right: 0;
+        @media screen and (min-width: 960px){
+            padding-right: 16px;
+        }
+        form{max-width: 490px;padding-bottom: 20px;
+            .field-col{max-width: 490px;}
+        }
+    }
+    .add-specs{
+        position: absolute;
+        top: 4px;
+        right: 16px;
+        z-index: 999;
+        &:focus{
+            box-shadow: 0 0 0 2px rgba(38,132,255,.6) inset;
+        }
+    }
+}
+.icon-button-actions{
+    position: absolute;
+    top: 48px;
+    right: 10px;
+}
+.actions-col{
+    display: flex;
+    align-items: center;
+    button.ak-button{
+        width: 25px;
+    height: 25px;
+    line-height: 25px;
+    margin-left: 14px;
+    background-color: rgba(9,30,66,.04);
+    }
+    .icon-drag{font-size: 16px;height: 16px;width: 16px;opacity: 0.7;}
+    .icon-more-horizontal{    
+        width: 16px;
+        height: 16px;
+        font-size: 16px;
+        line-height: 16px;
+    }
+}

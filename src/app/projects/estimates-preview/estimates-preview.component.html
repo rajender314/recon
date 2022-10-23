@@ -1,0 +1,56 @@
+<div class="preview-wrapper" #previewWrapper>
+  <div class="split-estimate-container" *ngIf="estimate?.parent_id=='0' && state.splitExists">
+    <div class="split-estimate-header">
+      <p class="split-title">This estimate has been split across {{state.splitEstimates.length+(state.splitEstimates.length=='1')?' Organization':' Organizations'}}</p>
+      <div class="split-actions">
+        <!-- <a>Copy</a>
+        <a>Download</a> -->
+        <div class="edit-costs brand-text-link" (click)="splitEstimate()">Edit Costs</div> 
+        <button class="btn-switching-icon m-l-15" [matMenuTriggerFor]="splitParentSettings"><i class="pixel-icons icon-more-horizontal"></i></button>
+        <mat-menu #splitParentSettings="matMenu" xPosition="before" class="more-grid-actions">
+          <button mat-menu-item (click)="copySplitEstimate()">Copy</button>
+          <button mat-menu-item (click)="downloadSplitEstimate()">Download</button>
+          <!-- <button mat-menu-item (click)="splitEstimate()">Edit</button> -->
+        </mat-menu>
+      </div>
+    </div>
+    <div class="split-estimate-details">
+      <ng-container *ngFor="let estimate of state.splitEstimates;let i=index;">
+          <a class="split-estimate-into" @showMoreAnimate *ngIf="i<2 || state.showMore" href="#projects/{{job_id}}/estimates/{{estimate.id}}">
+            <div class="split-info">
+              <!-- <span class="icon-wrap">
+                  <i class="pixel-icons icon-company-codes"></i>
+              </span> -->
+              <pi-icon name="icon-company-codes" size="sm" background="#8E44AD" color="#FFF"></pi-icon>
+              <span class="split_org">{{estimate.split_org}}</span>
+              <span class="split_name">{{estimate.split_name}}</span>
+            </div>
+            <span class="split_cost">{{estimate.cost}}</span>
+          </a>
+      </ng-container>
+      <p class="see-more-less" *ngIf="state.splitEstimates.length>2" (click)="showMoreSplits()">
+        <span class="text" *ngIf="state.showMore">See Less<i class="pixel-icons icon-arrow-up"></i></span>
+        <span class="text" *ngIf="!state.showMore">See More<i class="pixel-icons icon-arrow-down"></i></span>
+      </p>
+    </div>
+  </div>
+  <div class="split-child-container" *ngIf="estimate?.parent_id!='0'">
+    <div class="parent-estimate"><a class="brand-text-link" href="#projects/{{job_id}}/estimates/{{estimate?.parent_id}}"><i class="pixel-icons icon-arrow-left"></i>Parent Estimate</a></div>
+    <div class="split-actions">
+        <div class="edit-costs brand-text-link" (click)="splitEstimate()">Edit Costs</div>
+        <button class="btn-switching-icon m-l-15" [matMenuTriggerFor]="splitSettings"><i class="pixel-icons icon-more-horizontal"></i></button>
+        <mat-menu #splitSettings="matMenu" xPosition="before" class="more-grid-actions">
+          <button mat-menu-item (click)="editDescription()">Edit Description</button>
+          <button mat-menu-item (click)="editCustomAttributes()">Edit Custom Attributes</button>
+          <button mat-menu-item (click)="changeBillingAddress()">Change Billing Address</button>
+        </mat-menu>
+    </div>
+    
+  </div>
+  <div *ngIf="!loader" [innerHtml]="previewPage | safeHtml: 'html'"></div>
+  <div class="spinner-view"  *ngIf="loader">
+      <div class="empty-screen">
+        <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+      </div>                
+    </div>
+</div>

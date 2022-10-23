@@ -1,0 +1,26 @@
+<form [formGroup]="preferencesForm" class="form-flex preferences" autocomplete="off">
+  <mat-list formArrayName="inputs">
+      <mat-list-item *ngFor="let list of inputs.controls;let i = index" [formGroupName]="i"> 
+          <div class="ak-field-group" *ngIf="!list.get('parent').value">
+              <label>{{list.get('name').value}}</label>
+              <div class="checkbox-container">
+                  <mat-checkbox color="primary" class="inbox-chk" formControlName="inbox_status" [disableRipple]="true"></mat-checkbox>
+                  <mat-checkbox color="primary" formControlName="email_status" [disableRipple]="true"></mat-checkbox>
+              </div>
+          </div>  
+          <div class="ak-field-group heading" *ngIf="list.get('parent').value">
+              <div>{{list.get('name').value}}</div>
+              <div class="checkbox-hdr">
+                <div class="recon-inbox" *ngIf="list.get('recon_inbox').value">{{list.get('recon_inbox').value}}</div>
+                <div *ngIf="list.get('email').value">{{list.get('email').value}}</div>
+              </div>
+          </div>  
+      </mat-list-item>
+    </mat-list>
+
+    <div class="fixed-footer b-t">
+        <button pi-button class="cancel" (click)="cancel()">Cancel</button>
+        <button class="m-l-15" pi-button color="primary" (click)="save(preferencesForm)" [disabled]="preferencesForm.pristine">Save</button>
+    </div>
+
+</form>

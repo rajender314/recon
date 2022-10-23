@@ -1,0 +1,10 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button [matDialogClose]="dailogCloseData" tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content style="min-height: 300px;">
+  <app-add-time-track (onClose)="onAfterClosed($event)" [config]="trackConfig"></app-add-time-track>
+</mat-dialog-content>

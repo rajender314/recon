@@ -1,0 +1,39 @@
+<div class="mat-dialog-heading add-estimate-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <div class="edit-order-container">
+    <div class="products-panel">
+      <div class="panel-header">
+          <div class="column1">Products/Services</div>
+          <!-- <div class="column2">Options</div> -->
+          <div class="column3 text-right">Status</div>
+      </div>
+      <div class="panel-container">
+        <div [sortablejs]="state.products" [sortablejsOptions]="{ handle: '.product-handle', animation: 150 }">
+          <div class="panel-item" *ngFor="let item of state.products; let i = index">
+            <div class="parent {{item.is_bundle ? 'unbundle' : 'bundle'}}">
+              <i class="pixel-icons icon-drag product-handle"></i><span><i class="pixel-icons icon-products"></i> {{item.product_name}}</span>
+            </div>
+            <ul *ngIf="item.children && item.children.length" class="child-list">
+              <div [sortablejs]="item.children" [sortablejsOptions]="{ handle: '.service-handle', animation: 150 }">
+                <li class="service" *ngFor="let child of item.children" [ngClass]="{'bundle_with_parent': item.is_bundle, 'bundle_with_service': (child.is_bundle && !item.is_bundle && !child.bundle?.jsr_ids_from?.length)}">
+                    <div class="column1"><i class="pixel-icons icon-drag service-handle"></i> <span class="name"><i class="pixel-icons icon-orders"></i>{{child.job_service_name}}</span></div>
+                    <!-- <div class="column2">{{child.option_no}}</div> -->
+                    <div class="column3 text-right">{{child.status_name}}</div>
+                </li>
+              </div>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions class="mat-footer">
+  <button pi-button color="subtle" (click)="close()">Cancel</button>
+  <button pi-button color="primary" (click)="save()">Apply</button>
+</mat-dialog-actions>

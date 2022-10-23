@@ -1,0 +1,43 @@
+<div style="height: 100vh;display: flex;align-items: center;">
+    <div class="recon-profile">
+        <div class="place-holder-avathar">
+           <div fxLayout="column" class="image-upload org-upload">
+               <label (click)="uploadLogo()" class="browse-file" matTooltip="{{(userDetails?.image=='')?'Browse':'Change'}}">
+                   <i class="pixel-icons icon-camera"></i>
+                   <!-- <a></a> -->
+               </label>
+              <div class="pro-pic">
+                 <div class="images" *ngIf="userDetails?.image!=''">
+                     <span class="pic" style="background-image: url('userDetails?.image')"></span>
+                 </div>
+                 <!-- <div class="text-image">
+                   <h3>{{userDetails?.first_name + ' ' + userDetails?.last_name}}</h3>
+                 </div> -->
+              </div>
+           </div>
+        </div>
+        <div class="profile-detail-info">
+           <h5>{{userDetails?.first_name + ' ' + userDetails?.last_name}}</h5>
+           <p>{{userDetails?.primary_email}}</p>
+       </div>
+       <div class="user-section">  
+           <div class="user-block">
+               <span class="user-label">Company :</span>
+               <span class="user-info">{{userDetails?.organizationName}}</span>
+             </div>
+           <div class="user-block">
+             <span class="user-label">Designation :</span>
+             <span class="user-info">{{userDetails?.designationName}}</span>
+           </div>
+           <div class="user-block">
+             <span class="user-label">Department :</span>
+             <span class="user-info">{{userDetails?.departmentName}}</span>
+           </div>   
+         </div>
+     
+     
+     </div>
+</div>
+
+
+

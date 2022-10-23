@@ -1,0 +1,527 @@
+<div class="primary-layout-detail">
+	<!-- <div>
+			<h1 >000111111</h1>
+	</div>	 -->
+	<div class="detail-container">
+		<header>
+			<div class="w-100 d-flex    flex-column">
+				<pi-breadcrumb>
+					<ng-container *ngIf="state.notifyType != 'old_notify'">
+						<ng-container *ngFor="let item of breadcrumbs">
+							<pi-breadcrumb-item *ngIf="item.type == 'link'" [label]="item.label" [routerLink]="item.route">
+							</pi-breadcrumb-item>
+							<pi-breadcrumb-item *ngIf="item.type != 'link'" [label]="item.label"></pi-breadcrumb-item>
+						</ng-container>
+					</ng-container>
+					<ng-container *ngIf="state.notifyType == 'old_notify'">
+						<pi-breadcrumb-item [title]="thread.tag" *ngIf="state.notifyType == 'old_notify'">{{thread.tags}}
+						</pi-breadcrumb-item>
+					</ng-container>
+				</pi-breadcrumb>
+
+				<div class="w-100 d-flex align-items-center justify-content-between ">
+					<aside class="left-header d-flex flex-width">
+
+						<h1 [title]="thread.subject" *ngIf="state.notifyType != 'old_notify'">{{thread.subject}}</h1>
+						<h1 [title]="thread.subject" *ngIf="state.notifyType == 'old_notify'">{{thread.sub}}</h1>
+					</aside>
+					<aside>
+						<div class="d-flex">
+							<div class="thread-actions" *ngIf="!noData && !state.loader && state.notifyType != 'old_notify'">
+								<div class="more-threads">
+									<div class="avator" *ngFor="let user of users.members | slice:0:(users.members.length>4?3:4)">
+										<pi-avatar size="md" style="width: 28px; height: 28px;" [user]="user" appearance="circle"></pi-avatar>
+									</div>
+									<div class="avator more" *ngIf="users.members.length > 4">
+										<div class="md">+{{users.members.length - 3}}</div>
+									</div>
+								</div>
+								<ng-container *ngIf="false">
+									<ul [matMenuTriggerFor]="listUsersMenu" [matMenuTriggerFor]="userListTrigger"
+										(menuClosed)="onMenuClosed()" (menuOpened)="onMenuOpened()">
+										<li>
+											<div class="avator"></div>
+										</li>
+										<li>
+											<div class="avator"></div>
+										</li>
+										<li>
+											<div class="avator"></div>
+										</li>
+									</ul>
+									<mat-menu #listUsersMenu="matMenu" xPosition="before" class="users-menu">
+										<div style="height: 100%" (click)="$event.stopPropagation()">
+											<div class="menu-actions">
+												<app-search #appSearch [ngStyle]="{'visibility': selectedIndex == 1 ? 'visible' : 'hidden'}"
+													(onSearch)="onSearch($event)"></app-search>
+												<button pi-button (click)="onSelectionChange()">{{selectedIndex == 0 ? 'Add' : 'Save'}}</button>
+											</div>
+											<div *ngIf="selectedIndex == 0">
+												<!-- <div class="list is-scroll"> -->
+												<cdk-virtual-scroll-viewport style="min-height: 150px;max-height: 100%;" itemSize="38">
+													<ng-container *cdkVirtualFor="let item of selected;let i = index">
+														<div class="list-item">
+															<div class="img-container">
+																<!-- <div class="avator"></div> -->
+																<pi-avatar size="md" [user]="userConfig" appearance="circle"></pi-avatar>
+																<span class="name" [innerHtml]="item.label"></span>
+															</div>
+															<i class="pixel-icons icon-close-slim" (click)="removeUser(item, i)"></i>
+														</div>
+													</ng-container>
+												</cdk-virtual-scroll-viewport>
+												<!-- </div> -->
+											</div>
+											<div class="animated slideInRight" *ngIf="selectedIndex == 1">
+												<!-- <div class="is-scroll"> -->
+												<cdk-virtual-scroll-viewport style="min-height: 150px;max-height: 100%;" itemSize="38">
+													<ng-container *cdkVirtualFor="let user of usersList">
+														<pi-form-field label="{{user.label}}">
+															<input type="checkbox" pi-input (change)="userSelection(user)"
+																[(ngModel)]="user.selected" />
+														</pi-form-field>
+													</ng-container>
+												</cdk-virtual-scroll-viewport>
+												<!-- </div> -->
+											</div>
+										</div>
+									</mat-menu>
+								</ng-container>
+								<button class="m-l-15 btn-switching-icon" matTooltip="Edit Recipients"
+									(click)="toggleSidenav('show')"><i class="pixel-icons icon-add-users"></i></button>
+								<button class="m-l-15 btn-switching-icon" (click)="saveFlag({type:'archive',status:thread.is_archive})"
+									matTooltip="{{thread.is_archive?'Move to inbox':'Archive'}} "><i
+										class="pixel-icons icon-{{thread.is_archive?'move-to-inbox':'archive'}}"></i></button>
+								<button class="m-l-15 btn-switching-icon {{thread.is_flag?'unflag':'flag'}}"
+									(click)="saveFlag({type:'flag',status:thread.is_flag})"
+									matTooltip="{{thread.is_flag?'Unflag':'Flag'}}"><i class="pixel-icons icon-flag"></i></button>
+								<!-- <i class="pixel-icons icon-archive" title="Archive" 
+                          (click)="saveFlag({type:'archive',status:thread.is_archive})">
+                        </i> -->
+								<button pi-button color="primary" style="text-transform: none !important;" class="m-l-15"
+									(click)="saveRead()" [ngClass]="{'active': thread.unread_count==0}">{{thread.unread_count==0?"Mark
+									as Unread":"Mark as Read"}}</button>
+								<!-- <span (click)="saveRead()" [ngClass]="{'active': thread.unread_count==0}">
+                            {{thread.unread_count==0?"Mark as Unread":"Mark as Read"}}
+                        </span> -->
+								<!-- <button class="m-l-15 btn-switching-icon"><i class="pixel-icons icon-flag" 
+                          [ngClass]="{'active': thread.is_flag}" 
+                          (click)="saveFlag({type:'flag',status:thread.is_flag})" 
+                          [title]="thread.is_flag?'Unflag':'Flag'">
+                        </i></button> -->
+							</div>
+						</div>
+					</aside>
+				</div>
+			</div>
+
+		</header>
+		<!-- <div class="header">
+    <div class="info">
+        <div class="title" [title]="thread.tag">{{thread.tag}}</div>
+        <div class="sub-title text-ellipsis" [title]="thread.subject">{{thread.subject}}</div>
+    </div>
+  </div> -->
+		<div class="flex-column primary-layout-detail-body padding-20" style="padding-right: 0px !important;">
+			<div class="section  messages-thread-ui  " #messageListSection>
+					<div class="spinner-view" *ngIf="state.loader">
+							<div class="empty-screen">
+							  <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>				
+							</div>
+					</div>
+				<div class="message-list secondary-max-screen-width" *ngIf="!noData && !state.loader">
+					<ng-container *ngIf="state.notifyType != 'old_notify'">
+						<div class="item" *ngFor="let msg of list;let i = index">
+							<ng-container *ngIf="!msg.notify_id || msg.notify_id != 5">
+								<pi-avatar size="lg" *ngIf="!thread.notify_category_id && !thread.note_type_id" appearance="circle">
+								</pi-avatar>
+								<pi-avatar size="md" *ngIf="thread.notify_category_id || thread.note_type_id" [user]="msg.user_info"
+									appearance="circle">
+								</pi-avatar>
+								<div class="details">
+									<div class="info">
+										<div class="user text-ellipsis" [innerHTML]="msg.created"></div>
+										<div class="time">{{msg.created_date | fromNow}}</div>
+									</div>
+									<ng-container *ngIf="selectedThread?.breadcrum_type == 5">
+										<div class="msg">
+											<!-- <div class="plain" *ngIf="i == 0" [innerHTML]="'Please Login to the Vendors Management System to Bid for this Products and Services.'"></div> -->
+											<div class="plain" [innerHTML]="msg.message"></div>
+											<!-- *ngIf="i != 0" -->
+										</div>
+										<div class="attachments {{msg['attachment_css']}}" [class.one]="msg.attachment.length==1" *ngIf="msg.attachment?.length">
+											<div *ngFor="let atchmt of msg.attachment" class="asset-type-{{msg['attachment_css']}} {{atchmt.extension}}">
+													<div class="attachment-preview" (click)="lightbox(msg.attachment, atchmt)"
+														*ngIf="attachmentImageTypes.indexOf(atchmt.extension)>-1  && (msg['attachment_css']!='multiple-formats')">
+														<div class="file-attached-in-msg">
+															<div class="image-thumb-view-msg">
+																	<img src="{{atchmt.preview_path}}" alt="" />
+															</div>															
+															<span class="download-attachment-image" (click)="singleDownload(atchmt)"><i class="pixel-icons icon-download"></i></span>
+															<div class="overlay-file-name">																	
+																	<div class="content">																
+																		<div style="display: flex;align-items: center; justify-content: center;">
+																			<i class="pixel-icons icons-formate icon-{{atchmt.extension}}"></i>																	
+																		</div>
+																		<div class="file-detail-names">
+																				<span class="title" matTooltip="{{atchmt.original_name}}">{{atchmt.original_name}}</span>																	
+																				<p>{{ atchmt.filesize/1024 | number:'.2' }} KB </p>
+																		</div>
+																	</div>
+																</div>
+														</div>
+															
+													</div>
+													<div class="other-formate-files {{atchmt.extension}}" (click)="lightbox(msg.attachment, atchmt)" *ngIf="attachmentImageTypes.indexOf(atchmt.extension)>-1 && (msg['attachment_css'] == 'multiple-formats')">
+															<div class="file-types images-list-for-message">
+																	<img style="max-width:100%;" src="{{atchmt.preview_path}}" alt="" />
+															</div>
+															<div class="file-names">
+																<p class="file-type-name">
+																	<span class="title" matTooltip="{{atchmt.original_name}}">{{atchmt.original_name}}</span>
+																	<span>{{ atchmt.filesize/1024 | number:'.2' }} KB </span>
+																</p>
+															</div>
+															<span class="download-attachment-image" (click)="singleDownload(atchmt)">
+																<i class="pixel-icons icon-download"></i>
+															</span>
+														</div>
+												<div class="other-formate-files" *ngIf="attachmentOtherTypes.indexOf(atchmt.extension)>-1">
+												<div class="file-types">
+													<i class="pixel-icons icon-{{atchmt.extension}}"></i>
+												</div>
+												<div class="file-names">
+													<p class="file-type-name">
+														<span class="title" matTooltip="{{atchmt.original_name}}">{{atchmt.original_name}}</span>
+														<span>{{ atchmt.filesize/1024 | number:'.2' }} KB </span>
+													</p>
+												</div>
+												<span class="download-attachment-image" (click)="singleDownload(atchmt)">
+													<i class="pixel-icons icon-download"></i>
+												</span>
+											</div>
+											</div>
+										</div>
+									</ng-container>
+									<ng-container *ngIf="selectedThread?.breadcrum_type != 5">
+										<div class="msg">
+											<div class="plain" [innerHTML]="msg.message"></div>
+										</div>
+										<div class="attachments {{msg['attachment_css']}}" [class.one]="msg.attachment.length==1" *ngIf="msg.attachment?.length">
+											<div *ngFor="let atchmt of msg.attachment" class="asset-type-{{msg['attachment_css']}} {{atchmt.extension}}">
+													<div class="attachment-preview" (click)="lightbox(msg.attachment, atchmt)"
+														*ngIf="attachmentImageTypes.indexOf(atchmt.extension)>-1 && (msg['attachment_css']!='multiple-formats')">
+														<div class="file-attached-in-msg">
+															<div class="image-thumb-view-msg">
+															<img src="{{atchmt.preview_path}}" alt="" />
+															</div>
+															<span class="download-attachment-image" (click)="singleDownload(atchmt)">
+																	<i class="pixel-icons icon-download"></i>
+																</span>
+															<div class="overlay-file-name">																	
+																<div class="content">																
+																	<div style="display: flex;align-items: center; justify-content: center;">
+																		<i class="pixel-icons icons-formate icon-{{atchmt.extension}}"></i>																	
+																	</div>
+																	<div class="file-detail-names">
+																			<span class="title" matTooltip="{{atchmt.original_name}}">{{atchmt.original_name}}</span>																	
+																			<p>{{ atchmt.filesize/1024 | number:'.2' }} KB </p>
+																	</div>
+																</div>
+															</div>
+														</div>															
+													</div>
+												<div class="other-formate-files {{atchmt.extension}}" (click)="lightbox(msg.attachment, atchmt)" *ngIf="attachmentImageTypes.indexOf(atchmt.extension)>-1 && (msg['attachment_css'] == 'multiple-formats')">
+												<div class="file-types images-list-for-message">
+														<img style="max-width:100%;" src="{{atchmt.preview_path}}" alt="" />
+												</div>
+												<div class="file-names">
+													<p class="file-type-name">
+														<span class="title" matTooltip="{{atchmt.original_name}}">{{atchmt.original_name}}</span>
+														<span>{{ atchmt.filesize/1024 | number:'.2' }} KB </span>
+													</p>
+												</div>
+												<span class="download-attachment-image" (click)="singleDownload(atchmt)">
+													<i class="pixel-icons icon-download"></i>
+												</span>
+											</div>
+											<div class="other-formate-files" *ngIf="attachmentOtherTypes.indexOf(atchmt.extension)>-1">
+													<div class="file-types">														
+														<i class="pixel-icons icon-{{atchmt.extension}}"></i>
+													</div>
+													<div class="file-names">
+														<p class="file-type-name">
+															<span class="title" matTooltip="{{atchmt.original_name}}">{{atchmt.original_name}}</span>
+															<span>{{ atchmt.filesize/1024 | number:'.2' }} KB </span>
+														</p>
+													</div>
+													<span class="download-attachment-image" (click)="singleDownload(atchmt)">
+														<i class="pixel-icons icon-download"></i>
+													</span>
+												</div>
+											</div>
+										</div>
+									</ng-container>
+								</div>
+							</ng-container>
+							<ng-container *ngIf="msg.notify_id == 5">
+								<app-msg-notifications [msg]="msg" [thread]="thread" (onUpdate)="onUpdate($event, msg)">
+								</app-msg-notifications>
+							</ng-container>
+						</div>
+					</ng-container>
+					<ng-container *ngIf="state.notifyType == 'old_notify'">
+						<div class="item notification" *ngFor="let msg of list">
+							<div class='msgthread_item msg_notify_t disabled'>
+								<span class='txt' [innerHtml]="msg.message"></span>
+							</div>
+						</div>
+					</ng-container>
+
+				</div>
+				<!-- <div class="no_data" *ngIf="noData && !state.loader">No Messages Created Yet!</div> -->
+			</div>
+
+			<!-- Side Nav -->
+			<div class="side-nav-container recipients" *ngIf="showRecipients">
+				<div class="overlay" (click)="toggleSidenav('show')"></div>
+				<div class="side-nav" [class.active]="showRecipients">
+					<div class="side-nav-header">
+						<h2 class="ft18 font-normal p-0">Edit Recipients</h2>
+						<i class="pixel-icons icon-close-slim" (click)="toggleSidenav('show')"></i>
+					</div>
+					<div class="side-nav-body">
+						<div class="section-container">
+
+							<mat-accordion>
+								<mat-expansion-panel>
+									<mat-expansion-panel-header collapsedHeight="40px" expandedHeight="40px">
+										<mat-panel-title>
+											<i class="pixel-icons icon-user"></i>
+											<span>{{users.members.length}} Members</span>
+										</mat-panel-title>
+									</mat-expansion-panel-header>
+
+									<ng-template matExpansionPanelContent>
+										<mat-list *ngIf="users.members.length">
+											<mat-list-item *ngFor="let user of users.members">
+												<div class="list-item">
+													<span class="icon-container">
+														<pi-avatar size="sm" [user]="user" appearance="circle">
+														</pi-avatar>
+														<div class="member-info">
+															<span class="title" [innerHtml]="user.firstName + ' ' + user.lastName"></span>
+															<!-- <span class="dept-name" [innerHtml]="user.firstName + ' ' + user.lastName"></span> -->
+														</div>
+													</span>
+													<span class="action" [class.active]="selectedUser?.users_id == user.users_id" *ngIf="state?.currentUserId != user?.users_id"> 
+														<i class="pixel-icons icon-delete" #deleteMenuPop="matMenuTrigger"
+															[matMenuTriggerFor]="deleteMenu" (menuClosed)="selectedUser = null;"
+															(menuOpened)="selectedUser = user">
+														</i>
+														<mat-menu #deleteMenu="matMenu" class="card-ui row-card colored bg-delete">
+
+															<div class="card row-card" (click)="$event.stopPropagation()">
+																<div class="card-header"><i class="pixel-icons icon-exclamation"></i></div>
+																<div class="card-body">
+																	<h5 class="card-title">Remove User</h5>
+																	<p class="card-text">Are you sure you want to remove user?
+																	</p>
+																	<div class="footer">
+																		<a class="card-link text-btn" (click)="deleteMenuPop.closeMenu()">Cancel</a>
+																		<a class="card-link act-btn"
+																			(click)="removeUser('members', 'users_id');deleteMenuPop.closeMenu();">Remove</a>
+																	</div>
+																</div>
+															</div>
+														</mat-menu>
+													</span>
+												</div>
+											</mat-list-item>
+										</mat-list>
+										<div class="no-data" *ngIf="!users.members.length">No Users Added</div>
+										<div class="add-section">
+											<span *ngIf="users.members.length > show.usersCount && false">See All Members</span>
+											<button pi-button color="primary" (click)="addRecipients('members')">Add User
+												<!-- <i class="pixel-icons icon-plus"></i> -->
+											</button>
+										</div>
+									</ng-template>
+								</mat-expansion-panel>
+
+								<mat-expansion-panel>
+									<mat-expansion-panel-header collapsedHeight="40px" expandedHeight="40px">
+										<mat-panel-title>
+											<i class="pixel-icons icon-groups"></i>
+											<span>{{users.groups.length}} Groups</span>
+										</mat-panel-title>
+									</mat-expansion-panel-header>
+
+									<ng-template matExpansionPanelContent>
+										<mat-list *ngIf="users.groups.length">
+											<mat-list-item *ngFor="let group of users.groups" class="groups-item">
+												<div class="list-item">
+													<span class="icon-container group-row">
+														<div class="avator group-avator">
+															<i class="pixel-icons icon-groups"></i>
+														</div>
+														<span class="title" [innerHtml]="group.name"></span>
+													</span>
+													<span class="action" [class.active]="selectedGroup?.id == group.id">
+														<i class="pixel-icons icon-delete" #deleteMenuPopup="matMenuTrigger"
+															[matMenuTriggerFor]="deleteMenuCard" (menuClosed)="selectedGroup = null;"
+															(menuOpened)="selectedGroup = group">
+														</i>
+														<mat-menu #deleteMenuCard="matMenu" class="card-ui row-card colored bg-delete">
+
+															<div class="card row-card" (click)="$event.stopPropagation()">
+																<div class="card-header"><i class="pixel-icons icon-exclamation"></i></div>
+																<div class="card-body">
+																	<h5 class="card-title">Remove Group</h5>
+																	<p class="card-text">Are you sure you want to remove group?
+																	</p>
+																	<div class="footer">
+																		<a class="card-link text-btn" (click)="deleteMenuPopup.closeMenu()">Cancel</a>
+																		<a class="card-link act-btn"
+																			(click)="removeUser('groups', 'id');deleteMenuPopup.closeMenu();">Remove</a>
+																	</div>
+																</div>
+															</div>
+														</mat-menu>
+													</span>
+												</div>
+											</mat-list-item>
+										</mat-list>
+										<div class="no-data" *ngIf="!users.groups.length">No Groups Added</div>
+										<div class="add-section">
+											<span *ngIf="users.groups.length > show.groupsCount && false">See All Groups</span>
+											<button pi-button color="primary" (click)="addRecipients('groups')">Add Group
+												<!-- <i class="pixel-icons icon-plus"></i> -->
+											</button>
+										</div>
+									</ng-template>
+								</mat-expansion-panel>
+							</mat-accordion>
+
+
+
+							<div *ngIf="false" class="section">
+								<div class="section-header">
+									<h4>Members</h4>
+								</div>
+								<mat-list *ngIf="users.members.length">
+									<mat-list-item *ngFor="let user of users.members">
+										<div class="list-item">
+											<span class="icon-container">
+												<!-- [matTooltip]="user.label" -->
+												<pi-avatar size="sm" [user]="user" appearance="circle"></pi-avatar>
+												<span class="name" [innerHtml]="user.firstName + ' ' + user.lastName"></span>
+											</span>
+											<span class="action">
+												<i class="pixel-icons icon-delete"></i>
+											</span>
+										</div>
+									</mat-list-item>
+								</mat-list>
+								<div class="no-data" *ngIf="!users.members.length">No Users Added</div>
+								<div class="add-section">
+									<span *ngIf="users.to.length > 15">See All Members</span>
+									<button pi-icon-button matTooltip="Add" class="icon-button-wrapper" (click)="addRecipients('user')">
+										<i class="pixel-icons icon-plus"></i>
+									</button>
+								</div>
+							</div>
+							<div *ngIf="false" class="section">
+								<div class="section-header">
+									<h4>GROUPS</h4>
+								</div>
+								<mat-list *ngIf="users.groups.length">
+									<mat-list-item *ngFor="let user of users.groups">
+										<div class="list-item">
+											<span>
+												<!-- [matTooltip]="user.label" -->
+												<!-- <pi-avatar size="sm" [user]="user" appearance="circle"></pi-avatar> -->
+												<div class="avator">
+													<i class="pixel-icons icon-groups"></i>
+												</div>
+												{{user.label}}
+											</span>
+											<span class="action">
+												<i class="pixel-icons icon-delete"></i>
+											</span>
+										</div>
+									</mat-list-item>
+								</mat-list>
+								<div class="no-data" *ngIf="!users.groups.length">No Groups Added</div>
+								<div class="add-section">
+									<span *ngIf="users.group_to.length > 15">See All Groups</span>
+									<button pi-icon-button matTooltip="Add" class="icon-button-wrapper" (click)="addRecipients('group')">
+										<i class="pixel-icons icon-plus"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+						<div class="footer" *ngIf="false">
+							<pi-form-field>
+								<textarea id="newMessage" pi-input placeholder="Add a Message" rows="1" minRows="3" maxRows="3"
+									(keydown)="onKeydown($event)"></textarea>
+							</pi-form-field>
+							<div class="action">
+								<button pi-button class="m-r-15">Cancel</button>
+								<button pi-button color="primary">Save</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="no-data-screen" *ngIf="noData && !state.loader">
+			<div class="empty-screen">
+				<div class="icon-info-holder">
+					<div class="icon">
+						<i class="pixel-icons {{tab.type=='notification'?'icon-notifications':'icon-messages'}}"></i>
+					</div>
+					<p class="no_data" *ngIf="tab.type!='notification' && tab.type!='notifications_old'">No Messages found</p>
+					<p class="no_data" *ngIf="tab.type=='notification'">No Notifications found</p>
+					<p class="no_data" *ngIf="tab.type=='notifications_old'">No Notifications found</p>
+				</div>
+				<button pi-icon-button color="primary" *ngIf="tab.type!='notification' && tab.type!='notifications_old'"
+					(click)="createDiscussion()">+ Create Discussion</button>
+			</div>
+		</div>
+		<div class="footer padding-20"
+			*ngIf="!noData && !state.loader && !thread.notify_category_id && !thread.note_type_id">
+			<div class="secondary-max-screen-width padding-20">
+				<app-send-box [options]="{container: messageListContainer, thread_id: thread.thread_id,jobs_id:jobs_id}"
+					(addMessage)="onMessageAdd($event)"></app-send-box>
+				<!--<pi-form-field>
+					<textarea id="newMessage" pi-input placeholder="Message" rows="1" minRows="1" maxRows="10" [(ngModel)]="newMessage" (focus)="showButtons = true;"
+					 (keydown)="onKeydown($event)"></textarea>
+				</pi-form-field>
+				<div *ngIf="showButtons">
+					<div class="job-attachments-list thread">
+						<div class="uploads">
+							<div ng2FileDrop [ngClass]="{'file-over': hasDropZoneOver}" [uploader]="uploader" class="file-drop-zone">
+								<input id="attachment" type="file" ng2FileSelect [uploader]="uploader" [hidden]="true" multiple />
+								<label for="attachment" class="browse-file">Upload new Files: <span class="upload-file-discussion"><i class="pixel-icons icon-plus-slim"></i></span></label>
+							</div>
+						</div>
+						<div class="files-sec">
+							<div *ngFor="let file of uploadData.files;let i = index" class="attachment-file">
+								<img src="" alt="">
+								<i class="pixel-icons icon-{{file.type}}"></i>
+								<span [innerHtml]="file.original_name"></span>
+								<span class="remove-pill" (click)="removeAttachment(i)"><i class="pixel-icons icon-close-slim"></i></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="actions" *ngIf="showButtons">
+					<button pi-button color="subtle" (click)="close()">Cancel</button>
+					<button pi-button color="primary" (click)="createMessage()">Create</button>
+				</div>-->
+
+			</div>
+		</div>
+	</div>
+</div>

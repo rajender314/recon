@@ -1,0 +1,16 @@
+<div class="btn-section" *ngIf="!isProduct">
+	<button pi-button color="primary" (click)="importDialog()">Import External Job Data</button>
+	<div class="seperator"></div>
+	<button pi-button color="primary" (click)="showProduct()">
+		<i class="pixel-icons icon-plus"></i>Add Product</button>
+</div>
+
+<app-add-product [products]="productsList" [jobId]="projectID" [form]="productService" *ngIf="isProduct"></app-add-product>
+
+<div class="footer">
+	<button pi-button color="subtle" (click)="reset()">Reset</button>
+	<button pi-button color="primary" [disabled]="productService.invalid || !checkLength(productService)" (click)="addProduct(productService)">Continue
+		Adding Specs</button>
+	<!-- productService.pristine ||  -->
+	<!-- || checkLength(services) -->
+</div>

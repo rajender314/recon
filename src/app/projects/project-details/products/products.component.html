@@ -1,0 +1,1166 @@
+<section class="secondary-layout">
+	<div class="spinner-view" *ngIf="state.isLoading" style="z-index: 9">
+		<div class="empty-screen">
+			<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+		</div>
+	</div>
+	<header *ngIf="state.allProducts.length || state.DOMSearchValue">
+		<div class="w-100 d-flex justify-content-center flex-column">
+			<pi-breadcrumb>
+				<ng-container *ngFor="let item of state.breadcrumbs">
+					<pi-breadcrumb-item *ngIf="item.type == 'link'" label="Projects" [routerLink]="item.route">
+					</pi-breadcrumb-item>
+					<pi-breadcrumb-item *ngIf="item.type != 'link'" [innerHtml]="item.label"></pi-breadcrumb-item>
+				</ng-container>
+			</pi-breadcrumb>
+			<div class="w-100 d-flex align-items-center justify-content-between ">
+				<aside class="left-header d-flex flex-width">
+					<!-- <i class="pixel-icons icon-arrow" (click)="changeMasterView()"></i> -->
+					<h1>Products</h1>
+				</aside>
+				<aside class="d-flex right-header flex-width justify-content-end" *ngIf="(APP.permissions.job_access.products?.job_specific_user=='edit' || APP.permissions.job_access.products?.job_specific_others=='edit')">
+					<button class="btn-switching-icon" (click)="state.hideCancelledProducts = !state.hideCancelledProducts">
+						<i *ngIf="state.hideCancelledProducts" title="Show All Products" class="pixel-icons icon-view"></i>
+						<i *ngIf="!state.hideCancelledProducts" title="Hide Cancelled Products" class="pixel-icons icon-hide"></i>
+					</button>
+					<!-- && state?.projectStatusID!=5 -->
+					<div class="m-l-15 btn-group basic-group-btns" *ngIf="state.editJobAccess">
+						<button class="first-child" (click)="addProduct('show')">Add Product</button>
+						<div class="btn-group">
+							<button class="last-child" mat-button [matMenuTriggerFor]="menu">
+								<i class="pixel-icons icon-arrow-down"></i>
+							</button>
+							<mat-menu #menu="matMenu" xPosition="before" class="drop-menu-ui">
+								<!-- <button mat-menu-item>Item 1</button> -->
+								<a *ngFor="let action of state.globalActions" [innerHtml]="action.label" (click)="performActions(action.flag, action.key)">Add
+									Product
+								</a>
+							</mat-menu>
+						</div>
+					</div>
+				</aside>
+			</div>
+		</div>
+
+	</header>
+
+	<pi-master-detail-view #myResizer class="secondary-layout-holder for-mask" [showDetail]="state.showView" *ngIf="state.allProducts.length || state.DOMSearchValue">
+		<pi-master-view class="left-section" [class.edit-order-section]="state.editOrder" [style.width.px]='leftWidth'>
+			<div class="filter-and-drog-holder" *ngIf="!state.editOrder">
+				<!-- <a class="pointer"><span class="icon-ui"><i class="pixel-icons icon-filter-new"></i></span>
+					<span>Filter</span></a> -->
+
+				<div class="custome-search-products" [class.applied]="state.DOMSearchValue?.length">
+					<app-search #piSearchInput (onSearch)="DOMSearch($event)"></app-search>
+				</div>
+				<ng-container *ngIf="state.editJobAccess">
+				<a class="pointer" (click)="state.allProducts.length && !state.DOMSearchValue ? editOrder() : ''" *ngIf="!state.editOrder">
+					<span class="icon-ui">
+						<i class="pixel-icons icon-drag"></i>
+					</span>
+					<span>Edit Order</span>
+				</a>
+			</ng-container>
+			</div>
+			<div class="filter-and-drog-holder" *ngIf="state.editOrder" style="justify-content: flex-start; padding-left: 16px">
+				<a class="pointer" (click)="resetOrder()" matTooltip="Close"><div class="ag-cell-custome-actions" style="position: relative; top: 0px;">
+					<ul style="padding-top: 0px; ">
+						<li class="m-0" style="background: transparent;">
+							<i class="pixel-icons pixel-icons icon-arrow" style="font-size: 16px;"></i>
+						</li>
+					</ul>
+				</div></a>	
+				<span style="padding-top: 3px; padding-left: 4px;">Edit Order</span>					
+			</div>
+			<div class="products">
+				<div class="products-list">
+					<div class="list" #listScroll *ngIf="!state.isLoading">
+						<virtual-scroller *ngIf="!state.editOrder" [scrollAnimationTime]="1000" [useMarginInsteadOfTranslate]="true"
+						 [bufferAmount]="2" #scroll [items]="(state.editOrder ? editOrderProducts : state.allProducts)" [enableUnequalChildrenSizes]="true">
+							<div class="drag-box" *ngFor="let prod of scroll.viewPortItems; trackBy:index; let i = index">
+								<div class="list-items dd-handle" *ngIf="(state.hideCancelledProducts ? !prod.is_cancel : true) && !prod.is_dummy">
+									<div class="parent-item" (click)="onSelect('product', prod)">
+										<!-- <i class="pixel-icons icon-products"></i> -->
+										<i class="pixel-icons {{prod.is_cancel ? 'icon-cancelled-products' : 'icon-products'}}"></i>
+										<div class="product-name-icon">
+											<span [title]="prod.name" class="medium-font" [innerHtml]="prod.name"></span>
+											<span class="product-type"> - </span>
+											<span [innerHtml]="prod.product_type" class="regularFont"></span>
+										</div>
+										<i class="pixel-icons {{prod.isOpen ? 'icon-arrow-down' : 'icon-arrow-up'}}"></i>
+									</div>
+									<div class="dd-item">
+										<div class="child-item" [sortablejs]="prod.services" [sortablejsOptions]="{ animation: 150, handle: '.handle' }" @servicesAnimate
+										 *ngIf="prod.isOpen">
+											<div *ngFor="let serv of prod.services; trackBy:index; let j = index;" class="dd-handle align-items-start" (click)="onSelect('service', serv, i, j)"
+											 [class.highlight]="serv.jobs_service_revisions_id == state.selectedService?.jobs_service_revisions_id">
+												<i class="pixel-icons icon-drag handle" *ngIf="state.editOrder"></i>
+												<!-- <i class="pixel-icons icon-orders"></i> -->
+												<i class="pixel-icons {{serv.form_status_id == 10 ? 'icon-cancelled-services' : 'icon-orders'}}"></i>
+												<span [innerHtml]="serv.services_name" [title]="serv.services_name"></span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="list-items dd-handle" style="overflow: hidden; position: relative;" *ngIf="prod.is_dummy">
+									<div class="parent-item">
+										<i class="pixel-icons icon-products dummy-icon"></i>
+										<div class="product-name-icon dummy-name">
+											<span class="dummy-product-text"> </span>
+										</div>
+									</div>
+									<div class="dd-item">
+										<div class="child-item ">
+											<div class="dd-handle " style="padding-right: 0px;">
+												<i class="pixel-icons icon-orders dummy-icon"></i>
+												<span class="dummy-service-text dummy-name" style="top: 0px;"></span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</virtual-scroller>
+						<virtual-scroller *ngIf="state.editOrder" [parentScroll]="listScroll.nativeElement" cdkDropList (cdkDropListDropped)="drop($event)" [scrollAnimationTime]="1000" [useMarginInsteadOfTranslate]="true"
+						 [bufferAmount]="2" #scroll [items]="(state.editOrder ? editOrderProducts : state.allProducts)" [enableUnequalChildrenSizes]="true">
+							<div cdkDrag class="drag-box " *ngFor="let prod of scroll.viewPortItems; trackBy:index; let i = index">
+								<div class="list-items dd-handle" *ngIf="(state.hideCancelledProducts ? !prod.is_cancel : true) && !prod.is_dummy">
+									<div class="parent-item" (click)="onSelect('product', prod)">
+										<i class="pixel-icons icon-drag" cdkDragHandle *ngIf="state.editOrder"></i>
+										<i class="pixel-icons {{prod.is_cancel ? 'icon-cancelled-products' : 'icon-products'}}"></i>
+										<div class="product-name-icon">
+											<span [title]="prod.name" class="medium-font" [innerHtml]="prod.name"></span>
+											<span class="product-type"> - </span>
+											<span [innerHtml]="prod.product_type" class="regularFont"></span>
+										</div>
+										<i class="pixel-icons {{prod.isOpen ? 'icon-arrow-down' : 'icon-arrow-up'}}"></i>
+									</div>
+									<div class="dd-item">
+										<div class="child-item" [sortablejs]="prod.services" [sortablejsOptions]="{ animation: 150, handle: '.handle' }" @servicesAnimate
+										 *ngIf="prod.isOpen">
+											<div *ngFor="let serv of prod.services; trackBy:index; let j = index;" class="dd-handle align-items-start" (click)="onSelect('service', serv, i, j)"
+											 [class.highlight]="serv.jobs_service_revisions_id == state.selectedService?.jobs_service_revisions_id">
+												<i class="pixel-icons icon-drag handle" *ngIf="state.editOrder"></i>
+												<aside class="sort-services">
+												<i class="pixel-icons {{serv.form_status_id == 10 ? 'icon-cancelled-services' : 'icon-orders'}}"></i>
+												<span [innerHtml]="serv.services_name" [title]="serv.services_name"></span></aside>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="list-items dd-handle" style="overflow: hidden; position: relative;" *ngIf="prod.is_dummy">
+									<div class="parent-item">
+										<i class="pixel-icons icon-products dummy-icon"></i>
+										<div class="product-name-icon dummy-name">
+											<span class="dummy-product-text"> </span>
+										</div>
+									</div>
+									<div class="dd-item">
+										<div class="child-item">
+											<div class="dd-handle" style="padding-right: 0px;">
+												<i class="pixel-icons icon-orders dummy-icon"></i>
+												<span class="dummy-service-text dummy-name" style="top: 0px;"></span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</virtual-scroller>
+						<div *ngIf="!state.allProducts.length" class="no-data-screen spinner-view" style="background-color: #ffffff;">
+							<div class="empty-screen">
+								<div class="icon-info-holder" style="    position: absolute;
+		margin-top: -18px;">
+									<div class="icon"><i style="margin-right: 0;" class="pixel-icons icon-search"></i></div>
+									<p class="alert-message">No Products Found!</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- <div class="list" *ngIf="!state.isLoading" infiniteScroll [infiniteScrollDistance]="1" [infiniteScrollThrottle]="50" (scrolled)="loadMoreProducts()"
+					 (scrolledUp)="loadTopProducts()" [scrollWindow]="false">
+						<div [sortablejs]="state.editOrder ? editOrderProducts : state.allProducts" class="dd-item" [sortablejsOptions]="{ animation: 150, handle: '.icon-drag' }">
+							<ng-container *ngFor="let prod of (state.editOrder ? editOrderProducts : state.allProducts); trackBy:index; let i = index">
+								<div class="list-items dd-handle" *ngIf="(state.hideCancelledProducts ? !prod.is_cancel : true) && !prod.is_dummy">
+									<div class="parent-item" (click)="onSelect('product', prod)">
+										<i class="pixel-icons icon-drag" *ngIf="state.editOrder"></i>
+										<i class="pixel-icons icon-products"></i>
+										<div class="product-name-icon">
+											<span [title]="prod.name" class="medium-font" [innerHtml]="prod.name"></span>
+											<span class="product-type"> - </span>
+											<span [innerHtml]="prod.product_type" class="regularFont"></span>
+										</div>
+										<i class="pixel-icons {{prod.isOpen ? 'icon-arrow-down' : 'icon-arrow-up'}}"></i>
+									</div>
+									<div class="dd-item">
+										<div class="child-item" [sortablejs]="prod.services" [sortablejsOptions]="{ animation: 150, handle: '.handle' }" @servicesAnimate
+										 *ngIf="prod.isOpen">
+											<div *ngFor="let serv of prod.services" class="dd-handle" (click)="onSelect('service', serv, i)" [class.highlight]="serv.jobs_service_revisions_id == state.selectedService?.jobs_service_revisions_id">
+												<i class="pixel-icons icon-drag handle" *ngIf="state.editOrder"></i>
+												<i class="pixel-icons icon-orders"></i>
+												<span [innerHtml]="serv.services_name" [title]="serv.services_name"></span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="list-items dd-handle" style="overflow: hidden; position: relative;" *ngIf="prod.is_dummy">
+									<div class="parent-item">
+										<i class="pixel-icons icon-products dummy-icon"></i>
+										<div class="product-name-icon dummy-name">
+											<span class="dummy-product-text"> </span>
+										</div>
+									</div>
+									<div class="dd-item">
+										<div class="child-item">
+											<div class="dd-handle" style="padding-right: 0px;">
+												<i class="pixel-icons icon-orders dummy-icon"></i>
+												<span class="dummy-service-text dummy-name" style="top: 0px;"></span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</ng-container>
+						</div>
+						<div *ngIf="!state.allProducts.length" class="no-data-screen spinner-view" style="background-color: #ffffff;">
+							<div
+							 class="empty-screen">
+								<div class="icon-info-holder" style="    position: absolute;
+    margin-top: -18px;">
+									<div class="icon"><i style="margin-right: 0;" class="pixel-icons icon-search"></i></div>
+									<p class="alert-message">No Products Found!</p>
+								</div>
+							</div>
+						</div>
+					</div> -->
+				</div>
+			</div>
+			<div class="footer" @editOrder *ngIf="state.editOrder">
+				<button class="m-r-15" pi-button (click)="resetOrder()">Reset</button>
+				<button pi-button color="primary" class="primary" (click)="saveOrder()" [disabled]="saveOrderPromise">Save Changes</button>
+			</div>
+			<div class="edit-order-overlay" (click)="resetOrder()" *ngIf="state.editOrder"></div>
+		</pi-master-view>
+		<pi-detail-view class="right-section" [style.width.px]='rightWidth'>
+			<div class="grabber">
+				<span class="grab-icon"></span>
+			</div>
+			<div class="products-list detail-info">
+				<div class="bck-wrapper" (click)="backToProducts()">
+					<i class="back-link pixel-icons icon-arrow"></i>
+					Products List</div>
+				<!-- #detailScroll infiniteScroll
+					[infiniteScrollDistance]="1" [infiniteScrollThrottle]="50" (scrolled)="loadMoreProducts()" (scrolledUp)="loadTopProducts()"
+					[scrollWindow]="false" -->
+				<div class="details recon-product-view" style="overflow-y: auto !important;" *ngIf="!state.isLoading">
+					<virtual-scroller #detailScroll [scrollAnimationTime]="1000" [useMarginInsteadOfTranslate]="true" [bufferAmount]="2" [items]="state.allProducts"
+					 [enableUnequalChildrenSizes]="true">
+						<ng-container *ngFor="let details of detailScroll.viewPortItems; trackBy:index; let i = index">
+							<!--  | slice:lowerLimit:upperLimit+1 -->
+							<div class="list-items dd-handle dummy-detail-loader" *ngIf="details.is_dummy">
+
+								<div class="parent-item d-flex">
+									<div class="d-flex flex-1 flex-direction-row"><i class="pixel-icons icon-products dummy-icon"></i>
+										<div class="product-name-icon dummy-name" style="top: 2px">
+											<span class="dummy-product-text dummy-icon"></span>
+										</div>
+									</div>
+									<div class="d-flex flex-1 justify-content-end flex-direction-row"><span class="dummy-small-btn" style="width: 24px; min-width: 24px;"></span>
+										<span class="dummy-small-btn"></span></div>
+								</div>
+								<div style="min-height: 240px;">
+									<div class="child-item child-detail d-flex flex-column" style="margin-top: 7px;">
+										<div class="d-flex">
+											<div class="d-flex flex-1 flex-direction-row">
+												<i class="pixel-icons icon-orders dummy-icon" style="font-size: 18px; position: relative; top: 2px;"></i>
+												<div class="product-name-icon dummy-name" style="top: 2px">
+													<span class="dummy-product-text dummy-icon"></span>
+												</div>
+											</div>
+											<div class="d-flex flex-1 justify-content-end flex-direction-row"><span class="dummy-small-btn" style="width: 24px; min-width: 24px;"></span>
+												<span class="dummy-small-btn"></span></div>
+										</div>
+										<div class="d-flex" style="border-bottom: solid 1px #e4e7ec; padding-bottom: 10px;padding-top: 7px;">
+											<!-- <div class="d-flex flex-1 flex-direction-row">
+												<i class=" dummy-icon" style="font-size: 18px; position: relative; top: 2px; background: #e4e7ec;"></i>
+												<div class="product-name-icon dummy-name" style="top: 2px">
+													<span class="dummy-product-text dummy-icon"></span>
+												</div></div> -->
+											<div class="d-flex flex-1  flex-direction-row"><span class="dummy-small-btn" style="width: 18px; min-width: 18px; height: 14px; margin-left: 0; margin-right: 4px;"></span>
+												<span class="dummy-small-btn" style="height: 14px; margin-right: 4px;"></span> <span class="dummy-small-btn"
+												 style="width: 18px; min-width: 18px; height: 14px; margin-left: 0; margin-right: 4px;"></span>
+												<span class="dummy-small-btn" style="width: 18px; min-width: 18px; height: 14px; margin-left: 0; margin-right: 4px;"></span></div>
+										</div>
+										<div class="d-flex row">
+											<div class=" d-flex flex-1  flex-column" style="top: 2px">
+												<div class="dummy-label w-30"></div>
+												<div class="dummy-name w-30"></div>
+											</div>
+											<!-- <div class=" d-flex flex-1  flex-column" style="top: 2px">
+													<div class="dummy-label w-50"></div>
+													<div class="dummy-name w-50"></div>
+												</div> -->
+										</div>
+										<div class="d-flex row">
+											<div class=" d-flex flex-1  flex-column" style="top: 2px">
+												<div class="dummy-label w-30"></div>
+												<div class="dummy-name w-30"></div>
+											</div>
+											<!-- <div class=" d-flex flex-1  flex-column" style="top: 2px">
+													<div class="dummy-label w-50"></div>
+													<div class="dummy-name w-50"></div>
+												</div> -->
+										</div>
+
+									</div>
+
+								</div>
+								<!-- <div class="dd-item" style="min-height: 240px;">
+								<div class="child-item">
+									<div class="dd-handle">
+										<i class="pixel-icons icon-orders dummy-icon"></i>
+										<span class="dummy-service-text dummy-name"></span>
+									</div>
+								</div>
+							</div> -->
+							</div>
+							<div class="list-items" *ngIf="(state.hideCancelledProducts ? !details.is_cancel : true) && !details.is_dummy">
+								<div class="parent-item title">
+									<i class="pixel-icons {{details.is_cancel ? 'icon-cancelled-products' : 'icon-products'}}"></i>
+									<div class="product-title">
+										<span class="product-name semibold-font" *ngIf="!details.isEdit" [matTooltip]="details.name" [innerHtml]="details.name"></span>
+										<span class="product-name input-width" #productName [innerHtml]="details.temp_name"></span>
+										<pi-form-field [ngStyle]="{'width.px':state.productWidth}" *ngIf="details.isEdit" [label]=" ">
+											<input #myInput type="text" pi-input [(ngModel)]="details.temp_name" (click)="$event.stopPropagation()" (input)="updateProductName(details)"
+											 (blur)="updateProdName(details)" (keyup.enter)="updateProdName(details)" />
+										</pi-form-field>
+										<span class="product-type"> - </span>
+										<span class="product-type" [matTooltip]="details.product_type" [innerHtml]="details.product_type"></span>
+										<i class="pixel-icons icon-pencil" *ngIf="state.editJobAccess" (click)="editProductName(details)"></i>
+									</div>
+									<div class="smll-btn-container" *ngIf="state.editJobAccess">
+										<ng-container *ngIf="!details.is_cancel">
+											<ng-container *ngIf="details.cancel_product">
+												<ng-container *ngFor="let action of state.productActionsPosted">
+													<ng-container *ngIf="action.type == 'menu'">
+														<button pi-button [ngClass]="action.class" [title]="action.title" [innerHtml]="action.label"
+															#deleteMenuPopup="matMenuTrigger" [matMenuTriggerFor]="deleteMenuCard"></button>
+														<mat-menu #deleteMenuCard="matMenu" class="card-ui row-card colored bg-delete">
+															<div class="card row-card" (click)="$event.stopPropagation()">
+																<div class="card-header"><i class="pixel-icons icon-exclamation"></i></div>
+																<div class="card-body">
+																	<h5 class="card-title" [innerHtml]="action.title"></h5>
+																	<p class="card-text">Are you sure you want to {{action.title}}?</p>
+																	<div class="footer">
+																		<a class="card-link text-btn" (click)="deleteMenuPopup.closeMenu()">Cancel</a>
+																		<a class="card-link act-btn"
+																			(click)="performActions(action.flag, action.key, i);deleteMenuPopup.closeMenu();" [innerHtml]="action.title"></a>
+																	</div>
+																</div>
+															</div>
+														</mat-menu>
+													</ng-container>
+													<button pi-button *ngIf="action.type == 'button'" [ngClass]="action.class" [title]="action.title" [innerHtml]="action.label"
+														(click)="performActions(action.flag, action.key, i)"></button>
+												</ng-container>
+											</ng-container>
+											<ng-container *ngIf="!details.cancel_product">
+												<ng-container *ngFor="let action of state.productActions">
+													<ng-container *ngIf="action.type == 'menu'">
+														<button pi-button class="remove-prod" [innerHtml]="action.label" [title]="action.title" 
+															#deleteMenuPopup="matMenuTrigger" [matMenuTriggerFor]="deleteMenuCard"></button>
+														<mat-menu #deleteMenuCard="matMenu" class="card-ui row-card colored bg-delete">
+															<div class="card row-card" (click)="$event.stopPropagation()">
+																<div class="card-header"><i class="pixel-icons icon-exclamation"></i></div>
+																<div class="card-body">
+																	<h5 class="card-title" [innerHtml]="action.title"></h5>
+																	<p class="card-text">Are you sure you want to {{action.title}}?</p>
+																	<div class="footer">
+																		<a class="card-link text-btn" (click)="deleteMenuPopup.closeMenu()">Cancel</a>
+																		<a class="card-link act-btn"
+																			(click)="performActions(action.flag, action.key, i);deleteMenuPopup.closeMenu();" [innerHtml]="action.title"></a>
+																	</div>
+																</div>
+															</div>
+														</mat-menu>
+													</ng-container>
+													<button pi-button [innerHtml]="action.label" *ngIf="action.type == 'button'" [title]="action.title" (click)="performActions(action.flag, action.key, i)"></button>
+												</ng-container>
+											</ng-container>
+										</ng-container>
+									</div>
+									<!-- <button class="compac" pi-icon-button color="subtle" [matMenuTriggerFor]="productActions">
+											<i class="pixel-icons icon-more-horizontal"></i>
+										</button>
+										<mat-menu #productActions="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+											<ng-container *ngIf="!details.cancel_product">
+												<button mat-menu-item *ngFor="let action of state.productActions" [innerHtml]="action.label" (click)="performActions(action.flag, action.key, i)"></button>
+											</ng-container>
+											<ng-container *ngIf="details.cancel_product">
+												<button mat-menu-item *ngFor="let action of state.productActionsPosted" [innerHtml]="action.label" (click)="performActions(action.flag, action.key, i)"></button>
+											</ng-container>
+										</mat-menu> -->
+								</div>
+								<div class="child-item child-detail" *ngFor="let serv of details.services; let j = index" [id]="'service_' + serv.jobs_service_revisions_id">
+									<div class="service-titles">
+										<i class="pixel-icons {{serv.form_status_id == 10 ? 'icon-cancelled-services' : 'icon-orders'}}"></i>
+										<span [innerHtml]="serv.services_name" [matTooltip]="serv.services_name" class="medium-font p-service-name"></span>
+										<span [innerHtml]="serv.form_status" [matTooltip]="serv.form_status" class="p-service-status service_status status_{{serv.form_status_id}}"></span>
+										<div class="row-actions" *ngIf="state.editServiceAccess">
+											<div class="smll-btn-container">
+												<ng-container *ngIf="serv.form_status_id != 10">
+													<ng-container *ngIf="serv.form_status_id==1">
+														<ng-container *ngFor="let action of state.serviceActions">
+															<ng-container *ngIf="action.type == 'menu'">
+																<button class="inner-btns remove-prod" [innerHtml]="action.label" [ngClass]="action.class"
+																	[title]="action.title" #deleteMenuPopup="matMenuTrigger" [matMenuTriggerFor]="deleteMenuCard"></button>
+																<mat-menu #deleteMenuCard="matMenu" class="card-ui row-card colored bg-delete">
+																	<div class="card row-card" (click)="$event.stopPropagation()">
+																		<div class="card-header"><i class="pixel-icons icon-exclamation"></i></div>
+																		<div class="card-body">
+																			<h5 class="card-title" [innerHtml]="action.title"></h5>
+																			<p class="card-text">Are you sure you want to {{action.title}}?</p>
+																			<div class="footer">
+																				<a class="card-link text-btn" (click)="deleteMenuPopup.closeMenu()">Cancel</a>
+																				<a class="card-link act-btn"
+																					(click)="performActions(action.flag, action.key, i, j);deleteMenuPopup.closeMenu();" [innerHtml]="action.title"></a>
+																			</div>
+																		</div>
+																	</div>
+																</mat-menu>
+															</ng-container>
+															<button class="inner-btns" *ngIf="action.type == 'button'" [innerHtml]="action.label" [ngClass]="action.class"
+															 [title]="action.title" (click)="performActions(action.flag, action.key, i, j)"></button>
+														</ng-container>
+													</ng-container>
+													<ng-container *ngIf="serv.form_status_id!=1">
+														<ng-container *ngFor="let action of state.serviceActionsPosted">
+															<ng-container *ngIf="action.type == 'menu'">
+																<button class="inner-btns"  [innerHtml]="action.label" [ngClass]="action.class"
+																	[title]="action.title" #deleteMenuPopup="matMenuTrigger" [matMenuTriggerFor]="deleteMenuCard"></button>
+																<mat-menu #deleteMenuCard="matMenu" class="card-ui row-card colored bg-delete">
+																	<div class="card row-card" (click)="$event.stopPropagation()">
+																		<div class="card-header"><i class="pixel-icons icon-exclamation"></i></div>
+																		<div class="card-body">
+																			<h5 class="card-title" [innerHtml]="action.title"></h5>
+																			<p class="card-text">Are you sure you want  to {{action.title}}?</p>
+																			<div class="footer">
+																				<a class="card-link text-btn" (click)="deleteMenuPopup.closeMenu()">Cancel</a>
+																				<a class="card-link act-btn"
+																					(click)="performActions(action.flag, action.key, i, j);deleteMenuPopup.closeMenu();" [innerHtml]="action.title"></a>
+																			</div>
+																		</div>
+																	</div>
+																</mat-menu>
+															</ng-container>
+															<button class="inner-btns" *ngIf="action.type == 'button'" [innerHtml]="action.label" [ngClass]="action.class"
+															 	[title]="action.title" (click)="performActions(action.flag, action.key, i, j)"></button>
+														</ng-container>
+													</ng-container>
+												</ng-container>
+												<div class="btn-group basic-group-btns small-group-btn-ui" *ngIf="(state.editJobAccess || state.editServiceAccess) && serv.form_status_id != 10">
+													<button class="first-child" (click)="editProduct(details, serv, i, j)">Edit</button>
+													<div class="btn-group">
+														<button class="last-child" mat-button [matMenuTriggerFor]="menu">
+															<i class="pixel-icons icon-arrow-down"></i>
+														</button>
+														<mat-menu #menu="matMenu" xPosition="before" class="drop-menu-ui">
+															<!-- <button mat-menu-item>Item 1</button> -->
+															<a (click)="editProduct(details, serv, i, j)">Edit Specs</a>
+															<a (click)="editSpecOrder(details, serv)" *ngIf="APP.permissions.job_access?.edit_spec_order=='yes'">Edit Spec Order</a>
+														</mat-menu>
+													</div>
+												</div>
+												<!-- <button class="compac" pi-icon-button color="subtle" [matMenuTriggerFor]="serviceActions" *ngIf="serv.form_status_id!=10">
+													<i class="pixel-icons icon-more-horizontal"></i>
+												</button>
+												<mat-menu #serviceActions="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+													<ng-container *ngIf="serv.form_status_id==1">
+														<button mat-menu-item *ngFor="let action of state.serviceActions" [innerHtml]="action.label" (click)="performActions(action.flag, action.key, i, j)"></button>
+													</ng-container>
+													<ng-container *ngIf="serv.form_status_id!=1">
+														<button mat-menu-item *ngFor="let action of state.serviceActionsPosted" [innerHtml]="action.label" (click)="performActions(action.flag, action.key, i, j)"></button>
+													</ng-container>
+												</mat-menu> -->
+											</div>
+											<!-- <span class="rev-sort" [matMenuTriggerFor]="revision">
+											<span>R
+												{{serv.selectedRevision != null ? serv.selectedRevision : serv.service_revision_no}}</span>
+											<i class="pixel-icons icon-triangle-arrow-up"></i>
+											<i class="pixel-icons icon-triangle-arrow"></i>
+										</span>
+										<span class="options-label">Option :</span> -->
+										</div>
+										<span *ngIf="!state.editServiceAccess">R {{serv.selectedRevision != null ? serv.selectedRevision : serv.service_revision_no}}</span>
+										<span class="rev-sort" [matMenuTriggerFor]="revision" *ngIf="state.editServiceAccess">
+											<span>R {{serv.selectedRevision != null ? serv.selectedRevision : serv.service_revision_no}}</span>
+											<i class="pixel-icons icon-triangle-arrow-up"></i>
+											<i class="pixel-icons icon-triangle-arrow"></i>
+										</span>
+										<span class="options-label">Option :</span>
+									</div>
+									<div>
+										<mat-menu #revision="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="after" class="more-actions">
+											<button mat-menu-item *ngFor="let rev of getRevisions(serv.service_revision_no)" (click)="changeRevision(rev, details, serv)">R
+												{{rev}}
+											</button>
+										</mat-menu>
+										<mat-tab-group [disableRipple]="true" (selectedIndexChange)="onTabChange(serv, $event)" [selectedIndex]="serv.selectedIndex">
+											<mat-tab #optionLayout *ngFor="let tab of serv.options;let i = index" [label]="i+1">
+												<div class="123" [class.layout-form]="serv.form_layout != 3" [class.inline-form]="serv.form_layout == 3" [class.half-form]="serv.form_layout == 2">
+													<div *ngFor="let spec of tab.framed_layout" [class.pi-field-group]="serv.form_layout == 2">
+														<div *ngIf="spec.length > 1" class="w-100 d-flex" [class.field-group]="serv.form_layout == 2">
+															<div *ngFor=" let layout of spec" class="{{layout?.layout}}" [class.flex-50]="layout?.layout == 2" [class.field-set]="serv.form_layout == 2">
+																<div class="col-layout" *ngIf="layout" [ngClass]="{'change-revision' : layout.has_changed, 'is-adhoc': layout.is_adhoc}">
+																	<span class="change-in-revision " title="Spec value changed in this revision" *ngIf="layout.has_changed"></span>
+																	<span class="spec-lbl">{{layout.label}}</span>
+																	<span [innerHtml]="layout.value || '---'" class="spec-val"></span>
+																</div>
+															</div>
+														</div>
+														<div class="col-layout " *ngIf="spec.length == 1" [ngClass]="{'change-revision' : spec[0].has_changed, 'is-adhoc': spec[0].is_adhoc}">
+															<span class="change-in-revision" title="Spec value changed in this revision" *ngIf="spec[0].has_changed"></span>
+															<span class="spec-lbl">{{spec[0].label}}</span>
+															<span [innerHtml]="spec[0].value || '---'" class="spec-val"></span>
+														</div>
+													</div>
+													<div class="load-more-specs" *ngIf="!tab?.framed_layout?.length && tab.values.length">
+														<button (click)="onTabChange(serv, 0)" pi-button>Show Specs</button>
+													</div>
+													<div *ngIf="!tab.values.length">
+														No Specs Available
+													</div>
+												</div>
+											</mat-tab>
+										</mat-tab-group>
+									</div>
+								</div>
+								<div *ngIf="!details.services.length">No Services Assigned to this Product</div>
+							</div>
+						</ng-container>
+						<!-- </cdk-virtual-scroll-viewport> -->
+						<!-- <div class="no-data" *ngIf="!state.allProducts.length">No Data Found</div> -->
+						<div *ngIf="!state.allProducts.length" class="no-data-screen spinner-view" style="background-color: #ffffff;">
+							<div class="empty-screen">
+								<div class="icon-info-holder">
+									<div class="icon"><i style="margin-right: 0;" class="pixel-icons icon-search"></i></div>
+									<p class="alert-message">No Data Found!</p>
+								</div>
+							</div>
+						</div>
+					</virtual-scroller>
+				</div>
+			</div>
+			<div class="edit-overlay" (click)="backToList()" *ngIf="editState.editSpecOrder || editState.toggleView">
+			</div>
+			<div class="side-window-ui edit-proproducts-services-window" [class.open]="editState.toggleView" *ngIf="editState.toggleView">
+				<div class="selected-service-name">
+					<div class="ag-cell-custome-actions" style="position: relative; top: 0px;">
+						<ul style="padding-top: 0px;">
+							<li class="m-0" style="background: transparent;" (click)="backToList()">
+								<i class="pixel-icons pixel-icons icon-arrow"></i>
+							</li>
+						</ul>
+					</div>
+					<!-- <span class="back-arrow" (click)="backToList()">
+						<i class="pixel-icons icon-arrow"></i>
+					</span> -->
+					<span class="section-headding">
+						<i class="pixel-icons icon-orders"></i>
+						<h2 [innerHtml]="editState.selectedService.services_name"></h2>
+						<span [innerHtml]="editState.selectedService.form_status" class="service_status status_{{editState.selectedService.form_status_id}}"></span>
+
+					</span>
+					<!-- <div class="smll-btn-container">
+							<button pi-button ><i class="pixel-icons icon-close-slim"></i></button>
+
+							<button pi-button >Add Service</button>
+							<ng-container *ngIf="details.cancel_product">
+								<button pi-button [ngClass]="action.class" [title]="action.title"
+									*ngFor="let action of state.productActionsPosted" [innerHtml]="action.label"
+									(click)="performActions(action.flag, action.key, i)"></button>
+							</ng-container>
+							<ng-container *ngIf="!details.cancel_product">
+								<button pi-button *ngFor="let action of state.productActions"
+									[innerHtml]="action.label"
+									(click)="performActions(action.flag, action.key, i)"></button>
+							</ng-container> -->
+				</div>
+				<div class="scroll-conteiner-with-fixed-footer">
+					<div class="hero-main">
+						<div class="scroll-cont" style="padding-bottom: 10px;">
+							<div>
+								<div class="products-list detail-info">
+									<!-- <div class="bck-wrapper" >
+										<i class="back-link pixel-icons icon-arrow"></i>
+										{{state.selectedService.product_name}}
+									</div> -->
+									<div class="details">
+										<div class="list-items">
+											<div class="child-item child-detail">
+												<div style="top: 0px; padding: 0 20px;" class="edit-product-new-ui padding-0 " *ngIf="editState.selectedService">
+													<!-- <i class="pixel-icons icon-orders"></i> -->
+													<!-- <span [innerHtml]="editState.selectedService.services_name" ></span> -->
+													<!-- <span [innerHtml]="editState.selectedService.form_status" class="service_status status_{{editState.selectedService.form_status_id}}"></span> -->
+													<!-- <div class="row-actions">
+														<button class="compac" pi-icon-button color="subtle" [matMenuTriggerFor]="serviceActions">
+															<i class="pixel-icons icon-more-horizontal"></i>
+														</button>
+														<mat-menu #serviceActions="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+															<button mat-menu-item *ngFor="let action of editState.actions" [innerHtml]="action.label" (click)="performActions(action.flag, action.key)"></button>
+														</mat-menu>
+													</div> -->
+													<span class="rev-sort" [matMenuTriggerFor]="revision">
+														<span>R {{editState.selectedRevision != null ? editState.selectedRevision : editState.selectedService.service_revision_no}}
+														</span>
+														<i class="pixel-icons icon-triangle-arrow-up"></i>
+														<i class="pixel-icons icon-triangle-arrow"></i>
+													</span>
+													<span class="options-label">Option:</span>
+												</div>
+												<div>
+													<mat-menu #revision="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+														<button mat-menu-item *ngFor="let rev of getRevisions(editState.selectedService.service_revision_no || 0)" (click)="revisionChange(rev)">R
+															{{rev}}
+														</button>
+													</mat-menu>
+													<div [@.disabled]="disabled" class="w-100 customize-mat">
+														<mat-tab-group dynamicHeight [disableRipple]="true" [selectedIndex]="editState.selectedIndex" (selectedIndexChange)="onChangeTab($event)">
+															<mat-tab *ngFor="let tab of editState.selectedService.options;let i = index" [label]="i+1">
+																<div *ngIf="editState.selectedIndex == i" class="prdt-content" [class.inline-form]="editState.selectedService.form_layout == 3">
+																	<!-- <mat-spinner diameter="30" class="md" *ngIf="editState.fetchingSpecs">
+																	</mat-spinner> -->
+																	<div class="spinner-view" *ngIf="editState.fetchingSpecs">
+																		<div class="empty-screen">
+																			<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+																		</div>
+																	</div>
+																	<div *ngIf="!editState.fetchingSpecs" class="edit-product-pi-form-field-change ">
+																		<div *ngFor="let spec of editState.formLayout; let l = index">
+																			<div *ngIf="spec.length > 1" style="padding: 0 5px;">
+																				<div class="two-cols-ui field-group">
+																					<div *ngFor="let layout of spec" class="field-set 0222" [class.manual-adds]="layout?optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.value.is_adhoc:false">
+																						<div class="field-set col">
+																							<div *ngIf="layout">
+																								<pi-field-group class="d-flex w-100">
+																									<div class="edit-field-sec">
+																										<span class="change-in-revision" title="Spec value changed in this revision" *ngIf="optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.value.has_change"></span>
+																										<div class="d-flex">
+																											<app-form-builder [config]="layout" [form]="optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]">
+																											</app-form-builder>
+																											<span class="d-flex delete-holder-in-specs" (click)="deleteAdhocSpec(layout, l)" *ngIf="optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.value.is_adhoc">
+																												<i class="pixel-icons icon-delete"></i>
+																											</span>
+																										</div>
+																										<div class="error-sec">
+																											<div class="msg pi-error" *ngIf="editState.submitted">
+																												<div *ngIf="!optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.valid">
+																													Please {{layout.template_id == 2 || layout.template_id == 4 ? 'Enter' : 'Select'}} {{layout.label}}
+																												</div>
+																											</div>
+
+																										</div>
+																									</div>
+																								</pi-field-group>
+																							</div>
+																						</div>
+																					</div>
+																				</div>
+																			</div>
+
+																			<div class="one-fiels-set" *ngIf="spec.length == 1">
+																				<div class="field-set" *ngFor="let layout of spec">
+																					<div *ngIf="layout" class="edit-field-container" [ngClass]="{'change-revision' : optionsGroup.controls[tab.id]?.controls?.form_save_values?.controls[layout.index]?.value?.has_change}">
+																						<div class="edit-field-sec" [ngClass]="{'spec-field':optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.value.is_adhoc, 'test': true }">
+
+
+																							<div class="holder-filed" [ngClass]="{'manual-spec': optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.value.is_adhoc, 'rev-icon': optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.value.has_change}">
+																								<!--  [class.manual-spec]="optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.value.is_adhoc"  -->
+																								<span class="change-in-revision" title="Spec value changed in this revision" *ngIf="optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.value.has_change"></span>
+																								<div class="d-flex">
+																									<app-form-builder [config]="layout" [form]="optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]">
+																									</app-form-builder>
+																									<!-- <div  *ngIf=""> -->
+																									<span class="d-flex delete-holder-in-specs-singil" (click)="deleteAdhocSpec(layout, l)" *ngIf="optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.value.is_adhoc">
+																										<i class="pixel-icons icon-delete delete-field-icon"></i>
+																									</span>
+																								</div>
+																							</div>
+																							<div class="error-sec">
+																								<div class="msg pi-error" *ngIf="editState.submitted && !optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.valid">
+																									Please {{layout.template_id == 2 || layout.template_id == 4 ? 'Enter' : 'Select'}} {{layout.label}}
+																								</div>
+
+																							</div>
+																							<!-- </div> -->
+																						</div>
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+																		<!-- <div *ngFor="let spec of tab.specs; let l = index">
+																		<app-form-builder [config]="spec" [form]="optionsGroup.controls[tab.id].controls.form_save_values.controls[l]"></app-form-builder>
+																	</div> -->
+																		<span *ngIf="!tab.specs?.length" style="font-size: 14px; color: #8a8a8a; padding: 20px; line-height: 60px;">Specs not available
+																		</span>
+
+																	</div>
+																</div>
+															</mat-tab>
+															<mat-tab *ngIf="editState.selectedService.options.length < 10" disabled>
+																<ng-template mat-tab-label>
+																	<a class="add-tab" (click)="prePareOption()" [matMenuTriggerFor]="addProductMenu">
+																		<i class="pixel-icons icon-plus-slim"></i>
+																	</a>
+																	<div class="wrapper-triangle-top">
+																		<mat-menu #addProductMenu="matMenu" [overlapTrigger]="false" yPosition="below" class="more-actions add-tab-menu">
+																			<p>Copy Specs from</p>
+																			<div class="d-flex align-items-center copy-spec-option">
+																				<span class="d-flex align-items-center" style="opacity: .7;">Option : </span>
+																					<pi-select (click)="$event.stopPropagation()"  [options]="selectedTabOptions" [multi]="false" [(ngModel)]="selectedTabOption">
+																						</pi-select>
+																			</div>
+																			<button (click)="addOptionTab()" pi-button color="primary">Add</button>
+																		</mat-menu>
+																	</div>
+																</ng-template>
+															</mat-tab>
+														</mat-tab-group>
+													</div>
+												</div>
+
+											</div>
+
+										</div>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="hero-footer">
+						<div class="sticky-footer w-100 d-flex justify-content-between">
+							<div class="d-flex align-items-center">								
+								<a class="brand-text-button" *ngIf="APP.permissions.job_access.allow_adding_specs_in_forms=='yes'"  (click)="addSpecs(editState.selectedService)">Add Specs</a>
+							</div>
+							<div>
+								<button pi-button (click)="resetForm()">Reset</button>
+								<ng-container *ngIf="editState.selectedService.form_status_id == 1 || editState.selectedService.form_status_id == 10 || editState.selectedService.form_status_id == 11">
+									<button pi-button color="primary" [disabled]="serviceForm.pristine" (click)="saveSpecs()">Save</button>
+									<button pi-button color="primary" (click)="saveSpecs(true)" *ngIf="editState.selectedService.form_status_id == 1">Submit</button>
+								</ng-container>
+								<ng-container  *ngIf="editState.selectedService.form_status_id == 2">
+									<button pi-button color="primary" (click)="saveSpecs(true)">Resubmit</button>
+								</ng-container>
+								<ng-container *ngIf="editState.selectedService.form_status_id == 3 || editState.selectedService.form_status_id == 4 || editState.selectedService.form_status_id == 5  || editState.selectedService.form_status_id == 6  || editState.selectedService.form_status_id == 7  || editState.selectedService.form_status_id == 8  || editState.selectedService.form_status_id == 9 || editState.selectedService.form_status_id == 11">
+									<!-- <button pi-button>Save & Preserve Pricing</button> -->
+									<button pi-button color="primary" (click)="saveToNewRevision(true)">Submit Revision</button>
+									<div class="btn-group basic-group-btns" style="margin-left: 12px" *ngIf="editState.selectedService.form_status_id != 11">
+											<button  color="primary" style="min-width: 50px" class="first-child" mat-button [matMenuTriggerFor]="menuSave">Save</button>
+											<div class="btn-group">
+												<button color="primary"  class="last-child" mat-button [matMenuTriggerFor]="menuSave">
+													<i class="pixel-icons icon-arrow-down"></i>
+												</button>
+												<mat-menu #menuSave="matMenu" xPosition="before" class="drop-menu-ui">
+													<!-- <button mat-menu-item>Item 1</button> -->
+													<a (click)="saveToNewRevision()" *ngIf="editState.selectedService.form_status_id != 11">Save to New Revision</a>
+													<a (click)="saveAndPreservePricing()" *ngIf="APP.permissions.job_access.save_preserve_pricing == 'yes' && editState.selectedService.form_status_id != 11">Save and Preserve Pricing</a>
+												</mat-menu>
+											</div>
+										</div>
+									<!-- <button pi-button color="primary" (click)="saveToNewRevision()" *ngIf="editState.selectedService.form_status_id != 11">Save	to New Revision	</button>
+									<button pi-button color="primary" (click)="saveAndPreservePricing()" *ngIf="editState.selectedService.form_status_id != 11">Save and Preserve Pricing</button> -->
+								</ng-container>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="side-window-ui" [class.open]="editState.editSpecOrder" *ngIf="editState.editSpecOrder">
+				<div class="selected-service-name 02">
+					<!-- <span class="back-arrow" (click)="backToList()">
+						<i class="pixel-icons icon-arrow"></i>
+					</span> -->
+					<div class="ag-cell-custome-actions" style="position: relative; top: 0px;">
+							<ul style="padding-top: 0px;">
+								<li class="m-0" style="background: transparent;" (click)="backToList()">
+									<i class="pixel-icons pixel-icons icon-arrow"></i>
+								</li>
+							</ul>
+						</div>
+					<span class="section-headding">
+						<i class="pixel-icons icon-orders"></i>
+						<h2 [innerHtml]="editState.selectedServiceSpecs.services_name"></h2>
+						<span [innerHtml]="editState.selectedServiceSpecs.form_status" class="service_status status_{{editState.selectedServiceSpecs.form_status_id}}"></span>
+
+					</span>
+				</div>
+				<div class="">
+					<div class="hero-main drag drag-list">						
+							<div class="w-100">
+								<div class="products-list detail-info">
+									<div class="details">
+										<div class="list-items">
+											<div class="child-item child-detail">
+												<div style="top: 0px;" class="edit-product-new-ui" *ngIf="editState.selectedServiceSpecs">
+													<span class="rev-sort">
+														<span>R {{editState.selectedRevision != null ? editState.selectedRevision : editState.selectedServiceSpecs.service_revision_no}}
+														</span>
+													</span>
+													<span class="options-label">Option:</span>
+												</div>
+												<div>
+													<mat-tab-group [disableRipple]="true" (selectedIndexChange)="onTabChange(editState.selectedServiceSpecs, $event)" [selectedIndex]="editState.selectedServiceSpecs.selectedIndex">
+															
+														<mat-tab *ngFor="let tab of editState.selectedServiceSpecs.options;let i = index" [label]="i+1">
+															<div class="scroll-conteiner-with-fixed-footer" style="height: calc(100vh - 145px); ">
+																	<div class="re-order-product" style="height: calc(100vh - 255px);">
+																	<div class="body">
+																			<div [class.layout-form]="editState.selectedServiceSpecs.form_layout != 3" [class.inline-form]="editState.selectedServiceSpecs.form_layout == 3"
+																			 [class.half-form]="editState.selectedServiceSpecs.form_layout == 2">
+																				<div [sortablejs]="tab.framed_layout" class="dd-item flex-column" [sortablejsOptions]="{ animation: 150, handle: '.icon-drag' }">
+																					<div *ngFor="let spec of tab.framed_layout" [class.pi-field-group]="editState.selectedServiceSpecs.form_layout == 2">
+																						<div *ngIf="spec.length > 1" [class.field-group]="editState.selectedServiceSpecs.form_layout == 2">
+																							<i class="pixel-icons icon-drag ng-tns-c6-4"></i>
+																							<div *ngFor=" let layout of spec" [class.field-set]="editState.selectedServiceSpecs.form_layout == 2">
+																								<div class="col-layout d-flex flex-column" *ngIf="layout" [ngClass]="{'change-revision' : layout.has_changed}">
+																									<span class="change-in-revision" title="Spec value changed in this revision" *ngIf="layout.has_changed"></span>
+																									<span class="spec-lbl">{{layout.label}}</span>
+																									<span [innerHtml]="layout.value || '---'" class="spec-val"></span>
+																								</div>
+																							</div>
+																						</div>
+				
+																						<div class="d-flex drag-service" *ngIf="spec.length == 1" [ngClass]="{'change-revision' : spec[0].has_changed}">
+																							<i class="pixel-icons icon-drag ng-tns-c6-4"></i>
+																							<div class="col-layout d-flex flex-column">
+																								<span class="change-in-revision" title="Spec value changed in this revision" *ngIf="spec[0].has_changed"></span>
+																								<span class="spec-lbl">{{spec[0].label}}</span>
+																								<span [innerHtml]="spec[0].value || '---'" class="spec-val"></span>
+																							</div>
+																						</div>
+																					</div>
+																				</div>
+																			</div>
+				
+																			<div *ngIf="!tab.values.length">
+																				No Specs Available
+																			</div>
+																		</div>
+																		</div>
+																		<div class="re-order-footer">
+																				<div class=" sticky-footer">
+																					<button pi-button (click)="resetSpecOrder()">Cancel</button>
+																					<button color="primary" style="    margin-left: 12px;" pi-button (click)="saveSpecOrder()">Change Spec Order</button>
+																				</div>
+																			</div>
+																	</div>															
+														</mat-tab>
+														
+													</mat-tab-group>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+						</div>
+					</div>
+					
+
+				</div>
+
+			</div>
+
+		</pi-detail-view>
+	</pi-master-detail-view>
+</section>
+<div class="side-nav-container recon-side-dialog" *ngIf="state.showAdd">
+	<div class="overlay" (click)="addProduct('show')"></div>
+	<div class="side-nav" [class.active]="state.showAdd">
+		<header>
+			<div class="d-flex align-center" style="position: relative; left: -4px;">
+				<div class="ag-cell-custome-actions" style="position: relative; top: -2px;">
+					<ul style="padding-top: 0px;">
+						<li class="m-0" (click)="addProduct('show')" style="background: transparent;">
+							<i class="pixel-icons pixel-icons icon-arrow"></i>
+						</li>
+					</ul>
+				</div>
+				<h2>Add Product/Service</h2>
+			</div>
+		</header>
+		<app-search #searchInput class="product-search" [search]="state.searchOpts" (onSearch)="onSearch($event)">
+		</app-search>
+
+		<div class="content-body">
+			<div class="sidebar" [class.list-width]="state.addList.selectedProduct">
+				<div class="search-result" *ngIf="state.addList?.searchResult.length">
+					<ul>
+						<li *ngFor="let res of state.addList?.searchResult">
+							<div class="item" (click)="onSelectItem(res)" routerLinkActive="active-link">
+								<i class="pixel-icons icon-products"></i>
+								<span [innerHtml]="res.name"></span>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<div style="padding-left: 10px;" class="no-data" *ngIf="!state.addList?.searchResult.length && state.addList?.searchValue.length && !state.addList?.isLoading">
+					No Data Found for Search String</div>
+			</div>
+			<div class="content" *ngIf="state.addList.selectedProduct">
+				<div [formGroup]="addProductForm" class="new-product" *ngIf="state.addList.selectedProduct.isNew">
+					<pi-form-field label="Product Type" class="selected-product">
+						<i class="pixel-icons icon-products"></i>
+						<span [innerHtml]="state.addList.selectedProduct.name"></span>
+					</pi-form-field>
+					<pi-form-field label="Name your product">
+						<input type="text" #productNameInput pi-input formControlName="product_name" />
+					</pi-form-field>
+					<div class="service" formGroupName="services">
+						<p>Select Services</p>
+						<div class="item" *ngFor="let serv of state.addList.selectedProduct.services">
+							<ng-container *ngIf="!serv.is_new">
+								<pi-form-field label="<i class='pixel-icons icon-orders'></i>{{serv.services_name}}" class="selected-service">
+									<input type="checkbox" pi-input (change)="isChecked(serv)" />
+								</pi-form-field>
+								<span class="show-icon" (click)="addNewService(serv)">
+									<i class="pixel-icons icon-recent-notes"></i>
+								</span>
+							</ng-container>
+							<ng-container *ngIf="serv.is_new" [formGroupName]="serv.is_new">
+								<pi-form-field label="<i class='pixel-icons icon-orders'></i>{{serv.services_name}}" class="selected-service">
+									<input type="checkbox" formControlName="selected" pi-input (change)="isChecked(serv)" />
+								</pi-form-field>
+								<div class="new_service">
+									<pi-form-field label=" ">
+										<input type="text" pi-input formControlName="services_name" />
+									</pi-form-field>
+								</div>
+							</ng-container>
+						</div>
+						<div *ngIf="!state.addList.selectedProduct.services.length">No Services Available</div>
+					</div>
+				</div>
+				<div *ngIf="!state.addList.selectedProduct.isNew">
+					<h2 [innerHtml]="state.addList.selectedProduct.product_name"></h2>
+					<div>
+						<div *ngFor="let serv of state.addList.selectedProduct.services">
+							<pi-form-field [label]="serv.services_name">
+								<input type="checkbox" pi-input />
+							</pi-form-field>
+							<span [innerHtml]="serv.options + ' Options'"></span>
+						</div>
+					</div>
+				</div>
+				<footer style="padding-right: 0;">
+					<button pi-button color="primary" [disabled]="!state.addList.selectedProduct.services.length || promise || !state.addList.selectedProduct.selectedServices?.length"
+					 (click)="addProduct('save')">Add & Continue</button>
+				</footer>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- *ngIf="state.showExternalProjects" -->
+<div class="side-nav-container" *ngIf="false">
+
+	<div class="overlay" (click)="addExternalProjectData('show')"></div>
+
+	<div class="side-nav" [class.active]="state.showExternalProjects">
+		<div class="info">
+			<i class="back-link pixel-icons icon-arrow" (click)="addExternalProjectData('show')"></i>
+			<h2>Add Product/Service</h2>
+		</div>
+
+		<app-search class="product-search" [search]="state.searchOpts" (onSearch)="onSearch($event)"></app-search>
+
+		<div class="content-body">
+			<div class="sidebar" [class.list-width]="state.addList.selectedProduct">
+				<div class="search-result" *ngIf="state.addList?.searchResult.length">
+					<ul>
+						<li *ngFor="let res of state.addList?.searchResult">
+							<div class="item" (click)="onSelectItem(res)" routerLinkActive="active-link">
+								<i class="pixel-icons icon-products"></i>
+								<span [innerHtml]="res.name"></span>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="content" *ngIf="state.addList.selectedProduct">
+				<div [formGroup]="addProductForm" class="new-product" *ngIf="state.addList.selectedProduct.isNew">
+					<pi-form-field label="Product Type" class="selected-product">
+						<i class="pixel-icons icon-products"></i>
+						<span [innerHtml]="state.addList.selectedProduct.name"></span>
+					</pi-form-field>
+					<pi-form-field label="Name your product">
+						<input type="text" pi-input formControlName="product_name" />
+					</pi-form-field>
+					<div class="service" formGroupName="services">
+						<p>Select Services</p>
+						<div class="item" *ngFor="let serv of state.addList.selectedProduct.services">
+							<pi-form-field label="<i class='pixel-icons icon-orders'></i>{{serv.services_name}}" class="selected-service">
+								<input type="checkbox" pi-input (change)="isChecked(serv)" />
+							</pi-form-field>
+							<span class="show-icon" *ngIf="!serv.is_new" (click)="addNewService(serv)">
+								<i class="pixel-icons icon-recent-notes"></i>
+							</span>
+							<div class="new_service" *ngIf="serv.is_new" [formGroupName]="serv.is_new">
+								<pi-form-field label=" ">
+									<input type="text" pi-input formControlName="services_name" />
+								</pi-form-field>
+							</div>
+						</div>
+						<div *ngIf="!state.addList.selectedProduct.services.length">No Services Available</div>
+					</div>
+				</div>
+				<div *ngIf="!state.addList.selectedProduct.isNew">
+					<h2 [innerHtml]="state.addList.selectedProduct.product_name"></h2>
+					<div>
+						<div *ngFor="let serv of state.addList.selectedProduct.services">
+							<pi-form-field [label]="serv.services_name">
+								<input type="checkbox" pi-input />
+							</pi-form-field>
+							<span [innerHtml]="serv.options + ' Options'"></span>
+						</div>
+					</div>
+				</div>
+				<div class="actions">
+					<button pi-button color="primary" [disabled]="!state.addList.selectedProduct.services.length || !state.addList.selectedProduct.selectedServices?.length"
+					 (click)="addExternalProjectData('save')">Add & Continue</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="side-nav-container recon-side-dialog" *ngIf="state.showExternalProjects">
+
+	<div class="overlay" (click)="addExternalProjectData('show')"></div>
+
+	<div class="side-nav projects" [class.active]="state.showExternalProjects">
+		<header>
+			<!-- <div class="info">
+				<i class="back-link pixel-icons icon-arrow" (click)="addExternalProjectData('show')"></i>
+				<h2>Import External Project Data</h2>
+			</div> -->
+			<div class="d-flex align-center" style="position: relative; left:-4px;">
+				<div class="ag-cell-custome-actions" style="position: relative; top: 0px;">
+					<ul style="padding-top: 0px;">
+						<li class="m-0" style="background: transparent;" (click)="addExternalProjectData('show')">
+							<i class="pixel-icons pixel-icons icon-arrow"></i>
+						</li>
+					</ul>
+				</div>
+				<h2 style="padding-top: 2px;">Import External Project Data</h2>
+			</div>
+		</header>
+		<div class="projects-list-details">
+			<div class="projects-view" *ngIf="state.projectsList.showList">
+				<!--  @projectsList -->
+				<div class="go-to-projects">
+					<a class="projects-link" (click)="goToProjects()" style="margin-top: 20px;">Go To Projects List
+						<i class="pixel-icons icon-right-arrow"></i>
+					</a>
+					<p>OR</p>
+				</div>
+
+				<app-search #searchInput class="project-search" [search]="state.searchProjectOpts" (onSearch)="onSearchProjects($event)"></app-search>
+
+				<div class="projects-list">
+					<mat-spinner diameter="34" class="md parent-spinner" *ngIf="state.searchProjectOpts.spinner">
+					</mat-spinner>
+					<div class="list" *ngIf="!state.searchProjectOpts.spinner" [class.full-width]="!state.projectsList.selectedProduct">
+						<div class="search-result" *ngIf="state.projectsList?.searchResults.length">
+							<ul>
+								<div *ngFor="let res of state.projectsList?.searchResults">
+									<li (click)="onSelectProject(res)">
+										<i _ngcontent-c4="" class="pixel-icons icon-pn-projects"></i>
+										<div class="details">
+											<p class="project-title" [innerHtml]="res.job_title"></p>
+											<p class="project-no" [innerHtml]="res.job_no"></p>
+										</div>
+									</li>
+								</div>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="projects-detail-view" @projectDetailsList *ngIf="!state.projectsList.showList">
+				<div class="projects-grid">
+					<div class="projects-grid-header">
+						<div class="header-label">Select a Project to Import Data</div>
+						<app-search class="project-search" [search]="state.searchProjects" (onSearch)="projectSearch($event)"></app-search>
+					</div>
+					<div class="projects-grid-container">
+						<mat-spinner diameter="34" class="md parent-spinner" *ngIf="state.searchProjects.spinner">
+						</mat-spinner>
+						<div class=" empty-import-products global-grid task-grid with-out-margin with-table-gaps actions-grid ag-no-striped ng-star-inserted">
+							<ag-grid-angular class="ag-theme-balham" *ngIf="state.projectsList.gridOptions?.rowData.length && !state.searchProjects.spinner"
+							 [gridOptions]="state.projectsList.gridOptions"></ag-grid-angular>
+						</div>
+						<div class="no-projects" *ngIf="!state.projectsList.gridOptions?.rowData.length && !state.searchProjects.spinner">No
+							Projects Found.</div>
+					</div>
+				</div>
+				<footer>
+					<button pi-button (click)="projectsList()">Back</button>
+					<button pi-button color="primary" (click)="addExternalProjectData('save')" [disabled]="!gridApi?.getSelectedRows().length">Import
+						External Project Data</button>
+				</footer>
+			</div>
+		</div>
+	</div>
+</div>
+<h1>AAAA{{!state.allProducts.length && !state.isLoading && !state.DOMSearchValue}}AAS{{state.allProducts.length}}
+	ssss{{!state.isLoading  }}cccc{{!state.DOMSearchValue}}
+</h1>
+<div class="no-data-screen" *ngIf="!state.allProducts.length && !state.isLoading && !state.DOMSearchValue">
+	<div class="empty-screen" *ngIf="state?.projectDetails?.is_related_to_project ||(APP.permissions.job_access.products.job_specific_others!='none'  && !state?.projectDetails?.is_related_to_project)">
+		<div class="icon-info-holder">
+			<div class="icon">
+				<i class="pixel-icons icon-products"></i>
+			</div>
+			<p class="alert-message">There are no Products assigned to this Project</p>
+			<ng-container *ngIf="state.editJobAccess">
+			<div class="d-flex">
+				<button pi-icon-button color="primary" (click)="addExternalProjectData('show')">
+					<i class="pixel-icons icon-down-arrow"></i> Import External Project Data</button>
+			</div>
+			<span class="partition">OR</span>
+			<div class="d-flex">
+				<button class="m-l-15" pi-icon-button color="primary" (click)="addProduct('show')">+ Add Product
+				</button>
+				<!-- <button class="m-l-15" pi-icon-button color="primary" (click)="addProduct('show')">+ Import Products</button> -->
+			</div>
+		</ng-container>
+		</div>
+	</div>
+	<div class="empty-screen" *ngIf="APP.permissions.job_access.products.job_specific_others=='none'  && !state?.projectDetails?.is_related_to_project">
+		<div class="icon-info-holder">
+			<div class="icon">
+				<i class="pixel-icons icon-exclamation"></i>
+			</div>
+			<p class="alert-message">No Permissions to access the products</p>
+		</div>
+	</div>
+</div>
+
+<div class="side-nav-container recon-side-dialog" *ngIf="state.showImport">
+	<div class="overlay" (click)="updateProduct('show')"></div>
+	<div class="side-nav" [class.active]="state.showImport">
+		<header>
+			<div class="d-flex align-center" style="position: relative; left: -4px;">
+				<div class="ag-cell-custome-actions" style="position: relative; top: -2px;">
+					<ul style="padding-top: 0px;">
+						<li class="m-0" (click)="updateProduct('show')" style="background: transparent;">
+							<i class="pixel-icons pixel-icons icon-arrow"></i>
+						</li>
+					</ul>
+				</div>
+				<h2 [innerHtml]="state.sideNavData.title"></h2>
+			</div>
+		</header>
+	</div>
+</div>

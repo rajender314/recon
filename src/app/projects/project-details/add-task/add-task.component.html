@@ -1,0 +1,82 @@
+<div class="mat-dialog-heading">
+  <div class="dialog-header">
+    <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+    <div class="project-no" [innerHtml]="data.projectInfo.job_no"></div>
+  </div>
+  <button mat-icon-button (click)="close()" tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup" class="form-flex" autocomplete="off">
+    <pi-field-group *ngIf="data.tabIndex!='4'">
+      <pi-form-field>
+        <pi-select label="Product" nameKey="product_name" [inactiveOptions]="state.inactiveProducts" (onChange)="getServices()" placeholder="Select Product"
+          [options]="state.products" [multi]="false" formControlName="product"></pi-select>
+        <div class="pi-error" *ngIf="formGroup.controls.product.hasError('required') && state.submitted">Please Select
+          Product</div>
+      </pi-form-field>
+      <pi-form-field>
+        <pi-select label="Service" nameKey="services_name" [inactiveOptions]="state.inactiveServices" (onChange)="changeCostType()"
+          placeholder="Select Service" [options]="state.services" [multi]="false" formControlName="service"></pi-select>
+        <div class="pi-error" *ngIf="formGroup.controls.service.hasError('required') && state.submitted">Please Select
+          Service</div>
+      </pi-form-field>
+    </pi-field-group>
+    <pi-field-group>
+      <pi-form-field>
+        <pi-select label="Cost Item Type" placeholder="Select Cost Item Type" [options]="state.tasks" (onChange)="changeCostType()"
+          [multi]="false" formControlName="cost_type"></pi-select>
+        <div class="pi-error" *ngIf="formGroup.controls.cost_type.hasError('required') && state.submitted">Please
+          Select
+          Cost Type
+        </div>
+      </pi-form-field>
+      <pi-form-field>
+        <pi-select label="Cost Item" *ngIf="formGroup.controls.cost_type.value!='3'" placeholder="Select Cost Item"
+          [options]="state.taskTypes" [multi]="false" formControlName="cost_item"></pi-select>
+        <pi-select label="Cost Item" *ngIf="formGroup.controls.cost_type.value=='3'" nameKey="display_name" placeholder="Select Cost Item"
+          [options]="state.taskTypes" [multi]="false" formControlName="cost_item"></pi-select>
+        <div class="pi-error" *ngIf="formGroup.controls.cost_item.hasError('required') && state.submitted">Please
+          Select
+          Cost Item
+        </div>
+      </pi-form-field>
+    </pi-field-group>
+    <pi-field-group label="User Type" *ngIf="formGroup.controls.cost_type.value!='3'" direction="row">
+      <pi-form-field label="Ivie">
+        <input type="radio" pi-input value="1" (change)="changeUserType()" formControlName="user_type" />
+      </pi-form-field>
+      <pi-form-field label="Others">
+        <input type="radio" pi-input value="2" (change)="changeUserType()" formControlName="user_type" />
+      </pi-form-field>
+    </pi-field-group>
+    <pi-field-group *ngIf="formGroup.controls.cost_type.value!='3'">
+      <pi-form-field *ngIf="formGroup.controls.user_type.value=='1'" label="Select User">
+          <!-- infiniteScroll [infiniteScrollDistance]="1" [infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false" -->
+        <mat-select placeholder="Select User" panelClass="select-user-options" formControlName="user">
+          <mat-optgroup *ngFor="let dept of state.users" [label]="dept.name">
+            <mat-option *ngFor="let user of dept.children" [value]="user.id">
+              <span class="mat-option-user-text">
+                <i class="pixel-icons icon-user"></i>
+                {{user.user_name}}
+              </span>
+            </mat-option>
+          </mat-optgroup>
+        </mat-select>
+        <div class="pi-error" *ngIf="formGroup.controls.user.hasError('required') && state.submitted">Please Select
+          User</div>
+      </pi-form-field>
+      <pi-form-field *ngIf="formGroup.controls.user_type.value!='1'">
+        <pi-select label="Select User" placeholder="Select User" [minSearchLength]='3' (onChange)="userChange()" [options]="state.users" [multi]="false"
+          formControlName="user"></pi-select>
+        <div class="pi-error" *ngIf="formGroup.controls.user.hasError('required') && state.submitted">Please Select
+          User</div>
+      </pi-form-field>
+    </pi-field-group>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions class="mat-footer">
+  <button pi-button color="subtle" (click)="close()">Cancel</button>
+  <button pi-button color="primary" (click)="save()" [disabled]="formGroup.pristine">Add</button>
+</mat-dialog-actions>

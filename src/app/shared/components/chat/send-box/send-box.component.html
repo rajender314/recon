@@ -1,0 +1,21 @@
+<div class="chat-box" [class.active]="state.focus">
+  <div class="upload-box" #addFileTrigger="matMenuTrigger" [matMenuTriggerFor]="addFileMenu">
+      <i class="pixel-icons icon-add-icon"></i>
+  </div>  
+  <mat-menu #addFileMenu="matMenu" xPosition="after" class="drop-menu-ui">
+    <div class="my-dialog" (click)="$event.stopPropagation();addFileTrigger.closeMenu()">
+      <p class="file-from">Add a file from...</p>
+      <button mat-menu-item (click)="addFiles('device')">Your Computer</button>
+      <button mat-menu-item (click)="addFiles('project')">Project</button>
+    </div>
+</mat-menu>
+  <div class="chat-area">
+    <pi-form-field>
+        <textarea id="newMessage" pi-input placeholder="Message" rows="1" minRows="1" maxRows="10" [(ngModel)]="state.message" (keydown)="onKeydown($event)" (focus)="focusChat()" (blur)="blurChat()"></textarea>
+    </pi-form-field>
+    
+  </div>
+  <div class="chat-actions">
+      <button pi-button class="send" [disabled]="checkDisabled()" (click)="createMessage()">Send</button>
+  </div>
+</div>

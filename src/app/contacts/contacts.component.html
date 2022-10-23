@@ -1,0 +1,46 @@
+<div class="primary-layout-detail">
+  <header>
+    <div class="w-100 d-flex align-items-center justify-content-between secondary-max-screen-width">
+      <aside class="left-header d-flex">
+        <h1>Organizations [{{contacts.orgCount}}]</h1>
+      </aside>
+      <aside class="d-flex right-header flex-width justify-content-end">
+        <div class="app-search-container m-l-8">
+          <app-search (onSearch)="searchList($event)"></app-search>
+        </div>
+        <button pi-button color="primary" *ngIf="showButton" (click)="addOrganization()" class="m-l-8">Add</button>
+      </aside>
+    </div>
+  </header>
+  <div
+    class="page-sub-header w-100 d-flex align-items-center justify-content-between secondary-max-screen-width border-bottom">
+    <aside class="left-header d-flex">
+      <nav mat-tab-nav-bar [disableRipple]="true">
+        <div class="tab-group">
+          <ng-container *ngFor="let link of contacts.links">
+            <a mat-tab-link (click)="setActiveTab(link)" *ngIf="link.show"
+              [active]="link.type==contacts.activeTab.type">
+              {{link.label}} </a>
+          </ng-container>
+        </div>
+      </nav>
+    </aside>
+    <aside class="d-flex right-header flex-width justify-content-end">
+      <button mat-button [matMenuTriggerFor]="status" class="m-l-8 ak-button">{{contacts.selectedStatus.label}}</button>
+      <mat-menu #status="matMenu" class="drop-menu-ui" [overlapTrigger]="false" yPosition="below" xPosition="before">
+        <button mat-menu-item [disableRipple]="true" *ngFor="let item of contacts.status"
+          (click)="changeStatus(item)">{{item.label}}</button>
+      </mat-menu>
+    </aside>
+  </div>
+  <div class="primary-layout-detail-body flex-column padding-20" style="overflow: auto; margin-right:0px;" infiniteScroll
+    [infiniteScrollDistance]="1" [infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false">
+    <div class="secondary-max-screen-width">
+      <mat-spinner *ngIf="contacts.spinner && !contacts.noPermissions" diameter="36"></mat-spinner>
+      <app-organizations *ngIf="!contacts.spinner && !contacts.noPermissions" [organizations]="contacts.organizations"
+        [orgCount]="contacts.orgCount" [listType]="'list'" [orgType]="contacts.activeTab.type"></app-organizations>
+      <div class="no-permissions" *ngIf="!contacts.spinner && contacts.noPermissions">No Permissions To View
+        Organizations</div>
+    </div>
+  </div>
+</div>

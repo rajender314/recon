@@ -1,0 +1,32 @@
+.invoice-list{
+    .parent-org, .child-orgs .row{
+        display: flex;
+        .s-no, .s-xid, .s-p-s, .s-cost, .s-percent{
+            flex: 1;
+        }
+        .s-p-s{
+            display: flex;
+            align-items: center;
+            .products-count .icon-products{
+                color: #607eda !important;
+                width: 16px !important;
+                position: relative;
+                font-size: 18px !important;
+                top: 3px;
+                margin-right: 5px;
+            }
+            .service-count{
+                margin-left: 10px;
+                .icon-orders{
+                    color: #dc4f66 !important;
+                    font-size: 15px !important;
+                    width: 15px;
+                    height: 15px;
+                    position: relative;
+                    top: 3px;
+                    margin-right: 5px;
+                }
+            }
+        }
+    }
+}

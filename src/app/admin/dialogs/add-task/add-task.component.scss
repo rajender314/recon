@@ -1,0 +1,21 @@
+@import "../../../../assets/styles/mixins";
+
+.ak-field-group{
+    padding-top: 0 !important;
+}
+.mat-icon-button{
+    display: flex;
+    color: rgba(23, 43, 77, 0.8); 
+    @include regularFont;
+    .pixel-icons{
+        width: 12px;height: 11px;font-size: 12px;margin-left: 4px;line-height: 12px;
+    }
+}
+
+.task-row { 
+    .pi-form-field {
+        margin-top: 0;
+        margin-bottom: 16px;
+    }
+}
+

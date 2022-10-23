@@ -1,0 +1,356 @@
+<div class="toolbar" [class.show-menu]="selectedNavContainer?.isActive">
+    <div class="shadow-line"></div>
+    <div class="main-top-menu">
+        <!-- <div class="app-logo-icon"><span>R</span></div> -->
+        <div class="newLogo" (click)="toggleNavContainer(navContainers[0])">
+            <svg width="29px" height="28px" viewBox="0 0 29 28" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink">
+
+                <g id="Recon-logo--set-3" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                    <path d="M1.58095759e-13,0.710100076 L28.4487805,27.2265625 L16.9164679,27.2265625 L1.58095759e-13,11.4649975 L1.58095759e-13,0.710100076 Z M1.24344979e-14,13.3736851 C4.56641207,17.598685 7.92934629,20.7237445 10.0888026,22.7488636 C7.24423216,25.6619647 3.88129795,27.1545403 1.24344979e-14,27.2265904 L1.24344979e-14,27.2265904 Z M1.34389422,0 L15.4249239,0 C19.6004854,0.279555027 22.4060489,3.88255176 22.4060489,8.05279915 C22.3570838,10.0103514 21.6434701,11.7933502 20.0805951,13.4780596 C19.6393213,13.9024841 19.0039324,14.4930028 18.1744286,15.2496159 L17.919754,15.4815826 L1.34389422,0 L15.4249239,0 Z"
+                        id="Combined-Shape" fill="#FFFFFF"></path>
+                </g>
+            </svg></div>
+        <a (click)="toggleNavContainer(navContainers[0])" class="icon-menu">
+            <i class="pixel-icons icon-hamburger"></i>
+        </a>
+        <a (click)="toggleNavContainer(navContainers[1], 'search')" class="icon-menu">
+            <i class="pixel-icons icon-search"></i>
+        </a>
+        <a (click)="toggleNavContainer(navContainers[1], 'plus')" class="icon-menu  has-divider">
+            <i class="pixel-icons icon-plus-slim"></i>
+        </a>
+
+        <a class="icon-menu" routerLinkActive="active" style="margin-top: 26px;" matTooltip="Messages"
+            matTooltipPosition="right" routerLink="/messages">
+            <i class="pixel-icons icon-messages"></i>
+        </a>
+        <a class="icon-menu" routerLink="/projects" matTooltip="Projects" matTooltipPosition="right" routerLinkActive="active"><i
+                class="pixel-icons icon-pn-projects"></i></a>
+        <a class="icon-menu" routerLink="/tasks" matTooltip="Tasks" matTooltipPosition="right" routerLinkActive="active"><i
+                class="pixel-icons icon-task-fill"></i></a>
+
+
+        <!-- <mat-icon (click)="toggleNavContainer(navContainers[0])">menu</mat-icon>
+        <mat-icon >add</mat-icon> -->
+    </div>
+    <div class="main-bottom-menu">
+            <a (click)="toggleNavContainer(navContainers[1], 'notifications')" class="icon-menu " *ngIf="!false">
+                    <i class="pixel-icons icon-notifications"></i>
+                </a>
+        <a (click)="toggleNavContainer(navContainers[1], 'feedback')" class="icon-menu ">
+            <i class="pixel-icons icon-feedback"></i>
+        </a>        
+        <div class="author-pic-holder">
+            <button [matTooltip]='userName + " &#13; "+userEmail' mat-icon-button [matMenuTriggerFor]="userMenu">
+                <span class="user-pic"></span>
+                <!-- <img [src]="'assets/images/avatar.png'" alt="user-logo" *ngIf="userImage" default="assets/images/avatar.png"> -->
+            </button>
+            <mat-menu #userMenu="matMenu" class="more-actions">
+                <!-- <a mat-menu-item [href]="logoutUrl" (click)="logout()">Logout</a> -->
+                <a mat-menu-item [routerLink]="['/userProfile']">Personal Info</a>
+                <a mat-menu-item [routerLink]="['/userPerferences']">Perernces</a>
+                <a mat-menu-item (click)="logout()">Logout</a>
+            </mat-menu>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="primary-nav-container" *ngIf="selectedNavContainer === navContainers[0]">
+    <div class="overlay" (click)="toggleNavContainer(selectedNavContainer)" [@fadeAnimation] *ngIf="selectedNavContainer.isActive"></div>
+    <div class="app-primary-nav" [class.active]="selectedNavContainer.isActive">
+        <div class="toolbar"></div>
+        <div class="nav-data">
+            <h2 class="brand-name">RECON</h2>
+            <div class="list menu-icon-sizes">
+                <div class="item" *ngFor="let group of groups">
+                    <div *ngFor="let tab of group.tabs">
+                        <a class="nav-links" [routerLink]="tab.link" *ngIf="tab.show" [routerLinkActive]="['active']"
+                            (click)="toggleNavContainer(selectedNavContainer)"><span class="icon-wrap"
+                                [style.background]="tab.iconBackground"><i [class]="tab.iconClass"></i></span><span>{{tab.name}}</span></a>
+                    </div>
+                    <!-- <span *ngIf="group.tabs.length">Underline</span> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="primary-nav-container actions" *ngIf="selectedNavContainer === navContainers[1]" [class.notify-nav]="selectedAction == 'notifications'">
+    <div class="overlay" (click)="toggleNavContainer(selectedNavContainer)" [@fadeAnimation] *ngIf="selectedNavContainer.isActive"></div>
+    <div class="app-primary-nav" [class.active]="selectedNavContainer.isActive">
+
+        <div class="nav-data" [ngClass]="{'primary-nav-plus':selectedAction == 'plus'}" *ngIf="selectedAction == 'plus'">
+            <h3><i class="pixel-icons icon-arrow" (click)="toggleNavContainer(navContainers[1])"></i> <span>Create
+                    New</span></h3>
+            <div class="list">
+                <div class="item">
+                    <a class="create-msg" (click)="createMessage()"><span class="icon-wrap"><i class="material-icons">chat_bubble_outline</i></span><span
+                            class="text-action-ui">Message</span></a>
+                </div>
+                <div class="item" *ngIf="APP.permissions.system_access.new_job=='yes'">
+                    <a class="create-msg" (click)="performActions('/projects/create-project')"><span class="icon-wrap"><i
+                                class="pixel-icons icon-pn-projects"></i></span><span class="text-action-ui">Project</span></a>
+                </div>
+                <div class="item">
+                    <a class="create-msg" (click)="performActions()"><span class="icon-wrap"><i class="pixel-icons icon-task-fill"></i></span><span
+                            class="text-action-ui">Task</span></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-data" [ngClass]="{'primary-nav-search':selectedAction == 'search'}" *ngIf="selectedAction == 'search'">
+            <div class="primary-nav-search-container">
+                <h3><i class="pixel-icons icon-arrow" (click)="toggleNavContainer(navContainers[1])"></i>
+                    <span style="width: 100%;">
+                        <app-search #globalSerach [search]="searchConfig" (onSearch)="searchList($event)"></app-search>
+                    </span></h3>
+                <div class="spinner-view" *ngIf="fetchingResults">
+                    <div class="empty-screen">
+                        <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+                    </div>
+                </div>
+                <div class="scroll-sec" *ngIf="!fetchingResults">
+                    <div class="wrapper">
+                        <div class="job-list" [class.no-data]="!searchResults.jobs_list.length" [class.recent-jobs]="!searchValue">
+                            <h3>Projects {{searchValue ? '' : ' (Recent)'}}</h3>
+                            <ul [class.no-search-results]="!searchResults.jobs_list.length">
+                                <li *ngFor="let job of searchResults.jobs_list" (click)="goTo('job', job)">
+                                    <div class="icon">
+                                        <img width="30px" [src]="job.logo" alt="logo" *ngIf="job.logo">
+                                        <i class="pixel-icons icon-pn-projects" *ngIf="!job.logo"></i>
+                                    </div>
+                                    <div class="search-content">
+                                        <div class="content">
+                                            <span class="title" [innerHtml]="job.job_title">04-29-2020 New Ad Type 20
+                                                12</span>
+                                            <span class="num" [innerHtml]="job.job_no">TESTZ US00073979</span>
+                                        </div>
+                                        <div class="status_wrapper">
+                                            <span class="job_status status_{{job.status_id}}" [innerHtml]="job.status_name">draft</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <div class="no-data-screen" *ngIf="!searchResults.jobs_list.length">
+                                    <div class="empty-screen">
+                                        <div class="icon-info-holder">
+                                            <div class="icon">
+                                                <i class="pixel-icons icon-pn-projects"></i>
+                                            </div>
+                                            <p class="no_data">No {{this.searchValue ? '' : 'Recent '}} Projects Found</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <li  >No Jobs Found</li> -->
+                                <!-- [ngClass]="{'no-search-results':!searchResults.jobs_list.length}" -->
+                                <!-- {{!searchResults.jobs_list.length}} -->
+                            </ul>
+                        </div>
+                        <div *ngIf="searchValue" class="po-list" [class.no-data]="!searchResults.job_pos.length">
+                            <h3>PO</h3>
+                            <ul [class.no-search-results]="!searchResults.job_pos.length">
+                                <li *ngFor="let po of searchResults.job_pos" (click)="goTo('po', po)">
+                                    <div class="icon">
+                                        <i class="pixel-icons icon-pn-purchase-orders"></i>
+                                    </div>
+                                    <div class="search-content">
+                                        <div class="content">
+                                            <span class="num" [innerHtml]="po.po_name">TESTZ US00073979</span>
+                                        </div>
+                                        <div class="status_wrapper">
+                                            <span class="status po_status status_{{po.po_status_id}}" [innerHtml]="po.po_status_name">draft</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <!-- <li >No PO's Found</li> -->
+                                <div class="no-data-screen" *ngIf="!searchResults.job_pos.length">
+                                    <div class="empty-screen">
+                                        <div class="icon-info-holder">
+                                            <div class="icon">
+                                                <i class="pixel-icons icon-pn-purchase-orders"></i>
+                                            </div>
+                                            <p class="no_data">No PO's Found</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-data" [ngClass]="{'primary-nav-feedback':selectedAction == 'feedback'}" *ngIf="selectedAction == 'feedback'">
+            <h3>
+                <i class="pixel-icons icon-arrow" (click)="toggleNavContainer(navContainers[1])"></i>
+                <span style="width: 100%;">Feedback</span>
+            </h3>
+            <div class="spinner-view" *ngIf="feedback.isLoading">
+                <div class="empty-screen">
+                    <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+                </div>
+            </div>
+            <ng-container *ngIf="!feedback.isLoading && feedback.success">
+                <div style="display: flex; flex-direction: column;height: calc(100vh - 109px); overflow: auto;">
+                    <div style="flex: 1" [formGroup]="feedbackForm">
+                        <div class="m-r-20">
+                            <h3 class="m-r-0">General Information</h3>
+                            <pi-form-field label="Full Name*">
+                                <input type="text" #firstInput pi-input formControlName="name" />
+                                <div class="msgs">
+                                    <div class="pi-error" *ngIf="feedbackForm.controls.name.hasError('required') && feedback.submitted">Please
+                                        Enter Full Name</div>
+                                </div>
+                            </pi-form-field>
+                            <pi-form-field label="Email*">
+                                <input type="text" pi-input formControlName="email" />
+                                <div class="msgs">
+                                    <div class="pi-error" *ngIf="feedbackForm.controls.email.hasError('required') && feedback.submitted">Please
+                                        Enter Email Address</div>
+                                    <div class="pi-error" *ngIf="feedbackForm.controls.email.hasError('pattern') && feedback.submitted">Please
+                                        Enter Valid Email Address</div>
+                                </div>
+                            </pi-form-field>
+                            <pi-form-field label="Phone">
+                                <input type="text" [appAllowNumbers]="true" maxlength="10" pi-input formControlName="phone" />
+                                <div class="msgs">
+                                    <div class="pi-error" *ngIf="feedbackForm.controls.phone.hasError('minlength') && feedback.submitted">Please
+                                        Enter Valid Phone Number</div>
+                                </div>
+                            </pi-form-field>
+                            <!-- <pi-form-field label="Browser Information <i class='pixel-icons icon-info-circle' title='This field is non-editable. This information is captured from Recon System.'></i>">
+                                <textarea type="text" pi-input formControlName="browser_info" [disabled]="true"></textarea>
+                            </pi-form-field> -->
+                            <div class="pi-form-field">
+                                <label for="browser">Browser Information <i style="font-size: inherit;" class='pixel-icons icon-info-circle'
+                                        title='This field is non-editable. This information is captured from Recon System.'></i></label>
+                                <div class="pi-field">
+                                    <textarea class="ak-field-text" id="browser" type="text" formControlName="browser_info"
+                                        readonly></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-r-20">
+                            <h3>Issue Description</h3>
+                            <ng-container>
+                                <pi-select label="Type of Issue*" [options]="feedback.dropdowns.issueTypes" [multi]="false"
+                                    formControlName="type"></pi-select>
+                                <div class="msgs">
+                                    <div class="pi-error" *ngIf="feedbackForm.controls.type.hasError('required') && feedback.submitted">Please
+                                        Select Type of Issue</div>
+                                </div>
+                            </ng-container>
+                            <pi-form-field label="Subject*">
+                                <input type="text" pi-input formControlName="subject" />
+                                <div class="msgs">
+                                    <div class="pi-error" *ngIf="feedbackForm.controls.subject.hasError('required') && feedback.submitted">Please
+                                        Enter Subject</div>
+                                </div>
+                            </pi-form-field>
+                            <pi-form-field label="Description of Issue*">
+                                <textarea type="text" pi-input formControlName="description"></textarea>
+                                <div class="msgs">
+                                    <div class="pi-error" *ngIf="feedbackForm.controls.description.hasError('required') && feedback.submitted">Please
+                                        Enter Description</div>
+                                </div>
+                            </pi-form-field>
+                            <ng-container>
+                                <div class="pi-form-field">
+                                    <label style="line-height: inherit;">Upload File <em style="font-size: 12px;opacity: .7;">(You
+                                            can attach Multiple Files, total files should be less than 3 MB in size)</em></label>
+                                    <div class="uploader-input">
+                                        <input id="attachment" [accept]="allowedMimeType.toString()" type="file" ng2FileSelect [uploader]="uploader" [hidden]="true"
+                                            multiple />
+                                        <label for="attachment" class="browse-file"><span> Select a file for upload
+                                            </span></label>
+                                    </div>
+                                </div>
+
+                                <ng-container *ngIf="uploader.queue.length">
+                                    <ul class="list-unstyled  files-list">
+                                        <li class="" *ngFor="let item of uploader.queue">
+                                            <div class="file-names-and-size">
+                                                <div class="uploaded-file" style="width: initial;">
+                                                    <div class="file-formate">
+                                                        <i class="pixel-icons icon-{{item.customType}}"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="file-details">
+                                                    <h5 class="" [innerHtml]="item.file.name"></h5>
+                                                    <ng-container>
+                                                        <p>{{ item.file.size/1024 | number:'.2' }} KB </p>
+                                                    </ng-container>
+                                                </div>
+                                            </div>
+                                            <div class="status-and-close">
+                                                <div class="upload-status">
+                                                    <span *ngIf="item.isSuccess" title="Success" class="success"><i
+                                                            class="pixel-icons icon-select"></i></span>
+                                                    <span *ngIf="item.isCancel" title="Cancel" class="cancel"><i class="pixel-icons icon-close-slim"></i>
+                                                    </span>
+                                                    <span *ngIf="item.isError" title="Error" class="error"><i class="pixel-icons icon-exclamation"></i></span>
+                                                </div>
+                                                <span class="rm-btn" (click)="item.isError ? item.remove() : removeFile(item)">Remove</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </ng-container>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div class="footer animated-footer p-r-20" style="display: flex;justify-content: flex-end;">
+                        <button pi-button class="m-r-10" (click)="cancelFeedback()">Cancel</button>
+                        <button pi-button color="primary" (click)="saveFeedback()" [disabled]="feedback.ajaxProgress">Save</button>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+        <div class="nav-data" [ngClass]="{'primary-nav-feedback primary-nav-notify':selectedAction == 'notifications'}"
+            *ngIf="selectedAction == 'notifications'">
+            <h3>
+                <i class="pixel-icons icon-arrow" (click)="toggleNavContainer(navContainers[1])"></i>
+                <!-- <h3 [matMenuTriggerFor]="menu">
+                    {{selectedTab?.name}}
+                    <i class="pixel-icons icon-arrow-down"></i>
+                </h3>
+                <mat-menu #menu="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="after" class="more-actions">
+                    <button mat-menu-item *ngFor="let tab of notifications?.tabs" [class.active]="tab === selectedTab"
+                        (click)="getNotificationsList(tab)">{{tab.name}}</button>
+                </mat-menu> -->
+                <span>Notifications</span>
+                <div class="right-actions">
+                    <app-search class="p-l-16 msg-search" [search]="searchNotifications" (onSearch)="onSearchNotifications($event)"></app-search>
+                    <!-- <i class="pixel-icons icon-search"></i> -->
+                    <!-- <button pi-button>Mark all as read</button> -->
+                </div>
+            </h3>
+            <div class="spinner-view" *ngIf="notifyLoader">
+                <div class="empty-screen">
+                    <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+                </div>
+            </div>
+            <ng-container *ngIf="!notifyLoader">
+                <ng-container *ngIf="notifyData?.length">
+
+                    <app-notifications [notifications]="notifyData" [from]="selectedTab?.key" (close)="closeNotify()"
+                        (reload)="getNotificationsList()"></app-notifications>
+                </ng-container>
+                <ng-container *ngIf="!notifyData?.length">
+                        <div class="no_items" style="color: #8791a6; margin: 0; margin-top: 50px;  text-align: center;">No Notifications found</div>
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
+</div>
+
+<!-- <div class="primary-nav-container actions" *ngIf="selectedNavContainer === navContainers[1]">
+    <div class="overlay" (click)="toggleNavContainer(selectedNavContainer)" [@fadeAnimation]
+        *ngIf="selectedNavContainer.isActive"></div>
+    <div class="app-primary-nav" [class.active]="selectedNavContainer.isActive">
+
+        
+    </div>
+</div> -->

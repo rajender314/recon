@@ -1,0 +1,275 @@
+<div class="primary-layout-detail files-container" *ngIf="state.clonedFiles.length">
+    
+    <header class="tab-header">
+        <div class="w-100 d-flex flex-column">
+                <app-breadcrumb [list]="state.breadcrumbs"></app-breadcrumb>
+                <div class="w-100 d-flex align-items-center justify-content-between ">
+        <aside class="left-header flex-column d-flex flex-width">
+            <div class="estimate-info d-flex align-items-center">
+                    <h1>Files</h1>
+            </div>
+            <nav mat-tab-nav-bar class="nav-bar" [disableRipple]="true">
+                    <div class="tab-group">
+                        <div>
+                            <a mat-tab-link (click)="filterBy(option)" *ngFor="let option of state.filterBy" [active]="option.key == state.selectedFilter.key">
+                              {{option.label}} </a>
+                        </div>
+    
+                    </div>
+            </nav>
+        </aside>
+        <aside class="estimates-menu-detail d-flex" style="margin-top:2px;">
+            <div class="files-type-select">
+                    <div class="multiple-switch files-switch">
+                        <pi-form-field (click)="changeType(nav.id)" *ngFor="let nav of state.listTypes"
+                            [class.active]="nav.id == state.selectedType">
+                            <i class="pixel-icons {{nav.css}}"></i>
+                        </pi-form-field>
+                    </div>
+                </div>
+            <!-- <div class="m-r-15 btn-group small-group-btn-ui basic-group-btns" mat-button [matMenuTriggerFor]="menu">
+                <button class="first-child" [innerHtml]="state.selectedFilter.label"></button>
+                <div class="btn-group">
+                    <button class="last-child">
+                        <i class="pixel-icons icon-arrow-down" style="position: relative; top: 2px;"></i>
+                    </button>
+                    <mat-menu #menu="matMenu" xPosition="before" class="drop-menu-ui">
+                        <a *ngFor="let option of state.filterBy" [innerHtml]="option.label"
+                            [class.active]="option.key == state.selectedFilter.key" (click)="filterBy(option)"></a>
+                    </mat-menu>
+                </div>
+            </div> -->
+            <app-search (onSearch)="DOMSearch($event)" class="m-l-15"></app-search>
+            <button pi-button (click)="addFiles()" color="primary" class="m-l-15">Add Files</button>
+        </aside>
+    </div>
+    </div>
+    </header>
+    <div class="primary-layout-detail-body flex-column padding-20" *ngIf="!state.loader" [ngClass]="{'cards-list-view':state.selectedType==0}">
+        <div class="container">
+            <div class="cards-list" *ngIf="state.files.length && state.selectedType==0">
+                <ng-container *ngFor="let file of state.files">
+                    <div class="file-ui-card">
+                    <div (click)="openSelectedFile(file)"  class="files-card {{state.className}}" @cardAnimation>
+                        <div class="icon file" [class.active]="state.selectedFile?.id == file.id">
+                            <div class="has-preview" 
+                                *ngIf="file.file_type == 'jpg' || file.file_type == 'jpeg' || 
+                                    file.file_type == 'png' || file.file_type == 'gif'">
+                                    <!-- || file.file_type == 'tiff' || file.file_type =='bmp' -->
+                                <div class="img-src" [style.background-image]="'url(' + file.preview_url + ')' | safeHtml: 'style'"></div>
+                            </div>
+                            <div class="no-preview" style="z-index: 1;"
+                                *ngIf="file.file_type == 'pdf' || file.file_type == 'txt' ||
+                                    file.file_type == 'doc' || file.file_type == 'docx' || 
+                                    file.file_type == 'xls' || file.file_type == 'xlsx' ||
+                                    file.file_type == 'zip' || file.file_type == 'rar' || 
+                                    file.file_type == 'tiff' || file.file_type =='bmp' || 
+                                    file.file_type =='csv'">
+                                <i class="pixel-icons icon-{{file.file_type}}"></i>
+                            </div>
+                            <div class="overlay"></div>
+                                <div class="content">
+                                    <div class="file-actions" style="display:flex;">
+                                        <ul>
+                                            <li style="margin-left: 0px;" (click)="$event.stopPropagation()" (menuClosed)="state.selectedFile = null;" (menuOpened)="menuOpened(file)" [matMenuTriggerFor]="menu">
+                                                <i class="pixel-icons icon-more-horizontal" ></i>
+                                            </li>
+                                        </ul>
+                                        <mat-menu #menu="matMenu" xPosition="before" yPosition="below" class="grid-cell-drop-menu-ui cust-ui-menu files-menu">
+                                            <ng-container *ngFor="let act of state.actions">
+                                                <a *ngIf="act.is_visible" (click)="performActions(act, file)"><i class="pixel-icons  icon-{{act.icon}}"></i> <span>{{act.label}}</span></a>
+                                            </ng-container>
+                                        </mat-menu>
+                                    </div>
+                                    <div class="file-type"></div>
+                                    <div class="footer">
+                                        <div class="user-info">
+                                            <div class="box d-flex align-items-center">
+                                                <pi-avatar size="md" [user]="file.user_info" appearance="circle"></pi-avatar>
+                                                <span class="m-l-5" [innerHtml]="file.modified_by"></span>
+                                            </div>
+                                        </div>
+                                        <div class="time" [innerHtml]="file.last_modified"></div>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="file-description">
+                            <div class="file-name"><p class="m-0 file-name-title" matTooltip="{{file.file_name}}">{{file.file_name}}</p></div>
+                            <div class="file-info">
+                                <div class="info-left">
+                                    <div class="version">{{file.version}}</div>
+                                    <div class="messaging">
+                                        <i class="pixel-icons icon-messages"></i>
+                                        <span class="count-msg" [innerHtml]="file.messages"></span>
+                                    </div>
+                                    <div class="access_status m-l-15" *ngIf="file.is_private">Private</div>
+                                </div>
+                                <div class="size info-right">{{file.size}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </ng-container>
+            </div>
+            <div class="list-view global-grid files-grid ag-no-striped with-table-gaps" @gridAnimation
+                *ngIf="state.files.length && state.selectedType==1">
+                <ag-grid-angular class="ag-theme-balham" [class.hide]="state.hideFilesGrid" [gridOptions]="gridOptions">
+                </ag-grid-angular>
+            </div>
+            <div class="no-msg-holder" *ngIf="!state.files.length">
+                <div class="msg-alert">
+                    <p>No Files Assigned / Uploaded</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="spinner-view" *ngIf="state.loader">
+    <div class="empty-screen">
+        <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+    </div>
+</div>
+<div class="no-data-screen" *ngIf="!state.loader && !state.clonedFiles.length">
+    <div class="empty-screen">
+        <div class="icon-info-holder">
+            <div class="icon"><i class="pixel-icons icon-pn-files"></i></div>
+            <p class="alert-message">No Files</p>
+        </div>
+        <button pi-icon-button color="primary" (click)="addFiles()">+ Add Files</button>
+    </div>
+</div>
+
+<div class="side-nav-container discussion-screen recon-side-dialog" *ngIf="state.showSideNav">
+    <div class="overlay" (click)="toggleSideNav()"></div>
+    <div class="side-nav" [class.active]="state.showSideNav">
+        <header>
+            <app-breadcrumb [list]="state.threadBreadcrumb"></app-breadcrumb>
+            <div class="d-flex align-center">
+                <i class="back-link pixel-icons icon-arrow" (click)="toggleSideNav()"></i>
+                <h2>Discussion</h2>
+            </div>
+        </header>
+        <div class="discussions">
+                <h2 style="visibility:hidden;">Discussion</h2>
+            <ng-container>
+                <div class="spinner-view" *ngIf="messages.inProgress">
+                    <div class="empty-screen">
+                        <div class="icon-info-holder">
+                            <mat-spinner diameter="38" class="md"></mat-spinner>
+                        </div>
+                    </div>
+                </div>
+                <ng-container *ngIf="!messages.inProgress">
+                    <ng-container *ngIf="!messages.isNew">
+                        <div class="list-group" *ngIf="!messages.noData" #messageListSection>
+                            <div class="item" *ngFor="let msg of messages.list">
+                                <div class="discussions-image">
+                                    <!-- <pi-avatar size="lg" appearance="circle"></pi-avatar> -->
+                                </div>
+                                <div class="data">
+                                    <h5>
+                                        <div class="user text-ellipsis" [innerHTML]="msg.created"></div>
+                                    </h5>
+                                    <div class="time">{{msg.created_date | fromNow}}</div>
+                                    <div class="msg">
+                                        <div class="plain" [innerHTML]="msg.message"></div>
+                                    </div>
+                                    <div class="attachments" *ngIf="msg.attachment?.length">
+                                        <div class="discussions-file-details" *ngFor="let atchmt of msg.attachment">
+                                            <div class="file-types">
+                                                <i class="pixel-icons icon-{{atchmt.extension}}"></i>
+                                            </div>
+                                            <div class="file-names" [title]="atchmt.original_name">
+                                                <!-- <p class="file-name">
+                                                    {{msg.attachment.length+" "+((msg.attachment.length==1)?"File":"Files")}}
+                                                </p> -->
+                                                <p class="file-type-name">
+                                                    <span class="title">{{atchmt.original_name}}</span>
+                                                    <span>{{ atchmt.filesize/1024 | number:'.2' }} KB </span>
+                                                </p>
+                                            </div>
+                                            <span class="download-attachment" (click)="singleDownload(atchmt)">
+                                                <i class="pixel-icons icon-download"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- <div class="no_data" *ngIf="messages.noData">No Messages Created!</div> -->
+                        <div class="no-data-screen" *ngIf="messages.noData">
+                            <div class="empty-screen">
+                                <div class="icon-info-holder">
+                                    <div class="icon">
+                                        <i class="pixel-icons icon-pn-messages"></i>
+                                    </div>
+                                    <p class="no_data">No Messages found</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="footer">
+                            <div class="msg-typeing">
+                                <div class="text-msg">
+                                    <pi-form-field>
+                                        <textarea id="newMessage" pi-input placeholder="Message" rows="2" minRows="2"
+                                            maxRows="10" [(ngModel)]="messages.newMessage"
+                                            (focus)="messages.showButtons = true;"
+                                            (keydown)="onKeydown($event)"></textarea>
+                                    </pi-form-field>
+                                    <button class="restore-btn button" *ngIf="messages.showButtons"
+                                        (click)="messages.showButtons = false;">
+                                        <i class="material-icons">settings_backup_restore</i>
+                                    </button>
+                                </div>
+                                <div class="send-btn">
+                                    <button class="send-btn-action button" (click)="createMessage()">
+                                        <i class="material-icons">send</i>
+                                    </button>
+                                </div>
+
+
+                            </div>
+                            
+                            <div *ngIf="messages.showButtons" class="job-attachments-list">
+                                <!-- <div class="attachments"></div> -->
+                                <div class="uploads">
+                                    <div ng2FileDrop [ngClass]="{'file-over': hasDropZoneOver}" [uploader]="uploader"
+                                        class="file-drop-zone">
+                                        <input id="attachment" type="file" ng2FileSelect [uploader]="uploader"
+                                            [hidden]="true" multiple [accept]="allowedMimeType.toString()" />
+                                        <label for="attachment" class="browse-file">Upload New Files :
+                                            <span class="upload-file-discussion">
+                                                <i class="pixel-icons icon-plus-slim"></i>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="files-sec">
+                                        <div *ngFor="let file of messages.uploadData.files;let i = index"
+                                            class="attachment-file">
+                                            <img src="" alt="">
+                                            <i class="pixel-icons icon-{{file.type}}"></i>
+                                            <span [innerHtml]="file.original_name"></span>
+                                            <span class="remove-pill" (click)="removeAttachment(i)">
+                                                <i class="pixel-icons icon-close-slim"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                            </div>
+
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="messages.isNew">
+                        <div class="first-msg">
+                            <div class="hello"></div>
+                            <p>Hello</p>
+                            <button pi-button color="primary" (click)="createDiscussion()">Create Discussion</button>
+                        </div>
+
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
+</div>

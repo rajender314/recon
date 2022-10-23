@@ -1,0 +1,85 @@
+.catg-title{
+    font-weight: 600;
+    color: rgba(23, 43, 77, 0.6);
+    margin: 24px 0 4px 0;
+}
+.box-container{
+    display: flex;
+    max-width: 1100px;
+    .left, .right{
+        display: flex;flex-direction: column;width: 50%;
+        .head{
+            display: flex;justify-content: space-between;align-items: center;
+            padding: 8px;font-size: 13px;font-weight: 600;height: 50px;
+            border: 1px solid #dfe1e6;border-bottom: none;
+            .event-actions{
+                color: #3a79d7;
+                cursor: pointer;
+                display: flex;
+                line-height: 16px;
+                i{display: inline;margin: 0 3px;font-size: 14px;}
+                .icon-plus{font-size: 13px;margin-left: 4px;}
+                .link-txt{display: none;}
+                @media screen and (min-width:960px){
+                    i{display: none;}
+                    .link-txt{display: inline;margin-right: 4px;}
+                }
+                &:hover{
+                    color: #1b5ab7;
+                }
+            }
+            @media screen and (min-width:960px){
+                padding: 16px;
+            }
+        }
+        .body{
+            border: 1px solid #dfe1e6;
+            height: 250px; /*312px;*/
+            overflow: auto;
+            color: rgba(23, 43, 77, 0.8);
+            .list{
+                display: flex;align-items: center;padding: 8px;
+                font-size: 13px;cursor: default;user-select:none;
+                .name{flex: 1;word-wrap: break-word;width: 90%;}
+                .event-actions{
+                    cursor: pointer;
+                    font-weight: 600;
+                    height: 12px;
+                    font-size: 12px;
+                    width: 12px;
+                    i{height: 12px;font-size: 12px;width: 12px;display: flex;}
+                }
+                &:hover{
+                   background: #eff0f7; 
+                   color: rgba(23, 43, 77, 1);
+                }
+                @media screen and (min-width:600px){
+                    padding: 8px 16px;
+                }
+            }
+        }
+    }
+    .left{
+        .head, .body{
+            border-right: none;
+        }
+    }
+    .right{
+        .head{
+            padding: 8px;
+            @media screen and (min-width:960px){
+                padding: 8px 16px;
+            }
+            .search{
+                max-width: 150px;
+                padding: 0;
+                border-bottom: 0;
+            }
+        }
+    }
+}
+.icon-button-actions{
+    position: absolute;
+    top: 48px;
+    right: 10px;
+}

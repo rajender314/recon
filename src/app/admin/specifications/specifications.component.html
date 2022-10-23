@@ -1,0 +1,393 @@
+<pi-master-detail-view class="recon-admin-layout" [showDetail]="showView">
+
+	<pi-master-view class="admin-sidebar">
+		<div class="sidebar-header">
+			<!-- <span class="my-pixel-icon {{selectedSpecType?.bgColor}}">
+				<i class="pixel-icons {{selectedSpecType?.icon}}"></i>
+			</span> -->
+			<div class="page-breadcrumb">
+				<app-admin-popover class="left-hdr-comp" class="align-items" [bgColor]="selectedSpecType?.bgColor" [icon]="selectedSpecType?.icon"
+				 [primary]="'Admin'" [activeState]="selectedSpecType.type != 2 ? 'Specifications' : ''" [secondary]="selectedSpecType?.pluralName"
+				 [data]="adminDashboard"></app-admin-popover>
+			</div>
+			<div class="icon-button-actions" *ngIf="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications=='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs=='edit'))">
+
+				<button pi-icon-button class="icon-button-wrapper" (click)="openAddDialog()">
+					<i class="pixel-icons icon-plus"></i>
+				</button>
+
+				<button pi-icon-button class="icon-button-wrapper m-l-6" [matMenuTriggerFor]="menu">
+					<i class="pixel-icons icon-more-horizontal"></i>
+				</button>
+				<mat-menu #menu="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+					<button mat-menu-item (click)="export()">Export</button>
+				</mat-menu>
+
+			</div>
+
+			<app-search (onSearch)="onSearch($event)"></app-search>
+		</div>
+
+		<div class="head">
+			<div matBadgeOverlap="false" matBadgePosition="before" class="mat-badge-center">
+				<span [matMenuTriggerFor]="statusFilter">
+					<span>{{totalCount}}</span>
+					<span>{{statusBy}} {{totalCount == 1 ? selectedSpecType?.label :
+						selectedSpecType?.pluralName}}</span>
+					<mat-icon>expand_more</mat-icon>
+				</span>
+				<mat-menu #statusFilter="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before">
+					<button mat-menu-item *ngFor="let status of dropdowns.statusFilter" (click)="onApplyFilter('status', status)">{{status.label}}</button>
+				</mat-menu>
+			</div>
+			<div class="sorting">
+				<span class="sort-action {{sortBy | lowercase}}" (click)="onApplyFilter('sort')">{{sortBy}}</span>
+			</div>
+		</div>
+		<div class="d-flex align-center justify-content-center w-100" *ngIf="isLoading" style="height: 80%;flex: 1;justify-content: center;align-items: center;">
+			<mat-spinner diameter="24" class="md"></mat-spinner>
+		</div>
+		<div class="sidebar-body">
+			<div class="sidebar-content" [class.spinner]="isLoading || !specificationsList?.length" infiniteScroll
+			 [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false">
+				<div class="body">
+					<!-- <mat-spinner diameter="45" class="md" *ngIf="isLoading"></mat-spinner> -->
+
+					<div class="no-data" [hidden]="isLoading || specificationsList?.length">
+						<div class="d-flex align-center justify-content-center w-100" style="min-height: 300px;flex: 1;
+						justify-content: center;align-items: center;">No
+							{{selectedSpecType?.label}} Found</div>
+					</div>
+					<div class="menu-container" *ngIf="!isLoading">
+						<ul>
+							<li *ngFor="let list of specificationsList" [class.active]="selectedSpecification?.id === list.id"
+							 [class.disable]="!list.status" (click)="onSelectItem(list);changeMasterView()">
+								<div class="group-title item-media estimate align-items-start cost-code-item">
+									<div class="d-flex flex-column m-item-width">
+										<div class="d-flex align-items-center">
+											<p class="name" [title]="list.label">{{list.label}}</p>
+										</div>
+										<div class="d-flex w-100 justify-content-between">
+											<p>{{list.type}}</p>
+										</div>
+									</div>
+								</div>
+
+							</li>
+						</ul>
+					</div>
+					<!-- <mat-list *ngIf="!isLoading">
+					<mat-list-item *ngFor="let list of specificationsList" [class.active]="selectedSpecification?.id === list.id"
+					 [class.disable]="!list.status" (click)="onSelectItem(list);changeMasterView()">
+						<h3 matLine [title]="list.label">{{list.label}}</h3>
+						<p matLine>{{list.type}}</p>
+					</mat-list-item>
+				</mat-list> -->
+				</div>
+			</div>
+		</div>
+
+
+	</pi-master-view>
+
+	<pi-detail-view class="admin-content">
+		<div class="no-data-screen spinner-view" *ngIf="!specificationsList?.length && !isLoading">
+			<div class="empty-screen">
+				<div class="icon-info-holder" *ngIf="param.search?.length">
+					<div class="icon">
+						<i class="pixel-icons icon-search"></i>
+					</div>
+					<p class="alert-message text-center" style="text-align: center;">No {{selectedSpecType?.label}} found for your search string <br />
+						<b style="color: #172b4d;">'{{param.search}}'</b>
+					</p>
+				</div>
+				<div class="icon-info-holder">
+					<ng-container *ngIf="!param.search?.length">
+						<div class="icon">
+							<i class="pixel-icons icon-cost-codes"></i>
+						</div>
+						<p class="alert-message text-center" style="text-align: center;">No {{selectedSpecType?.label}} found</p>
+					</ng-container>
+					<button pi-button color="primary" (click)="openAddDialog(param.search)" *ngIf="(((param.type==1  || param.type==3) && APP.permissions.system_access.specifications=='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs=='edit'))">
+							Add New {{selectedSpecType?.label}}</button>
+				</div>
+
+			</div>
+		</div>
+		<section class="admin-fixed-layout">
+			<div class="spinner-view" *ngIf="fetching && isLoading ">
+				<div class="empty-screen">
+					<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+				</div>
+			</div>
+			<ng-container *ngIf="specificationsList?.length">
+				<!-- <div class="right-header" *ngIf="selectedSpecification">
+				<app-breadcrumb [list]="breadcrumbs"></app-breadcrumb>
+				<div class="info">
+					<mat-icon class="back-link" (click)="changeMasterView()">arrow_back</mat-icon>
+					<h2 [innerHtml]="selectedSpecification.label"></h2>
+				</div>
+			</div> -->
+				<header class="header" *ngIf="selectedSpecification">
+					<div class="w-100 d-flex flex-column justify-content-between">
+						<app-breadcrumb [list]="breadcrumbs"></app-breadcrumb>
+						<div class="w-100 d-flex align-items-center justify-content-between ">
+							<aside class="left-header d-flex flex-width">
+								<h1 [innerHtml]="selectedSpecification.label"></h1>
+							</aside>
+							<aside class="d-flex right-header justify-content-end flex-width">
+							</aside>
+						</div>
+					</div>
+				</header>
+
+				<div class="scroll-body">
+					<ng-container *ngIf="selectedSpecification && !fetching">
+						<!-- <div class="no-result-flex" *ngIf="!specificationsList?.length && !isLoading">
+							<p *ngIf="param.search?.length">No {{selectedSpecType?.label}} found for your search string
+								<br />
+								<b>'{{param.search}}'</b>
+							</p>
+							<p *ngIf="!param.search?.length">No {{selectedSpecType?.label}} found</p>
+							<button pi-button color="primary" (click)="openAddDialog(param.search)" *ngIf="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications=='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs=='edit'))">+
+								Add New {{selectedSpecType?.label}}</button>
+						</div> -->
+
+						<form [formGroup]="specificationForm" class="form-flex" autocomplete="off">
+							<pi-form-field label="{{selectedSpecType?.label}} Name">
+								<input type="text" pi-input name="name" [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+								 formControlName="label" maxlength="64" />
+								<div class="msgs">
+									<div class="pi-error" *ngIf="f.label.hasError('required') && submitted">Please Enter
+										{{selectedSpecType?.label}}
+										Name</div>
+									<div class="pi-error" *ngIf="!f.label.hasError('required') && duplicateError">{{selectedSpecType?.label}}
+										{{duplicateError}}</div>
+								</div>
+							</pi-form-field>
+							<pi-field-group>
+								<pi-select label="Status" [options]="dropdowns.statusList" [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+								 formControlName="status"></pi-select>
+								<!-- <pi-select label="Type" [options]="dropdowns.UIElements" formControlName="ui_element_id"></pi-select> -->
+								<!-- <pi-form-field label="Type">
+							<select type="text" class="ak-field-select" id="type" name="type" formControlName="ui_element_id">
+								<option *ngFor="let ui of dropdowns.UIElements" [value]="ui.id" [disabled]="ui.disable">{{ui.label}}</option>
+							</select>
+						</pi-form-field> -->
+								<pi-select label="Type" [options]="dropdowns.UIElements" [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+								 formControlName="ui_element_id"></pi-select>
+							</pi-field-group>
+							<div formGroupName="settings">
+								<pi-form-field [label]="validation.label" *ngFor="let validation of UIElement?.validations">
+									<input type="checkbox" pi-input [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+									 [formControlName]="validation.key" />
+								</pi-form-field>
+							</div>
+
+							<div class="custom-admin-specs" [ngSwitch]="UIElement?.template_id">
+								<div *ngSwitchCase="'1'">
+									<mat-radio-group [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+									 formControlName="value" class="choices-wrapper">
+										<label>Choices</label>
+										<div class="spec-choices" *ngIf="options.controls.length">
+											<div class="spec-header">
+												<span class="radio">Default</span>
+												<span class="text">Value</span>
+												<span class="toggle">Status</span>
+												<!-- <div class="spec-action-icons"></div> -->
+												<div class="clear-fix"></div>
+											</div>
+											<div class="spec-body" formArrayName="options">
+												<div *ngFor="let choice of options.controls;let i = index" class="choice-box" [formGroupName]="i">
+													<div class="radio">
+														<pi-form-field label=" " class="custom-radio">
+															<input type="radio" [formControl]="specificationForm.get('value')" name="default" pi-input color="primary"
+															 [value]="options.controls[i].get('id').value" />
+														</pi-form-field>
+													</div>
+													<!-- <mat-radio-button disableRipple="true" color="primary" [value]="options.controls[i].get('id').value"></mat-radio-button> -->
+													<!-- </div> -->
+													<pi-form-field class="text">
+														<input type="text" pi-input id="value" name="value" [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+														 formControlName="value" maxlength="64">
+														<div class="pi-error" *ngIf="options.controls[i].get('value').hasError('required') && submitted">Please
+															Enter Value</div>
+													</pi-form-field>
+													<div class="toggle">
+														<mat-slide-toggle color="primary" class="" [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+														 formControlName="status"></mat-slide-toggle>
+
+														<div class="remove-adds" *ngIf="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications=='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs=='edit'))">
+															<span (click)="removeControl(i)" *ngIf="availableOptions <= i" [class.disable]="options.controls.length == 1"
+															 class="remove"><i class="pixel-icons icon-minus"></i></span>
+															<span (click)="addControl()" *ngIf="i >= availableOptions - 1" [class.disable]="options.controls.length == maxAliases"
+															 class="add"><i class="pixel-icons icon-plus"></i></span>
+														</div>
+													</div>
+
+												</div>
+											</div>
+										</div>
+									</mat-radio-group>
+
+								</div>
+								<div *ngSwitchCase="'2'">
+									<pi-field-group>
+										<div style="min-width: 100px;" formGroupName="settings">
+											<pi-select style="margin-top: 0" label="Size" [options]="dropdowns.sizes" [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+											 formControlName="size"></pi-select>
+										</div>
+										<pi-form-field label="Predefined Value">
+											<input type="text" pi-input name="predefined_value" [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+											 formControlName="value" />
+										</pi-form-field>
+									</pi-field-group>
+
+								</div>
+								<div *ngSwitchCase="'3'" class="ak-field-group padg">
+									<pi-form-field label="Tooltip/Help">
+										<textarea pi-input rows="3" id="tooltip" [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+										 name="tooltip" formControlName="tooltip" maxlength="1024"></textarea>
+										<span class="field-note" style="display: block; padding-bottom:0px;">Enter text of 1024 characters or less.</span>
+									</pi-form-field>
+									<div class="note" style="margin-top:0;">Last modified on 09-10-2018 03:27 PM by Recon Dev User</div>
+
+									<div *ngIf="param.type==3" formGroupName="settings">
+										<ng-container>
+											<pi-form-field [label]="'Lookup Values'" style="margin-bottom: 16px;">
+												<input type="checkbox" pi-input [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+												 [formControlName]="'is_lookup'" />
+											</pi-form-field>
+										</ng-container>
+
+										<ng-container *ngIf="specificationForm.controls.settings.controls.is_lookup?.value">
+											<pi-select nameKey="label" idKey="key" style="margin-top: 0;margin-bottom: 16px;" (onChange)="lookupChange($event)"
+											 label="Take values from" [options]="UIElement.generic_options" [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+											 formControlName="lookup_key"></pi-select>
+										</ng-container>
+									</div>
+
+									<ng-container *ngIf="param.type==3 ? !specificationForm.controls.settings.controls.is_lookup?.value : true">
+										<div class="auto-suggest">
+											<div class="actions">
+												<app-search (onSearch)="DOMSearch($event)"></app-search>
+												<button pi-button *ngIf="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications=='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs=='edit'))"
+												 (click)="openAddDialog('', 'auto_suggest')">Add</button>
+											</div>
+
+											<div class="list">
+												<div class="header">
+													<div class="item sorting">
+
+														<span (click)="DOMSort('value')" class="sort-action default {{value.sortBy | lowercase}}">Value</span>
+
+														<span (click)="DOMSort('status')" class="sort-action default {{status.sortBy | lowercase}}">Status</span>
+
+													</div>
+												</div>
+												<div class="content">
+													<div class="item" *ngFor="let data of selectedSpecification.options">
+														<div>
+															<span [innerHtml]="data.value" (click)="focusElement('suggest_value', data);data.showValue = true" *ngIf="!data.showValue"></span>
+															<pi-form-field label=" " *ngIf="data.showValue">
+																<input #myInput autocomplete="" name="suggest_value" type="text" pi-input [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+																 formControlName="suggest_value" (change)="onChangeOption('value', $event, data)" (blur)="onChangeOption('value', $event, data)">
+																<div class="pi-error" *ngIf="f.suggest_value.hasError('required')">Please Enter Value</div>
+															</pi-form-field>
+														</div>
+														<div>
+															<span [innerHtml]="data.status ? 'Active' : 'Inactive'" (click)="focusElement('suggest_status', data);data.showStatus = true"
+															 *ngIf="!data.showStatus"></span>
+															<ng-container *ngIf="data.showStatus">
+																<pi-select [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+																 formControlName="suggest_status" class="m-t" (onChange)="onChangeOption('status', $event, data)"
+																 [options]="dropdowns.status" name="suggest_status" type="text"></pi-select>
+															</ng-container>
+															<!-- <select #mySelect name="suggest_status" type="text" class="ak-field-select" *ngIf="data.showStatus"
+													 formControlName="suggest_status" (change)="onChangeOption('status', $event, data)" (blur)="onChangeOption('status', $event, data)">
+														<option *ngFor="let status of dropdowns.status" [value]="status.value">{{status.label}}</option>
+													</select> -->
+														</div>
+													</div>
+												</div>
+											</div>
+
+											<div class="pagination">
+
+											</div>
+										</div>
+									</ng-container>
+								</div>
+								<div *ngSwitchCase="'4'">
+									<pi-field-group>
+										<div style="min-width: 100px;" formGroupName="settings">
+											<pi-select style="margin-top: 0" label="Decimal Digits" [options]="dropdowns.decimalDigits" [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+											 formControlName="decimal"></pi-select>
+										</div>
+										<pi-form-field label="Predefined Value">
+											<input type="text" [appPriceFormat]="priceConfig" pi-input name="predefined_value" [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+											 formControlName="value" />
+										</pi-form-field>
+									</pi-field-group>
+								</div>
+								<div *ngSwitchCase="'5'">
+									<div class="choices-wrapper">
+										<label>Attributes</label>
+										<div class="choices grp" *ngIf="options.controls.length">
+											<div class="header">
+												<span class="text">Spec</span>
+												<span class="toggle">Delimiter</span>
+											</div>
+											<div class="body" formArrayName="options">
+												<div *ngFor="let choice of options.controls;let i = index" class="choice-box" [formGroupName]="i">
+													<pi-select nameKey="label" class="m-t custom-select" [options]="dropdowns.specifications" [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+													 formControlName="spec_id"></pi-select>
+
+													<pi-form-field class="m-t">
+														<input autocomplete="" type="text" pi-input [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+														 formControlName="delimiter">
+													</pi-form-field>
+													<!-- <div class="ak-field-group">
+												<input autocomplete="" type="text" class="ak-field-text" formControlName="delimiter">
+											</div> -->
+
+													<div class="actions">
+														<span (click)="removeControl(i)" [class.disable]="options.controls.length == 1" class="remove"><i class="pixel-icons icon-minus"></i></span>
+														<span (click)="addControl()" class="add"><i class="pixel-icons icon-plus"></i></span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<pi-form-field label="Tooltip/Help" *ngIf="UIElement?.template_id != 3 && UIElement?.template_id != 5">
+									<textarea pi-input name="description" [disabled]="(((param.type==1 || param.type==3) && APP.permissions.system_access.specifications!='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs!='edit'))"
+									 formControlName="tooltip" maxlength="1024"></textarea>
+									<span class="field-note" style="display: block; padding-bottom:20px;">Enter text of 1024 characters or less.</span>
+								</pi-form-field>
+
+								<div *ngSwitchCase="selectedSpecification.key  == 'paragraph_text' || selectedSpecification.key == 'single_line_text' ? selectedSpecification.key : 'NotInCase'"
+								 class="note">
+									<p>Last modified on 09-10-2018 03:27 PM by Chris Pearce</p>
+									<p>Created on 09-08-2018 03:27 PM by Chris Pearce</p>
+								</div>
+
+							</div>
+
+
+						</form>
+					</ng-container>
+				</div>
+				<div class="footer" *ngIf="selectedSpecification && (((param.type==1 || param.type==3) && APP.permissions.system_access.specifications=='edit') || (param.type==2 && APP.permissions.system_access.equipment_specs=='edit'))">
+					<div class="admin-max-footer">
+						<button pi-button (click)="resetForm(selectedSpecification)">Cancel</button>
+						<button pi-button class="m-l-15" color="primary" (click)="saveDetails(specificationForm)" [disabled]="specificationForm.pristine">Save</button>
+					</div>
+				</div>
+			</ng-container>
+
+
+		</section>
+	</pi-detail-view>
+
+</pi-master-detail-view>

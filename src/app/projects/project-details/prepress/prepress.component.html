@@ -1,0 +1,351 @@
+<section class="secondary-layout" *ngIf="!state.init">
+    <header *ngIf="true">
+        <div class="w-100 d-flex justify-content-center flex-column">
+            <pi-breadcrumb>
+                <ng-container *ngFor="let item of state.breadcrumbs">
+                    <pi-breadcrumb-item *ngIf="item.type == 'link'" label="Projects" [routerLink]="item.route">
+                    </pi-breadcrumb-item>
+                    <pi-breadcrumb-item *ngIf="item.type != 'link'" [innerHtml]="item.label"></pi-breadcrumb-item>
+                </ng-container>
+            </pi-breadcrumb>
+            <div class="w-100 d-flex align-items-center justify-content-between">
+                <aside class="left-header d-flex flex-width">
+                    <h1>Prepress</h1>
+                </aside>
+            </div>
+        </div>
+    </header>
+    <pi-master-detail-view #myResizer class="secondary-layout-holder" [showDetail]="state.showView">
+        <pi-master-view class="left-section" [style.width.px]='leftWidth'>
+            <!-- [class.edit-order-section]="state.editOrder" -->
+            <div class="filter-and-drog-holder">
+                <div class="custome-search-products" [class.applied]="state.DOMSearchValue?.length">
+                    <app-search #piSearchInput (onSearch)="DOMSearch($event)"></app-search>
+                </div>
+            </div>
+            <div class="products">
+                <div class="products-list">
+                    <div class="spinner-view" *ngIf="state.isLoading">
+                        <div class="empty-screen">
+                            <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+                        </div>
+                    </div>
+                    <div class="list" #listScroll *ngIf="!state.isLoading">
+                        <virtual-scroller [scrollAnimationTime]="1000" [useMarginInsteadOfTranslate]="true"
+                            [bufferAmount]="2" #scroll [items]="state.allVendors" [enableUnequalChildrenSizes]="true">
+                            <div class="drag-box"
+                                *ngFor="let vendor of scroll.viewPortItems; trackBy:index; let i = index">
+                                <div class="list-items" [class.active]="vendor.id==state.selectedVendor?.id">
+                                    <div class="parent-item" (click)="onSelect(vendor)">
+                                        <i class="pixel-icons icon-vendor-shape"></i>
+                                        <div class="product-name-icon">
+                                            <span [title]="vendor.name" class="medium-font"
+                                                [innerHtml]="vendor.name"></span>
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </virtual-scroller>
+                        <div *ngIf="!state.allVendors.length" class="no-data-screen spinner-view"
+                            style="background-color: #ffffff;">
+                            <div class="empty-screen">
+                                <div class="icon-info-holder" style="position: absolute;margin-top: -18px;">
+                                    <div class="icon"><i style="margin-right: 0;" class="pixel-icons icon-search"></i>
+                                    </div>
+                                    <p class="alert-message">No Vendors Found!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </pi-master-view>
+        <pi-detail-view class="right-section" [style.width.px]='rightWidth'>
+            <div class="grabber">
+                <span class="grab-icon"></span>
+            </div>
+            <div class="products-list detail-info">
+                <div class="spinner-view" *ngIf="state.fetching">
+                    <div class="empty-screen">
+                        <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+                    </div>
+                </div>
+                <ng-container *ngIf="!state.fetching">
+                    <div class="details recon-product-view">
+
+                        <ng-container *ngIf="state.selectedVendor">
+                            <div class="list-items">
+                                <div class="parent-item title">
+                                    <i class="pixel-icons icon-vendor-shape" title="Not yet Posted to Vendors"></i>
+                                    <div class="product-title">
+                                        <span class="product-name semibold-font" [title]="state.selectedVendor.name"
+                                            [innerHtml]="state.selectedVendor.name"></span>
+                                        <span></span>
+                                    </div>
+                                    <i *ngIf="state.vendorDetails.post_status=='0'" class="pixel-icons icon-vendor-shape vendors-not-posted"></i>
+                                    <div class="smll-btn-container">
+                                        <ng-container *ngFor="let action of state.actions">
+                                            <ng-container *ngIf="action?.visible">
+                                                    <button pi-button
+                                                    [innerHtml]="action.label" [title]="action.title"
+                                                    (click)="performActions(action.key)"></button>
+                                            </ng-container>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="project-info" style="padding: 0 20px;">
+                                <div class="field-wrapper">
+                                    <div class="fields multi-col">
+                                        <div class="field-name">Plant</div>
+                                        <div class="view-field-wrapper">
+                                            <span [innerHtml]="state.vendorDetails.plant_name"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="fields multi-col">
+                                        <div class="field-name">Posting Contact</div>
+                                        <div class="view-field-wrapper">
+                                            <span
+                                                [innerHtml]="(state.vendorDetails.additional_contacts.length ? state.vendorDetails.additional_contacts.join(', ') : '---')"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="fields multi-col">
+                                        <div class="field-name">Primary Contact</div>
+                                        <div class="view-field-wrapper">
+                                            <span [innerHtml]="state.vendorDetails.primary_contact"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="fields multi-col">
+                                        <div class="field-name">Posting Instructions</div>
+                                        <div class="view-field-wrapper">
+                                            <span
+                                                [innerHtml]="state.vendorDetails.posting_instructions || '---'"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="fields multi-col">
+                                        <div class="field-name">Proofs/Art Delivery Address</div>
+                                        <div class="view-field-wrapper">
+                                            <ng-container>
+                                                <!-- <div *ngIf="state.vendorDetails.plant_address_id || state.isEditable">
+															Image
+														</div> -->
+                                                <div class="address-container"
+                                                    *ngIf="state.vendorDetails.plant_address_id">
+
+                                                    <p [innerHtml]="state.vendorDetails.plant_address?.address1"></p>
+                                                    <p [innerHtml]="state.vendorDetails.plant_address?.city"></p>
+                                                    <p>{{state.vendorDetails.plant_address?.state}} -
+                                                        {{state.vendorDetails.plant_address?.postal_code}}</p>
+                                                    <p [innerHtml]="state.vendorDetails.plant_address?.country"></p>
+                                                </div>
+                                                <div class="no-address-view"
+                                                    *ngIf="!state.vendorDetails.plant_address_id">No
+                                                    Address Found</div>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+
+                                    <div class="fields multi-col">
+                                        <div class="field-name">Note</div>
+                                        <div class="view-field-wrapper">
+                                            <span [innerHtml]="state.vendorDetails.notes || '---'"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tasks-accordion nested-products-container">
+                                <p class="heading">Products/Services</p>
+                                <ng-container *ngIf="state.vendorDetails.products.length">
+                                    <ng-container *ngFor="let product of state.vendorDetails.products">
+                                        <div class="product" *ngIf="product.selected">
+                                            <div class="product-name">
+                                                <div class="ak-field-group chk-radio">
+                                                    <ul>
+                                                        <li>
+                                                            <p class="read-task-product"><i
+                                                                    class='pixel-icons icon-products'></i><span>{{product.name}}</span>
+                                                            </p>
+                                                            <ul>
+                                                                <ng-container *ngFor="let service of product.services">
+                                                                    <li *ngIf="service.selected">
+                                                                        <p class="read-task-service"><i
+                                                                                class='pixel-icons icon-orders'></i><span>{{service.name}}</span>
+                                                                        </p>
+                                                                    </li>
+                                                                </ng-container>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </ng-container>
+                                <div class="no-data" *ngIf="!state.vendorDetails.selected_count">
+                                    No Products/Services Added
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                    <div class="edit-overlay" (click)="performActions('edit')" *ngIf="state.toggleView"></div>
+                    <div class="side-window-ui edit-proproducts-services-window" [class.open]="state.toggleView"
+                        *ngIf="state.toggleView">
+                        <div class="selected-service-name">
+                            <div class="ag-cell-custome-actions" style="position: relative; top: 0px;">
+                                <ul style="padding-top: 0px;">
+                                    <li class="m-0" style="background: transparent;" (click)="performActions('edit')">
+                                        <i class="pixel-icons pixel-icons icon-arrow"></i>
+                                    </li>
+                                </ul>
+                            </div>
+                            <span class="section-headding">
+                                <i class="pixel-icons icon-orders"></i>
+                                <h2 [innerHtml]="state.vendorDetails.plant_name"></h2>
+                            </span>
+                            <div class="smll-btn-container">
+                                <button pi-button *ngFor="let action of state.editActions" [innerHtml]="action.label"
+                                    [title]="action.title" (click)="performActions(action.key)"
+                                    [color]="action.color"></button>
+                            </div>
+                        </div>
+
+                        <div class="project-info" style="padding: 0 20px;">
+                            <div class="field-wrapper" [formGroup]="vendorForm">
+                                <div class="fields multi-col">
+                                    <span class="field-name">Plant</span>
+                                    <div>
+                                        <pi-select label=" " (onChange)="plantChange($event)" [options]="state.dropdowns.plants"
+                                            formControlName="plant_id"></pi-select>
+                                    </div>
+                                </div>
+                                <div class="fields multi-col">
+                                    <span class="field-name">Posting Contact</span>
+                                    <div>
+                                        <pi-select label=" " [options]="state.dropdowns.postingContacts" [multi]="true"
+                                            [createNew]="true" formControlName="additional_contacts"></pi-select>
+                                    </div>
+                                </div>
+                                <div class="fields multi-col">
+                                    <span class="field-name">Primary Contact</span>
+                                    <div>
+                                        <pi-select label=" " [options]="state.dropdowns.primaryContacts"
+                                            formControlName="primary_contact"></pi-select>
+                                    </div>
+                                </div>
+
+                                <div class="fields multi-col">
+                                    <span class="field-name">Posting Instruction</span>
+                                    <div>
+                                        <pi-form-field [label]=" ">
+                                            <input type="text" pi-input formControlName="posting_instructions" />
+                                        </pi-form-field>
+                                    </div>
+                                </div>
+
+                                <div class="fields multi-col">
+                                    <span class="field-name">Proof/Art Delivery Address</span>
+                                    <div (click)="changeAddress()">
+                                        <ng-container>
+                                            <!-- <div *ngIf="state.vendorDetails.plant_address_id || state.isEditable">
+															Image
+														</div> -->
+                                            <div class="address-container" *ngIf="vendorForm.controls.plant_address_id.value">
+                                                <!--  state.vendorDetails.plant_address_id -->
+                                                <p [innerHtml]="state.vendorDetails.plant_address?.address1"></p>
+                                                <p [innerHtml]="state.vendorDetails.plant_address?.city"></p>
+                                                <p>{{state.vendorDetails.plant_address?.state}} -
+                                                    {{state.vendorDetails.plant_address?.postal_code}}</p>
+                                                <p [innerHtml]="state.vendorDetails.plant_address?.country"></p>
+                                            </div>
+                                            <div class="no-address-view" *ngIf="!vendorForm.controls.plant_address_id.value">
+                                                No
+                                                Address Found</div>
+                                        </ng-container>
+                                    </div>
+                                </div>
+
+                                <div class="fields multi-col">
+                                    <span class="field-name">Note</span>
+                                    <div>
+                                        <pi-form-field [label]=" ">
+                                            <textarea pi-input maxlength="1024" formControlName="notes"></textarea>
+                                            <span class="field-note">Enter text of 1024 characters or less.</span>
+                                        </pi-form-field>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tasks-accordion">
+                            <div class="nested-products-container">
+                                <p class="heading">Products/Services</p>
+                                <ng-container *ngIf="state.vendorDetails.products.length">
+                                    <div class="product" *ngFor="let product of state.vendorDetails.products">
+                                        <div class="product-name">
+                                            <div class="ak-field-group chk-radio">
+                                                <pi-form-field
+                                                    label="<i class='pixel-icons icon-products'></i>{{product.name}}">
+                                                    <input type="checkbox" pi-input name="product"
+                                                        [(ngModel)]="product.selected"
+                                                        (change)="checkAllServices(product, product.selected)"
+                                                        [value]="product.id" />
+                                                </pi-form-field>
+                                            </div>
+                                        </div>
+                                        <div class="service" *ngFor="let service of product.services">
+                                            <div class="service-name">
+                                                <div class="ak-field-group chk-radio">
+                                                    <pi-form-field
+                                                        label="<i class='pixel-icons icon-orders' ></i>{{service.name}}">
+                                                        <input type="checkbox" pi-input name="service"
+                                                            [(ngModel)]="service.selected"
+                                                            (change)="checkService(product, service.selected)"
+                                                            [value]="service.jsr_id" />
+                                                    </pi-form-field>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <div class="no-data" *ngIf="!state.vendorDetails.products.length">
+                                    No Products/Services Added
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+            <div class="spinner-view" *ngIf="state.detailsLoader">
+                <div class="empty-screen">
+                    <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+                </div>
+            </div>
+        </pi-detail-view>
+    </pi-master-detail-view>
+</section>
+
+<div *ngIf="!state.allVendors.length && !state.isLoading && state.init" class="no-data-screen spinner-view"
+    style="background-color: #ffffff;">
+    <div class="empty-screen">
+        <div class="icon-info-holder" style="position: absolute;margin-top: -18px;">
+            <div class="icon"><i style="margin-right: 0;" class="pixel-icons icon-prepress"></i>
+            </div>
+            <p class="alert-message">No Vendors</p>
+        </div>
+    </div>
+</div>
+
+<div class="spinner-view" *ngIf="state.isLoading && state.init">
+    <div class="empty-screen">
+        <div class="icon-info-holder">
+            <mat-spinner diameter="34" class="md"></mat-spinner>
+        </div>
+    </div>
+</div>

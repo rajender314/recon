@@ -1,0 +1,283 @@
+<div class="primary-layout">
+	<div class="pi-detail-view">
+		<div class="primary-layout-detail">
+			<header>
+				<div class="w-100 d-flex align-items-center justify-content-between">
+					<aside class="left-header d-flex ">
+						<pi-breadcrumb>
+							<ng-container *ngFor="let item of state.breadcrumbs">
+								<pi-breadcrumb-item tabindex="-1" *ngIf="item.type == 'link'" [label]="item.label"
+									[routerLink]="item.route" (click)="closeDialog()">
+								</pi-breadcrumb-item>
+								<pi-breadcrumb-item *ngIf="item.type != 'link'" [label]="item.label">
+								</pi-breadcrumb-item>
+							</ng-container>
+						</pi-breadcrumb>
+						<!-- <app-breadcrumb [list]="state.breadcrumbs" style="padding-bottom: 4px;"></app-breadcrumb> -->
+						<div class="d-flex " style="position: relative;">
+							<div class="ag-cell-custome-actions">
+								<ul style="padding-top: 0;">
+									<li style="margin-right: 0; margin-left: 0;" (click)="closeDialog()"><i
+											class="pixel-icons icon-arrow"></i></li>
+								</ul>
+							</div>
+							<h1 mat-dialog-title [innerHtml]="data.title"></h1>
+						</div>
+					</aside>
+					<aside class="right-header d-flex">
+						<button mat-icon-button mat-dialog-close tabindex="-1"
+							style="width:38px;height: 38px; line-height: 38px;position: relative;left: 13px;">
+							<mat-icon>close</mat-icon>
+						</button>
+					</aside>
+				</div>
+			</header>
+			<div class="distribution-kitlist upload-insertion-order">
+				<div class="primary-layout-detail-body flex-column">
+					<div class="sidebar-layout padding-20">
+						<div class="distribution-kitlist" style="height: calc(100vh - 71px);">
+							<mat-dialog-content class="w-100">
+								<div *ngIf="stepper == 0">
+
+									<pi-select label="File Type" [options]="state.fileTypes" (onChange)="fileTypeChange()"
+										[(ngModel)]="state.file_type"></pi-select>
+
+									<div class="uploader">
+										<div class="uploader-details">
+											<div class="uploader-drag">
+												<div ng2FileDrop *ngIf="!selectedFile"
+													[ngClass]="{'file-over': hasDropZoneOver}" [uploader]="uploader"
+													class="file-drop-zone" (fileOver)="fileOverBase($event)"
+													(onFileDrop)="fileDrop($event)">
+													Drag Files to attach, or &nbsp;<label for="upload">Browse</label>
+													<input id="upload" type="file" [accept]="allowedMimeType.toString()" ng2FileSelect [uploader]="uploader"
+														[hidden]="true" />
+												</div>
+												<div class="uploaded-file" *ngIf="selectedFile">
+													<i class="pixel-icons icon-close-slim" (click)="deleteFile()"></i>
+													<span [innerHtml]="selectedFile.name"></span>
+													<span [innerHtml]="(selectedFile.size / 1024) + 'KB'"></span>
+												</div>
+
+												<div class="format-sec">
+													<div class="uploader-formats">
+														<span>Valid file formates are xlsx, xls<i
+																class="required">*</i>.</span>
+														<span>Max file size allowed is 3 MB<i
+																class="required">*</i>.</span>
+														<span>Excel header must be same as the sample format<i
+																class="required">*</i>.</span>
+													</div>
+													<div class="uploader-details">
+														<a [href]="sampleLink"><i
+																class="pixel-icons icon-down-arrow"></i> Download
+															Insertion Order Sample</a>
+													</div>
+												</div>
+
+												<div [innerHtml]="showFileError"></div>
+											</div>
+
+										</div>
+										<div [innerHtml]="showFileError"></div>
+									</div>
+								</div>
+
+								<div class="" *ngIf="stepper == 1">
+									<pi-select label="Select Sheet" [options]="validateResults?.updatedSheets"
+										[formControl]="selectedSheet"></pi-select>
+									<div *ngIf="validateResults?.error_status" class="erro-sec">
+										<h2 class="error-title">1 Error occurred</h2>
+										<div *ngIf="!validateResults?.errors">
+											<p class="error-content"><i class="pixel-icons icon-exclamation"></i>Excel
+												file header doesn't match with Sample
+												Format</p>
+											<h3 class="format">Sample Format</h3>
+											<div class="excel-header">
+												<span *ngFor="let col of validateResults?.sample_columns"
+													[innerHtml]="col"></span>
+											</div>
+											<h3 class="format">Upload Format</h3>
+											<div class="excel-header">
+												<span *ngFor="let col of validateResults?.uploaded_columns"
+													[innerHtml]="col.name" [class.has-error]="col.is_error"></span>
+											</div>
+										</div>
+										<div *ngIf="validateResults?.errors">
+											<div *ngIf="validateResults?.errors.header_match">
+												<p class="error-content"><i
+														class="pixel-icons icon-exclamation"></i>Excel file header
+													doesn't match with Sample
+													Format</p>
+												<h3 class="format">Sample Format</h3>
+												<div class="excel-header">
+													<span *ngFor="let col of validateResults?.sample_columns"
+														[innerHtml]="col"></span>
+												</div>
+												<h3 class="format">Upload Format</h3>
+												<div class="excel-header">
+													<span *ngFor="let col of validateResults?.uploaded_columns"
+														[innerHtml]="col.name" [class.has-error]="col.is_error"></span>
+												</div>
+											</div>
+											<p *ngIf="validateResults?.errors.inactive_vendors" class="error-content"><i
+													class="pixel-icons icon-exclamation"></i>
+												{{validateResults?.errors.inactive_vendors.toString()}} Inactive
+												Vendors.</p>
+											<p *ngIf="validateResults?.errors.vendor_not_exists" class="error-content">
+												<i class="pixel-icons icon-exclamation"></i>
+												{{validateResults?.errors.vendor_not_exists.toString()}} Following
+												Vendor
+												does not exists.</p>
+											<p *ngIf="validateResults?.errors.vendor_code_not_exists"
+												class="error-content"><i class="pixel-icons icon-exclamation"></i>
+												Vendor codes does not exists.</p>
+											<p *ngIf="validateResults?.errors.formula_error" class="error-content"><i
+													class="pixel-icons icon-exclamation"></i>
+												Cannot read the excel files with formula\'s.</p>
+											<p *ngIf="validateResults?.errors.file" class="error-content"><i
+													class="pixel-icons icon-exclamation"></i>
+												Error reading excel sheet.</p>
+											<p *ngIf="validateResults?.errors.common_error" class="error-content"><i
+													class="pixel-icons icon-exclamation"></i>
+												{{validateResults.errors.common_error}}</p>
+
+										</div>
+									</div>
+
+									<div *ngIf="!validateResults?.error_status">
+
+										<div class="table">
+											<div class="tbody">
+												<div class="trow">
+													<div class="tdata first">1</div>
+													<div class="tdata">Create {{validateResults?.product_count}} new
+														Products{{validateResults?.update_product_count?(" "+validateResults?.update_product_count+(validateResults?.update_product_count=='1'?" Product will get Updated":" Products will get Updated")):""}}
+													</div>
+												</div>
+												<div class="trow">
+													<div class="tdata first">2</div>
+													<div class="tdata">Add {{validateResults?.vendor_count}}
+														Vendors{{validateResults?.update_vendor_count?(" "+validateResults?.update_vendor_count+(validateResults?.update_vendor_count=='1'?" Vendor will get Updated":" Vendors will get Updated")):""}}
+													</div>
+												</div>
+												<div class="trow">
+													<div class="tdata first">3</div>
+													<div class="tdata">Post Estimate</div>
+												</div>
+												<div class="trow">
+													<div class="tdata first">4</div>
+													<div class="tdata">Create {{validateResults?.vendor_count}} PO's for
+														{{validateResults?.product_count}}
+														Products{{validateResults?.update_vendor_count?(" "+validateResults?.update_vendor_count+(validateResults?.update_vendor_count=='1'?" Vendor will get Updated":" Vendors will get Updated")):""}}
+													</div>
+												</div>
+												<div class="trow">
+													<div class="tdata first">5</div>
+													<div class="tdata">Approve PO's
+														<!-- <pi-form-field label="Send PO's">
+															<input type="checkbox" pi-input  [(ngModel)]="state.send_po"/>
+														</pi-form-field> -->
+														<!-- <div><input pi-input type="checkbox" [(ngModel)]="state.send_po"/>Send PO's</div> -->
+													</div>
+												</div>
+												<div class="trow">
+													<div class="tdata insertion-order-notes">Steps 4 and 5 are run in
+														the background. Once it is
+														completed, you will get a notification.</div>
+												</div>
+											</div>
+											<div class="tfooter">
+												<div class="trow insertion-order-progress">
+													<ul>
+														<li></li>
+														<li></li>
+														<li class="last"></li>
+													</ul>
+												</div>
+												<!-- <hr> -->
+												<mat-dialog-actions [ngClass]="{'back':stepper == 1}"
+													class="animated-footer padding-20">
+													<button pi-button
+														(click)="stepper == 0 ? closeDialog() : stepper = 0">{{stepper == 0 ? 'Cancel' :
+												'Back'}}</button>
+													<button pi-button color="primary" *ngIf="stepper == 0"
+														(click)="validate()" [disabled]="!selectedFile">Next</button>
+													<div *ngIf="stepper == 1 && !validateResults?.error_status">
+														<button pi-button color="primary"
+															(click)="saveDetails(true)">Import</button>
+													</div>
+												</mat-dialog-actions>
+											</div>
+										</div>
+									</div>
+									<!-- <div *ngIf="!validateResults?.error_status">
+
+										<div class="table">
+											<div class="tbody">
+												<div class="trow">
+													<div class="tdata first">1</div>
+													<div class="tdata">Create {{validateResults?.product_count}} new
+														Products</div>
+												</div>
+												<div class="trow">
+													<div class="tdata first">2</div>
+													<div class="tdata">Add {{validateResults?.vendor_count}} Vendors
+													</div>
+												</div>
+												<div class="trow">
+													<div class="tdata first">3</div>
+													<div class="tdata">Post Estimate</div>
+												</div>
+												<div class="trow">
+													<div class="tdata first">4</div>
+													<div class="tdata">Create {{validateResults?.vendor_count}} PO's for
+														{{validateResults?.product_count}} Products</div>
+												</div>
+												<div class="trow">
+													<div class="tdata first">5</div>
+													<div class="tdata">Approve PO's
+													</div>
+												</div>
+												<div class="trow">
+													<div class="tdata insertion-order-notes">Steps 4 and 5 are run in
+														the background. Once it is completed, you will get a
+														notification.</div>
+												</div>
+											</div>
+											<div class="tfooter">
+												<div class="trow insertion-order-progress">
+													<ul>
+														<li></li>
+														<li></li>
+														<li class="last"></li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</div> -->
+								</div>
+							</mat-dialog-content>
+
+							
+						</div>
+					</div>
+					<mat-dialog-actions [ngClass]="{'back':stepper == 1}" class="animated-footer padding-20">
+							<button pi-button (click)="stepper == 0 ? closeDialog() : stepper = 0">{{stepper == 0 ? 'Cancel' :
+						'Back'}}</button>
+							<button pi-button color="primary" *ngIf="stepper == 0" (click)="validate()"
+								[disabled]="!selectedFile">Next</button>
+							<div *ngIf="stepper == 1 && !validateResults?.error_status">
+								<button pi-button color="primary" (click)="saveDetails(true)">Import</button>
+							</div>
+						</mat-dialog-actions>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="spinner-view overlay-spinner" *ngIf="loader">
+	<div class="empty-screen">
+        <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+    </div>
+</div>

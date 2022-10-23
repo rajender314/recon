@@ -1,0 +1,88 @@
+<div class="vendor-schedule">
+	<div class="mat-dialog-heading">
+		<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+		<button mat-icon-button mat-dialog-close tabindex="-1">
+			<mat-icon>close</mat-icon>
+		</button>
+	</div>
+	<mat-dialog-content>
+		<div class="primary-heading align-items-center justify-content-between" style="border-bottom: solid 1px #e9e9e9; padding-bottom: 12px;    position: sticky;
+		left: 0; right: 0; top: 0; background: #fff; z-index: 2;">
+			<div  style="min-width: 180px;">
+				<pi-select label="" [options]="data.vendorsList" [formControl]="selectedVendor"
+					(onChange)="changeVendor(selectedVendor.value)"></pi-select>
+				<!-- <div class="dropdown"><i class="pixel-icons icon-triangle-arrow-up"></i>
+					<i class="pixel-icons icon-triangle-arrow"></i>
+				</div> -->
+			</div>
+			<pi-form-field label="Send Schedule">
+				<input type="checkbox" pi-input [(ngModel)]="data.sendSchedule[selectedVendor.value]" [disabled]="!allowEditable"/>
+			</pi-form-field>
+		</div>
+		<div class="secondary-heading" *ngIf="false">
+			<button pi-button class="small-btn m-r-15" (click)="performActions('add')">Add Milestone</button>
+			<span style="flex: 1;"></span>
+			<pi-select placeholder="Select Template" [options]="dropdowns.vendorTemplates"
+				[(ngModel)]="selectedMilestone"></pi-select>
+			<button pi-button class="small-btn m-l-15" (click)="performActions('apply')"
+				[disabled]="!selectedMilestone">Apply</button>
+		</div>
+		<div class="content">
+			<div class="spinner-view" *ngIf="inProgress">
+				<div class="empty-screen">
+					<div class="icon-info-holder">
+						<mat-spinner diameter="24" class="md"></mat-spinner>
+					</div>
+				</div>
+			</div>
+			<ng-container *ngIf="!inProgress">
+				<div [sortablejs]="vendorMilestones" class="milestones" [sortablejsOptions]="sortOptions">
+					<div class="list-item" *ngFor="let item of vendorMilestones;let i = index">
+						<div class="list-item-actions d-flex" *ngIf="allowEditable">
+							<div class="animate-icon-wrap animate-icon-effect-1 animate-icon-effect-1a">
+								<a class="animate-icon">
+									<i class="pixel-icons icon-drag handle"></i>
+								</a>									
+							</div>
+							<div class="animate-icon-wrap animate-icon-effect-1 animate-icon-effect-1a">
+								<a class="animate-icon" (click)="performActions('delete', item, i)">
+									<i class="pixel-icons icon-delete" ></i>
+								</a>									
+							</div>
+						</div>
+						<div class="list-item-name m-r-15">
+							<span [innerHtml]="item.name" *ngIf="!item.is_new"></span>
+							<div *ngIf="item.is_new">
+								<pi-select [options]="dropdowns.milestones" [(ngModel)]="item.vendor_milestone_id"
+									(onChange)="milestoneChange($event, i)" [disabled]="!allowEditable"></pi-select>
+								<div class="msgs">
+									<div class="pi-error" *ngIf="!item.vendor_milestone_id && checkValidation">
+										Please Select Milestone</div>
+								</div>
+							</div>
+						</div>
+						<div class="list-item-field">
+							<pi-form-field [label]=" " class="date-field plain-date-field">
+								<input pi-input matInput [min]="minDate" [max]="maxDate" [owlDateTime]="picker1"
+									[(ngModel)]="item.due_date" [owlDateTimeTrigger]="picker1"  [disabled]="!allowEditable"
+									(dateTimeChange)="showFooter = true;" placeholder="Choose a date" readonly>
+								<div class="owl-picker-toggle">
+									<i class="pixel-icons icon-calendar" [owlDateTimeTrigger]="picker1"></i>
+								</div>
+								<owl-date-time #picker1 [hour12Timer]="true"></owl-date-time>
+							</pi-form-field>
+						</div>
+					</div>
+				</div>
+				<div class="no-data empty-msg-ui" *ngIf="!vendorMilestones.length">
+					<p>No Milestones Added</p>
+				</div>
+			</ng-container>
+		</div>
+	</mat-dialog-content>
+	<mat-dialog-actions *ngIf="showFooter">
+		<button pi-button (click)="cancelMilestones()">Cancel</button>
+		<button pi-button color="primary" class="m-l-15" (click)="saveMilestones()">Save
+			Changes</button>
+	</mat-dialog-actions>
+</div>

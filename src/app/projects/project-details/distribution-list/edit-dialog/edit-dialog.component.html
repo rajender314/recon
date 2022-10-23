@@ -1,0 +1,51 @@
+<div class="primary-layout">
+	<div class="pi-detail-view">
+		<div class="primary-layout-detail">
+			<header>
+				<div class="w-100 d-flex align-items-center justify-content-between  ">
+					<div class="left-header d-flex" >
+						<pi-breadcrumb>
+							<ng-container *ngFor="let item of data.breadcrumbs">
+								<pi-breadcrumb-item tabindex="-1" *ngIf="item.type == 'link'" [label]="item.label"
+									[routerLink]="item.route" (click)="closeDialog()">
+								</pi-breadcrumb-item>
+								<pi-breadcrumb-item *ngIf="item.type != 'link'" [label]="item.label">
+								</pi-breadcrumb-item>
+							</ng-container>
+						</pi-breadcrumb>
+						<div class="d-flex align-items-center " style="position: relative;">
+							<div class="ag-cell-custome-actions">
+								<ul style="padding-top:0;">
+									<li style="margin-right: 0; margin-left: 0;" (click)="closeDialog()">
+										<i class="pixel-icons icon-arrow"></i>
+									</li>
+								</ul>
+							</div>
+							<h1 [innerHtml]="data.title"></h1>
+						</div>
+
+					</div>
+					<div class="right-header d-flex">
+						<button class="m-l-15" pi-button (click)="performAction('show_errors')">Show Errors</button>
+						<button class="m-l-15" color="primary" pi-button (click)="performAction('import')">Import</button>
+						<button class="m-l-15" color="primary" pi-button (click)="performAction('export')">Export</button>
+					</div>
+				</div>
+			</header>
+			<div class="primary-layout-detail-body flex-column padding-20">
+				<div class="global-grid  distribution-data with-out-margin actions-grid with-check-boxs ag-no-striped ag-full-width-grid">
+					<ag-grid-angular [ngStyle]="{height: isFooter ? 'calc(100vh - 121px)' : 'calc(100vh - 71px)'}" [class.hidden]="loader" class="ag-theme-balham"
+						[gridOptions]="gridOptions"></ag-grid-angular>
+					<ag-grid-angular style="height: 50px;" *ngIf="isFooter" [class.hidden]="loader" class="ag-theme-balham"
+						[gridOptions]="footerGid"></ag-grid-angular>
+					<div class="spinner-view" *ngIf="loader">
+						<div class="empty-screen">
+							<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>

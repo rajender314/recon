@@ -1,0 +1,493 @@
+@import "../../../assets/styles/mixins";
+.project-content {
+    overflow: auto;
+    height: 100%;
+    .centralise {
+        width: auto;
+        padding: 0 24px;
+        margin: 0 auto;
+        color: rgba(23, 43, 77, 0.8);
+        -webkit-animation-duration: 0.20s;
+        animation-duration: 0.20s;
+        -webkit-animation-timing-function: cubic-bezier(0.2, 1, 0.4, 1);
+        animation-timing-function: cubic-bezier(0.2, 1, 0.4, 1);
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both;
+        -webkit-animation-name: slideInRight;
+        animation-name: slideInRight;
+        @media screen and (min-width: 960px) {
+            padding: 0;
+            width: 80%;
+        }
+        .sticky-section {
+            position: sticky;
+            top: 0px;
+            z-index: 1;
+            background: #fff;
+        }
+        hr {
+            border: none;
+            border-bottom: 2px solid #ccd1db;
+            max-width: 767px;
+        }
+        .title-header {
+            display: flex;
+            align-items: center;
+            margin: 0 auto;
+            padding: 5px 0 0;
+            max-width: 767px;
+            a {
+                height: 30px;
+                width: 30px;
+                border-radius: 50%;
+                margin-right: 20px;
+                margin-left: -50px;
+                color: #fff;
+                background: #0A47A6;
+                padding: 6px;
+                cursor: pointer;
+                i {
+                    @include iconSize(18px);
+                }
+                &:hover {
+                    background: #0d3d8e;
+                }
+            }
+            h3 {
+                color: rgba(23, 43, 77, 1);
+                font-weight: 600;
+                font-size: 18px;
+            }
+        }
+        .content-wrapper {
+            max-width: 767px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .progress-indicator {
+            position: relative;
+            max-width: 920px;
+            margin: 0 auto 30px;
+            .indicator-line {
+                position: absolute;
+                border-bottom: 2px solid #eee;
+                left: 0;
+                right: 0;
+                width: 66%;
+                margin: 0 auto;
+                top: 19px;
+            }
+        }
+        .sonar-emitter {
+            position: relative;
+            width: 8px;
+            height: 8px;
+            border-radius: 9999px;
+            background-color: #c3c9cb;
+            /*HSL(45,100%,50%);*/
+            /*left: 30px;
+            top: -16px;*/
+            margin: 16px auto;
+            .sonar-wave,
+            .sonar-wave-2 {
+                position: absolute;
+                border-radius: 9999px;
+                background-color: #c3c9cb;
+                /*ccdbf5; /*HSL(45,100%,50%);*/
+                z-index: 0;
+                /*-1;*/
+                pointer-events: none;
+                width: 16px;
+                height: 16px;
+                left: -4px;
+                top: -4px;
+                opacity: 0.4;
+            }
+            .sonar-wave-2 {
+                display: none;
+            }
+        }
+        li.active {
+            color: #1149a5 !important;
+            .sonar-emitter {
+                background-color: #0553cb;
+                .sonar-wave,
+                .sonar-wave-2 {
+                    display: block;
+                    position: absolute;
+                    border-radius: 9999px;
+                    background-color: #0553cb;
+                    z-index: 0;
+                    pointer-events: none;
+                    width: 16px;
+                    height: 16px;
+                    left: -4px;
+                    top: -4px;
+                    opacity: 0.1;
+                }
+            }
+        }
+        li.current {
+            color: #1149a5 !important;
+            .sonar-emitter {
+                background-color: #0553cb;
+                .sonar-wave,
+                .sonar-wave-2 {
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    opacity: 1;
+                    background-color: #0553cb;
+                    animation: sonarWave 2s linear infinite;
+                }
+                .sonar-wave-2 {
+                    animation: sonarWave 2s linear 1s infinite;
+                }
+            }
+        }
+        @keyframes sonarWave {
+            from {
+                opacity: 0.6;
+            }
+            to {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+    }
+}
+
+.progressbar {
+    overflow: hidden;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+.progressbar li {
+    list-style-type: none;
+    width: 33%;
+    float: left;
+    position: relative;
+    font-weight: 600;
+}
+
+.progressbar li:before {
+    content: '';
+    width: 20px;
+    line-height: 20px;
+    display: block;
+    font-size: 10px;
+    color: #333;
+    background: white;
+    border-radius: 3px;
+    margin: 0 auto 5px auto;
+}
+
+.progressbar li:after {
+    content: '';
+    width: 100%;
+    height: 2px;
+    background: white;
+    position: absolute;
+    left: -50%;
+    top: 19px;
+    z-index: -1;
+}
+
+.progressbar li:first-child:after {
+    content: none;
+}
+
+.progressbar li.current:before,
+.progressbar li.current:after {
+    background: #0553cb;
+    color: white;
+    z-index: 0;
+}
+
+@media screen and (max-width: 600px) {
+    .project-content .centralise {
+        padding: 0;
+        .header {
+            padding: 10px 24px;
+            a {
+                height: 28px;
+                width: 28px;
+                padding: 6px;
+                margin-right: 12px;
+                i {
+                    @include iconSize(16px);
+                }
+            }
+            h3 {
+                font-size: 16px;
+            }
+        }
+        hr {
+            margin: 0 24px;
+        }
+        .progressbar li {
+            font-size: 12px;
+        }
+        .content-wrapper {
+            padding: 0 24px;
+        }
+    }
+}
+
+::ng-deep .project-content {
+    .has-info {
+        i.icon-info-circle {
+            font-size: inherit;width: inherit;height: inherit;padding-left: 5px;
+        }
+    }
+    .mat-chip-list .mat-chip-list-wrapper {
+        border: 1px solid #dfe1e6;
+        border-radius: 3px;
+        margin: 0;
+        input.mat-input-element {
+            border: none;
+            padding: 6px 0;
+            &:focus {
+                outline: none;
+            }
+        }
+        .mat-chip {
+            background-color: #dfe1e6;
+            border-radius: 2px;
+            margin: 6px;
+            padding: 2px 24px 2px 6px;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            position: relative;
+            i {
+                height: 10px;
+                width: 10px;
+                cursor: pointer;
+                margin-top: 1px;
+                line-height: 10px !important;
+                font-size: 10px !important;
+                position: absolute;
+                right: 6px;
+                color: #172b4d;
+                opacity: 1;
+                &:hover {
+                    opacity: 1;
+                }
+            }
+            &:hover {
+                background-color: #c7c9cc;
+            }
+        }
+    }
+}
+
+.pi-form-field,
+.pi-field-group {
+    max-width: 100%;
+}
+
+::ng-deep .pi-field .pi-select-input {
+    pi-icon {
+        .icon-arrow-down {
+            line-height: 12px !important;
+            @include iconSize(12px);
+        }
+    }
+}
+
+h4 {
+    border-bottom: 2px solid #e1e4eb;
+    padding: 4px 0;
+    margin: 32px 0 0;
+    color: #37407D;
+}
+
+.pi-field-group>.pi-form-field {
+    flex: 1 1 50%;
+}
+
+.pi-col-2 {
+    max-width: 50%;
+}
+
+.pi-field-group {
+    &.err-adj {
+        position: relative;
+        .pi-error {
+            position: absolute;
+            bottom: -16px;
+        }
+    }
+    .date-field {
+        .mat-datepicker-toggle {
+            position: absolute;
+            right: 0;
+            /*left: 0;
+            ::ng-deep .mat-icon-button{
+                width: 100%;
+                text-align: right;
+                padding-right: 8px;
+            }*/
+            i {
+                @include iconSize(16px);
+                line-height: 16px;
+            }
+        }
+        .mat-button:hover .mat-button-focus-overlay {
+            opacity: 0 !important;
+        }
+    }
+}
+
+.address-section {
+    display: flex;
+    border-top: 2px solid #e1e4eb;
+    margin-top: 30px;
+    flex-direction: column;
+    .address-wrapper {
+        flex: 1 0 50%;
+        .header {
+            border-bottom: 1px solid #e1e4eb;
+            margin: 24px 0 0;
+            color: rgba(23, 43, 77, 0.8);
+            font-size: 18px;
+        }
+        div.header {
+            padding-top: 4px;
+            padding-bottom: 8px;
+        }
+        .address-info>div {
+            display: flex;
+            padding: 18px 0;
+            border-bottom: 1px solid #e1e4eb;
+            svg {
+                margin: 0 26px;
+                // @include iconSize(50px);
+                // color: #837ED4;
+            }
+            div>p {
+                margin: 0 0 5px;
+                color: rgba(23, 43, 77, 0.6);
+            }
+        }
+        &:last-child {
+            padding-left: 0;
+            .header {
+                ::ng-deep .ak-field-checkbox+label {
+                    padding: 4px 4px 8px 24px;
+                    &::after {
+                        top: 9px;
+                    }
+                }
+            }
+        }
+        .blue-link {
+            border-bottom: 2px solid #e1e4eb;
+            color: #174ea8;
+            cursor: pointer;
+            display: flex;
+            font-weight: 600;
+            padding: 10px 0;
+            &:hover {
+                color: #2262ca;
+            }
+        }
+    }
+    .brdr-btm {
+        border-top: 1px solid #ddd;
+        margin-top: 8px;
+        border-bottom: 1px solid #ddd;
+        padding: 8px 0;
+        .pi-form-field {
+            margin-top: 0;
+        }
+    }
+    @media screen and (min-width: 600px) {
+        flex-direction: row;
+        .address-wrapper:last-child {
+            padding-left: 16px;
+        }
+    }
+    ::ng-deep pi-icon {
+        i {
+            height: 10px;
+            width: 10px;
+            cursor: pointer;
+            margin-top: 1px;
+            line-height: 10px !important;
+            font-size: 10px !important;
+            position: absolute;
+            right: 6px;
+            color: #172b4d;
+            opacity: 1;
+            &:hover {
+                opacity: 1;
+            }
+        }
+        &:hover {
+            background-color: #c7c9cc;
+        }
+    }
+}
+
+.spineer-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .mat-progress-spinner {
+        top: 2px;
+    }
+}
+
+.footer {
+    border-top: 1px solid #e0e1e5;
+    margin: 24px 0 0;
+    padding: 15px 24px;
+    text-align: right;
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+    background: #f7f7f7;
+    .wrapper {
+        max-width: 767px;
+        margin: 0 auto;
+    }
+    button {
+        min-width: 98px;
+        justify-content: center;
+        height: 2.5em;
+        &:last-child {
+            margin-left: 16px;
+        }
+    }
+}
+
+::ng-deep .pi-form-field .pi-field .pi-select-input.multi {
+    .selected-list {
+        .opt {
+            >pi-icon {
+                .icon-close {
+                    height: 10px;
+                    width: 10px;
+                    cursor: pointer;
+                    margin-top: 2px;
+                    line-height: 10px !important;
+                    font-size: 10px !important;
+                }
+                &:hover {
+                    background-color: transparent !important;
+                }
+            }
+            &:hover {
+                background-color: #c7c9cc !important;
+            }
+        }
+    }
+}

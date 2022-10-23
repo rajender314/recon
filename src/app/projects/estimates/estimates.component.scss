@@ -1,0 +1,399 @@
+::ng-deep .full-width-modal.add_estimate {
+    .panel-container {
+        overflow: auto;
+        height: calc(100vh - 370px);
+    }
+}
+
+::ng-deep .estimates-grid{
+    .split-child-estimate{
+        padding-left: 89px !important;
+    }
+    .user-product-service{
+        height: 100%;
+        padding-top: 0;
+    }
+    .status-cell, .cost-cell{
+        display: flex;
+        align-items: center;
+        >span{
+            line-height: 1;
+        }
+    }
+}
+
+// @import "../../../assets/styles/mixins";
+// ::ng-deep .estimates-container {
+//     display: flex;
+//     flex: 1;
+//     flex-direction: column;
+//     width: 100%;
+//     .estimates-header {
+//         margin: 15px 15px 0;
+//         .header-left {
+//             color: rgba(23, 43, 77, 0.5);
+//             // @include mediumFont();
+//         }
+//         .header-top {
+//             .estimate-name {
+//                 color: #172b4d;
+//                 font-size: 16px;
+//                 font-weight: bold;
+//             }
+//         }
+//         .header-bottom {
+//             .tab-group {
+//                 display: flex;
+//                 justify-content: space-between;
+//                 width: 100%;
+//             }
+//         }
+//     }
+//     .estimates-content {
+//         flex: 1;
+//         display: flex;
+//         align-items: center;
+//         justify-content: center;
+//         padding: 0 15px;
+//         .estimate-cell {
+//             // display: flex;
+//             .icon-pn-estimates {
+//                 color: #fff;
+//                 padding: 21px;
+//                 display: flex;
+//                 align-items: center;
+//                 justify-content: center;
+//                 border-radius: 4px;
+//                 margin-right: 10px;
+//                 background: #8183F7;
+//                 font-size: 22px;
+//             }
+//             .estimate-content {
+//                 display: flex;
+//                 align-items: center;
+//                 line-height: normal;
+//                 .estimate-no {
+//                     letter-spacing: 0.11px;
+//                 }
+//                 .estimate-status {
+//                     padding: 1px 8px;
+//                     font-size: 12px;
+//                     border-radius: 3px;
+//                     margin-left: 10px;
+//                     text-transform: uppercase; // @include semiBoldFont();
+//                     &.Draft {
+//                         background: #F4E4D8;
+//                         color: #7F3F34;
+//                     }
+//                     &.Posted {
+//                         background: #D2E5FF;
+//                         color: #3061AD;
+//                     }
+//                     &.Sent {
+//                         background: #EAEAEA;
+//                         color: #909090;
+//                     }
+//                     &.Approved {
+//                         background: #E4FDCF;
+//                         color: #457729;
+//                     }
+//                     &.Rejected {
+//                         background: #F4D8D8;
+//                         color: #C81C1D;
+//                     }
+//                     &.Pendingrevision {
+//                         background: #FFECC0;
+//                         color: #976401;
+//                     }
+//                     &.Outdated {
+//                         background: #F5E2E3;
+//                         color: #78090A;
+//                     }
+//                 }
+//             }
+//             .products-content {
+//                 display: flex;
+//                 padding-top: 4px;
+//                 line-height: normal;
+//                 .product-count {
+//                     margin-right: 18px;
+//                 }
+//                 .product-count,
+//                 .service-count {
+//                     display: flex;
+//                     align-items: center;
+//                     i {
+//                         font-size: 16px;
+//                         width: 20px;
+//                         height: 18px;
+//                         &.icon-products {
+//                             color: #5678e3;
+//                         }
+//                         &.icon-orders {
+//                             color: #dc4f66;
+//                             font-size: 14px;
+//                             height: 14px;
+//                             margin-right: 6px;
+//                             width: 14px;
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+//     ag-grid-angular {
+//         display: flex;
+//         width: 100%;
+//         height: 100%;
+//         .ag-root-wrapper {
+//             width: 100%;
+//         }
+//     }
+// }
+// .edit-estimate {
+//     display: flex;
+//     justify-content: flex-end;
+//     background: #F7F7F9;
+//     box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.12);
+//     padding: 8px 15px 8px 15px;
+//     @media only screen and (max-width: 1200px) {
+//         flex-wrap: wrap;
+//         padding: 8px 20px 8px 20px;
+//         justify-content: flex-start;
+//     }
+//     &.header {
+//         background: transparent;
+//         justify-content: flex-start;
+//         box-shadow: none;
+//         align-items: center;
+//         border-bottom: 2px solid#D7DDE7;
+//         margin: 0 15px 0 15px;
+//         padding: 0px 0 8px;
+//         align-items: center;
+//         span {
+//             @include mediumFont();
+//             font-size: 18px;
+//             flex: 1;
+//             @media only screen and (max-width: 1200px) {
+//                 flex: 1;
+//             }
+//         } // .button-group {
+//         //     display: flex;
+//         //     align-items: center;
+//         //     ::ng-deep .pi-form-field {
+//         //         margin-top: 0;
+//         //     }
+//         // }
+//         ::ng-deep .pi-form-field {
+//             margin-top: 0;
+//         }
+//         .ak-button {
+//             @media only screen and (max-width: 1200px) {
+//                 margin-top: 10px;
+//             }
+//             &.first-btn {
+//                 margin-left: auto;
+//                 @media only screen and (max-width: 1200px) {
+//                     margin-left: 10px;
+//                 }
+//                 @media only screen and (max-width: 784px) {
+//                     margin-left: 0px;
+//                 }
+//             }
+//             &:last-child {
+//                 margin-right: 0px;
+//             }
+//         }
+//     }
+//     .ak-button {
+//         min-width: 32px;
+//         margin-right: 10px; // @include mediumFont();
+//         @media only screen and (max-width: 1200px) {
+//             margin-top: 6px;
+//             margin-bottom: 6px;
+//         }
+//         &:last-child {
+//             margin-right: 0px;
+//         }
+//         &.compac {
+//             @media only screen and(max-width: 768px) {
+//                 height: 24px;
+//                 line-height: 24px;
+//                 font-size: 13px;
+//                 min-width: 38px;
+//             }
+//         }
+//     }
+// }
+// ::ng-deep ag-grid-angular.ag-theme-balham {
+//     .ag-row {
+//         display: flex;
+//     }
+//     .ag-header-container {
+//         .ag-header-row {
+//             .ag-header-cell {
+//                 &:last-child {
+//                     display: flex;
+//                     justify-content: flex-end;
+//                 }
+//             }
+//         }
+//     }
+//     .ag-cell {
+//         line-height: 40px;
+//         color: rgba(23, 43, 77, 1);
+//         &.estimate-grid {
+//             display: flex;
+//             padding-left: 0;
+//             .ag-cell-wrapper {
+//                 display: flex;
+//                 align-items: center;
+//                 .estimate-cell {
+//                     display: flex;
+//                 }
+//             }
+//         }
+//         .estimate-cell {
+//             &.task-grid-sec {
+//                 text-align: center;
+//             }
+//             &.cost-grid-sec {
+//                 text-align: right;
+//             }
+//         } // &:first-child {
+//         //     line-height: normal;
+//         //     display: flex;
+//         //     align-items: center;
+//         //     padding-left: 0;
+//         //     .ag-cell-wrapper {
+//         //         display: flex;
+//         //         align-items: center;
+//         //     }
+//         // }
+//         // &:nth-child(2) {
+//         //     display: flex;
+//         //     justify-content: center;
+//         // }
+//         // &:last-child {
+//         //     font-size: 16px;
+//         //     display: flex;
+//         //     justify-content: flex-end;
+//         //     .estimate-cell {
+//         //         margin-right: 16px;
+//         //     }
+//         // }
+//         // .icon-arrow-right {
+//         //     cursor: pointer;
+//         //     color: #44536e;
+//         //     margin-left: 10px;
+//         //     @include iconSize(10px);
+//         // }
+//     }
+// }
+// ::ng-deep ag-grid-angular.ag-theme-balham {
+//     flex: 1;
+//     width: 100%;
+//     height: 100%;
+//     @include regularFont;
+//     font-size: 13px;
+//     .ag-side-buttons,
+//     .ag-group-expanded,
+//     .ag-group-contracted,
+//     .ag-group-child-count {
+//         display: none;
+//     }
+//     .ag-ltr .ag-row-group-leaf-indent {
+//         margin-left: 0;
+//     }
+//     .ag-root {
+//         border: none;
+//     }
+//     .ag-header {
+//         @include semiBoldFont();
+//     }
+//     .ag-header-row,
+//     .ag-row {
+//         border-bottom-color: #e5e5eb;
+//     }
+//     .ag-header,
+//     .ag-row-odd {
+//         background-color: transparent;
+//     }
+//     .ag-row-hover,
+//     .ag-row-selected {
+//         background-color: #eceef7;
+//     }
+//     .ag-header-cell:first-child {
+//         padding-left: 0;
+//     }
+//     .ag-header-cell-text {
+//         color: rgba(23, 43, 77, 0.5);
+//         font-weight: 500;
+//         font-size: 12px;
+//         /*14px*/
+//     }
+//     /*.ag-theme-balham{display: none;}*/
+//     .ag-tool-panel {
+//         border-color: transparent;
+//     }
+//     .edit-opts {
+//         cursor: pointer;
+//         .tooltip {
+//             display: none;
+//         }
+//     }
+//     .ag-cell-focus {
+//         position: relative;
+//         overflow: visible;
+//         border-color: transparent !important;
+//         .tooltip {
+//             position: absolute;
+//             display: block;
+//             border: 1px solid #eceef0;
+//             width: 200px;
+//             right: 0;
+//             background-color: #ffffff;
+//             padding: 15px;
+//             line-height: 30px;
+//             z-index: 9999;
+//         }
+//     }
+//     .ag-side-bar {
+//         border-right: 1px solid transparent !important;
+//     }
+//     .ag-status-bar {
+//         border-bottom: 1px solid transparent !important;
+//     }
+//     .go-to-sub-org {
+//         cursor: pointer;
+//         &:hover {
+//             color: rgba(23, 43, 77, 1);
+//         }
+//     }
+// }
+// ::ng-deep .custom-search {
+//     // margin-left: auto;
+//     // order: 1;
+//     margin-right: 10px;
+//     @media only screen and (max-width: 1200px) {
+//         margin-left: 10px;
+//         order: 0;
+//     }
+//     .pi-form-field .pi-field {
+//         .ak-field-text {
+//             padding: 5px 32px;
+//         }
+//         pi-icon {
+//             bottom: 0 !important;
+//             .icon-search {
+//                 line-height: 12px !important;
+//                 @include iconSize(12px);
+//             }
+//             .icon-close-slim {
+//                 line-height: normal !important;
+//                 position: relative;
+//                 top: 1px;
+//             }
+//         }
+//     }
+// }

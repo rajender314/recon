@@ -1,0 +1,73 @@
+<!-- <div class="right-header">
+	<app-breadcrumb [list]="config.breadcrumbs"></app-breadcrumb>
+	<div class="info">
+		<mat-icon class="back-link" (click)="onBack.emit()">arrow_back</mat-icon>
+		<h2 [innerHtml]="selectedItem.name"></h2>
+	</div>
+</div> -->
+<div class="admin-fixed-layout">
+<header class="header">
+		<div class="w-100 d-flex flex-column justify-content-between">
+			<app-breadcrumb [list]="config.breadcrumbs"></app-breadcrumb>
+			<div class="w-100 d-flex align-items-center justify-content-between ">
+				<aside class="left-header d-flex flex-width">
+					<h1 [innerHtml]="selectedItem.name"></h1>
+				</aside>
+				<aside class="d-flex right-header justify-content-end flex-width">
+				</aside>
+			</div>
+		</div>
+	</header>
+	<div class="spinner-view" *ngIf="isLoading">
+			<div class="empty-screen">
+			  <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>				
+			</div>
+	</div>  
+<div class="scroll-body" [class.has-spinner]="isLoading" style="height: calc(100vh - 74px);">
+	
+	<!-- <div class="no-result-flex" *ngIf="!isLoading && !selectedListItem">
+				<p *ngIf="search">No {{config.name}} found for your search string <br/>
+				  <b>'{{search}}'</b>
+				</p>
+				<p *ngIf="!search">No {{config.name}} found</p>
+				<button pi-button color="primary" (click)="onAdd(search)" *ngIf="config.permission=='edit'">+ Add New {{config.name}}</button>
+			  </div>
+			  <div class="spinner-view" *ngIf="isLoading && !selectedListItem">
+					<div class="empty-screen">
+					  <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>				
+					</div>
+			</div>  -->
+	<!-- <mat-spinner diameter="45" class="md" *ngIf="isLoading" style="transform: translate(-50%);position: absolute;top: 50%;left: 50%;"></mat-spinner> -->
+	<form *ngIf="!isLoading" class="form-flex" [formGroup]="form" autocomplete="off">
+
+		<pi-form-field [label]="config.name + ' Name'">
+			<input type="text" pi-input name="name" [disabled]="config.permission!='edit'" formControlName="name" maxlength="64" />
+			<div class="msgs">
+				<div class="pi-error" *ngIf="f.name.hasError('required') && submitted">Please Enter {{config.name}} Name</div>
+				<div class="pi-error" *ngIf="!f.name.hasError('required') && duplicateError">{{config.name + ' ' + duplicateError}}</div>
+			</div>
+		</pi-form-field>
+
+		<pi-select label="Status" [options]="statusList" [disabled]="config.permission!='edit'" formControlName="status"></pi-select>
+
+		<pi-form-field label="Description">
+			<textarea pi-input name="description" [disabled]="config.permission!='edit'" formControlName="description" maxlength="1024"></textarea>
+			<span class="field-note">Enter text of 1024 characters or less.</span>
+		</pi-form-field>
+
+		<ng-content select=".extension"></ng-content>
+
+		<app-modified-user-info [modifiedInfo]="form.value"></app-modified-user-info>
+
+		
+	</form>
+
+</div>
+<div class="footer" *ngIf="config.permission=='edit'">
+	<div class="admin-max-footer">
+			<button pi-button  (click)="reset()">Cancel</button>
+			<button class="m-l-15" pi-button color="primary" (click)="save()" [disabled]="form.pristine">Save</button>
+	</div>
+		
+	</div>
+</div>

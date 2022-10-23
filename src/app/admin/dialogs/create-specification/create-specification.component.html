@@ -1,0 +1,40 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+<mat-dialog-content>
+	<form [formGroup]="createFormGroup" class="form-flex" autocomplete="off">
+		
+
+		<pi-form-field label="Label">
+			<input type="text" pi-input formControlName="label" maxlength="64" />
+			<div class="msgs">
+				<div class="pi-error" *ngIf="f.label.hasError('required') && submitted">Please Enter {{data.flag ? 'Value' : data.label + ' Label'}}</div>
+				<div class="pi-error" *ngIf="!f.label.hasError('required') && duplicateError">{{data.flag ? '' : data.label}} {{duplicateError}}</div>
+			</div>
+		</pi-form-field>
+		
+		<pi-select *ngIf="data.flag != 'auto_suggest'" label="Type" [options]="data.dropdowns.cloneUIElements" formControlName="ui_element_id"></pi-select>
+		
+		<!-- 
+			<div class="ak-field-group">
+				<label for="label">Label</label>
+				<input type="text" class="ak-field-text" id="label" name="label" formControlName="label" maxlength="64">
+				<div class="pi-error" *ngIf="f.label.hasError('required') && submitted">Please Enter {{data.flag ? 'Value' : data.label + ' Label'}}</div>
+				<div class="pi-error" *ngIf="!f.label.hasError('required') && duplicateError">{{data.flag ? '' : data.label}} {{duplicateError}}</div>
+			</div>
+			<div class="ak-field-group">
+			<label for="type">Type</label>
+			<select type="text" class="ak-field-select" id="type" name="type" formControlName="ui_element_id">
+				<option *ngFor="let ui of data.dropdowns.UIElements" [value]="ui.id">{{ui.label}}</option>
+			</select>
+		</div> -->
+
+	</form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+	<button pi-button  (click)="closeDialog()">Cancel</button>
+	<button pi-button color="primary" (click)="saveDetails(createFormGroup)" [disabled]="createFormGroup.pristine">Save</button>
+</mat-dialog-actions>

@@ -1,0 +1,39 @@
+<pi-master-detail-view class="primary-layout " [showDetail]="state.showView">
+
+  <pi-master-view class="with-brand-bg">
+    <header>
+      <pi-icon name="icon-task-fill" size="md" background="#8082f7" color="#fff"></pi-icon>
+      <div class="info">
+        <h4>Tasks</h4>
+      </div>
+    </header>
+    <div class="menu-container">
+      <ul>
+        <ng-container *ngFor="let tab of state.tabsList">
+          <ng-container *ngIf="tab.show">
+            <li (click)="changeMasterView()" [routerLink]="tab.route" [class.active]="state.activeState.flag == tab.key">
+              <span class="menu-tab-icon-holder"><i class="pixel-icons {{tab.icon}}"></i></span><span class="menu-tab-name">
+                {{tab.name}}</span>
+            </li>
+          </ng-container>
+        </ng-container>
+      </ul>
+      <!-- <section class="internal-links">
+        <h4 class="org-heading">RECENT TASKS</h4>
+        <ul *ngFor="let recent of state.recentTasks">
+          <li> <span class="menu-tab-icon-holder"><i class="pixel-icons icon-task-fill"></i></span><span
+              class="menu-tab-name">{{recent.job_no}}</span></li>
+        </ul>
+        <div *ngIf="!state.recentTasks.length" class="side-empty-screen">
+          <div class="side-empty-icon"> <i class="pixel-icons icon-task-fill"></i> </div>
+          <p>No Recent Tasks</p>
+        </div>
+      </section> -->
+    </div>
+  </pi-master-view>
+
+  <pi-detail-view>
+    <router-outlet></router-outlet>
+  </pi-detail-view>
+
+</pi-master-detail-view>

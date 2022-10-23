@@ -1,0 +1,24 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+<mat-dialog-content style="min-height: 180px;" class="add-reciepents">
+	<pi-form-field>
+		<ng-container *ngIf="data.flag == 'members'">
+			<pi-select [label]="textLabels.label" [nameKey]="textLabels.nameKey" [inactiveOptions]="data.selected.user"
+				[placeholder]="textLabels.placeholder" [options]="usersList" [formControl]="usersControl" [multi]="true">
+			</pi-select>
+		</ng-container>
+		<ng-container *ngIf="data.flag == 'groups'">
+			<pi-select [label]="textLabels.label" [nameKey]="textLabels.nameKey" [inactiveOptions]="data.selected.group"
+				[placeholder]="textLabels.placeholder" [options]="usersList" [formControl]="usersControl" [multi]="true">
+			</pi-select>
+		</ng-container>
+	</pi-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end" style="border-top: none;">
+	<button pi-button class="m-r-15" color="subtle" mat-dialog-close>Cancel</button>
+	<button pi-button color="primary" (click)="saveDetails()">Save</button>
+</mat-dialog-actions>

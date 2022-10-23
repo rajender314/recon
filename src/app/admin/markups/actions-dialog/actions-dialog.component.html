@@ -1,0 +1,34 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<i class="pixel-icons icon-close-slim"></i>
+	</button>
+</div>
+
+<mat-dialog-content>
+	<ng-container *ngIf="data.flag == 'import'">
+		<pi-form-field label="Upload" class="browse-file">
+			<input id="attachment" pi-input type="file" [accept]="allowedMimeType.toString()" ng2FileSelect [uploader]="uploader" [hidden]="true" multiple />
+		</pi-form-field>
+		<!-- <input id="attachment" type="file" ng2FileSelect [uploader]="uploader" [hidden]="true" multiple />
+		<label for="attachment" class="browse-file">Upload</label> -->
+		<ul>
+			<li [class.error]="uploadData.validation?.invalid">Only .xls and .xlsx files are allowed.</li>
+			<li [class.error]="uploadData.validation?.size">File size must not exceed 2MB.</li>
+			<li>Excel header must be the same as sample format.</li>
+		</ul>
+		<a href="JavaScript:void(0)" class="link-color">Download Sample Markups</a>
+	</ng-container>
+	<ng-container *ngIf="data.flag == 'clone'">
+		<app-search class="m-b-15" (onSearch)="onSearch($event)"></app-search>
+		<div class="global-grid with-out-margin with-check-boxs">
+		<ag-grid-angular style="height: 300px" *ngIf="gridOptions.rowData.length" class="ag-theme-balham" [gridOptions]="gridOptions">
+		</ag-grid-angular>
+	</div>
+	</ng-container>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="p-t-25">
+	<button pi-button [innerHtml]="data.button.no" mat-dialog-close></button>
+	<button pi-button [innerHtml]="data.button.yes" (click)="save()" color="primary"></button>
+</mat-dialog-actions>

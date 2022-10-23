@@ -1,0 +1,15 @@
+<div class="mat-dialog-heading">
+    <h2 mat-dialog-title style="text-transform: capitalize;">{{data.title}}</h2>
+    <button mat-icon-button mat-dialog-close tabindex="-1">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  
+  <mat-dialog-content>
+    <span [innerHtml]="data.content"></span>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions>
+    <button pi-button color="subtle" (click)="closeDialog()">Cancel</button>
+    <button pi-button color="primary" (click)="remove()" style="text-transform: capitalize;">{{data.title}}</button>
+  </mat-dialog-actions>

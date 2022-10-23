@@ -1,0 +1,12 @@
+<div class="review-container">
+  <div class="heading">
+      <div>TASKS/MILESTONES</div>
+      <div>DUE DATE</div>
+  </div>
+  <div class="content">
+    <div class="item-row" *ngFor="let task of tasks">
+      <b>{{task.task}}</b>
+      <span>{{task.due_date}}</span>
+    </div>
+  </div>
+</div>

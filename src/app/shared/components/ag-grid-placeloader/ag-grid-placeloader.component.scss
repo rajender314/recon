@@ -1,0 +1,49 @@
+.placeload {
+    .header {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-top: 20px;
+        .img {
+            width: 20px;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        .header-content {
+            margin-left: 12px;
+            width: 100%;
+            display: flex;
+            .content-shape {
+                height: 14px;
+                border-radius: 4px;
+                width: 24%;
+                margin-right: 15px;
+                &:nth-last-of-type(){
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+}
+.animated-background,
+.animated-second-background, .loads  {
+    animation-duration: 1.5s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-name: placeHolderShimmer;
+    background: #f6f7f8;
+    background: linear-gradient(to right, #ced2da 8%, #b5b8c0 18%, #ced2da 33%);
+    background-size: 800px 104px;
+    height: 58px;
+    position: relative;
+}
+@keyframes placeHolderShimmer {
+    0% {
+        background-position: -468px 0;
+    }
+    100% {
+        background-position: 468px 0;
+    }
+}

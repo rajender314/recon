@@ -1,0 +1,19 @@
+quill-editor {
+  font-family: inherit;
+}
+
+.ql-editor.ql-blank::before{
+  font-style: inherit;
+}
+
+quill-editor .ql-editor{
+  border: 1px solid transparent;
+  border-radius: 3px;
+}
+quill-editor .ql-editor:hover{
+  border: 1px solid #ddd;
+}
+quill-editor.active .ql-editor{
+  border: 1px solid transparent;
+  outline: -webkit-focus-ring-color auto 5px;
+}

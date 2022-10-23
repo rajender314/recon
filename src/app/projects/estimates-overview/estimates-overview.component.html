@@ -1,0 +1,95 @@
+<div *ngIf="!state.loader">
+  <div class="estimate-form" [formGroup]="estimateDetails">
+    <pi-select label="Distribution List" [options]="state.distributionList"
+      [disabled]="!allowEditable || estimateStatus==5 || estimateStatus==4 || estimateStatus==3 || estimate.parent_id!='0' || estimate.id!=estimate.selected_revision"
+      (onChange)="estimateDistroChange($event)" formControlName="distribution_id" class="distro-select"></pi-select>
+    <!-- [(ngModel)]="state.estimateDt.distribution_id" -->
+    <pi-form-field label="Description">
+      <textarea pi-input rows="3" formControlName="description"
+        [disabled]="!allowEditable || estimateStatus==5 || estimateStatus==4 || estimateStatus==3 || estimate.parent_id!='0' || estimate.id!=estimate.selected_revision"
+        (input)="estimateChange()" maxlength="1024"></textarea>
+      <!-- [(ngModel)]="state.estimateDt.description" -->
+    </pi-form-field>
+    <div class="estimate-actions" *ngIf="(APP.permissions.job_access.edit_cancelled_jobs=='yes' && projectStatusID=='5') || projectStatusID!='5'">
+      <button pi-button color="subtle" (click)="reset()" class="
+      m-r-15">Cancel</button>
+      <button pi-button color="primary" (click)="save()" [disabled]="estimateDetails.pristine">Save</button>
+    </div>
+  </div>
+  <div class="timeline-container">
+    <header>
+      <div class="title">Timeline</div>
+      <div class="add-timeline">
+        <button pi-button color="subtle" class="m-l-15" *ngIf="allowEditable && ((APP.permissions.job_access.edit_cancelled_jobs=='yes' && projectStatusID=='5') || projectStatusID!='5')"
+          [disabled]="estimateStatus==5 || estimateStatus==4 || estimateStatus==3 || estimate.parent_id!='0' || estimate.id!=estimate.selected_revision"
+          (click)="addMilestones()"><i class="pixel-icons icon-plus"></i>Add
+          Timeline
+        </button>
+      </div>
+    </header>
+    <div class="timeline-data-container">
+      <div *ngIf="!state.timelineLoader && state.timeline.length" class="timeline-content">
+        <div class="row" *ngFor="let task of state.timeline">
+          <div class="task-name" style="display: flex;align-items: center;">
+              <span class="sub-tasks-grid-icon"><i style="font-size: 20px;" class="pixel-icons {{task.is_milestones ? 'icon-milestones' : 'icon-task-fill'}}"></i></span>
+            <span style="margin-left: 6px;" [innerHtml]="task.name"></span>
+          </div>
+          <div class="due-date">
+            <pi-form-field [label]=" " class="date-field">
+              <input pi-input matInput [min]="state.minDate" [owlDateTime]="i" [(ngModel)]="task.timeline_date"
+                [owlDateTimeTrigger]="i" (dateTimeChange)="changeTaskDate($event, task)"
+                [disabled]="!allowEditable || estimateStatus==5 || estimateStatus==4 || estimateStatus==3 || estimate.parent_id!='0' || estimate.id!=estimate.selected_revision"
+                placeholder="Choose a date" readonly>
+              <div class="owl-picker-toggle">
+                <i class="pixel-icons icon-calendar" [owlDateTimeTrigger]="i"></i>
+              </div>
+              <owl-date-time #i [hour12Timer]="true"></owl-date-time>
+            </pi-form-field>
+          </div>
+          <div class="delete"
+            *ngIf="allowEditable && estimateStatus!=5 && estimateStatus!=4 && estimateStatus!=3 && estimate.parent_id=='0' && estimate.id==estimate.selected_revision">
+            <i class="pixel-icons icon-delete" #removeProjectPop="matMenuTrigger"
+              [matMenuTriggerFor]="removeProject"></i>
+            <mat-menu #removeProject="matMenu" class="card-ui row-card colored bg-delete">
+              <div class="card row-card" (click)="$event.stopPropagation()">
+                <div class="card-header"><i class="pixel-icons icon-exclamation"></i></div>
+                <div class="card-body">
+                  <h5 class="card-title">{{task.is_milestones?'Delete Milestone':'Delete Task'}}</h5>
+                  <p class="card-text">Are you sure you want to delete {{task.is_milestones?'Milestone':'Task'}}?</p>
+                  <div class="footer">
+                    <a class="card-link text-btn" (click)="removeProjectPop.closeMenu()">Cancel</a>
+                    <a class="card-link act-btn"
+                      (click)="removeProjectPop.closeMenu();deleteMilestone(task);">Delete</a></div>
+                </div>
+              </div>
+            </mat-menu>
+          </div>
+          <!-- <i class="pixel-icons icon-delete" #removeProjectPop="matMenuTrigger" [matMenuTriggerFor]="removeProject"></i> -->
+        </div>
+      </div>
+      <!-- <div *ngIf="!state.timelineLoader && !state.timeline.length" class="no-data">
+        No Milestones Added -->
+      <div class="no-data-screen" *ngIf="!state.timelineLoader && !state.timeline.length">
+        <div class="empty-screen">
+          <div class="icon-info-holder">
+            <div class="icon"><i class="pixel-icons icon-milestones"></i></div>
+            <p class="alert-message">No Tasks/Milestones Added</p>
+          </div>
+        </div>
+      </div>
+      <!-- </div> -->
+      <div *ngIf="state.timelineLoader">
+        <div class="spinner-view">
+          <div class="empty-screen">
+            <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="spinner-view" *ngIf="state.loader">
+  <div class="empty-screen">
+    <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+  </div>
+</div>

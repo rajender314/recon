@@ -1,0 +1,35 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+<mat-dialog-content>
+	<form [formGroup]="createFormGroup" class="form-flex" autocomplete="off">
+
+		<pi-form-field label="{{data.label}} Name">
+			<input type="text" pi-input id="name" name="name" formControlName="name" maxlength="64">
+			<div class="pi-error" *ngIf="f.name.hasError('required') && submitted">Please Enter {{data.label}} Name</div>
+			<div class="pi-error" *ngIf="!f.name.hasError('required') && duplicateError">{{data.label}} {{duplicateError}}</div>
+		</pi-form-field>
+
+		<pi-select label="Status" [options]="data.dropdowns.statusList" id="status" name="status" formControlName="status"></pi-select>
+		<div class="pi-error" *ngIf="f.status.hasError('required') && submitted">Please Select Status</div>
+
+		<pi-form-field label="Description">
+			<textarea rows="3" id="description" pi-input name="description" formControlName="description" maxlength="1024"></textarea>
+			<span class="field-note">Enter text of 1024 characters or less.</span>
+		</pi-form-field>
+
+		<pi-form-field label="Bill Rate">
+			<input [appPriceFormat]="priceConfig" type="text" pi-input id="add_bill_rate" name="bill_rate"
+			 formControlName="bill_rate">
+			<div class="pi-error" *ngIf="f.bill_rate.hasError('required') && submitted">Please Enter Bill Rate</div>
+		</pi-form-field>
+
+	</form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+	<button pi-button (click)="closeDialog()">Cancel</button>
+	<button pi-button color="primary" (click)="saveDetails(createFormGroup)" [disabled]="createFormGroup.pristine">Save</button>
+</mat-dialog-actions>

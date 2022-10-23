@@ -1,0 +1,104 @@
+<div class="split-estimates-container primary-layout step-{{stepper.selectedIndex}}">
+  <div class="pi-detail-view">
+    <div class="primary-layout-detail">
+      <div class="spinner-view" *ngIf="state.loader">
+          <div class="empty-screen">
+              <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+          </div>
+      </div>
+      <!-- 123 -->
+      <header [class.popup-header]="stepper.selectedIndex != 0">
+        <div class="w-100 d-flex flex-column">
+          <pi-breadcrumb *ngIf="stepper.selectedIndex != 0">
+              <ng-container *ngFor="let item of data.breadcrumbs">
+                <pi-breadcrumb-item tabindex="-1" *ngIf="item.type == 'link'" [label]="item.label" [routerLink]="item.route" (click)="closeDialog()">
+                </pi-breadcrumb-item>
+                <pi-breadcrumb-item *ngIf="item.type != 'link'" [label]="item.label">
+                </pi-breadcrumb-item>
+              </ng-container>
+            </pi-breadcrumb>
+            <div class="w-100 d-flex justify-content-between" [class.align-items-center]="stepper.selectedIndex == 1 || stepper.selectedIndex == 0" [ngClass]="{'align-items-start':stepper.selectedIndex == 2}">
+          <aside class="left-header d-flex ">
+            <div class="d-flex align-items-center">
+              <div class="ag-cell-custome-actions" *ngIf="stepper.selectedIndex == 2 || stepper.selectedIndex == 1" >
+                <ul style="padding-top: 0;">
+                  <li style="margin-right: 0; margin-left: 0;" (click)="closeDialog()"><i class="pixel-icons icon-arrow"></i></li>
+                </ul>
+              </div>
+              <h1 style="font-size: 18px;">{{data.title}} <span class="estimate-no">&nbsp;- {{data.estimate_no}}</span></h1>
+            </div>
+            <div class="split_estimate_text" *ngIf="stepper.selectedIndex == 2 && state.splitType==2"><p>The Estimate has been split between <span class="sub_orgs_cnt">&nbsp;{{(state.splitOrgCount==1)?state.splitOrgCount+" Organization ":state.splitOrgCount+" Organizations "}}</span>&nbsp;based on the current Distribution List in the Project. You can make edits here or recalculate costs from the Distribution List.<i class="pixel-icons icon-revert" (click)="regenerateEstimate()" title="Recalculate"></i></p></div>
+            <div class="split_estimate_text" *ngIf="stepper.selectedIndex == 2 && state.splitType==1"><p>The Estimate has been split manually between <span class="sub_orgs_cnt">&nbsp;{{(state.splitOrgCount==1)?state.splitOrgCount+" Organization ":state.splitOrgCount+" Organizations "}}</span></p></div>
+          </aside>
+          <aside class="right-header d-flex">
+            <button mat-icon-button mat-dialog-close tabindex="-1" style="position: relative;width: 24px;height: 24px;line-height: 24px;left: 5px;">
+              <mat-icon>close</mat-icon>
+            </button>
+          </aside>
+          </div>
+        </div>
+      </header>
+      
+      <div class="primary-layout-detail-body flex-column" [class.padding-l-0]="stepper.selectedIndex == 0" [class.primary-max-screen-width]="stepper.selectedIndex == 1">
+        <div class="sidebar-layout padding-20">
+          <!-- <div class="list-view global-grid with-footer ag-no-striped with-table-gaps">
+            <ag-grid-angular class="ag-theme-balham" [class.invisible]="state.loader" [gridOptions]="state.gridOptions"></ag-grid-angular>
+          </div> -->
+
+
+          <mat-horizontal-stepper #stepper>
+            <mat-step>
+                <ng-container *ngIf="stepper.selectedIndex == 0">
+                  <div class="split-selection">
+                      <div class="split-using-distro">
+                        <div class="icon-info-holder" *ngIf="!data.is_distro">
+                            <div class="icon">
+                                <i class="pixel-icons icon-distribution-types"></i>
+                            </div>
+                            <p class="alert-message">No Distro List Uploaded</p>
+                        </div>
+                        <button pi-button color="primary" *ngIf="data.is_distro" (click)="useDistroList(stepper, 2)">Use Distro List</button>
+                      </div>
+                      <div class="separator"></div>
+                      <div class="split-manually">
+                        <button pi-button color="primary" (click)="next(stepper, 1)">Split Manually <i class="pixel-icons icon-right-arrow"></i></button>
+                      </div>
+                  </div>
+                </ng-container>
+            </mat-step>
+            <mat-step>
+                <ng-container *ngIf="stepper.selectedIndex == 1">
+                    <div class="list-view global-grid with-footer ag-no-striped with-table-gaps">
+                      <ag-grid-angular class="ag-theme-balham" [class.invisible]="state.loader" [gridOptions]="gridOptionsManually"></ag-grid-angular>
+                    </div>
+                </ng-container>
+            </mat-step>
+            <mat-step>
+                <ng-container *ngIf="stepper.selectedIndex == 2">
+                  <div class="list-view global-grid with-footer ag-no-striped with-table-gaps">
+                    <ag-grid-angular class="ag-theme-balham" [class.invisible]="state.loader" [gridOptions]="state.gridOptions"></ag-grid-angular>
+                  </div>
+                </ng-container>
+            </mat-step>
+            </mat-horizontal-stepper>
+
+
+        </div>
+      </div>
+      <div class="split-footer padding-20" *ngIf="stepper.selectedIndex != 0" style="padding-left: 64px !important;">
+        <div class="justify-content-start">
+          <a *ngIf="stepper.selectedIndex == 1" class="add-organization-txt" (click)="addOrganization()"><i class="pixel-icons icon-plus"></i> Add Organization</a>
+        </div>
+        <div class="justify-content-end d-flex align-items-center">
+          <div class="pi-error" *ngIf="stepper.selectedIndex == 1 && state.duplicateRows!='0'">Please enter unique secondary split for organization.</div>
+          <div class="pi-error" *ngIf="stepper.selectedIndex == 2 && state.reviewBalance!='0'">Please review the balance column, it has to be empty before you split the estimate.</div>
+          <div class="d-flex">
+            <button pi-button class="m-l-15" (click)="closeDialog()">Cancel</button>
+            <button pi-button class="m-l-15" color="primary" (click)="next(stepper, 2)" [disabled]="state.loader || gridOptionsManually.api.getDisplayedRowCount()==1" *ngIf="stepper.selectedIndex == 1">Next</button>
+            <button pi-button class="m-l-15" color="primary" [disabled]="state.loader" *ngIf="stepper.selectedIndex == 2" (click)="splitEstimate()">Split Estimate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> 
+</div>

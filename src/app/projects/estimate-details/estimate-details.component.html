@@ -1,0 +1,19 @@
+<div class="estimates-header">
+  <div class="header-left">
+    <div class="estimate-name">Back To List / ALBDSOC I400034216-1-0</div>
+  </div>
+  <div class="header-right">
+      <button pi-button color="primary" (click)="sendEstimate()">Send Estimate</button>
+  </div>
+</div>
+<div class="estimates-content">
+    <div class="spinner-view"  *ngIf="state.loader">
+        <div class="empty-screen">
+          <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+        </div>                
+      </div>
+
+    <!-- <mat-spinner diameter="45" class="md" *ngIf="state.loader"></mat-spinner> -->
+    <ag-grid-angular *ngIf="!state.loader" class="ag-theme-balham" [gridOptions]="gridOptions"></ag-grid-angular>
+</div>
+<div class="estimates-footer"></div>

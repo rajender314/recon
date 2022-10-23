@@ -1,0 +1,39 @@
+
+.icon-pdf {
+    color: #e41d24;
+}
+.icon-gif {
+    color: #0087ca;
+}
+.icon-png {
+    color: #ff6f2d;
+}
+.icon-jpeg,
+.icon-jpg {
+    color: #00bcc2;
+}
+.icon-doc,
+.icon-docx,
+.icon-txt,
+.icon-xls,
+.icon-xlsx {
+    color: #2fac7a;
+}
+.icon-zip {
+    color: #9c27b0;
+}
+.mat-dialog-content{
+    min-height: 250px;
+    max-height: 250px;
+
+}
+.file-info{
+    .file{
+        margin-right: 5px;
+        display: flex;
+        align-items: center;
+    }
+}
+.pixel-icons.icon-download{
+    opacity: .5;
+}

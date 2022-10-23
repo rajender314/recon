@@ -1,0 +1,234 @@
+<div class="primary-layout">
+	<div class="pi-detail-view">
+		<div class="primary-layout-detail">
+			<header>
+				<div class="w-100 d-flex align-items-center justify-content-between">
+					<aside class="left-header d-flex">
+						<pi-breadcrumb>
+							<ng-container *ngFor="let item of data.breadcrumbs">
+								<pi-breadcrumb-item tabindex="-1" *ngIf="item.type == 'link'" [label]="item.label" [routerLink]="item.route" (click)="closeDialog()">
+								</pi-breadcrumb-item>
+								<pi-breadcrumb-item *ngIf="item.type != 'link'" [label]="item.label">
+								</pi-breadcrumb-item>
+							</ng-container>
+						</pi-breadcrumb>
+						<div class="d-flex align-items-center" style="position: relative;">
+							<div class="ag-cell-custome-actions">
+								<ul style="padding-top: 0;">
+									<li style="margin-right: 0; margin-left: 0;" (click)="closeDialog()"><i class="pixel-icons icon-arrow"></i></li>
+								</ul>
+							</div>
+							<div class="title">
+								<div class="primary">
+									<h1 class="m-r-15" mat-dialog-title [innerHtml]="data.selectedFile.file_name"></h1>
+									<span class="version" [innerHtml]="data.selectedFile.version"></span>
+									<div class="secondary m-l-15">
+										by
+										<div class="user-info">
+											<div class="box m-r-5">
+												<pi-avatar size="md" [user]="data.selectedFile.user_info" appearance="circle"></pi-avatar>
+											</div>
+											<span [innerHtml]="data.selectedFile.modified_by"></span>
+										</div>
+										{{data.selectedFile.last_modified | date: 'MMM dd, HH:MM a'}}
+									</div>
+								</div>
+								<!-- <div class="secondary">
+									by
+									<div class="user-info">
+										<span [innerHtml]="data.selectedFile.modified_by"></span>
+									</div>
+									{{data.selectedFile.last_modified}}
+								</div> -->
+							</div>
+						</div>
+					</aside>
+					<aside class="right-header d-flex">
+						<button mat-icon-button (click)="closeDialog()" tabindex="-1" style="width:38px;height: 38px; line-height: 38px;position: relative;left: 13px;">
+							<mat-icon>close</mat-icon>
+						</button>
+					</aside>
+				</div>
+			</header>
+			<div class="primary-layout-detail-body flex-column" style="padding-left: 64px;">
+				<div class="sidebar-layout">
+					<div class="preview-container">
+						<mat-dialog-content>
+							<div *ngIf="false" class="carousel-container"></div>
+							<div *ngIf="true" class="carousel-container padding-20">
+								<div class="file-actions" style="display:flex;">
+									<ul>
+										<li class="preview-menu" (click)="$event.stopPropagation()" (menuOpened)="menuOpened()" [matMenuTriggerFor]="menu">
+											<i class="pixel-icons icon-more-horizontal"></i>
+										</li>
+									</ul>
+									<mat-menu #menu="matMenu" xPosition="before" yPosition="below" class="grid-cell-drop-menu-ui cust-ui-menu files-menu">
+										<ng-container *ngFor="let act of state.actions">
+											<a *ngIf="act.is_visible" (click)="performActions(act)"><i class="pixel-icons  icon-{{act.icon}}"></i> <span>{{act.label}}</span></a>
+										</ng-container>
+									</mat-menu>
+								</div>
+								<div class="carouse-left" *ngIf="data.selectedIndex != 0" (click)="goPrev(data.selectedIndex)">
+									<i class="pixel-icons icon-arrow-left"></i>
+								</div>
+								<div *ngIf="true" class="preview">
+									<div class="no-preview" *ngIf="data.selectedFile.file_type == 'pdf' || data.selectedFile.file_type == 'txt' ||
+											data.selectedFile.file_type == 'doc' || data.selectedFile.file_type == 'docx' || 
+											data.selectedFile.file_type == 'xls' || data.selectedFile.file_type == 'xlsx' ||
+											data.selectedFile.file_type == 'zip' || data.selectedFile.file_type == 'rar' || 
+											data.selectedFile.file_type == 'tiff' || data.selectedFile.file_type == 'bmp' ||
+											data.selectedFile.file_type == 'csv'">
+										<i class="pixel-icons icon-{{data.selectedFile.file_type}}"></i>
+										<p style="opacity: 0.5;">No Preview Available</p>
+									</div>
+									<div class="has-preview" *ngIf="data.selectedFile.file_type == 'jpg' || data.selectedFile.file_type == 'jpeg' || 
+											data.selectedFile.file_type == 'png' || data.selectedFile.file_type == 'gif'">
+										<!-- || data.selectedFile.file_type == 'tiff' || data.selectedFile.file_type == 'bmp' -->
+										<div class="img-src" [style.background-image]="'url(' + data.selectedFile.preview_url + ')' | safeHtml: 'style'"></div>
+									</div>
+									<div class="audio-video" *ngIf="data.selectedFile.file_type == 'mp4' || data.selectedFile.file_type == 'ogg'">
+										<video width="400" controls>
+											<source *ngIf="data.selectedFile.file_type == 'mp4'" [src]="data.selectedFile.preview_url" type="video/mp4">
+											<source *ngIf="data.selectedFile.file_type == 'ogg'" [src]="data.selectedFile.preview_url" type="video/ogg"> Your
+											browser does not support HTML5 video.
+										</video>
+									</div>
+									<div class="audio-video" *ngIf="data.selectedFile.file_type == 'mp3'">
+										<audio controls>
+											<source [src]="data.selectedFile.preview_url" type="audio/mpeg"> Your browser does not support the audio element.
+										</audio>
+									</div>
+								</div>
+								<div *ngIf="false" class="preview">
+									<ngx-doc-viewer [url]="data.selectedFile.preview_url" viewer="google" style="width:100%;height:100%"></ngx-doc-viewer>
+								</div>
+								<div class="carouse-right" *ngIf="data.selectedIndex < data.totalLength - 1" (click)="goNext(data.selectedIndex)">
+									<i class="pixel-icons icon-arrow-right"></i>
+								</div>
+							</div>
+							<div class="message-container discussion-screen ">
+								<div class="discussions">
+									<h2 *ngIf="!messages.inProgress">Discussion</h2>
+									<ng-container>
+										<div class="spinner-view" *ngIf="messages.inProgress">
+											<div class="empty-screen">
+												<div class="icon-info-holder">
+													<mat-spinner diameter="38" class="md"></mat-spinner>
+												</div>
+											</div>
+										</div>
+										<ng-container *ngIf="!messages.inProgress">
+											<ng-container *ngIf="!messages.isNew">
+												<div class="list-group" *ngIf="!messages.noData" #messageListSection>
+													<div class="item" *ngFor="let msg of messages.list">
+														<div class="discussions-image">
+															<!-- <pi-avatar size="lg" appearance="circle"></pi-avatar> -->
+														</div>
+														<div class="data">
+															<h5>
+																<div class="user text-ellipsis" [innerHTML]="msg.created"></div>
+															</h5>
+															<div class="time">{{msg.created_date | fromNow}}</div>
+															<div class="msg">
+																<div class="plain" [innerHTML]="msg.message"></div>
+															</div>
+															<div class="attachments" *ngIf="msg.attachment?.length">
+																<div class="discussions-file-details" *ngFor="let atchmt of msg.attachment">
+																	<div class="file-types">
+																		<i class="pixel-icons icon-{{atchmt.extension}}"></i>
+																	</div>
+																	<div class="file-names">
+																		<!-- <p class="file-name">
+																			{{msg.attachment.length+" "+((msg.attachment.length==1)?"File":"Files")}}
+																		</p> -->
+																		<p class="file-type-name">
+																			<span class="title">{{atchmt.original_name}}</span>
+																			<span>{{ atchmt.filesize/1024 | number:'.2' }} KB </span>
+																		</p>
+																	</div>
+																	<span class="download-attachment" (click)="singleDownload(atchmt)">
+																		<i class="pixel-icons icon-download"></i>
+																	</span>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+
+												<!-- <div class="no_data" *ngIf="messages.noData">No Messages Created!</div> -->
+												<div class="no-data-screen" *ngIf="messages.noData">
+													<div class="empty-screen">
+														<div class="icon-info-holder">
+															<div class="icon">
+																<i class="pixel-icons icon-pn-messages"></i>
+															</div>
+															<p class="no_data">No Messages found</p>
+														</div>
+													</div>
+												</div>
+												<div class="footer">
+													<div class="msg-typeing">
+														<div class="text-msg">
+															<pi-form-field>
+																<textarea id="newMessage" pi-input placeholder="Message" rows="2" minRows="2" maxRows="10" [(ngModel)]="messages.newMessage"
+																 (focus)="messages.showButtons = true;" (keydown)="onKeydown($event)"></textarea>
+															</pi-form-field>
+															<button class="restore-btn button" *ngIf="messages.showButtons" (click)="messages.showButtons = false;">
+																<i class="material-icons">settings_backup_restore</i>
+															</button>
+														</div>
+														<div class="send-btn">
+															<button class="send-btn-action button" (click)="createMessage()">
+																<i class="material-icons">send</i>
+															</button>
+														</div>
+
+
+													</div>
+
+													<div *ngIf="messages.showButtons" class="job-attachments-list">
+														<!-- <div class="attachments"></div> -->
+														<div class="uploads">
+															<div ng2FileDrop [ngClass]="{'file-over': hasDropZoneOver}" [uploader]="uploader" class="file-drop-zone">
+																<input id="attachment" type="file" ng2FileSelect [uploader]="uploader" [hidden]="true" multiple [accept]="allowedMimeType.toString()"
+																/>
+																<label for="attachment" class="browse-file">Upload New Files :
+																	<span class="upload-file-discussion">
+																		<i class="pixel-icons icon-plus-slim"></i>
+																	</span>
+																</label>
+															</div>
+														</div>
+														<div class="files-sec">
+															<div *ngFor="let file of messages.uploadData.files;let i = index" class="attachment-file">
+																<img src="" alt="">
+																<i class="pixel-icons icon-{{file.type}}"></i>
+																<span [innerHtml]="file.original_name"></span>
+																<span class="remove-pill" (click)="removeAttachment(i)">
+																	<i class="pixel-icons icon-close-slim"></i>
+																</span>
+															</div>
+														</div>
+													</div>
+
+												</div>
+											</ng-container>
+											<ng-container *ngIf="messages.isNew">
+												<div class="first-msg">
+													<div class="hello"></div>
+													<p>Hello</p>
+													<button pi-button color="primary" (click)="createDiscussion()">Create Discussion</button>
+												</div>
+
+											</ng-container>
+										</ng-container>
+									</ng-container>
+								</div>
+							</div>
+						</mat-dialog-content>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

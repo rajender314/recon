@@ -1,0 +1,252 @@
+@import "../../../../../theme/_fonts";
+@import "../../../../../theme/_mixins";
+
+.date-field {
+    .ak-field-text.is-focus {
+        box-shadow: inset 0 0px 0px 1px #4c9aff;
+        background-color: #fff;
+        border-color: #4c9aff;
+    }
+}
+
+.cust-nav-tab{
+    height: 40px;
+    margin-bottom: -1px;
+    nav{
+        overflow: hidden;
+        display: block;
+        margin-bottom: 0;
+        padding: 0;
+        line-height: 1.2;
+        a{
+            min-width: 40px;
+            padding: 12px 0;
+            /* height: 30px; */
+            margin: 0 12px;
+            font-size: 14px;
+            overflow: hidden;
+            color: rgba(23, 43, 77, 0.8);
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            &.active{
+                color: #0747a6;
+                opacity: 1 !important;
+                &:after{    
+                    content: '';
+                    position: absolute;
+                    bottom: 0px;
+                    left: 0;
+                    right: 0;
+                    height: 2px;
+                    background-color: #0747a6;
+                    
+                }
+            }
+            &:first-child{
+                margin-left: 0;
+            }
+            
+        }
+    }
+    
+}
+
+.timeline-container{
+    display: flex;
+    flex-direction: column;
+    width: 100%; 
+    margin-top: 20px;
+    // border-top: 2px solid #e8e8ef;
+    position: relative;
+    header{
+        min-height: 43px;
+        padding: 0;
+        .title{
+            color: #172b4d;
+            font-size: 16px;
+            @include medium-font;
+        }
+        .icon-plus{
+            font-size: 10px;
+            width: 10px;
+            height: 8px;
+            margin-right: 3px;
+        }
+    }
+    .timeline-data-container{
+        display: flex;
+        width: 100%;
+        min-height: 140px;
+        flex-direction: column;
+        position: relative;
+        .timeline-content{
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            .row{
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+                height: 34px;
+                align-items: center;
+                border-bottom: 1px solid #edeef5;
+                .task-name, .due-date{
+                    flex: 1;
+                    flex-basis: 0;
+                    color: #192d4f;
+                    font-size: 14px;
+                    .date-field{
+                        display: block;
+                        position: relative;
+                        max-width: 200px;
+                        margin: 0;
+                        input{
+                            border: none;
+                            padding: 10px;
+                            background: none;
+                            &:focus{
+                                box-shadow: none;
+                            }
+                        }
+                        .icon-calendar{
+                            line-height: 10px;
+                            font-size: 14px;
+                            vertical-align: baseline;
+                        }
+                    }
+                }
+                .delete{
+                    display: flex;
+                    align-items: center;
+                    .icon-delete{
+                        font-size: 16px;
+                        width: 16px;
+                        height: 16px;
+                        color: #6e7b90;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+        .no-data{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #8b95a6;
+            font-size: 16px;
+        }
+        .icon-info-holder .icon{
+            width: 60px;
+            height: 60px;
+            margin-bottom: 0;
+        }
+    }
+}
+.attachments {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 15px -5px;
+  padding: 0;
+
+  .discussions-file-details {
+    //   position: initial;
+    // width: calc(50% - 10px);
+    // height: 40px;
+    // border: solid 1px #d6dcea;
+    border-radius: 3px;
+    margin: 5px;
+    // background-color: #fff;
+    margin-right: 8px;
+    width: 240px;
+
+    .file-types {
+      width: 26px;
+      height: 26px;
+
+      i.pixel-icons {
+        font-size: 26px;
+      }
+    }
+
+    .file-names {
+      flex: 1;
+      overflow: hidden;
+
+      .file-type-name {
+        display: flex;
+        flex-direction: column;
+
+        .title {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+  }
+}
+
+.download-attachment {
+  width: 20px;
+  height: 20px;
+  position: initial;
+
+  i.pixel-icons {
+    top: 3px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.attachment-preview {
+  position: relative;
+
+  .file-attached {
+    width: 240px;
+    height: 110px;
+    border: 1px solid #d8ddec;
+    margin-right: 8px;
+    border-radius: 3px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
+
+  .overlay {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    padding: 8px;
+    left: 0;
+    .details {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  &:hover {
+    .overlay {
+      width: calc(100% - 8px);
+      height: 110px;
+      background-color: rgba(127, 127, 127, 0.5);
+      display: block;
+
+      .download-attachment {
+        visibility: visible;
+      }
+    }
+  }
+}

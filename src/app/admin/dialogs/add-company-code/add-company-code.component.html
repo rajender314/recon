@@ -1,0 +1,110 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="createFormGroup" class="form-flex" autocomplete="off">
+    <div class="form-wrapper">
+      <pi-form-field label="Company Code Name">
+        <input autocomplete="" type="text" maxlength="64" pi-input id="name" (input)="removeDuplicate()" name="name"
+          formControlName="name">
+        <div class="pi-error" *ngIf="createFormGroup.controls.name.hasError('required') && submitted">Please Enter
+          Company Code
+          Name
+        </div>
+        <div class="pi-error" *ngIf="!createFormGroup.controls.name.hasError('required') && duplicateError">Company
+          Code {{duplicateError}}</div>
+      </pi-form-field>
+
+      <pi-select label="Parent Company Code" [options]="parentCompanyCodes" id="parentCompany" name="parentCompany"
+        formControlName="parentCompany"></pi-select>
+
+      <pi-select label="Status" [options]="StatusFilter" id="status" name="status" formControlName="status"></pi-select>
+
+      <pi-form-field label="Description">
+        <textarea pi-input rows="3" id="description" name="description" formControlName="description" maxlength="1024"></textarea>
+        <span class="field-note">Enter text of 1024 characters or less.</span>
+      </pi-form-field>
+
+      <pi-form-field label="Job Prefix">
+        <input autocomplete="" type="text" maxlength="2" pi-input id="job_prefix" name="job_prefix" formControlName="job_prefix">
+        <div class="pi-error" *ngIf="createFormGroup.controls.job_prefix.hasError('required') && submitted">Please
+          Enter Job Prefix</div>
+      </pi-form-field>
+
+      <label class="field-title">Business Rules</label>
+      <div class="business-rules-block">
+
+        <div class="chk-radio">
+          <pi-form-field label="Allow MIO">
+            <input type="checkbox" pi-input formControlName="allow_mio" />
+          </pi-form-field>
+        </div>
+
+        <div class="chk-radio">
+          <pi-form-field label="Calculate taxes from Avalara">
+            <input type="checkbox" pi-input formControlName="check_avalara" />
+          </pi-form-field>
+        </div>
+
+        <div class="chk-radio">
+          <pi-form-field label="Invoices need all PO's processed to be finalized">
+            <input type="checkbox" pi-input formControlName="invoice_need" />
+          </pi-form-field>
+        </div>
+
+        <div class="chk-radio push-nets">
+          <pi-form-field label="Push nets to GP">
+            <input type="checkbox" pi-input formControlName="net_push_gp" />
+          </pi-form-field>
+          <pi-form-field class="chk-radio" [label]="'PO'" *ngIf="createFormGroup.controls['net_push_gp'].value">
+            <input type="radio" pi-input name="po_actual_amount" formControlName="po_actual_amount" [value]="0" />
+          </pi-form-field>
+          <pi-form-field class="chk-radio" [label]="'Actual'" *ngIf="createFormGroup.controls['net_push_gp'].value">
+            <input type="radio" pi-input name="po_actual_amount" formControlName="po_actual_amount" [value]="1" />
+          </pi-form-field>
+          <pi-form-field label="If no Actual, use PO" *ngIf="createFormGroup.controls['net_push_gp'].value && createFormGroup.controls['po_actual_amount'].value==1">
+            <input type="checkbox" pi-input formControlName="no_actual_use_po" />
+          </pi-form-field>
+        </div>
+
+        <div class="chk-radio">
+          <pi-form-field [label]="option.value" *ngFor="let option of syncOptions">
+            <input type="radio" pi-input name="sync" formControlName="sync" [value]="option.id" />
+          </pi-form-field>
+        </div>
+
+        <pi-select label="Default Distribution Type" [options]="distributionTypes" id="distribution_id" name="distribution_id"
+          formControlName="distribution_id"></pi-select>
+
+        <pi-form-field label="Corp Co">
+          <input autocomplete="" pi-input type="text" maxlength="9" id="corp_co" name="corp_co" formControlName="corp_co">
+          <div class="pi-error" *ngIf="createFormGroup.controls.corp_co.hasError('required') && submitted">Please Enter
+            Corp Co</div>
+        </pi-form-field>
+
+        <div class="wrap-content">
+          <label for="due_days">The Final Bill Due Date should be</label>
+          <pi-form-field label="">
+            <input type="text" pi-input type="text" [appPriceFormat]="numberConfig" maxlength="3" id="due_days"
+              formControlName="due_days">
+          </pi-form-field>
+          <label for="due_days">days from delivery due date</label>
+          <div class="pi-error" *ngIf="createFormGroup.controls.due_days.hasError('required') && submitted">Please
+            Enter final
+            bill due days</div>
+        </div>
+        <pi-select [options]="groupTypes" label="Default Group for final bill due task" [multi]="false" id="group_id"
+          name="group_id" formControlName="group_id"></pi-select>
+        <div class="pi-error" *ngIf="createFormGroup.controls.group_id.hasError('required') && submitted">Please
+          Select Group</div>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+  <button pi-button  (click)="closeDialog()">Cancel</button>
+  <button pi-button color="primary" (click)="saveDetails(createFormGroup)" [disabled]="createFormGroup.pristine">Save</button>
+</mat-dialog-actions>

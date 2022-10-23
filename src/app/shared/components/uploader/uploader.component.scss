@@ -1,0 +1,101 @@
+.mat-dialog-content{
+    display: flex;
+    flex-direction: column;
+    padding: 24px !important;
+    color: rgba(23, 43, 77, 0.8);
+    .file-drop-zone{
+        border: 2px dashed #ccc;
+        background: #f7f9fc;
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 100px;
+        position: relative;
+        @media screen and (min-width:600px){
+            width: 200px;
+            height: 200px;
+        }
+        .images-dropzone{
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            overflow: hidden;
+            img{
+                max-width: 100%;
+            }
+        }
+        .info-label{
+            margin: auto;
+            text-align: center;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            .mat-icon{
+                margin: 0 auto;
+                width: 60px;
+                height: 60px;
+                font-size: 60px;
+                color: #ccc;
+            }
+            p{margin: 10px 20px;}
+        }
+        .browse-file{
+            position: absolute;
+            bottom: -70px;
+            text-align: center;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            p{
+                margin: 16px 0;
+                font-weight: 600;
+            }
+            a{
+                cursor: pointer;
+                background: #f5f6f7;
+                color: #172b4d;
+                padding: 5px 30px;
+                border-radius: 3px;
+                &:hover{
+                    background: #e0e4e8;
+                }
+            }
+        }
+    }
+    .info{
+        p{
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            &:last-child{
+                margin-top: 10px;
+            }
+            span{
+                color: red;
+            }
+            &.invalid-error{
+                color: #f6cdcd; /*#FCBEBE;*/
+                background: #6D3535;
+                border-radius: 3px;
+                padding: 2px 4px;
+                margin: 4px 0;
+            }
+        }
+    }
+}
+
+.mat-dialog-actions{
+    border-top: 2px solid #ebecf1;
+    position: relative;
+    .remove{
+        position: absolute;
+        left: 0;
+    }
+}

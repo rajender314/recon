@@ -1,0 +1,15 @@
+<div class="primary-max-screen-width global-grid estimates-grid with-table-gaps accordion-grid with-out-margin actions-grid ag-no-striped ag-full-width-grid  estimates_ui">
+    <ag-grid-angular @estimatesAnimate *ngIf="!state.loader" class="ag-theme-balham configure-estimates-grid" [gridOptions]="options.gridOptions"></ag-grid-angular>
+</div>
+
+<div class="bottom-foooter" style="padding: 10px 0;" *ngIf="!state.loader" >
+    <div class="primary-max-screen-width justify-content d-flex align-items-end flex-column">
+        <p class="net-total"><span class="label">Net</span><strong>{{state.net}}</strong></p>
+        <!-- <p class="tax"><span class="worning-alert"><i class="pixel-icons icon-exclamation"></i> Tax Not Calculate Yet</span><strong>Calculate</strong></p> -->
+        <p class="grand-total"> <span class="label">Gross</span><strong>{{state.grandTotal}}</strong></p>
+    </div>   
+</div>
+    
+    
+       
+      

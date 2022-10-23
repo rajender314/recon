@@ -1,0 +1,46 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="formGroup" class="form-flex" autocomplete="off">
+    <div class="task-row">
+      <div class="task-menu">
+        <button [disableRipple]="true" mat-icon-button [matMenuTriggerFor]="taskMenu">
+          <span>{{state.selectedTask.label}}</span>
+          <i class="pixel-icons icon-arrow-down"></i>
+        </button>
+        <mat-menu #taskMenu="matMenu" tabindex="-1" [overlapTrigger]="false" yPosition="below">
+          <button mat-menu-item *ngFor="let type of state.taskTypes" (click)="changeTaskType(type)">
+            <span>{{type.label}}</span>
+          </button>
+        </mat-menu>
+        <ng-container>
+          <pi-select [options]="state.tasksList[state.selectedTask.key]" nameKey="name" formControlName="task_id"></pi-select>
+          <div class="pi-error" *ngIf="formGroup.controls.task_id.hasError('required') && submitted">Please Select {{state.selectedTask.label}}</div>
+        </ng-container>
+      </div>
+      <div class="user-menu" *ngIf="state.selectedTask.id==1">
+        <button [disableRipple]="true" mat-icon-button [matMenuTriggerFor]="userMenu">
+          <span>{{state.selectedUser.label}}</span>
+          <i class="pixel-icons icon-arrow-down"></i>
+        </button>
+        <mat-menu #userMenu="matMenu" [overlapTrigger]="false" yPosition="below">
+          <button mat-menu-item *ngFor="let type of state.userTypes" (click)="changeUserType(type)">
+            <span>{{type.label}}</span>
+          </button>
+        </mat-menu>
+        <ng-container>
+          <pi-select [options]="state.usersList[state.selectedUser.key]" nameKey="name" formControlName="user_id"></pi-select>
+          <!-- <div class="pi-error" *ngIf="formGroup.controls.user_id.hasError('required') && submitted">Please Select {{state.selectedUser.label}}</div> -->
+        </ng-container>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+  <button pi-button (click)="close()">Cancel</button>
+  <button pi-button color="primary" (click)="save(formGroup)" [disabled]="formGroup.pristine">Save</button>
+</mat-dialog-actions>

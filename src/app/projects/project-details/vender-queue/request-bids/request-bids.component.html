@@ -1,0 +1,76 @@
+<div class="request-bids">
+  <div class="mat-dialog-heading" style="padding-bottom: 0;">
+    <h2  mat-dialog-title [innerHtml]="data.title"></h2>
+    <button mat-icon-button mat-dialog-close tabindex="-1">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <mat-dialog-content  style="padding:0px">
+    <div class="steppers">
+      <div class="stepper-label" [class.active]="stepper.selectedIndex == 0"
+        (click)="stepper.selectedIndex != 0 ? stepper.previous() : ''">Set Bid Deadlines</div>
+      <div class="stepper-label" [class.active]="stepper.selectedIndex == 1"
+        (click)="stepper.selectedIndex == 0 ? stepper.next() : ''">Send Bid Request</div>
+    </div>
+
+    <mat-horizontal-stepper #stepper>
+      <mat-step>
+          <div class="analyze-bids-content global-grid with-out-margin ag-no-striped">
+            <ag-grid-angular class="ag-theme-balham" style="height: 319px;" [gridOptions]="gridOptions"></ag-grid-angular>
+          </div>
+      </mat-step>
+      <mat-step>
+        <ng-container>
+          <div class="alert req-bid-alert" >
+            <span>Bid Request will be sent to selected vendor's Company email ID.</span>
+            <span>You can add a common message for all the vendors here.</span>
+          </div>
+          <div [formGroup]="formGroup">
+            <div>
+              <pi-form-field label=" ">
+                <textarea placeholder="Enter message here..." pi-input minRows="6" maxRows="6" formControlName="message"></textarea>
+              </pi-form-field>
+            </div>
+            <div>
+              <pi-select label=" " idKey="attachments_id" placeholder="Select from project files"  [options]="dropdowns.jobFiles" [multi]="true"
+                formControlName="files" nameKey="file_name">
+							</pi-select>
+            </div>
+            <div class="file-upload">
+              <div class="uploads">
+                <div ng2FileDrop [ngClass]="{'file-over': hasDropZoneOver}" [uploader]="uploader"
+                  class="file-drop-zone">
+                  <input id="attachment" type="file" ng2FileSelect [uploader]="uploader" [hidden]="true" [accept]="allowedMimeType.toString()"
+                    multiple />
+                  <label for="attachment" class="browse-file">
+                    <i class="pixel-icons icon-plus"></i> Upload new Files:
+                  </label>
+                </div>
+                <div class="files-sec">
+                  <div *ngFor="let file of uploadData.files;let i = index" class="files">
+                    <i class="pixel-icons icon-{{file.type}}"></i>
+                    <span [innerHtml]="file.original_name"></span>
+                    <span class="close" (click)="removeAttachment(i)">
+                      <i class="pixel-icons icon-close-slim"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="p-t-25">
+    <ng-container *ngIf="stepper.selectedIndex == 0">
+      <button pi-button matDialogClose>Cancel</button>
+      <button pi-button color="primary" (click)="stepper.next()">Next</button>
+    </ng-container>
+    <ng-container *ngIf="stepper.selectedIndex == 1">
+        <button pi-button (click)="stepper.previous()">Back</button>
+        <button pi-button color="primary" (click)="sendRequest()">Send Bid Request</button>
+    </ng-container>
+  </mat-dialog-actions>
+</div>

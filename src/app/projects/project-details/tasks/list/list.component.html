@@ -1,0 +1,58 @@
+<section class="split-screen projects-tasks" style="height: calc(100% - 26px);" *ngIf="!state.isLoading">
+	<aside [class.split-part]="state.selectedTask" class="split-part" style="width: 100%;">
+		<div class="recon-sticky-layout" style="height: 100%;">
+			<div class="recon-sticky-header" *ngIf="state.selectedTask">
+				<div>
+					<h3 class="p-0">{{state.tasksDetails.list.length + ' Tasks'}}</h3>
+				</div>
+
+				<div class="m-l-15  " mat-button [matMenuTriggerFor]="sortMenu">
+					<span class="sort-new">
+						<span>Sort By : </span> <strong>&nbsp;{{state.selectedSort.display}}</strong> <i
+							class="pixel-icons icon-arrow-down"></i>
+					</span>
+					<div class="btn-group" style="position: absolute;">
+						<mat-menu #sortMenu="matMenu" xPosition="before" class="drop-menu-ui">
+							<a *ngFor="let option of state.sortActions"
+								[class.active]="option.key == state.selectedSort.key" [innerHtml]="option.label"
+								(click)="performActions('sort', option)"></a>
+						</mat-menu>
+					</div>
+				</div>
+
+			</div>
+			<div class="recon-scroll-body">
+				<ng-container>
+					<div class="global-grid task-grid  with-out-margin with-table-gaps with-actions"
+						*ngIf="state.tasksDetails.list.length" style="height: 100%;">
+						<ag-grid-angular [ngStyle]="{'visibility': isVisible ? 'visible' : 'hidden'}"
+							class="ag-theme-balham" [gridOptions]="gridOptions" style="height: 100%">
+						</ag-grid-angular>
+					</div>
+					<div class="empty-screen" *ngIf="!state.tasksDetails.list.length && !state.isLoading">
+						<div class="empty-screen">
+							<div class="icon-info-holder">
+								<div class="icon">
+									<i class="pixel-icons icon-task-completed"></i>
+								</div>
+								<p class="alert-message">No Records Found</p>
+								<!-- <button pi-button color="primary" (click)="addTask()">+ Add Task</button> -->
+							</div>
+						</div>
+					</div>
+				</ng-container>
+			</div>
+		</div>
+
+	</aside>
+
+	<aside class="split-part" *ngIf="state.selectedTask">
+		<router-outlet></router-outlet>
+	</aside>
+</section>
+
+<div class="spinner-view" *ngIf="state.isLoading || !isVisible">
+	<div class="empty-screen">
+		<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+	</div>
+</div>

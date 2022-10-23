@@ -1,0 +1,45 @@
+<div class="certifications">
+    <div class="header">Company Certification &amp; Quality Control</div>
+    <mat-spinner *ngIf="state.certificationsLoader" diameter="36"></mat-spinner>
+    <div class="edit-form-container" *ngIf="!state.certificationsLoader">
+        <div class="sub-header">Environmental and Quality Control Specifications</div>
+        <form [formGroup]="certificationsForm" class="form-flex edit-form" autocomplete="off">
+            <mat-list formArrayName="inputs">
+                <mat-list-item *ngFor="let list of checkboxArray.controls;let i = index" [ngClass]="list.get('css').value"
+                    [formGroupName]="i">
+                        <pi-form-field label="{{list.get('label').value}}" class="p-b" [ngClass]="{'visible-fields':list.get('status').value && list.get('children').value}">
+                            <input type="checkbox" [disabled]="!state.editable" pi-input formControlName="status" (change)="changeCertificate(list)" />
+                        </pi-form-field>
+                        <!-- <mat-checkbox color="primary" formControlName="status" (change)="changeCertificate(list)" [disableRipple]="true">{{list.get('label').value}}</mat-checkbox> -->
+                        <mat-list class="child-list" *ngIf="list.get('status').value && list.get('children').value">
+                            <mat-list-item>
+                                <pi-form-field label="Certification Number" class="m-t-0">
+                                    <input autocomplete="" pi-input type="text" name="name" [disabled]="!state.editable" (input)="numberValidation(list)"
+                                        formControlName="number" maxlength="64">
+                                    <div class="pi-error" *ngIf="list.get('numberValidate').value">Please Enter
+                                        Valid
+                                        Certification Number</div>
+                                </pi-form-field>
+                            </mat-list-item>
+                            <mat-list-item>
+                                <pi-form-field label="Certification Body Website" class="p-b">
+                                    <input autocomplete="" pi-input [disabled]="!state.editable" type="text" name="name" (input)="emailValidation(list)"
+                                        formControlName="website" maxlength="64">
+                                    <div class="pi-error" *ngIf="list.get('websiteValidate').value">Please Enter
+                                        Valid
+                                        URL(www.company.com)</div>
+                                </pi-form-field>
+                            </mat-list-item>
+                        </mat-list>
+                </mat-list-item>
+            </mat-list>
+
+            <div class="footer" *ngIf="state.editable">
+                <button pi-button class="cancel" color="subtle" (click)="cancelCertification()">Cancel</button>
+                <button pi-button color="primary" (click)="saveCertification(certificationsForm)" [disabled]="certificationsForm.pristine">Save</button>
+            </div>
+
+        </form>
+
+    </div>
+</div>

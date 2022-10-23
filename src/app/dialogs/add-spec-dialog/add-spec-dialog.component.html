@@ -1,0 +1,22 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+<mat-dialog-content  style="min-height: 300px;">
+	<mat-spinner diameter="30" class="md" *ngIf="isLoading"></mat-spinner>
+	<div *ngIf="!isLoading">
+		<div class="sec-header">
+			<pi-select label=" " [options]="UIElements" [formControl]="type"></pi-select>
+			<app-search (onSearch)="search($event)"></app-search>
+		</div>
+		<div class="speck-grid global-grid with-out-margin">
+				<ag-grid-angular #agGrid style="height: 300px;" class="ag-theme-balham" [gridOptions]="gridOptions"></ag-grid-angular>
+		</div>
+	</div>
+</mat-dialog-content>
+<mat-dialog-actions style="border-top: none;">
+	<button pi-button color="subtle" mat-dialog-close>Cancel</button>
+	<button pi-button color="primary" (click)="saveDetails()" [disabled]="promise">Save</button>
+</mat-dialog-actions>

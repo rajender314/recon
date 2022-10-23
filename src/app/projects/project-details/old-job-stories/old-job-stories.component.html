@@ -1,0 +1,40 @@
+<div class="mat-dialog-heading add-credit-heading">
+    <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+    <button mat-icon-button mat-dialog-close tabindex="-1">
+        <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <mat-dialog-content>
+      <div>
+              <!-- <div *ngIf="jobStories.length">
+                  <div class="job-stories-timeline" >
+                      <div class="d-flex align-item-baseline m-t-20 w-100">
+                      <ul class="m-0"> 
+                        <li *ngFor="let stories of jobStories">
+                          <div class="d-flex align-items-start line">
+                            <i class="pixel-icons icon-{{stories.class}}"></i>
+                            <p class="m-0" [innerHTML]="stories.body"></p></div>
+                          <div class="s-date"><span [innerHTML]="stories.created_date"></span></div>
+                        </li> 
+                      </ul>
+                    </div>
+                  </div>
+                </div> -->
+                <!-- New UI -->
+                <div class="old-jobstories-timeline" *ngIf="jobStories.length">  
+                  <div class="timeline-item clearfix" *ngFor="let stories of jobStories">
+                    <div class="left-part">
+                      <div class="item-period" [innerHTML]="stories.created_date"></div>                  
+                    </div>
+                    <div class="divider"></div>
+                    <div class="right-part"><p [innerHTML]="stories.body"></p></div>
+                  </div>
+                  
+
+                </div>
+                <!-- End New UI --> 
+        </div>
+  </mat-dialog-content>
+  <!-- <mat-dialog-actions class="mat-footer">
+    <button pi-button color="subtle" mat-dialog-close>Ok</button>
+  </mat-dialog-actions> -->

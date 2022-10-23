@@ -1,0 +1,59 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+<mat-dialog-content class="tabs-window">
+
+	<ng-container *ngIf="state.tabs.length">
+		<mat-tab-group [disableRipple]="true" [selectedIndex]="state.activeTab"
+			(selectedIndexChange)="onTabChange($event)">
+			<mat-tab [label]="tab.label" *ngFor="let tab of state.tabs">
+				<!-- <mat-spinner diameter="45" class="md" *ngIf="state.isLoading"></mat-spinner> -->
+				<div class="address-list" *ngIf="!state.isLoading">
+					<div class="address-card"  *ngFor="let address of state.addressList" (click)="onSelectItem(address)"
+						[class.active]="state.selectedAddress?.id == address.id">
+						<p>
+						<span [innerHtml]="address.address1"></span>,
+						<span [innerHtml]="address.city"></span>, <span [innerHtml]="address.state"></span> - <span [innerHtml]="address.postal_code"></span></p>
+
+						<div class="country" [innerHtml]="address.country"></div>
+						<span class="selected-adress-card"><i *ngIf="state.selectedAddress?.id == address.id"  class="pixel-icons icon-select"></i></span> 
+					</div>
+					<!-- <div class="no-data" *ngIf="!state.addressList.length">No Address Found</div> -->
+					<div class="empty-screen"  *ngIf="!state.addressList.length"><div class="icon-info-holder">
+							<div class="icon"><i class="pixel-icons icon-address-book"></i>
+							</div>
+							<p class="alert-message">No Address Found</p></div>
+							</div>
+				</div>
+			</mat-tab>
+		</mat-tab-group>
+	</ng-container>
+	<ng-container *ngIf="!state.tabs.length">
+		<div class="address-list" *ngIf="!state.isLoading">
+			<div class="address-card" *ngFor="let address of state.addressList" (click)="onSelectItem(address) "
+				[class.active]="state.selectedAddress?.id == address.id" >
+				<span [innerHtml]="address.address1"></span>
+				<span [innerHtml]="address.city"></span>
+				<div><span [innerHtml]="address.state"></span> - <span [innerHtml]="address.postal_code"></span>
+				</div>
+				<div class="country" [innerHtml]="address.country"></div>
+				<span class="selected-adress-card"><i *ngIf="state.selectedAddress?.id == address.id" class="pixel-icons icon-select"></i></span>
+			</div>
+
+			<div class="empty-screen"  *ngIf="!state.addressList.length"><div class="icon-info-holder">
+				<div class="icon"><i class="pixel-icons icon-address-book"></i>
+				</div>
+				<p class="alert-message">No Address Found</p></div>
+				</div>
+			<!-- <div class="no-data" *ngIf="!state.addressList.length">No Address Found</div> -->
+		</div>
+	</ng-container>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+	<button pi-button color="subtle" mat-dialog-close>Cancel</button>
+	<button pi-button color="primary" (click)="saveAddress()">Save</button>
+</mat-dialog-actions>

@@ -1,0 +1,285 @@
+<div class="primary-layout">
+	<div class="pi-detail-view">
+		<div class="primary-layout-detail">
+			<header>
+				<div class="w-100 d-flex justify-content-center flex-column">
+						<pi-breadcrumb>
+								<ng-container *ngFor="let item of data.breadcrumbs">
+									<pi-breadcrumb-item tabindex="-1" *ngIf="item.type == 'link'" [label]="item.label"
+										[routerLink]="item.route" (click)="closeDialog()">
+									</pi-breadcrumb-item>
+									<pi-breadcrumb-item *ngIf="item.type != 'link'" [label]="item.label">
+									</pi-breadcrumb-item>
+								</ng-container>
+							</pi-breadcrumb>
+							<div class="w-100 d-flex align-items-center justify-content-between">
+									<aside class="left-header d-flex ">
+										
+										<div class="d-flex align-items-center " >
+											<div class="ag-cell-custome-actions">
+												<ul style="padding-top: 0;">
+													<li style="margin-right: 0; margin-left: 0;" (click)="closeDialog()"><i
+															class="pixel-icons icon-arrow"></i></li>
+												</ul>
+											</div>
+				
+											<h1 [innerHtml]="data.title"></h1>
+										</div>
+									</aside>
+									<aside class="right-header d-flex">
+										<div class="multiple-switch all-select">
+											<pi-form-field [label]="view.label" *ngFor="let view of gridViewList"
+												[class.active]="view.value == gridView">
+												<input type="radio" pi-input name="nav_tab" [(ngModel)]="gridView" [value]="view.value"
+													(change)="changeGrid(gridView)" />
+											</pi-form-field>
+										</div>
+										<a (click)="toggle()"><i class="pixel-icons icon-filter-new"></i><span>Filters</span></a>
+										<app-search class="m-l-15" (onSearch)="onSearch($event)"></app-search>
+										<!-- <button pi-button class="btn-switching-icon" ><i class="pixel-icons icon-filter-new"></i></button> -->
+									</aside>
+								</div>
+				</div>
+				
+			</header>
+
+			<div class="primary-layout-detail-body flex-column" style="height: calc(100vh - 120px);">
+				<div class="toggle-filters filter-nav padding-20" [class.hide]="isOpened">
+					<div class="toggle-filter-sec">
+						<div class="empty-element"></div>
+						<div class="filters d-flex align-items-center">
+							<button pi-button class="filter-btn" #capabilityTrigger="matMenuTrigger"
+								[matMenuTriggerFor]="capabilityFilter" (menuOpened)="menuOpened('capabilities_filter')">
+								{{pagination.capabilities_filter.length ? (pagination.capabilities_filter.length > 1 ?
+									pagination.capabilities_filter.length + ' Capabilities' : getName('capabilities_filter')) : 'Capabilities'}}
+								<i class="pixel-icons icon-arrow-down"></i>
+							</button>
+
+							<div class="multiple-switch">
+								<pi-form-field [label]="nav.label" *ngFor="let nav of filterSelection"
+									[class.active]="nav.value == selectedFilter">
+									<input type="radio" (change)="saveFilter()" pi-input name="nav_tab" [(ngModel)]="selectedFilter"
+										[value]="nav.value" />
+								</pi-form-field>
+							</div>
+
+							<button pi-button class="filter-btn" #equipmentTrigger="matMenuTrigger"
+								[matMenuTriggerFor]="equipmentFilter" (menuOpened)="menuOpened('equipment_filter')">
+								{{pagination.equipment_filter.length ? (pagination.equipment_filter.length > 1 ?
+									pagination.equipment_filter.length + ' Equipment' : getName('equipment_filter')) : 'Equipment'}}
+								<i class="pixel-icons icon-arrow-down"></i>
+							</button>
+
+
+							<button pi-button class="filter-btn m-l-15" #vendorTypeTrigger="matMenuTrigger"
+								[matMenuTriggerFor]="vendorTypeFilter" (menuOpened)="menuOpened('vendor_types_filter')">
+								{{pagination.vendor_types_filter.length ? (pagination.vendor_types_filter.length > 1 ?
+									pagination.vendor_types_filter.length + ' Vendor Types' : getName('vendor_types_filter')) : 'Vendor Types'}}
+								<i class="pixel-icons icon-arrow-down"></i>
+							</button>
+						</div>
+					</div>
+					<a class="pointer" (click)="resetFilters()" class="clear-filter">Clear</a>
+
+				</div>
+
+				<mat-menu #capabilityFilter="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="after"
+					class="select-with-button-filter">
+					<div (click)="$event.stopPropagation()">
+						<div class="heading">
+							<span>Capabilities</span>
+						</div>
+						<div class="container">
+							<div class="hdr-container">
+								<div class="hdr-actions-primary">
+									<app-search [search]="filters.search.capabilities_filter"
+										(onSearch)="menuActions('search', 'capabilities_filter', $event)"></app-search>
+								</div>
+								<div class="hdr-actions">
+									<pi-form-field [label]="'Select All'">
+										<input type="checkbox" pi-input
+											[(ngModel)]="filters.selectAll.capabilities_filter"
+											(change)="menuActions('select_all', 'capabilities_filter')" />
+
+									</pi-form-field>
+									<span class="clear-all"
+										(click)="capabilityTrigger.closeMenu();menuActions('clear', 'capabilities_filter')">Clear
+										All</span>
+								</div>
+							</div>
+							<div class="content-list">
+								<div class="content-list-visible">
+									<pi-form-field [label]="status.name"
+										*ngFor="let status of dropdowns.capabilities_filter | domSearch: filters.search.capabilities_filter.value:'name'">
+										<input type="checkbox" pi-input
+											[(ngModel)]="filters.capabilities_filter[status.id]"
+											(change)="change('capabilities_filter')" />
+									</pi-form-field>
+									<div
+										*ngIf="filters.search.capabilities_filter.value && filters.filterCount.count == 0">
+										No Capabilities Found</div>
+								</div>
+							</div>
+						</div>
+						<div class="footer">
+							<button pi-button (click)="capabilityTrigger.closeMenu()">Cancel</button>
+							<button pi-button color="primary"
+								(click)="saveFilter('capabilities_filter');capabilityTrigger.closeMenu()">Save</button>
+						</div>
+					</div>
+				</mat-menu>
+
+				<mat-menu #equipmentFilter="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before"
+					class="select-with-button-filter">
+					<div (click)="$event.stopPropagation()">
+						<div class="heading">
+							<span>Equipment</span>
+						</div>
+						<div class="container">
+							<div class="hdr-container">
+								<div class="hdr-actions-primary">
+									<app-search [search]="filters.search.equipment_filter"
+										(onSearch)="menuActions('search', 'equipment_filter', $event)"></app-search>
+								</div>
+								<div class="hdr-actions">
+									<pi-form-field [label]="'Select All'">
+										<input type="checkbox" pi-input [(ngModel)]="filters.selectAll.equipment_filter"
+											(change)="menuActions('select_all', 'equipment_filter')" />
+
+									</pi-form-field>
+									<span class="clear-all"
+										(click)="equipmentTrigger.closeMenu();menuActions('clear', 'equipment_filter')">Clear
+										All</span>
+								</div>
+							</div>
+							<div class="content-list">
+								<div class="content-list-visible">
+									<pi-form-field [label]="status.name"
+										*ngFor="let status of dropdowns.equipment_filter | domSearch: filters.search.equipment_filter.value:'name'">
+										<input type="checkbox" pi-input
+											[(ngModel)]="filters.equipment_filter[status.id]"
+											(change)="change('equipment_filter')" />
+									</pi-form-field>
+									<div *ngIf="filters.search.equipment_filter.value && !filters.filterCount.count">No
+										Equipment Found</div>
+								</div>
+							</div>
+						</div>
+						<div class="footer">
+							<button pi-button (click)="equipmentTrigger.closeMenu()">Cancel</button>
+							<button pi-button color="primary"
+								(click)="saveFilter('equipment_filter');equipmentTrigger.closeMenu()">Save</button>
+						</div>
+					</div>
+				</mat-menu>
+
+				<mat-menu #vendorTypeFilter="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before"
+					class="select-with-button-filter">
+					<div (click)="$event.stopPropagation()">
+						<div class="heading">
+							<span>Vendor Types</span>
+						</div>
+						<div class="container">
+							<div class="hdr-actions">
+								<pi-form-field [label]="'Select All'">
+									<input type="checkbox" pi-input [(ngModel)]="filters.selectAll.vendor_types_filter"
+										(change)="menuActions('select_all', 'vendor_types_filter')" />
+
+								</pi-form-field>
+								<span class="clear-all"
+									(click)="vendorTypeTrigger.closeMenu();menuActions('clear', 'vendor_types_filter')">Clear
+									All</span>
+							</div>
+							<div class="content-list">
+								<div class="content-list-visible">
+									<pi-form-field [label]="status.name"
+										*ngFor="let status of dropdowns.vendor_types_filter">
+										<input type="checkbox" pi-input
+											[(ngModel)]="filters.vendor_types_filter[status.id]"
+											(change)="change('vendor_types_filter')" />
+									</pi-form-field>
+								</div>
+							</div>
+						</div>
+						<div class="footer">
+							<button pi-button (click)="vendorTypeTrigger.closeMenu()">Cancel</button>
+							<button pi-button color="primary"
+								(click)="saveFilter('vendor_types_filter');vendorTypeTrigger.closeMenu()">Save</button>
+						</div>
+					</div>
+				</mat-menu>
+				<div class="sidebar-layout  padding-20 " style="height: 100%;" [ngClass]="{'toggle-isopend' : !isOpened}">
+					<aside class="sidebar bid-product-ui ">
+						<div class="panel" style="height: 100%;">
+							<div class="empty-msg-ui" *ngIf="data.bidDeadLines.length==0" style="margin-top: 60px;">
+									<p>No Products and Services</p>
+							</div>
+						
+							<div class="panel-header has-chk-box" *ngIf="data.bidDeadLines.length">
+								<pi-form-field label="All Products & Services">
+									<input type="checkbox" pi-input (change)="selectAll(isSelectAll)"
+										[(ngModel)]="isSelectAll" />
+									<!-- (change)="checkAllProducts(state.checkAllProducts)" [(ngModel)]="state.checkAllProducts" -->
+								</pi-form-field>
+							</div>
+							<div class="panel-container" style="height: calc(100vh - 160px);">
+								<virtual-scroller style="height: 100%;" [scrollAnimationTime]="1000"
+									[useMarginInsteadOfTranslate]="true" [bufferAmount]="2" #scroll [items]="data.bidDeadLines"
+									[enableUnequalChildrenSizes]="true">
+								<div class="multigroup-date-list add-vendor-lists-window" *ngFor="let item of scroll.viewPortItems; let i = index">
+									<div class="parent has-chk-box">
+										<pi-form-field
+											label="<i class='pixel-icons icon-products'></i> <span>{{item.name}}</span>"
+											class="selected-product">
+											<input type="checkbox" pi-input (change)="checkProduct(item)"
+												[(ngModel)]="item.is_checked" />
+											<!-- (change)="checkAllServices(item)" [(ngModel)]="item.selected" -->
+										</pi-form-field>
+									</div>
+
+									<ul *ngIf="item.services && item.services.length">
+										<li class="service has-chk-box" *ngFor="let child of item.services">
+											<pi-form-field
+												label="<i class='pixel-icons icon-orders'></i> <span>{{child.name}}</span>"
+												class="selected-service bid-name">
+												<input type="checkbox" (change)="checkService(child, item)" pi-input
+													[(ngModel)]="child.is_checked" />
+												<!-- (change)="checkParentProduct(child, item)" [(ngModel)]="child.selected" -->
+											</pi-form-field>
+											<pi-icon name="icon-exclamation" *ngIf="child.is_revision" title="Service revised from last Bid Request"></pi-icon>
+										</li>
+									</ul>
+								</div>
+								</virtual-scroller>
+							</div>
+						</div>
+					</aside>
+					<aside class="sidebar-content ">
+						<div
+							class="global-grid w-100 bid-grid with-out-margin actions-grid with-check-boxs ag-no-striped ag-full-width-grid">
+							<ag-grid-angular class="ag-theme-balham" [gridOptions]="gridOptions"
+								style="height: calc(100vh - 120px);"></ag-grid-angular>
+						</div>
+
+					</aside>
+				</div>
+			</div>
+			<div class="animated-footer padding-20" style="position: initial;" >
+				<div class="justify-content-between d-flex w-100 align-items-center ">
+
+					<div class="vendor-count m-r-15">Vendors: <span
+							[innerHtml]="gridApi?.getSelectedRows().length || 0"></span> Selected</div>
+
+					<div class="d-flex">
+						<button class="m-l-15" pi-button (click)="closeDialog()">Cancel</button>
+						<button class="m-l-15" pi-button color="primary" (click)="addToQueue()"
+							[disabled]="!unlockButton || !gridApi?.getSelectedRows().length">Add
+							to Queue</button>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>

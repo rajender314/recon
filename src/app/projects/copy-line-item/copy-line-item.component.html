@@ -1,0 +1,88 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+<mat-dialog-content style="position: relative;">
+	<div class="line-items-container" *ngIf="!state.loader">
+		<div class="export-from">
+			<div class="heading"><span class="title">From:</span></div>
+			<div class="container">
+				<div class="row" *ngFor="let item of state.copyLineItems.from">
+					<div class="products"><i class="pixel-icons icon-products"></i>{{item.product_name}}</div>
+					<div class="services"><i class="pixel-icons icon-orders"></i>{{item.service_name}}</div>
+					<div class="revision">{{'R'+item.revision}}</div>
+					<div class="service-status">
+						<span class="service_status status_{{item.job_form_status_id}}" [innerHtml]="item.job_form_status_name"></span>
+					</div>
+					<div class="option">{{(item.option ? (item.option+((item.option==1)?' Option':' Options')) : '--')}}
+					</div>
+				</div>
+				<div class="child-row row" *ngIf="data.type != 'service'">
+					<div class="first-cell products">
+						<div class="icon-container">
+							<div class="icon">
+								<i class="pixel-icons {{typeDetails[data.type].icon}}"></i>
+							</div>
+							<div class="details">
+								<ng-container *ngIf="data.type!='addCredit'">
+									<div *ngFor="let key of typeDetails[data.type].keys" [innerHtml]="data.row[key]"></div>
+								</ng-container>
+								<ng-container *ngIf="data.type=='addCredit'">
+									<div [innerHtml]="'Credit'"></div>
+								</ng-container>
+							</div>
+						</div>
+					</div>
+					<div class="services" style="flex: 0 0 17.5%;" [innerHtml]="'$' + data.row.rate" title="Rate"></div>
+					<div class="revision" style="flex: 0 0 17.5%;" [innerHtml]="data.row.units" title="Units"></div>
+					<div class="service-status" style="flex: 0 0 17.5%;" [innerHtml]="'$' + data.row.net_amount" title="Net Amount"></div>
+					<div class="option" *ngIf="data.type!='addCredit'" style="flex: 0 0 17.5%;" [innerHtml]="'$' + data.row.gross_amount" title="Gross Amount"></div>
+					<div class="option" *ngIf="data.type=='addCredit'" style="flex: 0 0 17.5%;" [innerHtml]="formatNumber(data.row.gross_amount)" title="Gross Amount"></div>
+				</div>
+			</div>
+		</div>
+		<div class="export-to">
+			<div class="heading"><span class="title">To:</span><span class="note">Line Item will be added to the selected Services</span></div>
+			<div class="service-selection">
+				<div class="row">
+					<div class="products">
+						<pi-form-field label="PRODUCTS">
+							<input type="checkbox" pi-input (change)="allServiceChk()" [(ngModel)]="state.checkAll" />
+						</pi-form-field>
+					</div>
+					<div class="services">SERVICES</div>
+					<div class="revision"></div>
+					<div class="service-status"></div>
+					<div class="option"></div>
+				</div>
+			</div>
+			<div class="container">
+				<div class="row" *ngFor="let item of state.copyLineItems.to">
+					<div class="products">
+						<pi-form-field label="<i class='pixel-icons icon-products'></i>{{item.product_name}}">
+							<input type="checkbox" pi-input (change)="serviceChk(item)" [(ngModel)]="item.selected" />
+						</pi-form-field>
+					</div>
+					<div class="services"><i class="pixel-icons icon-orders"></i>{{item.service_name}}</div>
+					<div class="revision">{{'R'+item.revision}}</div>
+					<div class="service-status">
+						<span class="service_status status_{{item.job_form_status_id}}" [innerHtml]="item.job_form_status_name"></span>
+					</div>
+					<div class="option">{{item.option ? (item.option+((item.option==1)?' Option':' Options')) : '--'}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="spinner-view" *ngIf="state.loader">
+		<div class="empty-screen">
+			<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+		</div>
+	</div>
+</mat-dialog-content>
+<mat-dialog-actions class="mat-footer">
+	<button pi-button color="subtle" (click)="close()">Cancel</button>
+	<button pi-button color="primary" (click)="save()" [disabled]="!state.selected.length">{{data.title}}</button>
+</mat-dialog-actions>

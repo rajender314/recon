@@ -1,0 +1,350 @@
+@import "../../../../assets/styles/mixins";
+@import "../../../../theme/projects";
+// ::ng-deep .app-purchase-orders{
+//     display: flex;
+//     width: 100%;
+//     height: 100%;
+//     background-color: #f6f7fe;
+//     mat-spinner{
+//         position: absolute;
+//         top: 50%;
+//         left: 50%;
+//         transform: translate(-50%,-50%);
+//     }
+//     .purchase-order-container{
+//         display: flex;
+//         width: 100%;
+//         height: 100%;
+//         padding: 10px 30px;
+//         flex-direction: column;
+//         header{
+//             display: flex;
+//             flex-direction: column;
+//             width: 100%;
+//             .main-header{
+//                 display: flex;
+//                 justify-content: space-between;
+//                 .project-details{
+//                     display: flex;
+//                     justify-content: space-between;
+//                     width: 100%;
+//                     align-items: center;
+//                     .data-left{
+//                         display: flex;
+//                         align-items: center;
+//                         .project-title{
+//                             color: #8d97a8;
+//                         }
+//                         .status{
+//                             margin-left: 20px;
+//                             background-color: #78a050;
+//                             padding: 2px 6px;
+//                             border-radius: 4px;
+//                             font-size: 12px;
+//                             color: #fff;
+//                         }
+//                     }
+//                     .data-right{
+//                         display: flex;
+//                         align-items: center;
+//                         color: #172b4d;
+//                         .due-date{
+//                             margin-left: 20px;
+//                             label{
+//                                 color: #a7afbc;
+//                             }
+//                             .date{
+//                                 margin-left: 5px;
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//             .sub-header{
+//                 display: flex;
+//                 justify-content: space-between;
+//                 align-items: center;
+//                 height: 30px;
+//                 h2{
+//                     padding: 0;
+//                     color: #172b4d;
+//                 }
+//                 .po-actions{
+//                     display: flex;
+//                     app-search{
+//                         margin-left: 20px;
+//                     }
+//                 }
+//             }
+//         }
+//         section{
+//             margin-top: 10px;
+//             flex: 1;
+//             ag-grid-angular{
+//                 height: 100%;
+//             }
+//         }
+//         section{
+//             .po_status{padding: 2px 6px;border-radius: 4px;
+//                 font-size: 12px;color: #fff;margin-left: 20px;
+//                 &.status_1{background-color: #7d886d}
+//             }
+//             &.po-preview{overflow-y: auto;
+//                 .info {
+//                     nav {
+//                         width: 100%; // border-bottom: 2px solid #D7DDE7;
+//                         // padding-bottom: 10px;
+//                     }
+//                     .actions {display: flex;align-items: center;
+//                         button {
+//                             margin-right: 10px;
+//                             margin-bottom: 5px;
+//                             margin-top: 5px;
+//                         }
+//                     }
+//                 }
+//                 .tab-group {display: flex;flex: 1;
+//                     flex-direction: column;justify-content: center;
+//                     .mat-tab-links {
+//                         flex: 1;
+//                         .costs-grid {
+//                             width: 100%;
+//                             height: 100%;
+//                         }
+//                     }
+//                     .mat-tab-link {
+//                         padding: 0 16px;
+//                         min-width: 36px;
+//                         height: 32px;
+//                         color: #42526E;
+//                         &.mat-tab-label-active {
+//                             color: #3240A1;
+//                             opacity: 1;
+//                         }
+//                     }
+//                     &.mat-primary .mat-ink-bar,
+//                     .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+//                         background-color: #3240A1;
+//                     }
+//                 }
+//                 .details{
+//                     .heading{display: flex;align-items: center;
+//                         .company-logo{width: 85px;height: 36px;position: relative;
+//                             &:hover{
+//                                 .browse-file{display: initial;}
+//                             }
+//                             .browse-file{display: none;cursor: pointer;z-index: 1;position: absolute;
+//                                 bottom: 0;left: 0;right: 0;text-align: center;
+//                                 background-color: #4d5c82;opacity: 0.5;color: #fff;}
+//                         }
+//                         .title{
+//                             &:before{content: '/';margin-right: 5px;}
+//                         }
+//                     }
+//                     .form-container{
+//                         .field-name {
+//                             color: rgba(23, 43, 77, 0.6);
+//                             display: block;
+//                             font-size: 14px;
+//                             font-weight: 400;
+//                             padding: 0;
+//                         }
+//                         .icon-pencil {
+//                             @include iconSize(14px);
+//                             color: rgba(23, 43, 77, 0.8);
+//                             cursor: pointer;
+//                             margin-left: 10px;
+//                             display: none;
+//                             &:hover {
+//                                 color: rgba(23, 43, 77, 1);
+//                             }
+//                         }
+//                         .field-wrapper {
+//                             display: flex;
+//                             flex-wrap: wrap;
+//                         }
+//                         .fields {
+//                             margin-bottom: 10px;
+//                             padding-left: 4px;
+//                             flex: 1 0 44%;
+//                             margin-right: 30px;
+//                             margin-top: 8px;
+//                             @media screen and (min-width: 960px) {
+//                                 flex: 0 0 44%;
+//                             }
+//                             &:hover .view-field-wrapper .icon-pencil {
+//                                 display: inline-flex;
+//                             }
+//                         }
+//                         .view-field-wrapper {
+//                             display: flex;
+//                             align-items: center;
+//                             margin: 6px 0 13px;
+//                         }
+//                         .edit-field-wrapper {
+//                             position: relative;
+//                             max-width: 490px;
+//                             .pi-form-field {
+//                                 margin-top: 0;
+//                                 ::ng-deep .pi-field {
+//                                     .pi-select-input {
+//                                         pi-icon {
+//                                             i {
+//                                                 @include iconSize(12px);
+//                                                 line-height: 12px !important;
+//                                             }
+//                                         }
+//                                     }
+//                                     .mat-datepicker-toggle {
+//                                         position: absolute;
+//                                         right: 0;
+//                                         i {
+//                                             @include iconSize(14px);
+//                                             line-height: 14px;
+//                                         }
+//                                     }
+//                                 }
+//                             }
+//                             .actions {
+//                                 position: absolute;
+//                                 right: 0;
+//                                 margin-top: 2px;
+//                                 button {
+//                                     width: 25px;
+//                                     height: 25px;
+//                                     min-width: auto;
+//                                     margin: 0 2px;
+//                                     color: rgba(23, 43, 77, 0.6);
+//                                     i {
+//                                         @include iconSize(14px);
+//                                     }
+//                                 }
+//                             }
+//                         }
+//                     }
+//                     .table-container{
+//                         .timeline{
+//                             .t-row{display: flex; flex-wrap: wrap;height: 36px;line-height: 36px;}
+//                             .t-col{flex: 0 0 40%;margin-right: 15px;}
+//                         }
+//                         ag-grid-angular.ag-theme-balham{height: 450px;
+//                             .ag-cell {line-height: 38px;
+//                                 &.product-cell span{display: flex;justify-content: space-between;align-items: center;
+//                                     i {font-size: 16px;margin-right: 12px;position: relative;
+//                                         vertical-align: middle;
+//                                         &.icon-products {color: #5679E4;font-size: 21px;
+//                                             width: 21px;height: 23px;}
+//                                     }
+//                                     .product-title {color: #172B4D;@include semiBoldFont();}
+//                                 }
+//                                 &.service-cell{
+//                                     .multi-container{display: flex;width: 100%;align-items: center;}
+//                                     i {font-size: 16px;margin-right: 12px;position: relative;
+//                                         vertical-align: middle;
+//                                         &.icon-orders {color: #DB425D;width: 16px;height: 18px;}
+//                                         &.icon-notes{color: #dadde6;display: flex;align-items: center;}
+//                                     }
+//                                     .service-title {color: #223556;}
+//                                     .spec-icon{text-align: center;border: 1px solid rgba(23, 43, 77, 0.8);
+//                                         line-height: initial;font-size: 12px;color: rgba(23, 43, 77, 0.8);
+//                                         font-size: 12px;padding: 0 4px;border-radius: 50%;margin: 0 5px;
+//                                         text-transform: capitalize;cursor: pointer;}
+//                                 }
+//                                 &.cost-type span{
+//                                     .type{
+//                                         &:after{content: '|';margin: 0 8px;color: #dadde6;}
+//                                     }
+//                                 }
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
+// .misc-item{
+//     display: flex;
+//     align-items: center;
+//     justify-content: space-between;
+//     .misc-action{
+//         display: flex;
+//         align-items: center;
+//     }
+// }
+.side-nav-container {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 5;
+    .overlay {
+        position: absolute;
+        left: -60px;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-color: rgba(9, 30, 66, 0.54);
+    }
+    .side-nav {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 3;
+        background: #fff; // border-left: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+        max-width: 400px;
+        width: 100%;
+        animation-duration: 0.20s;
+        /*0.15s;*/
+        animation-timing-function: cubic-bezier(0.2, 1, 0.4, 1);
+        animation-fill-mode: both;
+        animation-name: slideOutRight;
+        &.active {
+            animation-name: slideInRight;
+        }
+        .info {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            padding: 15px 20px;
+            border-bottom: solid 1px #ccc;
+            .back-link {
+                @include iconSize(16px);
+                margin-right: 8px;
+                cursor: pointer;
+            }
+            h2 {
+                padding: 0;
+                font-size: 18px;
+            }
+        }
+    }
+}
+
+.po-overview {
+    .edit-field-wrapper {
+        ::ng-deep .pi-field .pi-select-input {
+            pi-icon {
+                .icon-arrow-down {
+                    width: 12px;
+                    height: 12px;
+                    line-height: 12px !important;
+                    font-size: 12px;
+                }
+            }
+        }
+    }
+}
+
+.date-field {
+    .ak-field-text.is-focus {
+        box-shadow: inset 0 0px 0px 1px #4c9aff;
+        background-color: #fff;
+        border-color: #4c9aff;
+    }
+}
+

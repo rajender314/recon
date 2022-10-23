@@ -1,0 +1,55 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <i class="pixel-icons icon-close-slim"></i>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="data.form" class="form-flex book-keeper" autocomplete="off">
+    <ng-container>
+      <pi-field-group class="visible-lg">
+        <pi-form-field label="{{data.field.label}}" class="left-field">
+          <div class="value" *ngIf="data.field.type=='readonly'">{{data.field.value}}</div>
+        </pi-form-field>
+        <pi-form-field label="Company Code" ></pi-form-field>
+      </pi-field-group>
+      <pi-form-field label="Bookkeeper/Company Code" class="visible-xs"></pi-form-field>
+      <hr>
+      <div class="single-field-row ">
+        <!-- <div class="dummy-label-group"> -->
+          <!-- <span>Company Code</span> -->
+        <pi-field-group *ngIf="data.field.type=='select'" class="left-field">
+          <pi-select [options]="state[data.field.options]" nameKey="label" [formControlName]="data.field.name"></pi-select>
+        </pi-field-group>
+      <!-- </div> -->
+        <div *ngIf="data.field.addMore">
+            <button pi-icon-button (click)="addBookKeeper()">
+              <i class="pixel-icons icon-plus"></i>
+            </button>
+            <button pi-icon-button (click)="removeBookKeeper(i)" class="hidden-btn">
+                <i class="pixel-icons icon-minus"></i>
+              </button>
+          </div>
+      </div>
+
+      <ng-container formArrayName="{{data.field.name+'_array'}}" *ngIf="data.field.addMore">
+        <div class="multy-field-row" *ngFor="let list of state[data.field.name+'_array'].controls;let i = index"
+          [formGroupName]="i">
+          <pi-field-group *ngIf="data.field.type=='select'">
+            <pi-select [options]="state[row]" nameKey="label" *ngFor="let row of data.field.dataObj" [formControlName]="row"></pi-select>
+          </pi-field-group>
+          <button pi-icon-button (click)="removeBookKeeper(i)">
+            <i class="pixel-icons icon-minus"></i>
+          </button>
+          <button pi-icon-button (click)="addBookKeeper()">
+            <i class="pixel-icons icon-plus"></i>
+          </button>
+        </div>
+      </ng-container>
+    </ng-container>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t">
+  <button pi-button color="subtle" (click)="closeDialog()">Cancel</button>
+  <button pi-button color="primary" (click)="saveBookkeeper()">Save</button>
+</mat-dialog-actions>

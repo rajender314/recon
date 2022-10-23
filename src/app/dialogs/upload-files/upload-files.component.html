@@ -1,0 +1,103 @@
+<div class="upload-files">
+  <div class="mat-dialog-heading">
+      <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+    <button mat-icon-button (click)="close()" tabindex="-1">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <mat-dialog-content>
+    <div class="upload-info">Add files to the upload queue and click the Upload Files button, You can upload upto <b>20 files</b>
+      of <b>18MB</b> or less at once.</div>
+
+    <div ng2FileDrop [uploader]="uploader" (fileOver)="onFileDrop($event)" class="file-drop-zone" [ngClass]="{'drag-disabled': uploader.isUploading || isProcessing}">
+      <ng-container>
+        Drag and Drop Your Files here or
+      </ng-container>
+      <div class="uploader-input ak-button ak-button__appearance-primary">
+        <input id="upload_attachment" type="file" ng2FileSelect [uploader]="uploader" [accept]="allowedMimeType.toString()" [hidden]="true" multiple />
+        <label for="upload_attachment" class="browse-file"><span class="upload-text">Upload File</span></label>
+      </div>
+      <!-- <ng-container *ngIf="uploader.queue.length">
+        <ul class="list-unstyled  files-list">
+          <li class="" *ngFor="let item of uploader.queue">
+            <div class="file-names-and-size">
+              <div class="uploaded-file">
+                <div class="file-formate">
+                  <i class="pixel-icons icon-{{item.customType}}"></i>
+                </div>
+                <div class="file-details">
+                  <h5 class="" [innerHtml]="item.file.name"></h5>
+                  <ng-container>
+                    <p>{{ item.file.size/1024 | number:'.2' }} KB </p>
+                  </ng-container>
+                </div>
+              </div>
+
+            </div>
+            <div class="status-and-close">
+              <div class="upload-status">
+                <span *ngIf="item.isSuccess" title="Success" class="success"><i class="pixel-icons icon-select"></i></span>
+                <span *ngIf="item.isCancel" title="Cancel" class="cancel"><i class="pixel-icons icon-close-slim"></i> </span>
+                <span *ngIf="item.isError" title="Error" class="error"><i class="pixel-icons icon-exclamation"></i></span>
+              </div>
+              <span class="rm-btn" (click)="item.remove();serverMsg = ''">Remove</span>
+
+            </div>
+          </li>
+        </ul>
+      </ng-container> -->
+    </div>
+    <div class="error-list" *ngIf="errorFiles.length">
+      <ul>
+        <li *ngFor="let file of errorFiles; let i = index">
+          <i class="pixel-icons icon-close-slim" (click)="removeErrorFile(i)"></i>
+          <i class="pixel-icons icon-recent-notes m-l-15"></i>
+          <span class="m-l-15" [innerHtml]="file.name"></span>
+          <em [innerHtml]="file.error"></em>
+        </li>
+      </ul>
+    </div>
+    <div class="upload-list" *ngIf="uploader.queue.length">
+      <ul>
+        <li *ngFor="let item of uploader.queue">
+          <div class="overlay-loading" *ngIf="item.isUploading" style="background-color: #fff;">
+              <!-- *ngIf="item.isUploading" -->
+              <i class="pixel-icons icon-{{item.customType}}"></i>
+              <mat-progress-bar mode="determinate" [value]="item.progress"></mat-progress-bar>
+          </div>
+          <div class="overlay" *ngIf="!item.isUploading">
+              <!-- *ngIf="!item.isUploading" -->
+            <div class="content">
+              <span class="title" [innerHtml]="item.file.name"></span>
+              <div class="details">
+                <div style="display: flex;align-items: center;">
+                  <i class="pixel-icons icon-{{item.customType}}"></i>
+                  <p>{{ item.file.size/1024 | number:'.2' }} KB </p>
+                </div>
+                <i class="pixel-icons icon-delete" (click)="item.remove()"></i>
+              </div>
+            </div>
+          </div>
+          <ng-container>
+            <ng-container *ngIf="item.image_path && item.is_image">
+              <span *ngIf="!item.isUploaded" class="dummy-image image-center" [style.background-image]="'url(' + item.image_path + ')' | safeHtml: 'style'"></span>
+              <span *ngIf="item.isUploaded" class="image-center" [style.background-image]="'url(' + item.image_path + ')'"></span>
+            </ng-container>
+            <i *ngIf="!item.is_image" class="pixel-icons icon-{{item.customType}} type-icons"></i>
+          </ng-container>
+          <ng-container  *ngIf="item.isUploaded">
+            <div class="upload-status">
+                <span *ngIf="item.isSuccess" title="Success" class="success"><i class="pixel-icons icon-select"></i></span>
+                <span *ngIf="item.isCancel" title="Cancel" class="cancel"><i class="pixel-icons icon-close-slim"></i> </span>
+                <span *ngIf="item.isError" title="Server Error" class="error"><i class="pixel-icons icon-exclamation"></i></span>
+            </div>
+          </ng-container>
+        </li>
+      </ul>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions class="mat-footer">
+    <button pi-button color="subtle" (click)="close()" [disabled]="uploader.isUploading || isProcessing">Cancel</button>
+    <button pi-button color="primary" (click)="uploadFiles()" [disabled]="!uploader.queue.length || uploader.isUploading || isProcessing">{{uploader.queue.length ? 'Upload ' + uploader.queue.length + ' Files' : 'Upload File'}}</button>
+  </mat-dialog-actions>
+</div>

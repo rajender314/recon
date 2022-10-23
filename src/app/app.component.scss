@@ -1,0 +1,29 @@
+.app {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    .app-container {
+        flex-grow: 1;
+        display: flex;
+        position: relative;
+        overflow: hidden;
+        ::ng-deep.app-container {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            overflow: auto;
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .app {
+        flex-direction: column;
+        ::ng-deep.app-header {
+            height: 54px;
+            width: 100%;
+        }
+    }
+}

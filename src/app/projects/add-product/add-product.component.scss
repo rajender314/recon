@@ -1,0 +1,222 @@
+@import "../../../assets/styles/mixins";
+
+.add-product-wrapper{
+    margin: 24px 0;
+    padding: 0 40px 24px;
+    border:1px solid #ddd;
+    .product-item{
+        position: relative;
+        .product-actions{
+            position: absolute;
+            right: -120px;
+            top: 0;
+            button{
+                height: 24px;
+                max-width: 30px;
+                min-width: 20px;
+                margin: 0 5px;
+                color: rgba(23, 43, 77, 0.8);
+                i{@include iconSize(14px);}
+                &:hover{
+                    i{color: rgba(23, 43, 77, 1);}
+                }
+            }
+            
+        }
+    }
+    .pi-field-group{
+        flex-direction: row;
+        max-width: 100%;
+        .pi-form-field{
+            flex: 1 1 50%;
+        }
+        ::ng-deep .pi-select-input{
+            pi-icon{
+                .icon-arrow-down{
+                    line-height: 12px !important;
+                    @include iconSize(12px);
+                }
+            }
+        }
+    }
+    .product-section{position: relative;
+        .prod-arrow{
+            width: 14px;font-size: 14px;height: 14px;cursor: pointer;
+            position: absolute;top: 7px;left: -20px;color: rgba(23, 43, 77, 0.6);
+            &:hover{
+                color: rgba(23, 43, 77, 1);
+            }
+        }
+    }
+
+    .services-section{
+        .service-header{
+            border-bottom: 2px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            h4{margin: 0;color: rgba(23, 43, 77, 0.5);font-size: 12px;}
+            button{
+                margin-left: auto;
+                i{  
+                    @include iconSize(12px);
+                    margin: 2px 0 0 3px;
+                }
+            }
+        }
+        .no-data{
+            color: rgba(23, 43, 77, 0.5);
+            font-size: 14px;
+            padding: 16px 0;
+            display: flex;
+            justify-content: center;
+            flex: 1;
+        }
+        .service-content{
+            min-height: 60px;display: flex;flex: 1;flex-direction: column;
+            .mat-spinner{margin: auto;}
+            .service-item{
+                border-bottom: 1px solid #ddd;
+                /*padding: 8px 0;*/
+                .pi-form-field{margin-top: 0;}
+                &:last-child{border-bottom: none;}
+            }
+            .clone-service{
+                flex-direction: row;
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                flex-wrap: wrap;
+                padding-left: 24px;
+                span{width: 220px;}
+                i{
+                    @include iconSize(14px);
+                    cursor: pointer;color: rgba(23, 43, 77, 0.8);
+                    &:hover{
+                        color: rgba(23, 43, 77, 1);
+                    }
+                }
+                .pi-form-field{margin-top: 0;}
+            }
+        }
+    }
+    
+}
+
+::ng-deep .service-list{
+    color: rgba(23, 43, 77, 0.8);
+    .new_service{position: absolute;right: 0;}
+    i{@include iconSize(14px);margin-right: 8px;}
+    .icon-inventory{color: #607eda;@include iconSize(15px);}
+    .icon-orders{color: #dc4f66;@include iconSize(15px);}
+    .prd-list-item{
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+    }
+    .list-header{
+        display: flex;align-items: center;cursor: pointer;
+        i{color: rgba(23, 43, 77, 0.6);}
+        &:hover{
+            color: rgba(23, 43, 77, 1);
+            i{color: rgba(23, 43, 77, 1);}
+        }
+        
+    }
+    .sub-list{
+        padding: 8px 8px 0;border-bottom: 1px solid #ddd;position: relative;
+        &:last-child{border-bottom: none;}
+        .actions{
+            /*position: absolute;right: 0;*/
+            display: flex;justify-content: space-between;
+            padding: 24px 0 0;max-width: 600px;margin: 0;
+            > a{
+                color: #3542a0;font-weight: 600;cursor: pointer;
+                i{font-weight: 600;margin-right: 4px;position: relative;top: 2px;}
+                &:hover{color: #1e2c8c;}
+            }
+        }
+        .add-tab{
+            padding: 2px;width: 24px;height: 24px;color: #3542a0;cursor: pointer;
+            i{margin-right: 0;margin-top: 3px;font-weight: 600;}
+            &:hover{color: #1b2671;}
+        }
+    }
+    .options-label{
+        position: absolute;
+        border-bottom: 1px solid #ddd;
+        top: 37px;
+        padding: 6px 0;
+        left: 54px;
+        font-size: 12px;
+        color: rgba(23, 43, 77, 0.7);
+        font-weight: 600;
+        &.disabled-label{border-bottom: none;}
+    }
+
+    ::ng-deep .mat-tab-group{
+        margin-left: 46px;
+        position: relative;
+        z-index: 0;
+        .mat-tab-header{
+            margin-left: 42px;
+        }
+        .mat-tab-labels{
+            .mat-tab-label{
+                min-width: 30px;
+                height: 30px;
+                padding: 0 4px;
+                font-size: 12px;
+                &:first-child{
+                    margin-left: 0;
+                }
+                &.mat-tab-disabled{
+                    opacity: 1;
+                }
+            }
+        }
+        &.disabled-tab{
+            .mat-tab-header{
+                border-bottom: none;
+                .mat-ink-bar{background-color: transparent;}
+            }
+        }
+        .prdt-content{
+            padding: 20px 0;
+            .prdt-content{
+                padding: 20px 0;
+                &.inline-form{
+                    ::ng-deep .pi-form-field{/*border:1px solid lightblue;*/
+                        > label{
+                            flex: 0 0 50%;
+                        }
+                        .pi-form-field{margin-top:0;}
+                        &.has-sub-fields{
+                            /*border:1px solid greenyellow;*/
+                            flex-direction: column;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+}
+
+::ng-deep .more-actions{
+    .mat-menu-content{padding: 0;}
+    .mat-menu-item{color: rgba(23, 43, 77, 0.8);font-size: 14px;@include regularFont();}
+}
+
+::ng-deep .add-options{
+    h2{margin: 0;padding: 0;}
+}
+
+::ng-deep .pi-field .pi-select-input{
+    pi-icon{
+        .icon-arrow-down{
+            line-height: 12px !important;
+            @include iconSize(12px);
+        }
+    }
+}

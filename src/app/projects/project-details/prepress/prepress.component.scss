@@ -1,0 +1,21 @@
+.list-items {
+    &.active { background: #eef0f3; }
+    i.icon-vendor-shape {font-size: 20px;width: 20px;height: 20px;
+        color: #67c6b0;position: relative;top: 0px;
+    }
+}
+
+.tasks-accordion { padding: 0 20px;
+    p.heading { font-weight: 600;font-size: 16px;color: rgba(0,0,0,.87); }
+}
+
+.project-info {
+    padding: 0 20px;
+    .field-wrapper .fields {
+        .pi-form-field { margin-top: 0; }
+        .edit-field-wrapper .pi-form-field { left: 0; }
+    }
+    .address-container { margin-top: 8px;
+        p { margin: 0; }
+    }
+}

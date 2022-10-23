@@ -1,0 +1,56 @@
+.list-item { display: flex;align-items: center;
+    border-bottom: solid 1px #e9e9e9;padding: 5px 0;
+    .list-item-actions { flex: 0 0 60px;
+        i { font-size: 18px; color: rgba(23, 43, 77, 0.8); cursor: pointer; }
+    }
+    .list-item-name { flex: 0 0 40%;
+        .pi-form-field { margin-top: 0; }
+    }
+    .list-item-field { flex: 1;
+        .pi-form-field { margin-top: 0;width: 100%; }
+        .owl-picker-toggle{ position: absolute;right: 100%; left: 0;top: 0;
+            i.icon-calendar { font-size: 14px;position: relative;top: 3px; }
+        }
+        pi-icon[name="icon-close-slim"] { position: absolute;right: 0;left: initial;
+            top: 10px;font-size: 15px;width: 15px;height: 15px;
+            i { width: 15px;height: 15px; }
+        }
+    }
+}
+.date-field.plain-date-field {
+    width: 180px;
+}
+.panel-header.with-datepicker {
+    .owl-picker-toggle{ position: absolute;right: 100%; left: 0;top: 0;
+        i.icon-calendar { font-size: 14px;position: relative;top: 3px; }
+    }
+}
+
+.multigroup-date-list {
+    .owl-picker-toggle{ position: absolute;right: 100%; left: 0;top: 0;
+        i.icon-calendar { font-size: 14px;position: relative;top: 3px; }
+    }
+}
+
+.milestone-information {
+    .panel-container { overflow: auto;height: calc(100vh - 118px);
+        &.calc-height-footer { height: calc(100vh - 166px); }
+        .split-panel .footer{
+            margin-top:0px;
+        }
+        &.calc-height-footer-milestones{
+            height: calc(100vh - 168px);
+        }
+    }
+}
+
+::ng-deep .aside-actions {
+    display: flex;
+    .pi-form-field { margin-top: 0;height: 32px; 
+        .pi-field { height: 100%; 
+            .pi-select-input { min-height: 100%;padding: 4px 32px 4px 6px; 
+                .pi-select-search-input { width: 100%; }
+            }
+        }
+    }
+}

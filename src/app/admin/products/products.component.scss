@@ -1,0 +1,76 @@
+.alias{
+    max-width: 600px;
+}
+.alias{
+    margin: 4px 0 0;
+
+    .header{
+        display: flex;
+        justify-content: space-between;
+        max-width: 100%;
+        text-align: left;
+        PADDING: 0;
+        height: 36px;
+        min-height: 36px;
+       /* .title{width: 50%;}*/
+       .title{
+        width: 50%;
+        justify-content: flex-start;
+       }
+       .admin-status{
+        width: 50%;
+        justify-content: flex-start;
+        padding-left: 98px;
+       }
+    }
+    .body{
+        .alias-box{border: 1px solid #DFE1E6;border-radius: 3px;padding: 5px;
+            border-bottom: none;
+            &:last-child{border-bottom: 1px solid #DFE1E6;}
+            .flex-row{display: flex;align-items: center;justify-content: space-between;
+                .input{width: 100%;}
+                .actions{
+                    font-size: 26px;
+                    display: flex;
+                    justify-content: space-around;
+                    flex-direction: row;
+                    width: 60px;
+                    align-items: center;
+                    margin-right: -4px;
+                    position: relative;
+                    box-shadow: none;
+                    margin-top: 0;
+                    i{
+                        display: flex;
+                        cursor: pointer;
+                        width: 14px;
+                        height: 14px;
+                        font-size: 14px;
+                    }
+                    .remove{
+                        color: #d67575;
+                        &.disable{color: #DFE1E6;cursor: not-allowed;}
+                        &:hover{color: #b54c4c;}
+                    }
+                    .add{
+                        color: #2bc898;
+                        &.disable{color: #DFE1E6;cursor: not-allowed;}
+                        &:hover{color: #179c73;}
+                    }
+                }
+                .pi-form-field{
+                    display: initial;
+                    max-width: 100%;
+                    width: 50%;
+                    margin: 0;
+                }
+            }
+        }
+    }
+}
+
+.icon-button-actions{
+    position: absolute;
+    top: 48px;
+    right: 10px;
+}

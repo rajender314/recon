@@ -1,0 +1,379 @@
+<div class="mat-dialog-heading">
+    <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+    <button mat-icon-button mat-dialog-close tabindex="-1">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+<mat-dialog-content>
+    <form [formGroup]="createFormGroup" class="form-flex" autocomplete="off">
+        <!-- <div class="section-1"></div>
+      <div class="section-2"></div>
+      <div class="section-3"></div> -->
+
+        <mat-horizontal-stepper #stepper>
+            <mat-step>
+                <ng-container *ngIf="stepper.selectedIndex == 0">
+                    <ng-container *ngFor="let field of state.searchForm">
+                        <pi-form-field label="{{field.label}}" *ngIf="field.type=='text' || field.type=='email'">
+                            <div class="value" *ngIf="field.type=='readonly'">{{field.value}}</div>
+                            <input type="text" pi-input [name]="field.name" formControlName="{{field.name}}">
+                            <div class="pi-error" *ngIf="createFormGroup.controls[field.name].hasError('required') && state.submitted">Please
+                                Enter {{field.label}}</div>
+                            <div class="pi-error" *ngIf="!createFormGroup.controls[field.name].hasError('required') && state.submitted && createFormGroup.controls[field.name].hasError('pattern')">Please
+                                Enter Valid Email</div>
+                        </pi-form-field>
+                        <ng-container *ngIf="field.type=='select'">
+                            <pi-select nameKey="name" label="{{field.label}}" [options]="state[field.options]"
+                                [formControlName]="field.name"></pi-select>
+                        </ng-container>
+                    </ng-container>
+                    <div class="mat-dialog-actions m-t-20">
+                        <button pi-button (click)="closeDialog()">Cancel</button>
+                        <button pi-button color="primary" (click)="searchDetails(createFormGroup, stepper)" [disabled]="createFormGroup.pristine">Search
+                            Contacts...
+                        </button>
+                    </div>
+                </ng-container>
+            </mat-step>
+            <mat-step>
+                <ng-container *ngIf="state.addNewUser">
+                    <div class="step-2 new-user">
+                        <div class="msg">No Matching Contact Profile Found</div>
+                        <button type="button" pi-button color="primary" [disabled]="createFormGroup.pristine" (click)="createNewUser(createFormGroup, stepper)">Create
+                            New Contact & User</button>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="!state.addNewUser">
+                    <div class="step-2">
+
+                        <div class="msg">User already exists</div>
+                        <div class="user-details">
+                            <i class="pixel-icons icon-pn-user icon"></i>
+                            <div class="info">
+                                <div class="user-info">
+                                    <div class="label">{{state.user_details.name}}</div>
+                                    <div class="link" *ngIf="state.user_details.is_user" (click)="goToUser()">
+                                        Go to User
+                                        <i class="pixel-icons icon-arrow-right"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="suggest-info" *ngIf="!state.user_details.is_user">
+                            Contact already exists as a {{state.user_details.search_org_type==2?"Client":"Vendor"}}
+                            <mat-radio-group>
+                                <mat-radio-button [checked]="!state.createUserDisable" (change)="createUser()" value="">{{state.user_details.name}}</mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+
+                    </div>
+                    <!-- <div (click)="goToUser()">
+                   <div class="name">{{state.user_details.name}}</div>
+                 </div> !-->
+
+
+                </ng-container>
+                <div class="mat-dialog-actions m-t-20">
+                    <button type="button" pi-button (click)="BackToAdd(stepper)">Back</button>
+                    <button pi-button color="primary" *ngIf="state.user_details && !state.user_details.is_user && !state.addNewUser"
+                        (click)="saveAsUser()" [disabled]="state.createUserDisable">Add as User</button>
+                </div>
+            </mat-step>
+            <mat-step>
+                <ng-container *ngIf="state.createNewUser && data.org_type=='1'">
+                    <div *ngFor="let field of state.list">
+                        <ng-container *ngIf="!field.addMore">
+                            <pi-form-field label="{{field.label}}" *ngIf="field.type !='checkbox'" >
+                                <div class="value" *ngIf="field.type=='readonly'">{{field.value}}</div>
+                                <input type="text" pi-input *ngIf="field.type=='text' || field.type=='email'" [name]="field.name"
+                                    formControlName="{{field.name}}">
+                                <span *ngIf="field.suggestion">{{field.suggestion}}</span>
+                                <input type="text" pi-input *ngIf="field.type=='currency'" [name]="field.name"
+                                    formControlName="{{field.name}}">
+                            </pi-form-field>
+                            <pi-form-field label="{{field.label}}" *ngIf="field.type=='checkbox'" >
+                                <input type="checkbox" pi-input formControlName="{{field.name}}"/>
+                            </pi-form-field>
+                            <!-- <div class="actions" *ngIf="field.addMore">
+                                <button mat-icon-button (click)="addBookKeeper()" class="array-button plus">
+                                    <i class="pixel-icons icon-plus"></i>
+                                </button>
+                            </div> -->
+                            <ng-container *ngIf="field.type=='select' && field.name!='clone_from'">
+                                <pi-select nameKey="name" class="m-t" [options]="state[field.options]" formControlName="{{field.name}}"></pi-select>
+                            </ng-container>
+
+                            <ng-container *ngIf="field.type=='select' && field.name =='clone_from'">
+                                <pi-select nameKey="label" class="m-t" [options]="state[field.options]" formControlName="{{field.name}}"></pi-select>
+                            </ng-container>
+
+                            <div class="pi-error" *ngIf="createFormGroup.controls[field.name].hasError('required') && state.submitted">Please
+                                Enter {{field.label}}</div>
+                            <div class="pi-error" *ngIf="!createFormGroup.controls[field.name].hasError('required') && state.submitted && createFormGroup.controls[field.name].hasError('pattern')">Please
+                                Enter Valid Email</div>
+                        </ng-container>
+                        <ng-container *ngIf="field.addMore">
+                            <div class="container-group custom-select-group">
+                                <div formArrayName="emails">
+                                    <div *ngFor="let list of mailListArray.controls;let i = index" [formGroupName]="i"
+                                        class="inline-space-bw">
+
+                                        <button pi-icon-button color="subtle" class="array-button">
+                                            <mat-icon (click)="removeMail(i)">remove</mat-icon>
+                                        </button>
+
+                                        <button pi-icon-button color="subtle" class="array-button m-r">
+                                            <i class="pixel-icons icon-plus" (click)="addMail()"></i>
+                                        </button>
+
+                                        <div class="email">
+                                            <pi-select label="Email" nameKey="name" [options]="data.emailAddressTypes"
+                                                formControlName="type"></pi-select>
+
+                                        </div>
+
+                                        <div class="email cust-p">
+                                            <pi-form-field label="Enter Email">
+                                                <input type="text" pi-input (input)="emailValidation(list)"
+                                                    formControlName="email">
+                                                <div class="pi-error" *ngIf="list.value.invalid">Please Enter Valid
+                                                    Email</div>
+                                            </pi-form-field>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="container-group custom-select-group">
+                                <div formArrayName="phone_numbers">
+                                    <div *ngFor="let list of numberListArray.controls;let i = index" [formGroupName]="i"
+                                        class="inline-space-bw">
+
+                                        <button pi-icon-button color="subtle" class="array-button">
+                                            <mat-icon (click)="removeNumber(i)">remove</mat-icon>
+                                        </button>
+
+                                        <button pi-icon-button color="subtle" class="array-button m-r">
+                                            <i class="pixel-icons icon-plus" (click)="addNumber()"></i>
+                                        </button>
+                                        <div class="phone">
+                                            <pi-select label="Phone" nameKey="name" [options]="data.phoneNumberTypes"
+                                                formControlName="type"></pi-select>
+                                        </div>
+
+                                        <div class="phone">
+                                            <pi-form-field label="Enter Number">
+                                                <input type="text" class="ak-field-text" type="text" [appPriceFormat]="numberConfig"
+                                                    min="0" maxlength="10" (input)="phoneNumberValidation($event, list)"
+                                                    formControlName="phone">
+                                                <div class="pi-error" *ngIf="list.value.invalid">Please Enter Valid
+                                                    Number</div>
+                                            </pi-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="state.createNewUser && data.org_type=='2'">
+                    <div class="ak-field-group" *ngFor="let field of state.clientList">
+                        <ng-container *ngIf="!field.addMore">
+                            <label class="label">{{field.label}}</label>
+                            <div class="value" *ngIf="field.type=='readonly'">{{field.value}}</div>
+                            <input type="text" *ngIf="field.type=='text' || field.type=='email'" class="ak-field-text"
+                                [name]="field.name" formControlName="{{field.name}}">
+                            <span *ngIf="field.suggestion">{{field.suggestion}}</span>
+                            <input type="text" *ngIf="field.type=='currency'" class="ak-field-text" [name]="field.name"
+                                formControlName="{{field.name}}">
+                            <!-- <div class="actions" *ngIf="field.addMore">
+                                <button mat-icon-button (click)="addBookKeeper()" class="array-button plus">
+                                    <i class="pixel-icons icon-plus"></i>
+                                </button>
+                            </div> -->
+                            <select type="text" *ngIf="field.type=='select' && field.name!='clone_from'" class="ak-field-select"
+                                formControlName="{{field.name}}">
+                                <ng-container *ngFor="let option of state[field.options]">
+                                    <option *ngIf="true" [value]="option.id">{{option.name}}</option>
+                                </ng-container>
+                            </select>
+                            <select type="text" *ngIf="field.type=='select' && field.name=='clone_from'" class="ak-field-select"
+                                formControlName="{{field.name}}">
+                                <ng-container *ngFor="let option of state[field.options]">
+                                    <option *ngIf="true" [value]="option.id">{{option.label}}</option>
+                                </ng-container>
+                            </select>
+                            <div class="pi-error" *ngIf="createFormGroup.controls[field.name].hasError('required') && state.submitted">Please
+                                Enter {{field.label}}</div>
+                            <div class="pi-error" *ngIf="!createFormGroup.controls[field.name].hasError('required') && state.submitted && createFormGroup.controls[field.name].hasError('pattern')">Please
+                                Enter Valid Email</div>
+                        </ng-container>
+                        <ng-container *ngIf="field.addMore">
+                            <div class="ak-field-group container-group custom-select-group">
+                                <div formArrayName="emails">
+                                    <div *ngFor="let list of mailListArray.controls;let i = index" [formGroupName]="i"
+                                        class="inline-space-bw">
+
+                                        <button mat-icon-button class="array-button">
+                                            <mat-icon (click)="removeMail(i)">remove</mat-icon>
+                                        </button>
+
+                                        <button mat-icon-button class="array-button">
+                                            <i class="pixel-icons icon-plus" (click)="addMail()"></i>
+                                        </button>
+
+                                        <div class="ak-field-group email">
+                                            <label>Email</label>
+                                            <select type="text" class="ak-field-select" formControlName="type">
+                                                <option *ngFor="let mail of data.emailAddressTypes" [value]="mail.id">{{mail.name}}</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="ak-field-group email">
+                                            <label>Enter Email</label>
+                                            <input type="text" class="ak-field-text" (input)="emailValidation(list)"
+                                                formControlName="email">
+                                            <div class="pi-error" *ngIf="list.value.invalid">Please Enter Valid Email</div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ak-field-group container-group custom-select-group">
+                                <div formArrayName="phone_numbers">
+                                    <div *ngFor="let list of numberListArray.controls;let i = index" [formGroupName]="i"
+                                        class="inline-space-bw">
+
+                                        <button mat-icon-button class="array-button">
+                                            <mat-icon (click)="removeNumber(i)">remove</mat-icon>
+                                        </button>
+
+                                        <button mat-icon-button class="array-button">
+                                            <i class="pixel-icons icon-plus" (click)="addNumber()"></i>
+                                        </button>
+
+                                        <div class="ak-field-group phone">
+                                            <label>Phone</label>
+                                            <select type="text" class="ak-field-select" formControlName="type">
+                                                <option *ngFor="let number of data.phoneNumberTypes" [value]="number.id">{{number.name}}</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="ak-field-group phone">
+                                            <label>Enter Number</label>
+                                            <input type="text" class="ak-field-text" type="text" [appPriceFormat]="numberConfig"
+                                                min="0" maxlength="10" (input)="phoneNumberValidation($event, list)"
+                                                formControlName="phone">
+                                            <div class="pi-error" *ngIf="list.value.invalid">Please Enter Valid Number</div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="state.createNewUser && data.org_type=='3'">
+                    <div class="ak-field-group" *ngFor="let field of state.vendorList">
+                        <ng-container *ngIf="!field.addMore">
+                            <label class="label">{{field.label}}</label>
+                            <div class="value" *ngIf="field.type=='readonly'">{{field.value}}</div>
+                            <input type="text" *ngIf="field.type=='text' || field.type=='email'" class="ak-field-text"
+                                [name]="field.name" formControlName="{{field.name}}" />
+                            <span *ngIf="field.suggestion">{{field.suggestion}}</span>
+                            <input type="text" *ngIf="field.type=='currency'" class="ak-field-text" [name]="field.name"
+                                formControlName="{{field.name}}" />
+                            <!-- <div class="actions" *ngIf="field.addMore">
+                                    <button mat-icon-button (click)="addBookKeeper()" class="array-button plus">
+                                        <i class="pixel-icons icon-plus"></i>
+                                    </button>
+                                </div> -->
+                            <select type="text" *ngIf="field.type=='select'" class="ak-field-select" formControlName="{{field.name}}">
+                                <ng-container *ngFor="let option of state[field.options]">
+                                    <option *ngIf="true" [value]="option.id">{{option.name}}</option>
+                                </ng-container>
+                            </select>
+                            <div class="pi-error" *ngIf="createFormGroup.controls[field.name] && createFormGroup.controls[field.name].hasError('required') && state.submitted">Please
+                                Enter {{field.label}}</div>
+                            <div class="pi-error" *ngIf="createFormGroup.controls[field.name] && !createFormGroup.controls[field.name].hasError('required') && state.submitted && createFormGroup.controls[field.name].hasError('pattern')">Please
+                                Enter Valid Email</div>
+                        </ng-container>
+                        <ng-container *ngIf="field.addMore">
+                            <div class="container-group custom-select-group">
+                                <div formArrayName="emails">
+                                    <div *ngFor="let list of mailListArray.controls;let i = index" [formGroupName]="i"
+                                        class="inline-space-bw">
+
+                                        <button pi-icon-button color="subtle" class="array-button">
+                                            <mat-icon (click)="removeMail(i)">remove</mat-icon>
+                                        </button>
+
+                                        <button pi-icon-button color="subtle" class="array-button m-r">
+                                            <i class="pixel-icons icon-plus" (click)="addMail()"></i>
+                                        </button>
+
+                                        <div class="email">
+                                            <pi-select label="Email" nameKey="name" [options]="data.emailAddressTypes"
+                                                formControlName="type"></pi-select>
+
+                                        </div>
+
+                                        <div class="email cust-p">
+                                            <pi-form-field label="Enter Email">
+                                                <input type="text" pi-input (input)="emailValidation(list)"
+                                                    formControlName="email">
+                                                <div class="pi-error" *ngIf="list.value.invalid">Please Enter Valid
+                                                    Email</div>
+                                            </pi-form-field>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="container-group custom-select-group">
+                                <div formArrayName="phone_numbers">
+                                    <div *ngFor="let list of numberListArray.controls;let i = index" [formGroupName]="i"
+                                        class="inline-space-bw">
+
+                                        <button pi-icon-button color="subtle" class="array-button">
+                                            <mat-icon (click)="removeNumber(i)">remove</mat-icon>
+                                        </button>
+
+                                        <button pi-icon-button color="subtle" class="array-button m-r">
+                                            <i class="pixel-icons icon-plus" (click)="addNumber()"></i>
+                                        </button>
+                                        <div class="phone">
+                                            <pi-select label="Phone" nameKey="name" [options]="data.phoneNumberTypes"
+                                                formControlName="type"></pi-select>
+                                        </div>
+
+                                        <div class="phone">
+                                            <pi-form-field label="Enter Number">
+                                                <input type="text" class="ak-field-text" type="text" [appPriceFormat]="numberConfig"
+                                                    min="0" maxlength="10" (input)="phoneNumberValidation($event, list)"
+                                                    formControlName="phone">
+                                                <div class="pi-error" *ngIf="list.value.invalid">Please Enter Valid
+                                                    Number</div>
+                                            </pi-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+                <div class="mat-dialog-actions m-t-20">
+                    <span class="pi-error" [innerHtml]="state.errorMsg"></span>
+                    <button pi-button (click)="closeDialog()">Cancel</button>
+                    <button pi-button color="primary" (click)="saveDetails(createFormGroup)" [disabled]="createFormGroup.pristine">Save</button>
+                </div>
+            </mat-step>
+        </mat-horizontal-stepper>
+    </form>
+</mat-dialog-content>

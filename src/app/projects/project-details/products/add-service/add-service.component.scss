@@ -1,0 +1,56 @@
+
+
+.service {
+    p {
+        margin-bottom: 0;
+        font-size: 15px;
+        color: rgba(23, 43, 77, 0.6);
+        padding-bottom: 6px;
+        border-bottom: 1px solid #e2e4e9;
+    }
+    .item {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        ::ng-deep .pi-field {
+            label {
+                color: rgba(23, 43, 77, 0.9);
+            }
+        }
+        .show-icon {
+            // display: none;
+            background: #f2f2f2;
+            border-radius: 11px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+           
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            cursor: pointer;
+            i{
+                &.icon-recent-notes{
+                    font-size: 12px;
+                    width: 12px;
+                    height: 12px;
+                    line-height: 14px;
+                }                
+            }
+            &:hover{
+                background: #dfe1e6;
+              }
+            }
+            &:hover {
+              .show-icon {                
+                opacity: 1;
+              }
+            }
+    }
+}
+
+.mat-dialog-heading {
+    h2 {
+        font-size: 18px;
+    }
+}

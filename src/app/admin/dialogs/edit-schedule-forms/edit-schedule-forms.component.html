@@ -1,0 +1,16 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+    <mat-spinner diameter="45" class="md" *ngIf="loader"></mat-spinner>
+  <div class="grid-container" *ngIf="!loader && gridOptions.rowData?.length">
+    <ag-grid-angular class="ag-theme-balham" [gridOptions]="gridOptions"></ag-grid-angular>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+  <button pi-button (click)="close()">Cancel</button>
+  <button pi-button color="primary" (click)="save()">Save</button>
+</mat-dialog-actions>

@@ -1,0 +1,26 @@
+<div class="mat-dialog-heading">
+    <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+    <button mat-icon-button mat-dialog-close tabindex="-1">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+<mat-dialog-content>
+    <div class="slider">
+        <div class="form-content">
+            <form class="form-flex" autocomplete="off">
+                <pi-form-field [label]="'Search by Project Number'">
+                    <input type="text" pi-input name="name" [(ngModel)]="jobNumber" maxlength="64" />
+                </pi-form-field>
+            </form>
+            <div class="seperator">
+                <p>Or</p>
+                <a class="goToLink" (click)="goToLink()">Go To Projects List <i class="pixel-icons icon-arrow-right"></i></a>
+            </div>
+        </div>
+
+        <div class="grid-content" *ngIf="isVisible" [@slideInOut]>
+            <p>List comes here</p>
+            <a class="goToLink" (click)="goBack()"><i class="pixel-icons icon-arrow-left"></i> Back</a>
+        </div>
+    </div>
+</mat-dialog-content>

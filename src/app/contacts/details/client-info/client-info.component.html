@@ -1,0 +1,67 @@
+<mat-spinner *ngIf="state.loader" diameter="36"></mat-spinner>
+
+<ng-container *ngIf="!state.loader">
+	<!-- Custom Attributes -->
+	<ng-container *ngIf="state.selectedTab == 5">
+		<div [sortablejs]="state.details.list" [sortablejsOptions]="sortOptions" class="drag-drop-row-container">
+			<div class="drag-drop-row" *ngFor="let attr of state.details.list; let i = index"
+				[class.active]="attr.id == state.details.selected?.id">
+				<div class="column drag-drop-handle">
+					<i class="pixel-icons icon-drag handle" *ngIf="state.editable"></i>
+				</div>
+				<div class="column-wrapper">
+					<div class="column">
+						<span class="label" [innerHtml]="attr.label"></span>
+						<span class="description" [innerHtml]="attr.description"></span>
+					</div>
+					<div class="column gray-bold" [innerHtml]="attr.value"></div>
+					<div class="column light-text">
+						<span *ngIf="attr.settings.print_in_estimate">
+							<i class="pixel-icons icon-select"></i>Print in Estimate</span>
+						<span *ngIf="attr.settings.edit_in_job">
+							<i class="pixel-icons icon-select"></i>Edit in Job</span>
+						<span *ngIf="attr.sync">Syncs with GP({{getSyncLabel(attr.sync)}})</span>
+					</div>
+					<div class="column action-icons" *ngIf="state.editable">
+						<i class="pixel-icons icon-pencil" (click)="performAction('edit', i)"></i>
+						<i class="pixel-icons icon-delete" (click)="performAction('delete', i)"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="no-data" *ngIf="!state.details.list.length && !state.loader">
+			{{state.search ? 'No Custom Attributes Found for your search string' : 'No
+      Custom
+      Attributes Found'}}
+		</div>
+	</ng-container>
+
+	<!-- Internal Invoice -->
+	<ng-container *ngIf="state.selectedTab == 6">
+		<div class="drag-drop-row-container">
+			<div class="drag-drop-row" *ngFor="let attr of state.details.list; let i = index"
+				[class.active]="attr.id == state.details.selected?.id">
+				<div class="column m-w-100">
+					<span [innerHtml]="attr.cost_code_name"></span>
+				</div>
+				<div class="column gray-bold flex-start" [innerHtml]="attr.name"></div>
+				<div class="column light-text" [innerHtml]="attr.description"></div>
+				<div class="column action-icons flex-1" *ngIf="state.editable">
+					<i class="pixel-icons icon-pencil" (click)="performAction('edit', i)"></i>
+					<i class="pixel-icons icon-delete" (click)="performAction('delete', i)"></i>
+				</div>
+			</div>
+		</div>
+		<div *ngIf="!state.details.list.length && !state.loader">
+			{{state.search ? 'No Internal Invoice Found for your search string' : 'No
+      Internal
+      Invoice Found'}}
+		</div>
+	</ng-container>
+
+	<!-- Business Rules -->
+	<ng-container *ngIf="state.selectedTab == 7">
+		<app-others [organization]="state.selected" [users]="state.dropdowns.users"></app-others>
+	</ng-container>
+
+</ng-container>

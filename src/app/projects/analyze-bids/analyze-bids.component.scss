@@ -1,0 +1,59 @@
+.header{
+    display: flex;
+    justify-content: space-between;
+}
+.col-field-multiple{
+    min-width: 160px;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 20px 0;
+    label{
+        flex: 0 1 100%;
+        color: rgba(23, 43, 77, 0.6) !important;
+        font-size: 14px !important;
+        font-weight: 400 !important;
+        line-height: 2;
+    }
+    .pi-form-field{
+        flex: 1 0 50%;
+        max-width: 80px;
+        margin-top: 0;
+        background: #f5f6f8;
+        padding: 2px 10px;
+        text-align: center;
+        border-radius: 4px 0 0 4px;
+        &:last-child{
+            border-radius: 0 4px 4px 0;
+        }
+        ::ng-deep .pi-field{
+            .ak-field-radio+label{padding-left: 4px;}
+            .ak-field-radio+label::after{
+                display: none;
+            }
+        }
+        
+        &.active{
+            background: #ddeaff;
+            label{
+                color: #115ace;
+            }
+        }
+
+    }
+}
+.mat-dialog-content{
+    .container{position: relative;min-height: 360px;}
+    .header{
+        flex-shrink: 0;
+        .pi-form-field{width: 180px;}
+    }
+    .mat-spinner{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .content{
+        overflow: auto;margin: 10px 0;/*height: 360px;min-height: 360px;*/
+    }
+}

@@ -1,0 +1,362 @@
+@import "../../../assets/styles/mixins";
+@import "../../../theme/contacts";
+
+// .pi-master-detail-view .pi-master-view {
+//     width: 230px;
+// }
+
+// @media screen and (max-width:600px) {
+//     .pi-master-detail-view .pi-master-view {
+//         width: 100%;
+//     }
+// }
+
+// .pi-master-detail-view .pi-master-view {
+//     background: #f7f8fe;
+// }
+
+// mat-spinner,
+// .no-data {
+//     position: absolute;
+//     left: 50%;
+//     top: 50%;
+//     transform: translate(-50%, -50%);
+// }
+
+// .primary-layout {
+//     .mat-list-item,
+//     .back {
+//         cursor: pointer;
+//         .count {
+//             border-radius: 12px;
+//             background-color: #d7dae5;
+//             padding: 0 10px;
+//             color: #283b59;
+//             margin-left: auto;
+//             font-size: 12px;
+//             font-weight: 500;
+//         }
+//     }
+//     .image-upload {
+//         height: 62px;
+//         width: 62px;
+//         display: flex;
+//         align-items: center;
+//         flex-shrink: 0;
+//         border: 1px solid #dedede;
+//         justify-content: center;
+//         position: relative;
+//         .images {
+//             height: 60px;
+//             width: 60px;
+//             position: absolute;
+//             top: 0;
+//             left: 0;
+//             right: 0;
+//             border: 0;
+//             display: flex;
+//             align-items: center;
+//             img {
+//                 max-width: 100%;
+//             }
+//         }
+//         .file-drop-zone {
+//             position: absolute;
+//             bottom: 0;
+//             left: 0;
+//             right: 0;
+//             justify-content: center;
+//             display: flex;
+//             background-color: #f6f7fe;
+//         }
+//         .browse-file,
+//         .image-edit {
+//             display: none;
+//             cursor: pointer;
+//             z-index: 1;
+//             position: absolute;
+//             bottom: 0;
+//             left: 0;
+//             right: 0;
+//             text-align: center;
+//             background-color: #4d5c82;
+//             opacity: 0.5;
+//             color: #fff;
+//         }
+//         &:hover {
+//             .browse-file,
+//             .image-edit {
+//                 display: block;
+//             }
+//         }
+//     }
+//     .user-left-info {
+//         display: flex;
+//         flex-direction: column;
+//     }
+//     h4 {
+//         display: flex;
+//         margin-top: 15px;
+//         .slash-char {
+//             padding: 0 8px;
+//             font-size: 20px;
+//         }
+//         .org-name-edit {
+//             max-width: 140px;
+//             &:focus {
+//                 outline: none;
+//             }
+//         }
+//         .pi-form-field {
+//             margin-top: 0;
+//         }
+//     }
+//     h3 {
+//         padding: 0;
+//         display: flex;
+//         align-items: center;
+//         .icon-arrow {
+//             @include iconSize(16px);
+//             margin-right: 6px;
+//             @media screen and (min-width: 960px) {
+//                 display: none;
+//             }
+//         }
+//     }
+//     .no-data {
+//         text-align: center;
+//         color: rgba(23, 43, 77, 0.5);
+//         /*#777;*/
+//         font-size: 16px;
+//     }
+// }
+
+::ng-deep .mat-menu-content.orgs-list {
+    position: relative;
+    min-height: 200px;
+    app-search {
+        padding: 10px 9px 8px 9px;
+        border-bottom: 1px solid #dbdbdb;
+    }
+    .mat-spinner {
+        width: 36px;
+        height: 36px;
+        position: absolute;
+        top: 50%;
+        margin-left: -15px;
+        left: 50%;
+        margin-top: -15px;
+    }
+}
+
+// ::ng-deep td {
+//     .icon-arrow-right {
+//         cursor: pointer;
+//         color: #44536e;
+//         margin-left: 10px;
+//         @include iconSize(10px);
+//     }
+//     .edit-opts {
+//         cursor: pointer;
+//         .tooltip {
+//             display: none;
+//         }
+//     }
+//     &.highlight.current {
+//         position: relative;
+//         overflow: visible;
+//         .tooltip {
+//             position: absolute;
+//             display: block;
+//             border: 1px solid #eceef0;
+//             width: 200px;
+//             right: 0;
+//             background-color: #ffffff;
+//             padding: 15px;
+//             line-height: 30px;
+//         }
+//     }
+// }
+
+// ::ng-deep .mat-menu-panel.orgs-list {
+//     margin-left: -46px;
+//     margin-top:16px;
+//     display: flex;
+//     flex-direction: column;
+//     max-width: 236px;
+//     max-height: calc(50vh);
+//     .search {
+//         margin: 0 0px;
+//         padding: 10px 10px 10px 10px;
+//         border-bottom: 1px solid #dbdbdb;
+//         flex-shrink: 0;
+//     }
+//     .mat-menu-content {
+//         display: flex;
+//         flex-direction: column;
+//         padding: 0;
+//         min-width: auto;
+//         .contacts-container {
+//             display: flex;
+//             flex-direction: column;
+//             flex-grow: 1;
+//             overflow: auto;
+//             .contacts-list {
+//                 .no-data {
+//                     text-align: center;
+//                     padding: 20px;
+//                     color: rgba(23, 43, 77, 0.5);
+//                     /*#777;*/
+//                 }
+//                 ul {
+//                     margin: 0;
+//                     padding: 0;
+//                     list-style: none;
+//                     .list-item {
+//                         .org-row {
+//                             padding: 10px;
+//                             cursor: pointer;
+//                             position: relative;
+//                             .org-left-content {
+//                                 display: flex;
+//                                 align-items: center;
+//                                 i {
+//                                     position: absolute;
+//                                     margin-left: -14px;
+//                                     @include iconSize(10px);
+//                                 }
+//                                 .my-pixel-icon {
+//                                     width: 20px;
+//                                     height: 20px;
+//                                     background: none;
+//                                     color: rgba(23, 43, 77, 0.7);
+//                                     i {
+//                                         @include iconSize(14px);
+//                                         margin: 0;
+//                                     }
+//                                 }
+//                                 .org-name {
+//                                     display: inline-flex;
+//                                     max-width: 200px;
+//                                     padding: 0 2px;
+//                                     cursor: pointer;
+//                                     color: rgba(23, 43, 77, 0.85);
+//                                 }
+//                                 .org-type {
+//                                     display: none;
+//                                 }
+//                             }
+//                             &.parent {
+//                                 padding-left: 25px;
+//                                 .org-left-content {
+//                                     .my-pixel-icon {
+//                                         i {
+//                                             @include iconSize(16px);
+//                                         }
+//                                     }
+//                                 }
+//                             }
+//                             &.child {
+//                                 /*padding-left: 50px;*/
+//                                 padding: 8px 10px 8px 44px;
+//                             }
+//                             &.sub {
+//                                 padding-left: 75px;
+//                             }
+//                             &:hover {
+//                                 background: #eceef7;
+//                             }
+//                         }
+//                         &.inactive {
+//                             .parent {
+//                                 .org-name {
+//                                     color: rgba(23, 43, 77, 0.5);
+//                                     /*#919baa;*/
+//                                 }
+//                                 .my-pixel-icon {
+//                                     color: rgba(23, 43, 77, 0.5) !important;
+//                                 }
+//                             }
+//                             /*
+//                             .list-group{color: rgba(23, 43, 77, 0.4);}*/
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
+
+// ::ng-deep .upload-img .mat-dialog-container .mat-dialog-content {
+//     min-height: 300px;
+// }
+
+// ::ng-deep .ag-grid-wrapper {
+//     display: flex;
+//     flex: 1;
+//     .general-details {
+//         flex: 1;
+//         form {
+//             height: 100%;
+//             .content-wrapper.client-access {
+//                 height: 100%;
+//                 max-width: 100% !important;
+//                 .client-access-container {
+//                     display: flex;
+//                     flex-direction: column;
+//                     height: 100%;
+//                 }
+//             }
+//         }
+//     }
+// } 
+
+
+
+// ::ng-deep .mat-slide-toggle {
+//     height: 18px;
+//     line-height: 18px;
+//     .mat-slide-toggle-bar {
+//         width: 32px;
+//         height: 12px;
+//         .mat-slide-toggle-thumb-container {
+//             width: 16px;
+//             height: 16px;
+//             top: -2px;
+//             .mat-slide-toggle-thumb {
+//                 height: 16px;
+//                 width: 16px;
+//             }
+//         }
+//     }
+// }
+
+// ::ng-deep .mood {
+//     .mat-button {
+//         i {
+//             @include iconSize(16px);
+//             color: rgba(23, 43, 77, 0.7);
+//         }
+//         &:hover {
+//             i {
+//                 color: rgba(23, 43, 77, 1);
+//             }
+//         }
+//     }
+//     .mat-button:hover .mat-button-focus-overlay {
+//         opacity: 0 !important;
+//     }
+// }
+
+// ::ng-deep .more-grid-actions {
+//     .mat-menu-content {
+//         padding: 0;
+//         min-height: auto;
+//     }
+//     .mat-menu-item {
+//         color: rgba(23, 43, 77, 0.8);
+//         font-size: 14px;
+//         @include regularFont();
+//     }
+// }
+

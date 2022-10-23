@@ -1,0 +1,29 @@
+
+
+<!-- <router-outlet></router-outlet> -->
+
+<div class="admin-fixed-layout">
+    <header class="header" >
+        <div><h1>Admin</h1></div>            
+    </header>
+    <div class="scroll-body">
+        <div style="max-width: 970px; margin: 0 auto;">
+                <ng-container *ngFor="let admin of adminDashboard">
+                        <div  class="admin-options" *ngIf="admin.show">
+                            <h3 [innerHtml]="admin.name"></h3>
+                            <div class="item-wrapper">
+                                <ng-container *ngFor="let item of admin.items">
+                                    <div class="link-wrap" *ngIf="item.show">
+                                        <a [routerLink]="item.route" [queryParams]="item.children ? {'type': item.defaultValue} : null">
+                                            <span class="my-pixel-icon {{item.bgColor}}"><i class="pixel-icons {{item.icon}}"></i></span>
+                                            {{item.name}}
+                                        </a>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-container>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,87 @@
+<!-- virtualScroll [items]="contacts.organizations" (update)="viewPortItems = $event" -->
+<div class="container nested-list" [class.organization-list-menu]=isPopup>
+    <div class="no-data" *ngIf="contacts.orgCount==0">No Data Found!</div>
+    <ul class="nested-list-group" *ngFor="let org of contacts.organizations">
+        <li *ngIf="(contacts.orgType==0 || contacts.orgType==org.org_type)" class="nested-list-item" [class.inactive]="!org.status">
+            <div class="org-row" (click)="changeOrganization(org)" [class.parent]=!isPopup [class.parent-item]=isPopup>
+                <div class="nested-left-content">
+                    <i *ngIf="(org.children && org.children.length)" (click)="toggleChildOrgs(org, $event)" class="pixel-icons {{org.showChildren?'icon-arrow-right':'icon-arrow-down'}}" [class.hidden-element]=isPopup>
+                    </i>
+                    <i *ngIf="(org.children && org.children.length)" (click)="toggleChildOrgs(org, $event)" class="pixel-icons {{org.showChildren?'icon-triangle-arrow-right':'icon-triangle-arrow'}}" [class.hidden-element]= !isPopup>
+                    </i>
+                    <span class="green {{isPopup ? 'icon-without-background' :'my-pixel-icon'}}" ><i class="pixel-icons icon-company-codes"></i></span>
+                    <div class="d-flex flex-column justify-content-start" [class.hidden-element]=!isPopup [class.visible-element]=isPopup>
+                        <label class="org-name text-ellipsis">{{org.name}}</label>
+                        <div class="org-type hidden-element">{{org.xid}}</div>
+                    </div>
+                    <label class="org-name text-ellipsis" [class.hidden-element]=isPopup>{{org.name}}</label>
+                    <div class="org-type" [class.hidden-element]=isPopup>{{org.xid}}</div>
+                </div>
+                <div class="nested-right-content" *ngIf="(contacts.listType=='list')">
+                    <div class="flex-wrap">
+                        <!-- <div class="contacts right-cols">
+                        <span class="count">{{org.c_count}}</span>
+                        <span class="label">{{org.c_count==1?'Contact':'Contacts'}}</span>
+                    </div> -->
+                        <div class="vendor right-cols" *ngIf="(contacts.orgType==0 && org.org_type==3)">
+                            <i class="pixel-icons icon-vendor-shape"></i>Vendor
+                        </div>
+                        <div class="client right-cols" *ngIf="(contacts.orgType==0 && org.org_type==2)">
+                            <i class="pixel-icons icon-clients-contacts-tab"></i>Client
+                        </div>
+                    </div>
+                    <i class="pixel-icons icon-arrow-right"></i>
+                </div>
+            </div>
+            <ul class="nested-list-group" *ngIf="(org.children && org.children.length && !org.showChildren)">
+                <li *ngFor="let org of org.children" class="nested-list-item" [class.inactive]="!org.status">
+                    <div class="org-row" (click)="changeOrganization(org)" [class.child]=!isPopup [class.child-item]=isPopup>
+                        <div class="nested-left-content">
+                            <i *ngIf="(org.children && org.children.length)" (click)="toggleChildOrgs(org, $event)"
+                                class="pixel-icons {{org.showChildren?'icon-arrow-right':'icon-arrow-down'}}" [class.hidden-element]=isPopup>
+                            </i>
+                            <i *ngIf="(org.children && org.children.length)" (click)="toggleChildOrgs(org, $event)"
+                             class="pixel-icons {{org.showChildren?'icon-triangle-arrow-right':'icon-triangle-arrow'}}" [class.hidden-element]= !isPopup></i>
+                            <span class="green {{isPopup ? 'icon-without-background' :'my-pixel-icon'}}" ><i class="pixel-icons icon-sub-organisations"></i></span>
+                            <div class="d-flex flex-column justify-content-start" [class.hidden-element]=!isPopup [class.visible-element]=isPopup>
+                                <label class="org-name text-ellipsis">{{org.name}}</label>
+                            </div>
+                            <label class="org-name text-ellipsis" [class.hidden-element]=isPopup>{{org.name}}</label>
+                        </div>
+                        <div class="nested-right-content" *ngIf="(contacts.listType=='list')">
+                            <!-- <div class="flex-wrap">
+                            <div class="contacts right-cols">
+                                <span class="count">{{org.c_count}}</span>
+                                <span class="label">{{org.c_count==1?'Contact':'Contacts'}}</span>
+                            </div>
+                        </div> -->
+                            <i class="pixel-icons icon-arrow-right"></i>
+                        </div>
+                    </div>
+                    <ul class="nested-list-group" *ngIf="(org.children && org.children.length && !org.showChildren)">
+                        <li *ngFor="let org of org.children" class="nested-list-item" [class.inactive]="!org.status">
+                            <div class="org-row" (click)="changeOrganization(org)" [class.sub]=!isPopup [class.sub-child]=isPopup>
+                                <div class="nested-left-content">
+                                    <span class="green {{isPopup ? 'icon-without-background' :'my-pixel-icon'}}"><i class="pixel-icons icon-sub-organisations"></i></span>
+                                    <div class="d-flex flex-column justify-content-start" [class.hidden-element]=!isPopup [class.visible-element]=isPopup>
+                                        <label class="org-name text-ellipsis">{{org.name}}</label>
+                                    </div>
+                                    <label class="org-name text-ellipsis" [class.hidden-element]=isPopup>{{org.name}}</label>
+                                </div>
+                                <div class="nested-right-content" *ngIf="(contacts.listType=='list')">
+                                    <!-- <div class="flex-wrap">
+                                    <div class="contacts right-cols">
+                                        <span class="count">{{org.c_count}}</span>
+                                        <span class="label">{{org.c_count==1?'Contact':'Contacts'}}</span>
+                                    </div>
+                                </div> -->
+                                    <i class="pixel-icons icon-arrow-right"></i>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>

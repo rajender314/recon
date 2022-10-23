@@ -1,0 +1,77 @@
+<div class="primary-layout-detail" >
+    <header class="tab-header" *ngIf="state.costsList.length">
+      <div class="w-100 d-flex justify-content-center flex-column">
+          <pi-breadcrumb>
+              <ng-container *ngFor="let item of state.breadcrumbs">
+                <pi-breadcrumb-item *ngIf="item.type == 'link'" label="Projects" [routerLink]="item.route" ></pi-breadcrumb-item>
+                <pi-breadcrumb-item *ngIf="item.type != 'link'" [innerHtml]="item.label"></pi-breadcrumb-item>
+              </ng-container>
+            </pi-breadcrumb> 
+            <div class="w-100 d-flex align-items-center justify-content-between ">
+                <aside class="left-header d-flex flex-width">
+                    <!-- <i class="pixel-icons icon-arrow" (click)="changeMasterView()"></i> --> 
+                    <h1>Cost Analysis</h1>
+                    <section class="page-sub-header" *ngIf="state.costsList.length">
+                        <nav mat-tab-nav-bar [disableRipple]="true">
+                          <div class="tab-group">
+                            <div>
+                              <a mat-tab-link (click)="costTypeChange(link.type)" *ngFor="let link of state.costAnalysisTabs" [active]="link.type==state.activeTab">
+                              {{link.label}} </a>
+                            </div>
+                          </div>
+                          
+                        </nav>
+                      </section>
+                  </aside>
+                <aside>
+                  <button style="margin-top:2px;" pi-button color="primary" *ngIf="state.gridOptions?.rowData.length && !state.loader" (click)="addTask()">+
+                      Add Cost</button>
+                    </aside>
+                    </div> 
+      </div>
+        
+      </header>
+      <div class="primary-layout-detail-body flex-column padding-20">
+          <div class="spinner-view"  *ngIf="state.loader">
+              <div class="empty-screen">
+                <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+              </div>				
+            </div>
+          
+         
+          <!-- <mat-spinner diameter="45" class="md" *ngIf="state.loader"></mat-spinner> -->
+         
+            <div class="global-grid analysis-grid ag-no-striped with-table-gaps" *ngIf="state.gridOptions?.rowData.length">
+                <ag-grid-angular class="ag-theme-balham" *ngIf="state.gridOptions?.rowData.length && !state.loader" [gridOptions]="state.gridOptions"></ag-grid-angular>
+            </div> 
+            <div class="empty-screen"  *ngIf="!state.gridOptions?.rowData.length && !state.loader">                
+                     <div class="empty-screen">
+                         <div class="icon-info-holder">
+                           <div class="icon">
+                               <i class="pixel-icons icon-cost-analysis"></i>
+                           </div>
+                           <p class="alert-message">No Records Found</p>
+                       <button pi-button color="primary" (click)="addTask()">+ Add Cost</button>
+                       
+                         </div>
+                     </div>
+             </div>
+      </div>
+    </div>
+<div class="no-data-screen" *ngIf="!state.costsList.length && !state.loader">
+  <div class="empty-screen">
+      <div class="icon-info-holder">
+        <div class="icon">
+            <i class="pixel-icons icon-cost-analysis"></i>
+        </div>
+        <p class="alert-message">No Records Found</p>
+    <button pi-button color="primary" (click)="addTask()">+ Add Cost</button>
+    
+      </div>
+  </div>
+  </div>
+  <!-- <div class="spinner-view"  *ngIf="state.loader">
+      <div class="empty-screen">
+        <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+      </div>				
+    </div> -->

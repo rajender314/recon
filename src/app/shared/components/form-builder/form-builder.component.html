@@ -1,0 +1,99 @@
+<!-- <div [formGroup]="form">
+	<div [ngSwitch]="spec.template_id">
+		<div *ngSwitchCase="'1'">
+			<div class="ak-field-group">
+				<label *ngIf="spec.key != 'dropdown'" [for]="spec.id">{{spec.label}}
+					<sup *ngIf="spec.mandatory">*</sup>
+				</label>
+				<div *ngIf="spec.key == 'multiple_choice'">
+					<pi-form-field [label]="option.value" *ngFor="let option of spec.options">
+						<input type="radio" pi-input name="value" formControlName="value" [value]="option.id" />
+					</pi-form-field>
+				</div>
+				<div *ngIf="spec.key == 'checkboxes'">
+					<pi-form-field [label]="option.value" *ngFor="let option of spec.options">
+						<input type="checkbox" pi-input />
+					</pi-form-field>
+				</div>
+				<div *ngIf="spec.key == 'dropdown'">
+					<pi-select [label]="spec.label" [options]="spec.options" [multi]="false" formControlName="value"></pi-select>
+				</div>
+			</div>
+		</div>
+		<div *ngSwitchCase="'2'">
+			<pi-form-field [label]="spec.label">
+				<input *ngIf="spec.key == 'single_line_text'" type="text" pi-input formControlName="value" />
+				<textarea *ngIf="spec.key == 'paragraph_text'" pi-input formControlName="value"></textarea>
+			</pi-form-field>
+		</div>
+		<div *ngSwitchCase="'3'">
+			<pi-select [label]="spec.label" [options]="spec.options" [multi]="true" formControlName="value"></pi-select>
+		</div>
+		<div *ngSwitchCase="'4'">
+			<pi-form-field [label]="spec.label">
+				<input [appAllowNumbers]="true" type="text" pi-input formControlName="value" />
+			</pi-form-field>
+		</div>
+	</div>
+</div> -->
+
+
+<div [formGroup]="form" class="fb-wrapper">
+	<div [ngSwitch]="spec.key">
+		<div *ngSwitchCase="'multiple_choice'" class="pi-form-field">
+			<!-- <div *ngIf="spec.key == 'multiple_choice'" class="pi-form-field"> -->
+				<label [for]="spec.id">{{spec.label}}
+					<sup *ngIf="form.get('settings').value.mandatory">*</sup>
+				</label>
+				<pi-form-field [label]="option.value" *ngFor="let option of spec.options">
+					<input type="radio" pi-input formControlName="value" [value]="option.id" />
+				</pi-form-field>
+				<div *ngIf="!spec.options.length">No Options</div>
+		</div>
+		<div *ngSwitchCase="'checkboxes'" formGroupName="value" class="pi-form-field">
+			<label [for]="spec.id">{{spec.label}}
+				<sup *ngIf="form.get('settings').value.mandatory">*</sup>
+			</label>
+			<pi-form-field [label]="option.value" *ngFor="let option of spec.options">
+				<input type="checkbox" pi-input [formControlName]="option.id" />
+			</pi-form-field>
+			<div *ngIf="!spec.options.length">No Options</div>
+		</div>
+		<div *ngSwitchCase="'dropdown'">
+			<pi-select [readonly]="disable" [label]="spec.label + ' ' + (form.get('settings').value.mandatory ? '*' : '')" [options]="spec.options" [multi]="form.get('settings').value.allow_multiple_values || false" [createNew]="form.get('settings').value.allow_adding_new_values || false" formControlName="value"></pi-select>
+		</div>
+		<div *ngSwitchCase="'single_line_text'">
+			<pi-form-field [label]="spec.label + ' ' + (form.get('settings').value.mandatory ? '*' : '')">
+				<input type="text" pi-input formControlName="value" />
+			</pi-form-field>
+		</div>
+		<div *ngSwitchCase="'paragraph_text'">
+			<pi-form-field [label]="spec.label + ' ' + (form.get('settings').value.mandatory ? '*' : '')">
+				<textarea pi-input formControlName="value"></textarea>
+			</pi-form-field>
+		</div>
+		<div *ngSwitchCase="'auto_suggest'">
+			<pi-select [readonly]="disable" [label]="spec.label + ' ' + (form.get('settings').value.mandatory ? '*' : '')" [options]="spec.options" [multi]="true" formControlName="value"></pi-select>
+		</div>
+		<div *ngSwitchCase="'number'">
+			<pi-form-field [label]="spec.label + ' ' + (form.get('settings').value.mandatory ? '*' : '')" leftIcon="true">
+				<pi-icon>
+					<i class="pixel-icons" style="display: flex;align-items: center;justify-content: center;">&#xe028;</i>
+				</pi-icon>
+				<input [appAllowNumbers]="true" maxlength="21" [decimal]="form.get('settings').value.decimal" type="text" pi-input formControlName="value" />
+			</pi-form-field>
+		</div>
+
+		<div *ngSwitchCase="'group'" class="pi-form-field has-sub-fields">
+			<label [for]="spec.id">{{spec.label}}
+				<sup *ngIf="form.get('settings').value.mandatory">*</sup>
+			</label>
+			<div class="sub-fields">
+				<div class="sub-field-item" *ngFor="let opt of spec.options; let i = index">
+					<app-form-builder [config]="opt" [form]="form.controls.value.controls[i]"></app-form-builder>
+					<span class="delimiter" [innerHtml]="opt.delimiter" [hidden]="i == spec.options.length - 1"></span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

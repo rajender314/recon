@@ -1,0 +1,114 @@
+::ng-deep app-create-related-projects{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    .mat-dialog-heading{
+        padding: 0;
+    }
+    .mat-dialog-content{
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+        .mat-horizontal-stepper-header-container{
+            display: none;
+        }
+        .projects-container{
+            display: flex;
+            height: 100%;
+            width: 100%;
+            flex-direction: column;
+            .primary-max-screen-width{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                // border-bottom: 1px solid rgba(0,0,0,.12);
+                .nav-bar{
+                    border-bottom: none;
+                    .mat-tab-link {
+                        height: 40px;
+                        padding: 0 0px;
+                        cursor: pointer;
+                        box-sizing: border-box;
+                        opacity: .6;
+                        min-width: 84px;
+                        text-align: center;
+                        display: inline-flex;
+                        justify-content: center;
+                        align-items: center;
+                        white-space: nowrap;
+                        vertical-align: top;
+                        margin: 0 15px;
+                        text-decoration: none;
+                        position: relative;
+                        overflow: hidden;
+                        -webkit-tap-highlight-color: transparent;
+                        &:first-child{
+                            margin-left: 0px;
+                        }
+                    &.mat-tab-label-active{
+                        color: #0747a6;
+                        opacity: 1;
+                    }
+                    }
+
+                }
+            }
+            .mat-stepper-horizontal{
+                flex: 1;
+                border-top: 1px solid rgba(0, 0, 0, 0.12);
+                margin-top: -1px;
+                .mat-horizontal-content-container{
+                    padding: 0;
+                    display: flex;
+                    height: 100%;
+                    width: 100%;
+                    flex-direction: column;
+                    .mat-horizontal-stepper-content[aria-expanded=true] {
+                        display: flex;
+                        flex-direction: column;
+                        width: 100%;
+                        height: 100%;
+                        .list-view{
+                            display: flex;
+                            height: 100%;
+                            width: 100%;
+                            .ag-body-viewport{
+                                overflow-y: auto;
+                                height: 200px;
+                                .job-info{
+                                    line-height: 1.4;
+                                    .job-title{
+                                        margin: 0px;
+                                        color: #42526e;
+                                        font-family: "SF-Pro-Text-Medium", Sans-Serif;
+                                        font-size: 14px;
+                                        line-height: 1.3;
+                                    }
+                                    .job-no{
+                                        color: #a4acb9;
+                                        font-size: 13px;
+                                    }
+                                }
+                               
+                            }
+                            .ag-body-horizontal-scroll{
+                                display: none !important;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.multi-user-selection{
+    ::ng-deep pi-icon>i{
+        &.icon-close{  
+            width: 8px;
+            height: 6px;
+        }    
+    }
+
+}

@@ -1,0 +1,364 @@
+<pi-master-detail-view class="recon-admin-layout" [showDetail]="showView" *ngIf="!showEdit">
+
+
+	<pi-master-view class="admin-sidebar">
+		<div class="sidebar-header">
+			<!-- <span class="my-pixel-icon brown">
+				<i class="pixel-icons icon-forms"></i>
+			</span> -->
+			<div class="page-breadcrumb">
+				<app-admin-popover class="left-hdr-comp" class="align-items" [bgColor]="'brown'" [icon]="'icon-forms'" [primary]="'Admin'"
+				 [secondary]="'Forms'" [data]="adminDashboard"></app-admin-popover>
+			</div>
+			<div class="icon-button-actions" *ngIf="APP.permissions.system_access.forms=='edit'">
+				<button pi-icon-button class="icon-button-wrapper" (click)="openAddDialog()">
+					<i class="pixel-icons icon-plus"></i>
+				</button>
+			</div>
+			<app-search (onSearch)="onSearch($event)"></app-search>
+		</div>
+		<!-- <div class="left-content" [class.spinner]="isLoading || !formList?.length"> -->
+		<div class="head">
+			<div matBadgeOverlap="false" matBadgePosition="before" class="mat-badge-center">
+				<span [matMenuTriggerFor]="statusFilter">
+					<span>{{totalCount}}</span>
+					<span>{{statusBy}} {{totalCount == 1 ? 'Form' : 'Forms'}}</span>
+					<mat-icon>expand_more</mat-icon>
+				</span>
+				<mat-menu #statusFilter="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before">
+					<button mat-menu-item *ngFor="let status of dropdowns.statusFilter" (click)="onApplyFilter('status', status)">{{status.label}}</button>
+				</mat-menu>
+			</div>
+			<div class="sorting">
+				<span class="sort-action {{sortBy | lowercase}}" (click)="onApplyFilter('sort')">{{sortBy}}</span>
+			</div>
+		</div>
+		<!-- <div class="head company-code" style="border-top: none; ">
+					<h3 mat-button [matMenuTriggerFor]="companyCodesMenu" class="d-flex">
+					  <span class="detail-orgname text-ellipsis">{{selectedCompanyCode?.name}}</span>
+					  <mat-icon>keyboard_arrow_down</mat-icon>
+					</h3>
+					<mat-menu #companyCodesMenu="matMenu" yPosition="below" [overlapTrigger]="false" class="dropdown-list">
+					  <button mat-menu-item (click)="changeCompanyCode(list)" *ngFor="let list of formList">
+						{{ list.name }}
+					  </button>
+					</mat-menu>     
+				  </div> -->
+		<!-- infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false" -->
+		<div class="sidebar-body">
+			<!-- <div class="d-flex align-center justify-content-center w-100" *ngIf="isLoading" style="height: 80%;flex: 1;justify-content: center;align-items: center;">
+				<mat-spinner diameter="24" class="md"></mat-spinner>
+			</div> -->
+			<div class="spinner-view" *ngIf="isLoading">
+					<div class="empty-screen">
+					  <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+					</div>
+				  </div>
+			<!-- <mat-spinner diameter="45" class="md" *ngIf="isLoading"></mat-spinner> -->
+			<div class="sidebar-content" [class.spinner]="isLoading || !formList?.length">
+				<div class="body">
+					<div class="no-data" [hidden]="isLoading || formList?.length">
+						<div class="d-flex align-center justify-content-center w-100" style="min-height: 300px;flex: 1;justify-content: center;align-items: center;">
+							No Forms Found
+						</div>
+					</div>
+					<div class="menu-container nested-menu">
+						<ul class="has-sub-list" *ngIf="!isLoading">
+							<li class="products-list-form" [class.default]="'0' == product?.id" *ngFor="let product of formList; let i = index" [id]="'product_' + i"
+							 [class.test]="product.children?.length && !product.showChildren">
+								<div class="parent item-list" [class.active]="product.id == selectedService?.id">
+									<i *ngIf="(product.children && product.children.length)" (click)="toggleChildCompanyCodes(product, $event)"
+									 class="pixel-icons {{product.showChildren?'icon-arrow-right':'icon-arrow-down'}}"> </i>
+									<span *ngIf="!(product.children && product.children.length)" class="no-children"></span>
+									<span class="markup-txt" title="{{product.name}}">
+										<i class="pixel-icons icon-products"></i><span>{{product.name}}</span>
+									</span>
+									<!-- <span class="reset-action" (click)="$event.stopPropagation();resetDefaults()"><i class="pixel-icons icon-reload"></i></span> -->
+								</div>
+								<ul *ngIf="product.children?.length && !product.showChildren" class="test00">
+									<li class="products-list-form" *ngFor="let service of product.children">
+										<div (click)="onSelectItem(service);changeMasterView()" class="parent item-list" [class.active]="service.id == selectedService?.id">
+											<i *ngIf="(service.children && service.children.length)" (click)="toggleChildCompanyCodes(service, $event)"
+											 class="pixel-icons {{service.showChildren?'icon-arrow-right':'icon-arrow-down'}}">
+											</i>
+											<span *ngIf="!(service.children && service.children.length)" class="no-children"></span>
+											<span class="markup-txt" title="{{service.name}}">
+												<i class="pixel-icons icon-orders"></i><span>{{service.name}}</span>
+											</span>
+											<!-- <span class="reset-action" (click)="$event.stopPropagation();resetDefaults()"><i class="pixel-icons icon-reload"></i></span> -->
+										</div>
+										<ul *ngIf="service.children?.length && !service.showChildren">
+											<li *ngFor="let subOrg of service.children" [class.active]="subOrg.id == selectedService?.id" (click)="onSelectItem(subOrg);changeMasterView()">
+												<span class="no-children"></span>
+												<span class="markup-txt item-list" title="{{subOrg.name}}">
+													<i class="pixel-icons icon-orders"></i><span>{{subOrg.name}}</span>
+
+												</span>
+												<!-- <span class="reset-action" (click)="$event.stopPropagation();resetDefaults()"><i class="pixel-icons icon-reload"></i></span> -->
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- <div class="no-data" [hidden]="isLoading || formList?.length">No Form Found</div> -->
+			<!-- 
+				<div *ngIf="!isLoading">
+					<ul>
+						<li *ngFor="let product of formList; let i = index" [id]="'product_' + i">
+							<div class="group-title" (click)="dropdownTrigger($event, product, i)">
+								<i *ngIf="product.children.length" class="pixel-icons arrow {{product.isOpen ? 'icon-arrow-down' : 'icon-arrow-right'}}"></i>
+								<span [innerHtml]="product.name"></span>
+							</div>
+							<ul *ngIf="product.children.length && product.isOpen">
+								<li *ngFor="let service of product.children" [class.active]="service.id == selectedService?.id" (click)="onSelectItem(service);changeMasterView()">
+									<span [innerHtml]="service.name"></span>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div> -->
+
+		</div>
+
+
+	</pi-master-view>
+
+	<pi-detail-view class="right-section has-tabs">
+		<section class="admin-fixed-layout">
+			<div class="no-result-flex no-search-value" *ngIf="!formList?.length && !isLoading">
+				<p *ngIf="param.search?.length">No Form found for your search string
+					<br />
+					<b>'{{param.search}}'</b>
+				</p>
+				<p *ngIf="!param.search?.length">No Form found</p>
+				<button pi-button color="primary" (click)="openAddDialog(param.search)" *ngIf="APP.permissions.system_access.forms=='edit'">+
+					Add New Form</button>
+			</div>
+			<ng-container *ngIf="formList?.length">
+				<!-- <div class="right-header" *ngIf="selectedService">
+				<app-breadcrumb [list]="breadcrumbs"></app-breadcrumb>
+				<div class="info">
+					<mat-icon class="back-link" (click)="changeMasterView()">arrow_back</mat-icon>
+					<h2 [innerHtml]="selectedService.display_name"></h2>
+				</div>
+			</div> -->
+				<header class="header tab-header" *ngIf="selectedService">
+					<div class="w-100 d-flex flex-column justify-content-between">
+						<app-breadcrumb [list]="breadcrumbs"></app-breadcrumb>
+						<div class="d-flex align-items-center">
+							<h1 [innerHtml]="selectedService.display_name"></h1>
+						</div>
+						<div class="w-100 d-flex align-items-center justify-content-between">
+							<aside class="left-header flex-column d-flex ">
+								<nav *ngIf="selectedService" mat-tab-nav-bar class="nav-bar" [disableRipple]="true">
+									<div class="tab-group">
+										<a mat-tab-link (click)="onTabChange(index)" *ngFor="let link of state.tabs;let index = index" [active]="activeTab == index">
+											{{link.label}} </a>
+									</div>
+								</nav>
+							</aside>
+							<aside class="d-flex right-header justify-content-end ">
+									<div class="form-actions" *ngIf="!formSpinner && activeTab==0">
+											<button pi-button color="default" (click)="openAddDialog('', 'duplicate')" *ngIf="APP.permissions.system_access.forms=='edit'" matTooltip="Duplicate Form">Duplicate</button>
+											<button class="m-l-15" pi-button color="default" (click)="editForm()" *ngIf="APP.permissions.system_access.forms=='edit'" matTooltip="Edit Form">Edit</button>
+										</div>
+							</aside>
+						</div>
+					</div>
+				</header>
+
+				<div [formGroup]="formsGroup" class="scroll-body" *ngIf="selectedService">				
+					<!-- Configuration Tab content -->
+					<div [class.has-spinner]="formSpinner" class="tab-wrapper" *ngIf="activeTab == 0">
+						<!-- <mat-spinner diameter="45" class="md" *ngIf="formSpinner"></mat-spinner> -->
+						<div class="spinner-view" *ngIf="formSpinner">
+							<div class="empty-screen"><mat-spinner diameter="34" class="md parent-spinner"></mat-spinner></div>
+						</div>
+						<form formGroupName="details" class="form-flex" autocomplete="off" *ngIf="!formSpinner">
+							<pi-select label="Bid Submission Form" [options]="dropdowns.addOns" [multi]="false" [disabled]="APP.permissions.system_access.forms!='edit'"
+							 formControlName="bid_submission_id"></pi-select>
+							<div class="col-field-multiple">
+								<label>Status</label>
+								<pi-form-field [label]="status.label" *ngFor="let status of dropdowns.status" [class.active]="formsGroup.get('details').value.status == status.value">
+									<input type="radio" pi-input name="status" formControlName="status" [disabled]="APP.permissions.system_access.forms!='edit'"
+									 [value]="status.value" />
+								</pi-form-field>
+							</div>
+
+							<pi-select label="Cost Code" [options]="dropdowns.costCodes" [multi]="false" [disabled]="APP.permissions.system_access.forms!='edit'"
+							 formControlName="costcode_id"></pi-select>
+
+							<pi-form-field label="Allow Options">
+								<input type="checkbox" pi-input formControlName="is_allow" [disabled]="APP.permissions.system_access.forms!='edit'" />
+							</pi-form-field>
+						</form>
+						<div class="form-preview" *ngIf="!formSpinner">
+							<div class="flex-row">
+								<h2>Form Preview</h2>
+								<span fxFlex></span>
+
+							</div>
+							<form formGroupName="form" class="form-flex" autocomplete="off" [class.inline-form]="formsGroup.controls.form.get('layout').value == 3">
+								<div formGroupName="defaults" *ngIf="selectedService.details.specs && selectedService.details.specs.length">
+									<div *ngFor="let spec of formLayout; let i = index">
+										<pi-field-group *ngIf="spec.length > 1">
+											<div class="field-set" *ngFor="let layout of spec">
+												<app-form-builder [disable]="true" *ngIf="layout" [config]="layout" [form]="defaults.controls[layout.id]"></app-form-builder>
+											</div>
+										</pi-field-group>
+										<div *ngIf="spec.length == 1">
+											<div class="field-set" *ngFor="let layout of spec">
+												<app-form-builder [disable]="true" *ngIf="layout" [config]="layout" [form]="defaults.controls[layout.id]"></app-form-builder>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="no-specs" *ngIf="!selectedService.details.specs || !selectedService.details.specs.length">No
+									Specs Assigned</div>
+							</form>
+							<app-modified-user-info [modifiedInfo]="selectedService.details"></app-modified-user-info>
+						</div>
+
+						
+					</div>
+
+					<!-- Distribution Types Tab content -->
+					<div [class.has-spinner]="formSpinner" class="tab-wrapper" *ngIf="activeTab == 1">
+						<div class="global-grid with-out-margin with-table-gaps actions-grid ag-no-striped">
+								<div class="spinner-view" *ngIf="formSpinner">
+										<div class="empty-screen"><mat-spinner diameter="34" class="md parent-spinner"></mat-spinner></div>
+									</div>
+							<!-- <mat-spinner diameter="45" class="md" *ngIf="formSpinner"></mat-spinner> -->
+							<ag-grid-angular *ngIf="!formSpinner" class="ag-theme-balham" [gridOptions]="gridOptions">
+							</ag-grid-angular>
+						</div>
+					</div>
+
+
+				</div>
+
+				<div class="footer" *ngIf="activeTab == 0 && !formSpinner && APP.permissions.system_access.forms=='edit'">
+					<div class="admin-max-footer">
+						<button pi-button (click)="resetForm(selectedService.details)">Cancel</button>
+						<button pi-button class="m-l-15" color="primary" (click)="saveDetails(formsGroup)" [disabled]="formsGroup.get('details').pristine">Save</button>
+					</div>
+				</div>
+
+			</ng-container>
+
+
+		</section>
+	</pi-detail-view>
+</pi-master-detail-view>
+
+<pi-master-detail-view *ngIf="showEdit" class="details-wrapper layout-container">
+	<pi-detail-view class="right-section">
+		<div class="right-header">
+
+			<app-breadcrumb [list]="breadcrumbs" (goTo)="goTo($event)"></app-breadcrumb>
+
+			<div style="display: flex" class="info">
+				<mat-icon class="back-link" (click)="changeMasterView()">arrow_back</mat-icon>
+				<h2 [innerHtml]="selectedService.name"></h2>
+				<span style="flex: 1"></span>
+				<div class="layout-options" *ngIf="APP.permissions.system_access.forms=='edit'">
+					<label>Layout:</label>
+					<span [matMenuTriggerFor]="layout">{{selectedLayout?.text}}
+						<i class="pixel-icons icon-arrow-down"></i>
+					</span>
+					<mat-menu #layout="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions grp-actions">
+						<button [disableRipple]="true" mat-menu-item matSubheader>Labels on Top</button>
+						<button mat-menu-item (click)="perfomAction(undefined, 'layout', 1)">1 Column</button>
+						<button mat-menu-item (click)="perfomAction(undefined, 'layout', 2)">1/2 Column</button>
+						<button mat-menu-item matSubheader (click)="perfomAction(undefined, 'layout', 3)">Labels on Left</button>
+					</mat-menu>
+				</div>
+				<div class="hdr-actions" *ngIf="APP.permissions.system_access.forms=='edit'">
+					<button pi-button (click)="previewForm()">Preview</button>
+					<button pi-button color="primary" (click)="updateForm(formsGroup.get('form'))" [disabled]="formsGroup.get('form').pristine">Save</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="right-content form-specs" [formGroup]="formsGroup">
+			<form formGroupName="form" class="form-flex" [class.inline-form]="selectedLayout.value == 3" autocomplete="off">
+				<div formGroupName="defaults" *ngIf="selectedService.details.specs && selectedService.details.specs.length">
+					<!-- <ngx-sortable [items]="formLayout" [name]="'List'" listStyle="{width: 100%;}" (listSorted)="listSorted($event)"> -->
+					<div [sortablejs]="formLayout" [sortablejsOptions]="sortOptions">
+						<div class="field-wrapper" *ngFor="let spec of formLayout; let i = index">
+							<!-- <ng-template let-spec let-index="index"> -->
+							<pi-field-group *ngIf="spec.length > 1">
+								<div class="field-set" *ngFor="let layout of spec">
+									<app-form-builder *ngIf="layout" [disable]="defaults.controls[layout.id].disabled" [config]="layout" [form]="defaults.controls[layout.id]"></app-form-builder>
+								</div>
+							</pi-field-group>
+							<div class="field-col" *ngIf="spec.length == 1">
+								<div *ngFor="let layout of spec">
+									<app-form-builder *ngIf="layout" [disable]="defaults.controls[layout.id].disabled" [config]="layout" [form]="defaults.controls[layout.id]"></app-form-builder>
+								</div>
+							</div>
+							<div class="actions-col" *ngIf="APP.permissions.system_access.forms=='edit'">
+								<!-- <button pi-icon-button class="handle">
+									<i class="pixel-icons icon-drag"></i>
+								</button> -->
+								<i class="pixel-icons icon-drag handle"></i>
+								<button pi-icon-button color="subtle" [matMenuTriggerFor]="actions">
+									<i class="pixel-icons icon-more-horizontal"></i>
+								</button>
+								<mat-menu #actions="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions row-actions">
+									<button class="title" [disableRipple]="true" mat-menu-item *ngIf="formsGroup.get('form').controls.layout.value != 3">Switch
+										To: </button>
+									<button mat-menu-item *ngIf="formsGroup.get('form').controls.layout.value != 3 && spec.length > 1" (click)="perfomAction(spec, 'layout', 1, i)">1
+										Column</button>
+									<button mat-menu-item *ngIf="formsGroup.get('form').controls.layout.value != 3 && spec.length == 1" (click)="perfomAction(spec, 'layout', 2, i)">1/2
+										Column</button>
+									<button mat-menu-item (click)="perfomAction(spec, 'mandatory', null, i)">
+										{{defaults.controls[spec[0].id].value.settings.mandatory ? 'Remove ' : 'Set as '}} Mandatory
+									</button>
+									<button mat-menu-item (click)="perfomAction(spec, 'set', null, i)">Set Default</button>
+									<button mat-menu-item (click)="perfomAction(spec, 'unset', null, i)">Remove Default</button>
+									<button mat-menu-item (click)="perfomAction(spec, 'delete', null, i)">Remove Spec</button>
+								</mat-menu>
+							</div>
+						</div>
+						<!-- </ng-template> -->
+					</div>
+					<!-- </ngx-sortable> -->
+				</div>
+				<div class="no-data" *ngIf="!selectedService.details.specs || !selectedService.details.specs.length">No Specs
+					Assigned</div>
+			</form>
+
+		</div>
+	</pi-detail-view>
+	<pi-master-view class="left-section">
+		<h4>SPECIFICATIONS</h4>
+		<app-search (onSearch)="onSearch($event, 'specs')"></app-search>
+		<div class="left-content">
+			<div class="head">
+				Recent Specs
+			</div>
+			<!-- infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false" -->
+			<div class="body">
+				<mat-spinner diameter="45" class="md" *ngIf="isLoading"></mat-spinner>
+
+				<div class="no-data" [hidden]="isLoading || recentSpecs?.length">No Specs Found</div>
+
+				<mat-list *ngIf="!isLoading">
+					<ng-container *ngFor="let list of recentSpecs; let i = index">
+						<mat-list-item *ngIf="APP.permissions.system_access.forms=='edit'" (click)="addSpecs(list, i)">
+							<h3 matLine [title]="list.label">{{list.label}}</h3>
+							<p matLine>{{list.type}}</p>
+						</mat-list-item>
+					</ng-container>
+				</mat-list>
+			</div>
+		</div>
+	</pi-master-view>
+
+
+</pi-master-detail-view>

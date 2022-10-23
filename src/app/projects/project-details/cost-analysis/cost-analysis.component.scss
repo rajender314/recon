@@ -1,0 +1,53 @@
+// @import "../../../../assets/styles/mixins";
+
+// ag-grid-angular {
+//     display: flex;
+//     width: 100%;
+//     .ag-root-wrapper {
+//         display: flex;
+//         width: 100%;
+//         .ag-root {
+//             border: none;
+//         }
+//     }
+
+// }
+// .costs-grid {
+//     .ag-header-row {
+//         color: #949EAE;
+//     }
+// }
+// .ag-group-expanded,
+// .ag-group-contracted {
+//     i {
+//         vertical-align: middle;
+//         font-size: 21px;
+//     }
+// }
+// .ag-group-value .product {
+//     display: inline;
+// }
+// .ag-theme-balham .ag-cell {
+//     line-height: 38px;
+//     height: 38px;
+//     padding: 0 12px; //display: flex;
+//     &.cost-analysis-editable-grid {
+//         padding: 0;
+//         app-numeric-cell-editor{
+//             input{
+//                 height: 37px;
+//                 line-height: 37px;
+//                 padding: 5px;
+//                 border: 0;
+//                 outline: none;
+//                 &:focus{
+//                     box-shadow: 0 0px 0px 1px #4c9aff;
+//                     border-color: #4c9aff;
+//                 }
+//             }
+//         }
+//     }
+// }
+// .ag-theme-balham .ag-column-drop-horizontal.ag-column-drop {
+//     border-top: 0 none;
+// }

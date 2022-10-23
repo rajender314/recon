@@ -1,0 +1,301 @@
+<div class="project-content">
+	<div class="centralise">
+		<div class="sticky-section">
+			<div class="title-header">
+				<a routerLink="/projects/all"><i class="pixel-icons icon-arrow"></i></a>
+				<h3>Add New Project</h3>
+			</div>
+			<hr>
+		</div>
+
+		<div class="content-wrapper">
+
+			<form [formGroup]="projectInfo" class="form-flex create-project" autocomplete="off">
+				<!-- <p class="pi-error" [innerHtml]="serverError"></p> -->
+				<pi-form-field label="Project Name" class="inline-edit-ui">
+					<input type="text" pi-input formControlName="job_title" maxlength="100" />
+					<div class="msgs">
+						<div class="pi-error" *ngIf="projectInfo.controls.job_title.hasError('required') && state.submitted">
+							Please Enter Project Name
+						</div>
+					</div>
+				</pi-form-field>
+
+				<!-- <pi-field-group *ngIf="state.is_alb_company">
+					<pi-select label="Project Type" [options]="dropdowns.projectTypes" [multi]="false"
+						formControlName="project_type"></pi-select> -->
+				<!-- <pi-select label="Campaign" [options]="dropdowns.campaigns" [multi]="false" formControlName="campaign"></pi-select> -->
+				<!-- <pi-form-field label="Campaign (Optional)">
+						<input type="text" pi-input formControlName="campaign" />
+					</pi-form-field>
+				</pi-field-group> -->
+
+				<h4>CLIENT DETAILS</h4>
+				<pi-field-group class="err-adj">
+					<pi-form-field>
+						<pi-select label="Company Code" [options]="dropdowns.companyCodes" [multi]="false" formControlName="company_code" [inactiveOptions]="inactiveCompanyCodes"></pi-select>
+						<div class="pi-error" *ngIf="projectInfo.controls.company_code.hasError('required') && state.submitted">
+							Please Select Company Code
+						</div>
+					</pi-form-field>
+					<pi-form-field>
+						<pi-select label="Client Company" [options]="dropdowns.clientCompanies" [multi]="false" formControlName="org_id"></pi-select>
+						<div class="pi-error" *ngIf="projectInfo.controls.org_id.hasError('required') && state.submitted">
+							Please Select Client Company
+						</div>
+					</pi-form-field>
+				</pi-field-group>
+				<pi-field-group class="err-adj" >
+					<pi-select label="Client Initiator" (onChange)="clientInitiatorChange($event)" [createNew]='true' nameKey="fullname" [options]="dropdowns.clientInitiators" [multi]="false" formControlName="client_initiator"></pi-select>
+					<pi-select *ngIf="APP.permissions?.job_access.billing_type=='yes'" class="pi-col-2" label="Billing Type" [options]="dropdowns.billingTypes" [multi]="false" formControlName="billing_type"></pi-select>
+				</pi-field-group>
+				<pi-field-group class="err-adj" *ngIf="state.job_type_campaigns=='1'">
+					<pi-select label="Project Type" [options]="dropdowns.job_types" [multi]="false" formControlName="jobs_types_id"></pi-select>
+					<div class="pi-error" *ngIf="projectInfo.controls.jobs_types_id.hasError('required') && state.submitted">
+						Please Select Project Type
+					</div>
+					<pi-select class="pi-col-2" label="Campaign" [options]="dropdowns.campaigns" [multi]="false" formControlName="campaign_id"></pi-select>
+				</pi-field-group>
+
+				<h4>COMPANY DETAILS</h4>
+
+				<pi-select class="has-info" [disabled]="projectInfo.controls.org_id.value==''" label="Project Coordinator(s) <i title='You can select Max. 3 Project Coordinators' class='pixel-icons icon-info-circle'></i>" nameKey="label" [options]="dropdowns.users" [multi]="true" formControlName="job_coordinators"></pi-select>
+				<div class="pi-error" *ngIf="projectInfo.controls.job_coordinators.hasError('required') && state.submitted">
+					Please Select Project Coordinator(s)
+				</div>
+				<pi-field-group>
+					<pi-select [disabled]="projectInfo.controls.org_id.value==''" label="Account Director" nameKey="label" [options]="dropdowns.users" [multi]="false" formControlName="account_director"></pi-select>
+					<pi-select [disabled]="projectInfo.controls.org_id.value==''" label="Account VP" nameKey="label" [options]="dropdowns.users" [multi]="false" formControlName="account_vp"></pi-select>
+				</pi-field-group>
+
+				<h4>DATES</h4>
+				<pi-field-group>
+					<pi-form-field label="Start Date" class="date-field">
+						<input pi-input matInput [min]="state.minDate" [owlDateTime]="startDate" formControlName="start_date" (focus)="startDate.open()"
+						 [owlDateTimeTrigger]="startDate" placeholder="Choose a date" readonly>
+						<div class="owl-picker-toggle">
+							<i class="pixel-icons icon-calendar" [owlDateTimeTrigger]="startDate"></i>
+						</div>
+						<owl-date-time #startDate [hour12Timer]="true"></owl-date-time>
+						<div class="pi-error" *ngIf="projectInfo.controls.start_date.hasError('required') && state.submitted">
+							Please Select Start Date
+						</div>
+					</pi-form-field>
+					<pi-form-field label="Delivery Due Date" class="date-field">
+						<input pi-input matInput [min]="projectInfo.controls.start_date.value || state.minDate" [owlDateTime]="deliveryDate" formControlName="delivery_due_date" (focus)="deliveryDate.open()"
+						 [owlDateTimeTrigger]="deliveryDate" placeholder="Choose a date" readonly>
+						<div class="owl-picker-toggle">
+							<i class="pixel-icons icon-calendar" [owlDateTimeTrigger]="deliveryDate"></i>
+						</div>
+						<owl-date-time #deliveryDate [hour12Timer]="true"></owl-date-time>
+						<div class="pi-error" *ngIf="projectInfo.controls.delivery_due_date.hasError('required') && state.submitted">
+							Please Select Delivery Due Date
+						</div>
+					</pi-form-field>
+				</pi-field-group>
+
+				<pi-field-group>
+					<pi-form-field label="Event Date (Optional)" class="date-field">
+						<input pi-input matInput [min]="projectInfo.controls.start_date.value || state.minDate" [owlDateTime]="eventDate" formControlName="event_date" (focus)="eventDate.open()"
+						 [owlDateTimeTrigger]="eventDate" placeholder="Choose a date" readonly>
+						<div class="owl-picker-toggle">
+							<i class="pixel-icons icon-calendar" [owlDateTimeTrigger]="eventDate"></i>
+						</div>
+						<owl-date-time #eventDate [hour12Timer]="true"></owl-date-time>
+					</pi-form-field>
+
+					<pi-form-field label="Final Bill Due Date" class="date-field">
+						<input pi-input matInput [min]="projectInfo.controls.start_date.value || state.minDate" [owlDateTime]="billDueDate" formControlName="final_due_date" (focus)="billDueDate.open()"
+						 [owlDateTimeTrigger]="billDueDate" placeholder="Choose a date" readonly>
+						<div class="owl-picker-toggle">
+							<i class="pixel-icons icon-calendar" [owlDateTimeTrigger]="billDueDate"></i>
+						</div>
+						<owl-date-time #billDueDate [hour12Timer]="true"></owl-date-time>
+					</pi-form-field>
+				</pi-field-group>
+
+				<div class="address-section">
+					<div class="address-wrapper inline-form default-address">
+						<div class="header">Default Shipping Address</div>
+						<div class="spineer-container">
+							<mat-spinner diameter="25" class="md" *ngIf="state.fetchingAddress"></mat-spinner>
+						</div>
+						<div *ngIf="!state.fetchingAddress" class="address-info default-info">
+							<div *ngIf="state.projectDetails.address?.shipping">
+								<!-- <i class="pixel-icons icon-billing-and-shipping"></i> -->
+								<div [ngClass]="{'svg-wrapper':isEdit}">
+									<svg width="51px" height="51px" viewBox="0 0 51 51" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+										<!-- Generator: Sketch 53.1 (72631) - https://sketchapp.com -->
+										<title>billing and shipping</title>
+										<desc>Created with Sketch.</desc>
+										<defs>
+											<linearGradient x1="12.2784586%" y1="2.06%" x2="99.9996481%" y2="98.367%" id="linearGradient-1">
+												<stop stop-color="#5DA3DB" offset="0%"></stop>
+												<stop stop-color="#A766CF" offset="100%"></stop>
+											</linearGradient>
+										</defs>
+										<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+											<g id="billing-and-shipping" fill="url(#linearGradient-1)">
+												<g id="Shape">
+													<path d="M32,49 L44,49 L44,2 L7,2 L7,49 L19,49 L19,39 C19,38.4477153 19.4477153,38 20,38 L31,38 C31.5522847,38 32,38.4477153 32,39 L32,49 Z M46,49 L50,49 C50.5522847,49 51,49.4477153 51,50 C51,50.5522847 50.5522847,51 50,51 L1,51 C0.44771525,51 6.76353751e-17,50.5522847 0,50 C-1.78657678e-16,49.4477153 0.44771525,49 1,49 L5,49 L5,1 C5,0.44771525 5.44771525,4.62867309e-14 6,4.61852778e-14 L45,4.60742555e-14 C45.5522847,4.59728025e-14 46,0.44771525 46,1 L46,49 Z M11,5 L18,5 C18.5522847,5 19,5.44771525 19,6 L19,13 C19,13.5522847 18.5522847,14 18,14 L11,14 C10.4477153,14 10,13.5522847 10,13 L10,6 C10,5.44771525 10.4477153,5 11,5 Z M12,7 L12,12 L17,12 L17,7 L12,7 Z M22,5 L29,5 C29.5522847,5 30,5.44771525 30,6 L30,13 C30,13.5522847 29.5522847,14 29,14 L22,14 C21.4477153,14 21,13.5522847 21,13 L21,6 C21,5.44771525 21.4477153,5 22,5 Z M23,7 L23,12 L28,12 L28,7 L23,7 Z M33,5 L40,5 C40.5522847,5 41,5.44771525 41,6 L41,13 C41,13.5522847 40.5522847,14 40,14 L33,14 C32.4477153,14 32,13.5522847 32,13 L32,6 C32,5.44771525 32.4477153,5 33,5 Z M34,7 L34,12 L39,12 L39,7 L34,7 Z M11,16 L18,16 C18.5522847,16 19,16.4477153 19,17 L19,24 C19,24.5522847 18.5522847,25 18,25 L11,25 C10.4477153,25 10,24.5522847 10,24 L10,17 C10,16.4477153 10.4477153,16 11,16 Z M12,18 L12,23 L17,23 L17,18 L12,18 Z M22,16 L29,16 C29.5522847,16 30,16.4477153 30,17 L30,24 C30,24.5522847 29.5522847,25 29,25 L22,25 C21.4477153,25 21,24.5522847 21,24 L21,17 C21,16.4477153 21.4477153,16 22,16 Z M23,18 L23,23 L28,23 L28,18 L23,18 Z M33,16 L40,16 C40.5522847,16 41,16.4477153 41,17 L41,24 C41,24.5522847 40.5522847,25 40,25 L33,25 C32.4477153,25 32,24.5522847 32,24 L32,17 C32,16.4477153 32.4477153,16 33,16 Z M34,18 L34,23 L39,23 L39,18 L34,18 Z M11,27 L18,27 C18.5522847,27 19,27.4477153 19,28 L19,35 C19,35.5522847 18.5522847,36 18,36 L11,36 C10.4477153,36 10,35.5522847 10,35 L10,28 C10,27.4477153 10.4477153,27 11,27 Z M12,29 L12,34 L17,34 L17,29 L12,29 Z M22,27 L29,27 C29.5522847,27 30,27.4477153 30,28 L30,35 C30,35.5522847 29.5522847,36 29,36 L22,36 C21.4477153,36 21,35.5522847 21,35 L21,28 C21,27.4477153 21.4477153,27 22,27 Z M23,29 L23,34 L28,34 L28,29 L23,29 Z M33,27 L40,27 C40.5522847,27 41,27.4477153 41,28 L41,35 C41,35.5522847 40.5522847,36 40,36 L33,36 C32.4477153,36 32,35.5522847 32,35 L32,28 C32,27.4477153 32.4477153,27 33,27 Z M34,29 L34,34 L39,34 L39,29 L34,29 Z M21,40 L21,49 L30,49 L30,40 L21,40 Z">
+													</path>
+												</g>
+											</g>
+										</g>
+									</svg>
+								</div>
+								<div *ngIf="!isEdit">
+									<p [innerHtml]="state.projectDetails.address?.shipping.address1"></p>
+									<p [innerHtml]="state.projectDetails.address?.shipping.city"></p>
+									<p><span [innerHtml]="state.projectDetails.address?.shipping.state"></span> - <span [innerHtml]="state.projectDetails.address?.shipping.postal_code"></span></p>
+									<p [innerHtml]="state.projectDetails.address?.shipping.country"></p>
+								</div>
+
+								<div *ngIf="isEdit" [formGroup]="editAddressForm">
+									<pi-form-field label=" ">
+										<input type="text" placeholder="Address" pi-input formControlName="address1" />
+									</pi-form-field>
+									<pi-field-group>
+										<pi-form-field label=" ">
+											<input type="text" pi-input formControlName="city" />
+										</pi-form-field>
+										<pi-select [label]=" " [options]="dropdowns.countries || []" [multi]="false" formControlName="country_id"></pi-select>
+									</pi-field-group>
+									<pi-field-group>
+										<pi-select [label]=" " [options]="dropdowns.states || []" [multi]="false" formControlName="state_id"></pi-select>
+										<pi-form-field label=" ">
+											<input type="text" pi-input formControlName="postal_code" />
+										</pi-form-field>
+									</pi-field-group>
+								</div>
+							</div>
+							<a *ngIf="state.projectDetails.address?.shipping" class="blue-link" (click)="changeAddress('shipping')">Change Address
+							</a>
+							<a *ngIf="state.projectDetails.address?.shipping" class="blue-link" (click)="editAddress(state.projectDetails.address?.shipping);isEdit = true;">Edit
+								Address
+							</a>
+
+							<div *ngIf="!state.projectDetails.address?.shipping">Nothing to show</div>
+							<div class="pi-error" *ngIf="!state.projectDetails.address?.shipping?.id && projectInfo.controls.org_id.value && state.submitted">Please Add Default Shipping Address</div>
+
+							<a *ngIf="!state.projectDetails.address?.shipping && projectInfo.controls.org_id.value" class="blue-link" (click)="changeAddress('shipping')">Add
+								Address
+							</a>
+							<!--!state.projectDetails.address?.shipping &&   editAddress('shipping');isEdit = true; -->
+						</div>
+						<pi-select label="Distribution Type" [options]="dropdowns.distributionTypes" [multi]="false" formControlName="distribution_type"></pi-select>
+					</div>
+					<div class="address-wrapper">
+						<pi-form-field class="header" label="Add Billing Address">
+							<input type="checkbox" pi-input formControlName="add_billing_address" />
+						</pi-form-field>
+						<div class="spineer-container">
+							<mat-spinner diameter="25" class="md" *ngIf="state.fetchingAddress"></mat-spinner>
+						</div>
+						<div *ngIf="!state.fetchingAddress" class="address-info">
+							<div *ngIf="state.projectDetails.address?.billing">
+								<svg width="51px" height="51px" viewBox="0 0 51 51" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+									<!-- Generator: Sketch 53.1 (72631) - https://sketchapp.com -->
+									<title>billing and shipping</title>
+									<desc>Created with Sketch.</desc>
+									<defs>
+										<linearGradient x1="12.2784586%" y1="2.06%" x2="99.9996481%" y2="98.367%" id="linearGradient-1">
+											<stop stop-color="#5DA3DB" offset="0%"></stop>
+											<stop stop-color="#A766CF" offset="100%"></stop>
+										</linearGradient>
+									</defs>
+									<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+										<g id="billing-and-shipping" fill="url(#linearGradient-1)">
+											<g id="Shape">
+												<path d="M32,49 L44,49 L44,2 L7,2 L7,49 L19,49 L19,39 C19,38.4477153 19.4477153,38 20,38 L31,38 C31.5522847,38 32,38.4477153 32,39 L32,49 Z M46,49 L50,49 C50.5522847,49 51,49.4477153 51,50 C51,50.5522847 50.5522847,51 50,51 L1,51 C0.44771525,51 6.76353751e-17,50.5522847 0,50 C-1.78657678e-16,49.4477153 0.44771525,49 1,49 L5,49 L5,1 C5,0.44771525 5.44771525,4.62867309e-14 6,4.61852778e-14 L45,4.60742555e-14 C45.5522847,4.59728025e-14 46,0.44771525 46,1 L46,49 Z M11,5 L18,5 C18.5522847,5 19,5.44771525 19,6 L19,13 C19,13.5522847 18.5522847,14 18,14 L11,14 C10.4477153,14 10,13.5522847 10,13 L10,6 C10,5.44771525 10.4477153,5 11,5 Z M12,7 L12,12 L17,12 L17,7 L12,7 Z M22,5 L29,5 C29.5522847,5 30,5.44771525 30,6 L30,13 C30,13.5522847 29.5522847,14 29,14 L22,14 C21.4477153,14 21,13.5522847 21,13 L21,6 C21,5.44771525 21.4477153,5 22,5 Z M23,7 L23,12 L28,12 L28,7 L23,7 Z M33,5 L40,5 C40.5522847,5 41,5.44771525 41,6 L41,13 C41,13.5522847 40.5522847,14 40,14 L33,14 C32.4477153,14 32,13.5522847 32,13 L32,6 C32,5.44771525 32.4477153,5 33,5 Z M34,7 L34,12 L39,12 L39,7 L34,7 Z M11,16 L18,16 C18.5522847,16 19,16.4477153 19,17 L19,24 C19,24.5522847 18.5522847,25 18,25 L11,25 C10.4477153,25 10,24.5522847 10,24 L10,17 C10,16.4477153 10.4477153,16 11,16 Z M12,18 L12,23 L17,23 L17,18 L12,18 Z M22,16 L29,16 C29.5522847,16 30,16.4477153 30,17 L30,24 C30,24.5522847 29.5522847,25 29,25 L22,25 C21.4477153,25 21,24.5522847 21,24 L21,17 C21,16.4477153 21.4477153,16 22,16 Z M23,18 L23,23 L28,23 L28,18 L23,18 Z M33,16 L40,16 C40.5522847,16 41,16.4477153 41,17 L41,24 C41,24.5522847 40.5522847,25 40,25 L33,25 C32.4477153,25 32,24.5522847 32,24 L32,17 C32,16.4477153 32.4477153,16 33,16 Z M34,18 L34,23 L39,23 L39,18 L34,18 Z M11,27 L18,27 C18.5522847,27 19,27.4477153 19,28 L19,35 C19,35.5522847 18.5522847,36 18,36 L11,36 C10.4477153,36 10,35.5522847 10,35 L10,28 C10,27.4477153 10.4477153,27 11,27 Z M12,29 L12,34 L17,34 L17,29 L12,29 Z M22,27 L29,27 C29.5522847,27 30,27.4477153 30,28 L30,35 C30,35.5522847 29.5522847,36 29,36 L22,36 C21.4477153,36 21,35.5522847 21,35 L21,28 C21,27.4477153 21.4477153,27 22,27 Z M23,29 L23,34 L28,34 L28,29 L23,29 Z M33,27 L40,27 C40.5522847,27 41,27.4477153 41,28 L41,35 C41,35.5522847 40.5522847,36 40,36 L33,36 C32.4477153,36 32,35.5522847 32,35 L32,28 C32,27.4477153 32.4477153,27 33,27 Z M34,29 L34,34 L39,34 L39,29 L34,29 Z M21,40 L21,49 L30,49 L30,40 L21,40 Z">
+												</path>
+											</g>
+										</g>
+									</g>
+								</svg>
+								<div>
+									<p [innerHtml]="state.projectDetails.address?.billing.address1"></p>
+									<p [innerHtml]="state.projectDetails.address?.billing.city"></p>
+									<p><span [innerHtml]="state.projectDetails.address?.billing.state"></span> - <span [innerHtml]="state.projectDetails.address?.billing.postal_code"></span></p>
+									<p [innerHtml]="state.projectDetails.address?.billing.country"></p>
+								</div>
+							</div>
+							<a *ngIf="state.projectDetails.address?.billing" class="blue-link" (click)="changeAddress('billing')">Change Address
+							</a>
+							<!-- <a *ngIf="!state.projectDetails.address?.billing" class="blue-link" (click)="changeAddress('billing')">Add
+								Address</a> -->
+							<div *ngIf="!state.projectDetails.address?.billing">Nothing to show</div>
+						</div>
+						<pi-form-field label="Vendor Funded">
+							<input type="checkbox" pi-input formControlName="vendor_funded" />
+						</pi-form-field>
+						<div class="brdr-btm">
+							<pi-form-field label="Create Related Projects">
+								<input type="checkbox" pi-input formControlName="create_related_jobs" />
+							</pi-form-field>
+							<div *ngIf="projectInfo.controls.create_related_jobs.value">
+								<pi-select label=" " [options]="dropdowns.companyCodes" [multi]="true" formControlName="related_company_codes"></pi-select>
+							</div>
+						</div>
+
+						<pi-form-field label="Show Project in Client Portal">
+							<input type="checkbox" pi-input formControlName="job_in_client_portal" />
+						</pi-form-field>
+					</div>
+
+				</div>
+
+				<div *ngIf="projectInfo.controls.org_id.value && state.projectDetails.custom_attributes.length">
+					<h4>Custom Attributes</h4>
+					<mat-spinner diameter="25" class="md" *ngIf="state.fetchingAttributes"></mat-spinner>
+					<div *ngIf="!state.fetchingAttributes">
+						<div *ngIf="state.projectDetails.custom_attributes.length" class="inline-form" formArrayName="custom_attributes">
+							<div *ngFor="let attr of state.projectDetails.custom_attributes; let i = index;">
+								<ng-container [formGroupName]="i" *ngIf="attr.key == 'dropdown'">
+									<!-- <pi-form-field [label]="attr.label"> -->
+									<!-- <mat-chip-list #chipList formArrayName="value">
+											<mat-chip *ngFor="let opt of customAttributes.controls[i].get('value').controls; let j=index;"
+											 [formGroupName]="j" [selectable]="true" [removable]="true" (removed)="!customAttributes.controls[i].get('value').disabled ? remove(customAttributes.controls[i], j) : ''">
+												{{opt.value}}
+												<i class="pixel-icons icon-close" matChipRemove *ngIf="true"></i>
+											</mat-chip>
+											<input placeholder="" [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+											 [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add(customAttributes.controls[i], $event)"
+											 [disabled]="customAttributes.controls[i].get('value').disabled">
+										</mat-chip-list>
+										<span class="field-note">Enter Value & press semicolon(;) to add a Choice.</span> -->
+									<pi-field-group>
+										<pi-select [label]="attr.label" [disabled]="!attr.settings.edit_in_job" [options]="attr.options" [multi]="false" formControlName="selected">
+										</pi-select>
+									</pi-field-group>
+
+									<!-- </pi-form-field> -->
+								</ng-container>
+
+								<ng-container [formGroupName]="i" *ngIf="attr.key == 'single_line_text'">
+									<pi-form-field [label]="attr.label">
+										<input type="text" pi-input [disabled]="!attr.settings.edit_in_job" formControlName="value" />
+									</pi-form-field>
+								</ng-container>
+							</div>
+						</div>
+						<div *ngIf="!state.projectDetails.custom_attributes.length">Nothing to show</div>
+					</div>
+				</div>
+
+			</form>
+		</div>
+	</div>
+	<div class="footer">
+		<div class="wrapper">
+			<button pi-button (click)="cancel(state.projectDetails)">Cancel</button>
+			<button pi-button color="primary" (click)="continue(projectInfo)" [disabled]="projectInfo.pristine || promise">Create
+				Project</button>
+		</div>
+	</div>
+</div>
+<div class="spinner-view" *ngIf="state.loader">
+		<div class="empty-screen">
+			<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+		</div>
+	</div>

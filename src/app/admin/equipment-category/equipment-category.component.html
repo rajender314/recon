@@ -1,0 +1,237 @@
+<pi-master-detail-view class="recon-admin-layout" [showDetail]="showView">
+	<pi-master-view class="admin-sidebar">
+		<div class="sidebar-header">
+			<!-- <span class="my-pixel-icon yellow">
+				<i class="pixel-icons icon-equipments"></i>
+			</span> -->
+			<div class="page-breadcrumb">
+				<app-admin-popover class="left-hdr-comp" [bgColor]="'yellow'" [icon]="'icon-equipments'" [primary]="'Admin'"
+				 [secondary]="'Equipment Category'" [data]="adminDashboard"></app-admin-popover>
+			</div>
+			<div class="icon-button-actions" *ngIf="APP.permissions.system_access.equipment_category=='edit'">
+
+				<button pi-icon-button class="icon-button-wrapper" (click)="openAddDialog()">
+					<i class="pixel-icons icon-plus"></i>
+				</button>
+
+				<button pi-icon-button class="icon-button-wrapper m-l-6" [matMenuTriggerFor]="menu">
+					<i class="pixel-icons icon-more-horizontal"></i>
+				</button>
+				<mat-menu #menu="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+					<button mat-menu-item (click)="export()">Export</button>
+				</mat-menu>
+
+			</div>
+
+
+			<app-search (onSearch)="onSearch($event)"></app-search>
+		</div>
+
+		<div class="head">
+			<div matBadgeOverlap="false" matBadgePosition="before" class="mat-badge-center">
+				<span [matMenuTriggerFor]="statusFilter">
+					<span>{{totalCount}}</span>
+					<span>{{statusBy}} {{totalCount == 1 ? 'Equipment Category' : 'Equipment Categories'}}</span>
+					<mat-icon>expand_more</mat-icon>
+				</span>
+				<mat-menu #statusFilter="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before">
+					<button mat-menu-item *ngFor="let status of dropdowns.statusFilter" (click)="onApplyFilter('status', status)">{{status.label}}</button>
+				</mat-menu>
+			</div>
+			<div class="sorting">
+				<span class="sort-action {{sortBy | lowercase}}" (click)="onApplyFilter('sort')">{{sortBy}}</span>
+			</div>
+		</div>
+		<div class="d-flex align-center justify-content-center w-100" *ngIf="isLoading" style="height: 80%;flex: 1;justify-content: center;align-items: center;">
+			<mat-spinner diameter="24" class="md"></mat-spinner>
+
+		</div>
+		<div class="sidebar-body">
+			<div class="sidebar-content" [class.spinner]="isLoading || !adminList?.length" infiniteScroll
+			 [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false">
+				<div class="body">
+					<!-- <mat-spinner diameter="45" class="md" *ngIf="isLoading"></mat-spinner> -->
+
+					<div class="no-data" [hidden]="isLoading || adminList?.length">
+						<div class="d-flex align-center justify-content-center w-100" style="min-height: 300px;flex: 1;
+						justify-content: center;align-items: center;">No
+							Equipment Category Found</div>
+					</div>
+
+					<div class="menu-container" *ngIf="!isLoading">
+						<ul class="single-list">
+							<li *ngFor="let list of adminList" [class.active]="selectedDetails?.id === list.id" [class.disable]="!list.status"
+							 (click)="onSelectItem(list);changeMasterView()">
+								<span [title]="list.name">{{list.name}}</span>
+							</li>
+						</ul>
+					</div>
+					<!-- <mat-list *ngIf="!isLoading">
+					<mat-list-item *ngFor="let list of adminList" [class.active]="selectedDetails?.id === list.id" [class.disable]="!list.status"
+					 (click)="onSelectItem(list);changeMasterView()">
+						<span [title]="list.name">{{list.name}}</span>
+					</mat-list-item>
+				</mat-list> -->
+				</div>
+			</div>
+		</div>
+	</pi-master-view>
+
+	<pi-detail-view class="admin-content right-section has-tabs">
+		<div class="no-data-screen spinner-view" *ngIf="!adminList?.length && !isLoading">
+			<div class="empty-screen">
+				<div class="icon-info-holder" *ngIf="param.search?.length">
+					<div class="icon">
+						<i class="pixel-icons icon-search"></i>
+					</div>
+					<p class="alert-message text-center" style="text-align: center;">No Equipment Category found for your search
+						string <br />
+						<b style="color: #172b4d;">'{{param.search}}'</b>
+					</p>
+				</div>
+				<div class="icon-info-holder">
+					<ng-container *ngIf="!param.search?.length">
+						<div class="icon">
+							<i class="pixel-icons icon-equipments"></i>
+						</div>
+						<p class="alert-message text-center" style="text-align: center;">No Equipment Category found</p>
+					</ng-container>
+					<button pi-button color="primary" (click)="openAddDialog(param.search)" *ngIf="APP.permissions.system_access.equipment_category=='edit'">+
+						Add New Equipment Category</button>
+				</div>
+
+			</div>
+		</div>
+		<div class="spinner-view" *ngIf="isLoading">
+				<div class="empty-screen">
+				  <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>				
+				</div>
+		</div>
+		<section class="admin-fixed-layout">
+
+			<ng-container *ngIf="adminList?.length">
+				<header class="header tab-header" *ngIf="selectedDetails">
+					<div class="w-100 d-flex flex-column justify-content-between">
+						<app-breadcrumb [list]="breadcrumbs"></app-breadcrumb>
+						<div class="d-flex align-items-center">
+							<h1 [innerHtml]="selectedDetails.name"></h1>
+						</div>
+						<div class="w-100 d-flex align-items-center justify-content-between">
+							<aside class="left-header flex-column d-flex ">
+								<nav *ngIf="selectedDetails" mat-tab-nav-bar class="nav-bar" [disableRipple]="true">
+									<div class="tab-group">
+										<a mat-tab-link (click)="onTabChange(index)" *ngFor="let link of state.tabs;let index = index" [active]="activeTab == index">
+											{{link.label}} </a>
+									</div>
+								</nav>
+							</aside>
+							<aside class="d-flex right-header justify-content-end ">
+								<button pi-button color="primary" (click)="addSpecs()" *ngIf="activeTab == 1 && APP.permissions.system_access.equipment_category=='edit'">Add
+									Specs</button>
+							</aside>
+						</div>
+					</div>
+				</header>
+				<div class="scroll-body" style="position: relative;">
+					<!-- Details Tab Content -->
+					<ng-container *ngIf="activeTab == 0">
+						<div class="spinner-view" *ngIf="fetchingDetails">
+							<div class="empty-screen">
+								<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+							</div>
+						</div>
+						<!-- <mat-spinner diameter="45" class="md" *ngIf="fetchingDetails"></mat-spinner> -->
+						<form *ngIf="!fetchingDetails && selectedDetails" [formGroup]="adminForm" class="form-flex padg" autocomplete="off">
+
+							<pi-form-field [label]="'Label'">
+								<input type="text" pi-input name="name" formControlName="name" [disabled]="APP.permissions.system_access.equipment_category!='edit'"
+								 maxlength="64" />
+								<div class="msgs">
+									<div class="pi-error" *ngIf="f.name.hasError('required') && submitted">Please Enter Equipment
+										Category Name</div>
+									<div class="pi-error" *ngIf="!f.name.hasError('required') && duplicateError">Equipment Category
+										{{duplicateError}}</div>
+								</div>
+							</pi-form-field>
+
+							<pi-select label="Status" [options]="dropdowns.statusList" formControlName="status" [disabled]="APP.permissions.system_access.equipment_category!='edit'"></pi-select>
+
+							<pi-form-field label="Description">
+								<textarea pi-input name="description" formControlName="description" [disabled]="APP.permissions.system_access.equipment_category!='edit'"
+								 maxlength="1024"></textarea>
+								<span class="field-note">Enter text of 1024 characters or less.</span>
+							</pi-form-field>
+
+							<pi-select label="Print Method" [options]="dropdowns.print_method" [multi]="false" formControlName="print_method_id"
+							 [disabled]="APP.permissions.system_access.equipment_category!='edit'"></pi-select>
+							<app-modified-user-info [modifiedInfo]="selectedDetails"></app-modified-user-info>
+						</form>
+					</ng-container>
+					<!-- Specs Tab Content -->
+					<ng-container *ngIf="activeTab == 1">
+						<div class="spinner-view" *ngIf="tabSpinner">
+							<div class="empty-screen">
+								<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+							</div>
+						</div>
+						<div class="no-data" *ngIf="!orderSpecs || !orderSpecs.length" style="font-size: 14px; color: #7b8088; padding-top: 20px;">No
+							Specs Assigned</div>
+
+						<div class="form-specs padg" [class.has-spinner]="tabSpinner || !orderSpecs.length">
+							<!-- <mat-spinner diameter="45" class="md" *ngIf="tabSpinner"></mat-spinner> -->
+							<form *ngIf="!tabSpinner" [formGroup]="specsForm" class="form-flex" autocomplete="off">
+								<div class="tasks-list" formGroupName="defaults" *ngIf="orderSpecs && orderSpecs.length">
+									<div class="task-row flex-column" [sortablejs]="orderSpecs" [sortablejsOptions]="sortOptions">
+										<div class="task-container" *ngFor="let spec of orderSpecs; let i = index">
+											<div *ngIf="APP.permissions.system_access.equipment_category=='edit'">
+												<!-- <button pi-icon-button class="handle">
+																<i class="pixel-icons icon-drag"></i>
+															</button> -->
+												<i class="pixel-icons icon-drag handle"></i>
+
+											</div>
+											<app-form-builder class="field-col" [config]="spec" [form]="defaults.controls[spec.id]"></app-form-builder>
+											<div class="task-menu" *ngIf="APP.permissions.system_access.equipment_category=='edit'">
+												<!-- <button pi-icon-button class="handle">
+														<i class="pixel-icons icon-drag"></i>
+													</button> -->
+												<!-- <i class="pixel-icons icon-drag handle"></i> -->
+												<button pi-icon-button color="subtle" [matMenuTriggerFor]="actions">
+													<i class="pixel-icons icon-more-horizontal"></i>
+												</button>
+												<mat-menu #actions="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+													<button mat-menu-item (click)="perfomAction(spec, 'mandatory', null, i)">
+														{{defaults.controls[spec.id].value.settings.mandatory ? 'Remove ' : 'Set as '}} Mandatory
+													</button>
+													<button mat-menu-item (click)="perfomAction(spec, 'set', null, i)">Set Default</button>
+													<button mat-menu-item (click)="perfomAction(spec, 'unset', null, i)">Remove Default</button>
+													<button mat-menu-item (click)="perfomAction(spec, 'delete', null, i)">Remove Spec</button>
+												</mat-menu>
+											</div>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+
+
+					</ng-container>
+				</div>
+				<div class="footer" *ngIf="activeTab == 0 && !fetchingDetails && selectedDetails && APP.permissions.system_access.equipment_category=='edit'">
+					<div class="admin-max-footer">
+						<button pi-button (click)="resetForm(selectedDetails)">Cancel</button>
+						<button pi-button class="m-l-15" color="primary" (click)="saveDetails(adminForm)" [disabled]="adminForm.pristine">Save</button>
+					</div>
+				</div>
+				<div class=" footer" *ngIf="activeTab == 1 && !tabSpinner && selectedDetails.specData && APP.permissions.system_access.equipment_category=='edit'">
+					<div class="admin-max-footer">
+						<button pi-button (click)="resetSpecs(selectedDetails.specData)">Cancel</button>
+						<button pi-button class="m-l-15" color="primary" (click)="updateSpecs(specsForm)" [disabled]="specsForm.pristine">Save</button>
+					</div>
+				</div>
+			</ng-container>
+
+
+		</section>
+	</pi-detail-view>
+</pi-master-detail-view>

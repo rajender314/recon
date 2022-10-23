@@ -1,0 +1,185 @@
+<!-- <div class="mat-dialog-heading">
+	<div class="info">
+		<i class="pixel-icons icon-arrow" (click)="closeDialog()"></i>
+		<h2 [innerHtml]="data.title"></h2>
+	</div>
+	<div class="actions">
+		<app-search></app-search>
+		<button pi-button mat-dialog-close>Cancel</button>
+		<button pi-button color="primary">Save</button>
+	</div>
+</div> -->
+
+<mat-dialog-content>
+	<app-breadcrumb [list]="data.breadcrumbs" class="edit-popup-breadcrumb"></app-breadcrumb>
+	<div class="fixed-header">
+		<div class="info">
+			<i class="pixel-icons icon-arrow" (click)="closeDialog()"></i>
+			<h2 [innerHtml]="data.title"></h2>
+		</div>
+		<div class="actions">
+			<!-- <app-search></app-search> -->
+			<!-- <button pi-button mat-dialog-close>Cancel</button>
+					<button pi-button color="primary">Save</button> -->
+		</div>
+	</div>
+	<pi-master-detail-view class="details-wrapper" [showDetail]="state.showView1">
+		<pi-master-view class="left-section">
+			<div class="products-list">
+				<div class="list">
+					<div class="list-items" *ngFor="let prod of state.productList; let i = index">
+						<div class="parent-item" (click)="prod.isOpen = !prod.isOpen">
+							<i class="pixel-icons icon-products"></i>
+							<div>
+								<span [innerHtml]="prod.product_name"></span>
+								<span [innerHtml]="prod.type"></span>
+							</div>
+							<i class="pixel-icons {{prod.isOpen ? 'icon-arrow-down' : 'icon-arrow-up'}}"></i>
+						</div>
+						<div class="child-item" *ngIf="prod.isOpen">
+							<div *ngFor="let serv of prod.services; let j = index" [class.active]="serv.id == state.selectedService.id"
+							 (click)="onSelectService(serv, i, j)">
+								<i class="pixel-icons icon-orders"></i>
+								<span [innerHtml]="serv.services_name"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</pi-master-view>
+
+		<pi-detail-view class="right-section">
+			<div class="products-list detail-info">
+				<div class="bck-wrapper" (click)="backToList()">
+					<i class="back-link pixel-icons icon-arrow"></i>
+					Products List
+				</div>
+				<div class="details">
+					<div class="list-items">
+						<div class="child-item child-detail">
+							<div *ngIf="state.selectedService">
+								<i class="pixel-icons icon-orders"></i>
+								<span [innerHtml]="state.selectedService.services_name" class="font-bold"></span>
+								<span [innerHtml]="state.selectedService.form_status" class="service_status status_{{state.selectedService.form_status_id}}"></span>
+								<div class="row-actions">
+									<!-- <button class="compac" pi-button>Assign</button> -->
+
+									<button class="compac" pi-icon-button color="subtle" [matMenuTriggerFor]="serviceActions">
+										<i class="pixel-icons icon-more-horizontal"></i>
+									</button>
+									<mat-menu #serviceActions="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+										<button mat-menu-item *ngFor="let action of data.actions" [innerHtml]="action.label" (click)="performActions(action.flag, action.key)"></button>
+									</mat-menu>
+								</div>
+								<span class="rev-sort" [matMenuTriggerFor]="revision">
+									<span>R {{state.selectedRevision != null ? state.selectedRevision :
+										state.selectedService.service_revision_no}}</span>
+									<i class="pixel-icons icon-triangle-arrow-up"></i>
+									<i class="pixel-icons icon-triangle-arrow"></i>
+								</span>
+								<span class="options-label">Option:</span>
+
+							</div>
+
+							<div>
+								<mat-menu #revision="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+									<button mat-menu-item *ngFor="let rev of getRevisions(state.selectedService.service_revision_no || 0)" (click)="changeRevision(rev)">R
+										{{rev}}</button>
+								</mat-menu>
+
+								<mat-tab-group dynamicHeight [disableRipple]="true" [selectedIndex]="state.selectedIndex" (selectedIndexChange)="onTabChange($event)">
+									<mat-tab *ngFor="let tab of state.selectedService.options;let i = index" [label]="i+1">
+										<div *ngIf="state.selectedIndex == i" class="prdt-content" [class.inline-form]="state.selectedService.form_layout == 3">
+											<mat-spinner diameter="30" class="md" *ngIf="state.fetchingSpecs"></mat-spinner>
+											<div *ngIf="!state.fetchingSpecs" class="edit-product-pi-form-field-change">
+												<div *ngFor="let spec of state.formLayout; let l = index">
+													<pi-field-group *ngIf="spec.length > 1">
+														<div class="field-set" *ngFor="let layout of spec">
+															<div *ngIf="layout">
+																<span class="change-in-revision" title="Spec value changed in this revision" *ngIf="optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.value.has_change"></span>
+																<div class="edit-field-sec" [ngClass]="{'spec-field':optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.value.is_adhoc}">
+																	<app-form-builder [config]="layout" [form]="optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]"></app-form-builder>
+																	<div class="error-sec">
+																		<div class="msg pi-error satish" *ngIf="state.submitted">
+																			<div *ngIf="!optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.valid">Please
+																				{{layout.template_id == 2 || layout.template_id == 4 ? 'Enter' : 'Select'}} {{layout.label}}</div>
+																		</div>
+																		<i class="pixel-icons icon-delete" (click)="deleteAdhocSpec(layout, l)" *ngIf="optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.value.is_adhoc"></i>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</pi-field-group>
+													<div *ngIf="spec.length == 1">
+														<div class="field-set" *ngFor="let layout of spec">
+															<div *ngIf="layout" class="edit-field-container" [ngClass]="{'change-revision' : optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.value.has_change}">
+																<span class="change-in-revision" title="Spec value changed in this revision" *ngIf="optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.value.has_change"></span>
+																<div class="edit-field-sec" [ngClass]="{'spec-field':optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.value.is_adhoc}">
+																	<app-form-builder [config]="layout" [form]="optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]"></app-form-builder>
+																	<!-- <div  *ngIf=""> -->
+																	<div class="error-sec">
+																		<div class="msg pi-error" *ngIf="state.submitted && !optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.valid">Please
+																			{{layout.template_id == 2 || layout.template_id == 4 ? 'Enter' : 'Select'}} {{layout.label}}</div>
+																		<i class="pixel-icons icon-delete testing-icon" (click)="deleteAdhocSpec(layout, l)" *ngIf="optionsGroup.controls[tab.id].controls.form_save_values.controls[layout.index]?.value.is_adhoc"></i>
+																	</div>
+																	<!-- </div> -->
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- <div *ngFor="let spec of tab.specs; let l = index">
+													<app-form-builder [config]="spec" [form]="optionsGroup.controls[tab.id].controls.form_save_values.controls[l]"></app-form-builder>
+												</div> -->
+												<span *ngIf="!tab.specs?.length">Specs not available</span>
+												<div class="actions">
+													<a (click)="addSpecs(state.selectedService)">
+														<i class="pixel-icons icon-plus-slim"></i>Add Specs
+													</a>
+
+												</div>
+											</div>
+										</div>
+									</mat-tab>
+									<mat-tab *ngIf="state.selectedService.options.length < 10" disabled>
+										<ng-template mat-tab-label>
+											<a class="add-tab" (click)="prePareOption()" [matMenuTriggerFor]="addProductMenu">
+												<i class="pixel-icons icon-plus-slim"></i>
+											</a>
+											<div class="wrapper-triangle-top">
+												<mat-menu #addProductMenu="matMenu" [overlapTrigger]="false" yPosition="below" class="more-actions add-tab-menu">
+													<pi-select (click)="$event.stopPropagation()" label="Add Option" [options]="selectedTabOptions" [multi]="false"
+													 [(ngModel)]="selectedTabOption"></pi-select>
+													<button (click)="addOptionTab()" pi-button color="primary">Add</button>
+												</mat-menu>
+											</div>
+										</ng-template>
+									</mat-tab>
+								</mat-tab-group>
+							</div>
+
+						</div>
+						<div class="actions sticky-footer">
+							<button pi-button (click)="resetForm()">Reset</button>
+							<ng-container *ngIf="state.selectedService.form_status_id == 1 || state.selectedService.form_status_id == 10 || state.selectedService.form_status_id == 11">
+								<button pi-button color="primary" [disabled]="serviceForm.pristine" (click)="saveSpecs()">Save</button>
+								<button pi-button (click)="saveSpecs(true)" *ngIf="state.selectedService.form_status_id == 1">Submit</button>
+							</ng-container>
+							<ng-container *ngIf="state.selectedService.form_status_id == 2">
+								<button pi-button (click)="saveSpecs(true)">Resubmit</button>
+							</ng-container>
+							<ng-container *ngIf="state.selectedService.form_status_id == 3 || state.selectedService.form_status_id == 4 || state.selectedService.form_status_id == 5  || state.selectedService.form_status_id == 6  || state.selectedService.form_status_id == 7  || state.selectedService.form_status_id == 8  || state.selectedService.form_status_id == 9 || state.selectedService.form_status_id == 11">
+								<!-- <button pi-button>Save & Preserve Pricing</button> -->
+								<button pi-button (click)="saveToNewRevision(true)">Submit Revision</button>
+								<button pi-button (click)="saveToNewRevision()" *ngIf="state.selectedService.form_status_id != 11">Save to New
+									Revision</button>
+							</ng-container>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</pi-detail-view>
+	</pi-master-detail-view>
+
+</mat-dialog-content>

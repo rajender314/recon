@@ -1,0 +1,66 @@
+@import "../../../assets/styles/mixins";
+.track-header{
+    display: flex;
+    
+    .col-field-multiple{display: flex;justify-content: flex-end;}
+}
+
+
+.side-nav {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 3;
+    background: #fff;
+    border-left: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    max-width: 440px;
+    width: 100%;
+    animation-duration: 0.20s;
+    /*0.15s;*/
+    animation-timing-function: cubic-bezier(0.2, 1, 0.4, 1);
+    animation-fill-mode: both;
+    animation-name: slideOutRight;
+    &.active {
+        animation-name: slideInRight;
+    }
+    .side-nav-header {
+        .side-nav-title {
+            border-bottom: 2px solid #D7DDE7;
+            padding: 10px 0px 10px 0px;
+            i{
+                width: 16px;
+                font-size: 16px;
+                height: 16px;
+                line-height: 16px;
+                margin-right: 10px;
+            }
+            h2 {
+                padding: 0;
+                // border-bottom: 2px solid #D7DDE7;
+            }
+        }
+    }
+    .side-nav-content{
+        padding: 0 15px;
+    }
+}
+
+.side-nav-container {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 5;
+    .overlay {
+        position: absolute;
+        left: -60px;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-color: rgba(9, 30, 66, 0.54);
+    }
+}

@@ -1,0 +1,51 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+			<i class="pixel-icons icon-close-slim"></i>
+  </button>
+
+</div>
+<mat-dialog-content>
+  <form [formGroup]="addressForm" class="form-flex" autocomplete="off">
+    <pi-field-group>
+      <pi-select label="Address Type" id="address_type" name="address_type" [options]="data.address_types"
+        formControlName="address_type"></pi-select>
+    </pi-field-group>
+    <pi-form-field label="Address1">
+      <input type="text" pi-input id="address1" name="address1" formControlName="address1">
+      <div class="pi-error" *ngIf="addressForm.controls.address1.hasError('required') && submitted">Please Enter
+        Address</div>
+    </pi-form-field>
+
+    <pi-form-field label="Address2">
+      <input type="text" pi-input id="address2" name="address2" formControlName="address2">
+    </pi-form-field>
+
+    <pi-form-field label="City">
+      <input type="text" pi-input id="city" name="city" formControlName="city">
+    </pi-form-field>
+
+    <pi-field-group>
+      <pi-select label="Country" id="country" (onChange)="getStates()" name="country" [options]="countries"
+        formControlName="country"></pi-select>
+    </pi-field-group>
+    <pi-field-group>
+      <pi-select label="State/Provience" id="state" name="state" formControlName="state" [options]="states"></pi-select>
+      <pi-form-field label="Zip/Postal Code">
+        <input type="text" pi-input id="postal_code" name="postal_code" formControlName="postal_code">
+      </pi-form-field>
+    </pi-field-group>
+    <pi-form-field label="Default Shipping Address" class="edit_check" *ngIf="selected?.org_type == 2">
+        <input type="checkbox" pi-input (change)="changeDefaultAddress();" [checked]="addressForm.get('default_shipping').value=='1'" formControlName="default_shipping" />
+      </pi-form-field>
+    <!-- <div class="ak-field-group chk-box">
+      <mat-checkbox [disableRipple]="true" color="primary" [checked]="addressForm.get('default_shipping').value=='1'"
+        formControlName="default_shipping">Default Shipping Address</mat-checkbox>
+    </div> -->
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+  <button pi-button color="subtle" (click)="closeDialog()">Cancel</button>
+  <button pi-button color="primary" (click)="saveAddress(addressForm)" [disabled]="addressForm.pristine">Save</button>
+</mat-dialog-actions>

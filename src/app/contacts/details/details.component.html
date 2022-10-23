@@ -1,0 +1,124 @@
+<mat-spinner *ngIf="state.isLoading" diameter="36"></mat-spinner>
+<pi-master-detail-view *ngIf="!state.isLoading" size="sm" [showDetail]="state.showView" class="primary-layout">
+	<pi-master-view class="component-menu">
+		<header class="page-breadcrumb">
+			<a class="back-link" [routerLink]="['/organizations']">
+				<i class="pixel-icons icon-arrow"></i><span>Organizations</span></a>
+		</header>
+		<div class="user-switching">
+			<div class="user-switching-dropdown">
+				<span ng2FileSelect [uploader]="uploader" class="my-pixel-icon green">
+					<i class="pixel-icons icon-company-codes"></i>
+				</span>
+				<button mat-button [disableRipple]="true" [matMenuTriggerFor]="menu">
+					<span class="detail-orgname">{{state.org.selected?.name}}</span>
+					<i class="pixel-icons icon-arrow-down"></i>
+				</button>
+				<mat-menu #menu="matMenu" yPosition="below" [overlapTrigger]="false" (closed)="closeSearch()"
+					class="orgs-list">
+					<app-search [search]="state.org.search" (click)="$event.stopPropagation()"
+						(onSearch)="searchOrgList($event)"></app-search>
+					<mat-spinner *ngIf="state.org.isLoading" diameter="36"></mat-spinner>
+					<app-organizations infiniteScroll [infiniteScrollDistance]="1" [infiniteScrollThrottle]="50"
+						(scrolled)="onScroll()" [scrollWindow]="false" *ngIf="!state.org.isLoading"
+						[organizations]="state.org.list" (trigger)="getSelectedOrganization($event)"
+						[orgCount]="state.org.list.length" [listType]="'select'" [isPopup]="true" [orgType]="0">
+					</app-organizations>
+				</mat-menu>
+			</div>
+		</div>
+		<div class="menu-container">
+			<div class="internal-links">
+				<ul class="group-links">
+					<ng-container *ngFor="let route of state.routes">
+						<li *ngIf="((state.org.selected?.level!=2 && state.org.selected?.org_type==2) || (state.org.selected?.level!=1 && state.org.selected?.org_type==3) || route.id!=4)"
+							(click)="getTabDetails(route);changeMasterView()"
+							[class.active]="state.selectedRoute?.id==route.id">
+							<i class="pixel-icons {{route.icon}}"></i><span>{{route.name}}</span>
+							<span class="count"
+								*ngIf="route.id==3 && state.org.counts?.c_count!=0">{{state.org.counts?.c_count}}</span>
+							<span class="count"
+								*ngIf="route.id==4 && state.org.counts?.sub_orgs!=0">{{state.org.counts?.sub_orgs}}</span>
+						</li>
+					</ng-container>
+				</ul>
+				<h4 *ngIf="state.org.selected?.org_type==2">CLIENT INFO</h4>
+				<ul class="group-links" *ngIf="state.org.selected?.org_type==2">
+					<li class="p-left" *ngFor="let route of state.clientRoutes"
+						(click)="getTabDetails(route);changeMasterView()"
+						[class.active]="state.selectedRoute?.id==route.id">
+						<span>{{route.name}}</span>
+					</li>
+				</ul>
+				<h4 *ngIf="state.org.selected?.org_type==3">VENDOR INFO</h4>
+				<ul class="group-links" *ngIf="state.org.selected?.org_type==3">
+					<li class="p-left" *ngFor="let route of state.vendorRoutes"
+						(click)="getTabDetails(route);changeMasterView()"
+						[class.active]="state.selectedRoute?.id==route.id">
+						{{route.name}}
+					</li>
+				</ul>
+
+			</div>
+		</div>
+		<div>
+		</div>
+	</pi-master-view>
+	<pi-detail-view>
+		<div class="primary-layout-detail">
+			<header>
+				<div class="w-100 d-flex flex-column justify-content-between primary-max-screen-width">
+					<pi-breadcrumb>
+						<pi-breadcrumb-item label="Organizations" [routerLink]="['/organizations']">
+						</pi-breadcrumb-item>
+						<pi-breadcrumb-item>{{state.org.selected?.name}}</pi-breadcrumb-item>
+					</pi-breadcrumb>
+					<div class="w-100 d-flex align-items-center justify-content-between ">
+						<aside class="left-header d-flex flex-width">
+							<h1> {{state.selectedRoute?.name}}</h1>
+						</aside>
+						<aside class="d-flex right-header justify-content-end flex-width">
+							<div class="header-options" *ngIf="state.selectedRoute?.filter">
+								<label>Show:</label>
+
+								<span [matMenuTriggerFor]="layout">{{selectedAction}}
+									<i class="pixel-icons icon-arrow-down"></i>
+								</span>
+								<mat-menu #layout="matMenu" [overlapTrigger]="false" yPosition="below"
+									xPosition="before" class="more-actions grp-actions">
+									<button [disableRipple]="true" mat-menu-item (click)="filterAction('')">All</button>
+									<button mat-menu-item (click)="filterAction(true)">Active</button>
+									<button mat-menu-item (click)="filterAction(false)">Inactive</button>
+								</mat-menu>
+							</div>
+							<app-search class="m-l-15" [search]="search" *ngIf="state.selectedRoute?.search"
+								(onSearch)="searchList($event)"></app-search>
+							<button pi-button color="primary" class="m-l-15" *ngIf="state.selectedRoute?.add && state.editable"
+								(click)="addRelatedTab()">{{state.selectedRoute?.textLabels?.addTabTitle}}</button>
+							<button pi-button color="primary" class="m-l-15" *ngIf="state.org.selected?.parent_id"
+								(click)="goToParent()">Go To
+								Parent</button>
+						</aside>
+					</div>
+				</div>
+			</header>
+			<div class="primary-layout-detail-body flex-column padding-15">
+				<div class="primary-max-screen-width calc-height">
+					<router-outlet></router-outlet>
+				</div>
+			</div>
+
+			<div class="no-data-screen" *ngIf="!state.isLoading && state.noData">
+                <div class="wrapper">
+                    <div class="icon" *ngIf="state.selectedRoute?.listView"><i class="pixel-icons"
+                            [ngClass]="state.selectedRoute?.textLabels?.addImage"></i></div>
+                    <p>{{state.selectedRoute?.textLabels?.addTitle}}</p>
+                    <button pi-icon-button color="primary" *ngIf="state.selectedRoute?.add && state.editable" (click)="addRelatedTab()">
+                        <i class="pixel-icons icon-plus-slim"></i>{{state.selectedRoute?.textLabels?.addTabTitle}}
+                    </button>
+
+                </div>
+            </div>
+		</div>
+	</pi-detail-view>
+</pi-master-detail-view>

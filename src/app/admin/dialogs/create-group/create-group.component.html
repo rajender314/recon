@@ -1,0 +1,32 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+<mat-dialog-content>
+	<form [formGroup]="createFormGroup" class="form-flex" autocomplete="off">
+
+		<pi-form-field [label]="'Group Name'">
+			<input type="text" pi-input name="name" formControlName="name" maxlength="64" />
+			<div class="msgs">
+				<div class="pi-error" *ngIf="f.name.hasError('required') && submitted">Please Enter Group Name</div>
+				<div class="pi-error" *ngIf="!f.name.hasError('required') && duplicateError">Group {{duplicateError}}</div>
+			</div>
+		</pi-form-field>
+		
+		<pi-select label="Status" [options]="data.dropdowns.statusList" formControlName="status"></pi-select>
+		
+		<pi-form-field label="Description">
+			<textarea pi-input name="description" formControlName="description" maxlength="1024"></textarea>
+			<span class="field-note">Enter text of 1024 characters or less.</span>
+		</pi-form-field>
+		
+		<pi-select label="Users" [options]="data.dropdowns.usersList" [multi]="true" formControlName="users_id"></pi-select>
+
+	</form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+	<button pi-button  (click)="closeDialog()">Cancel</button>
+	<button pi-button color="primary" (click)="saveDetails(createFormGroup)" [disabled]="createFormGroup.pristine">Save</button>
+</mat-dialog-actions>

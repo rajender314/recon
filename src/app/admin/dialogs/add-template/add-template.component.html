@@ -1,0 +1,27 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="createFormGroup" class="form-flex" autocomplete="off">
+    <pi-form-field label="Template Name">
+        <input autocomplete="" type="text" maxlength="64" pi-input id="name" name="name" (input)="removeDuplicate()" formControlName="name">
+        <div class="pi-error" *ngIf="createFormGroup.controls.name.hasError('required') && submitted && !duplicateError && !data.params.department_id">Please Enter Schedule Template Name</div>
+        <div class="pi-error" *ngIf="createFormGroup.controls.name.hasError('required') && submitted && !duplicateError && data.params.department_id">Please Enter Vendor Template Name</div>
+        <div class="pi-error" *ngIf="duplicateError">{{duplicateError}}</div>
+    </pi-form-field>
+    <div class="p-t chk-radio" *ngIf="!data.params.department_id">
+      <label for="parent-company">Parent Company Code</label>
+      <pi-form-field label="IVIE" class="m-t">
+        <input type="checkbox" pi-input id="parent-company" formControlName="parentCompany" required/>
+      </pi-form-field>
+      <div class="pi-error" *ngIf="createFormGroup.controls.parentCompany.hasError('required') && submitted">Please Select Parent Company</div>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+  <button pi-button (click)="closeDialog()">Cancel</button>
+  <button pi-button color="primary" (click)="saveDetails(createFormGroup)" [disabled]="createFormGroup.pristine">Save</button>
+</mat-dialog-actions>

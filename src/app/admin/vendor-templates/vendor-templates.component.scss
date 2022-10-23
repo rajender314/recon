@@ -1,0 +1,272 @@
+@import "../../../assets/styles/mixins";
+
+.animate-icon-effect-1a{
+    right: 6px;
+    background: rgba(23, 43, 77, 0.1);
+    border-radius: 3px;
+    cursor: pointer;
+    top: 5px;
+    position: absolute;
+overflow: hidden;
+i{
+    &.icon-plus{
+        font-size: 14px;
+        position: relative;
+        height: 18px;
+        width: 18px;
+        line-height: 1;
+        top: 5px;
+        color: #172b4d;
+    }
+}
+}
+.tasks-list{
+    max-width: 600px;
+    .task-row{
+        display: flex;
+        width: 100%;
+        .task-container{
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            padding-top: .5rem;
+            padding-bottom: .5rem;
+            width: 100%;        
+            border-bottom: 1px dashed #ebedf2;
+            i{
+                &.icon-drag{
+                    font-size: 15px;
+                    height: 21px;
+                    cursor: pointer;
+                    width: 21px;
+                    margin-right: 4px;
+                    line-height: 22px;
+                    text-align: center;
+                    border-radius: 3px;
+                }
+                &:hover{
+                    background: #ebedf2;
+                }
+            }
+            .task-menu{
+                width: 7rem;
+                -webkit-box-flex: 1;
+                -ms-flex-positive: 1;
+                flex-grow: 1;
+                text-align: right;
+                font-weight: 500;
+                font-size: 1.1rem;
+                .ak-button{
+                    padding: 0px;
+                }
+                i{
+                    &.icon-more-horizontal{
+                        font-size: 18px;
+                        height: 18px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.left-content{
+    .vendor-list{
+        .mat-list-item{height: 38px;
+            ::ng-deep .mat-list-item-content{
+                .mat-list-text{
+                   flex-direction: row;
+                   align-items: center;
+                   span{flex: 1;}
+                }
+                .pixel-icons, .no-children{
+                    font-size: 12px;height: 11px;width: 12px;
+                    margin-right: 4px;cursor: pointer;
+                    &:hover{
+                        color: rgba(23, 43, 77, 1);
+                    }
+                }
+            }
+            &.parent{cursor: default;}
+            &.child{
+                ::ng-deep .mat-list-item-content{
+                    padding-left: 28px;
+                }
+            }
+        }
+    }
+}
+
+pi-detail-view{
+    position: relative;
+    mat-spinner{
+        position: absolute !important;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+    
+    .right-header{
+        border-bottom: none !important;
+    }
+    .right-content{
+        padding: 0;
+        @media screen and (min-width:960px){
+            padding: 0 15px 0 0;
+        }
+        .task-header{
+            position: relative;
+            display: flex;
+            z-index: 999;
+            .ak-button{
+                margin-right: 16px;
+                min-width: 44px;
+                &.icon-button{margin-right: 0;
+                    i{font-size: 16px;width: 16px;height: 16px;}
+                }
+            }
+            @media screen and (min-width:960px){
+                position: absolute;
+                right: 30px;
+                top: 4px;
+            }
+        }
+        ::ng-deep .mat-tab-group{
+            display: flex;
+            height: 100%;
+            .mat-tab-labels{
+                .mat-tab-label{
+                    min-width: 40px;
+                    height: 30px;
+                    padding: 20px 0px;
+                    margin: 0px 20px;
+                    &:first-child{
+                        margin-left: 0;
+                    }
+                }
+            }
+            .mat-tab-body-wrapper{
+                flex: 1;
+            }
+        }
+        
+        .form-wrapper{
+            max-width: 490px;
+        }
+
+        .task-container{
+            display: flex;
+            flex-direction: column;
+            color: rgba(23, 43, 77, 0.8);
+            flex: 1;
+            height: 100%;
+            @include regularFont;
+            font-size: 12px;
+            @media screen and (min-width: 960px){
+                font-size: 14px;
+            }
+            .task-body{overflow: auto;flex: 1;
+               .tasks-list{
+                    .task-row, .sub-task-row{
+                        display: flex;align-items: flex-start;position: relative;
+                    }
+                    .task-item{
+                        display: flex;
+                        padding: 10px 0 10px 24px;border-bottom: 1px solid #eee;
+                        .task-info{
+                            display: flex;flex: 1;justify-content: space-between;line-height: normal;align-items: center;
+                        }
+                    }
+                    .icon-drag{
+                        font-size: 14px;width: 14px;height: 14px;cursor: pointer;
+                        position: absolute;left: 0;top: 15px;
+                    }
+                    .general-data{min-height: 38px;/*min-width: 140px;*/
+                        .user-name{color: rgba(23, 43, 77, 0.5);font-size:12px;
+                            i{
+                                width: 14px;font-size: 14px;height: 14px;
+                                position: relative;top: 1px;color: rgba(23, 43, 77, 0.4);
+                            }
+                        }
+                    }
+                    .sub-task-row{
+                        padding: 10px 0 10px 48px;border-bottom: 1px solid #eee;
+                        .icon-drag{left: 22px;}
+                        .sub-task-info{
+                            display: flex;flex: 1;justify-content: space-between;
+                        }
+                        .general-data{
+                            max-width: 104px;
+                            @media screen and (min-width: 960px){
+                                max-width: 100%;
+                            }
+                        }
+                    }  
+                    
+                    .form-info{
+                        margin-left: auto;
+                        min-width: 20px;
+                        text-align: center;
+                    }
+                    .dependencies{
+                        margin: 0 16px;min-width: 80px;color: rgba(23, 43, 77, 0.6);
+                        @media screen and (min-width: 960px){
+                            min-width: 138px;
+                        }
+                    }
+                    .no-dependencies{
+                        color: rgba(23, 43, 77, 0.4);margin: 0 16px;text-align: center;
+                        max-width: 80px;
+                        @media screen and (min-width: 960px){
+                            max-width: 100%;
+                        }
+                    }
+                }
+                .ak-button{margin-right: 0;    margin-right: 0;
+                    min-width: 25px;
+                    width: 25px;
+                    max-width: 25px;
+                    height: 25px;
+                    line-height: 25px;
+                    &:focus{
+                        box-shadow: 0 0 0 2px rgba(38,132,255,.6) inset;
+                    }
+                }
+            }
+            .task-menu, .sub-task-menu{margin-left: auto;}
+            .icon-button{
+                i{font-size: 16px;width: 16px;height: 16px;}
+            }
+            .task-row{
+                &:last-child{
+                    .task-item{border-bottom: none !important;}
+                }
+            }
+            
+        }
+        
+    }
+}
+
+::ng-deep ag-grid-angular{
+    height: 500px;
+}
+
+.icon-button-actions{
+    position: absolute;
+    top: 48px;
+    right: 10px;
+}
+.no-data{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}

@@ -1,0 +1,240 @@
+@import "../../../assets/styles/mixins";
+
+::ng-deep .side-nav-filters.proj-filter.catg-menu {
+    height: 100%;
+    overflow: hidden;
+    .heading {
+        span {
+            font-size: 18px;
+            @include mediumFont();
+        }
+    }
+    .hdr-actions {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e5e5eb;
+        span {
+            cursor: pointer;
+        }
+        .search-box {
+            margin-top: 10px;
+        }
+    }
+    .content-list {
+        min-height: 70px;
+        overflow: auto;
+        visibility: hidden;
+        height: 100%;
+        max-height: 470px;
+        transition: visibility 0.2s;
+        .content-list-visible {
+            visibility: visible;
+        }
+        .pi-form-field {
+            margin-top: 8px;
+        }
+        &:hover,
+        &:focus {
+            visibility: visible;
+            transition: visibility 0s 0.2s;
+        }
+    }
+    .footer {
+        margin-top: 20px;
+        text-align: right;
+        button.ak-button {
+            margin-right: 8px;
+            min-width: 62px;
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+    i {
+        &.icon-products {
+            color: #607eda;
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+            line-height: 16px;
+            margin-right: 6px;
+            position: relative;
+            top: 3px;
+        }
+        &.icon-orders {
+            color: #dc4f66;
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+            line-height: 14px;
+            top: 2px;
+            margin-right: 6px;
+            position: relative;
+        }
+    }
+    .forms-search-sec {
+        padding: 10px 0;
+        display: flex;
+        align-items: center;
+        .search .pi-form-field {
+            max-width: 193px;
+        }
+        .mat-radio-group {
+            margin-right: 10px;
+            min-width: 182px;
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: 10px;
+            font-size: 14px;
+            color: rgba(23, 43, 77, 0.8);
+            .mat-radio-button {
+                padding: 2px 8px;
+                background: #f5f6f8;
+                text-align: center; // border-radius: 4px 0 0 4px;
+                flex: 1 0 50%;
+                max-width: 70px;
+                // border-top-left-radius: 4px;
+                // border-bottom-left-radius: 4px;
+                /* #ddeaff */
+                /*margin-left: 2px;
+                border-radius: 2px;*/
+                &:not(.mat-radio-checked){
+                    // background: #3A7C26;
+                }
+                &.mat-radio-checked {
+                    // border-top-right-radius: 4px;
+                    // border-bottom-right-radius: 4px;
+                    // border-top-left-radius: 0;
+                    // border-bottom-left-radius: 0;
+                }
+                @media screen and (min-width: 600px) {
+                    padding: 5px 6px;
+                }
+                ::ng-deep .mat-radio-label {
+                    position: relative;
+                    .mat-radio-container {
+                        position: absolute;
+                        opacity: 0;
+                    }
+                    .mat-radio-label-content {
+                        padding-left: 0;
+                        font-size: 13px;
+                        @media screen and (min-width: 960px) {
+                            font-size: 14px;
+                        }
+                    }
+                }
+                &.mat-radio-checked {
+                    background: #42526e !important;
+                    color: #fff;
+                }
+                &:first-child {
+                    // border-radius: 2px 0 0 2px;
+                }
+                &:last-child {
+                    // border-radius: 0 2px 2px 0;
+                }
+            }
+        }
+    }
+    .child-select {
+        padding-left: 25px;
+    }
+    .mat-expansion-panel-spacing {
+        margin: 0px;
+        padding-bottom: 10px;
+        box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.2) !important;
+        margin-bottom: 5px;
+        border-bottom: 0 !important;
+    }
+    .mat-expansion-panel-header {
+        padding: 0 15px;
+    }
+    .mat-expansion-panel-body {
+        padding: 0 15px;
+    }
+    .mat-expansion-panel:not([class*=mat-elevation-z]) {
+        box-shadow: none;
+        border-bottom: 1px solid #e5e5eb;
+    }
+    .mat-t {
+        i {
+            width: 12px;
+            font-size: 12px;
+            height: 12px;
+            margin-right: 8px;
+            line-height: 12px;
+            position: relative;
+            top: 1px;
+        }
+    } // .mat-expansion-panel{
+    //     .mat-expansion-indicator{
+    //         order: -1;
+    //         &::after{
+    //             transform: rotate(-50deg);
+    //         }
+    //     }
+    //     &.mat-expanded{
+    //         .mat-expansion-indicator{
+    //             order: -1;
+    //             transform: rotate(90deg) !important;
+    //         }
+    //     }
+    // }
+}
+
+// sidenav styles
+.side-nav {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 3;
+    background: #fff;
+    border-left: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    max-width: 320px;
+    width: 100%;
+    animation-duration: 0.20s;
+    /*0.15s;*/
+    animation-timing-function: cubic-bezier(0.2, 1, 0.4, 1);
+    animation-fill-mode: both;
+    animation-name: slideOutRight;
+    &.active {
+        animation-name: slideInRight;
+    }
+    .filter-container {
+        .filter-title {
+            padding: 15px 0;
+            h2 {
+                padding: 0 15px 2px 15px;
+                border-bottom: 2px solid #D7DDE7;
+            }
+        }
+    }
+}
+
+.side-nav-container {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 5;
+    .overlay {
+        position: absolute;
+        left: -60px;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-color: rgba(9, 30, 66, 0.54);
+    }
+}
+
+.custom-tabing-page {
+    height: 100%;
+    overflow: hidden;
+}

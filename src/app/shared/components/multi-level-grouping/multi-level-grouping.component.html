@@ -1,0 +1,20 @@
+<div class="box">
+  <div class="box-header">
+      <app-search [search]="params.searchList" (onSearch)="searchList($event)"></app-search>
+      <div class="col-field-multiple">
+          <pi-form-field [label]="nav.label" *ngFor="let nav of params.navs" [class.active]="nav.label == params.selectedNav">
+          <input type="radio" pi-input name="nav_tab" (change)="getListCount()" [(ngModel)]="params.selectedNav" [value]="nav.value" />
+          </pi-form-field>
+      </div>
+  </div>
+  <mat-checkbox disableRipple="true" color="primary" [(ngModel)]="params.checkAll" (change)="selectAll()">{{params.header}}</mat-checkbox>
+  <div>
+    <mat-spinner diameter="45" class="md" *ngIf="loader"></mat-spinner>
+    <ng-container *ngIf="!loader">
+        <ng-container *ngFor="let list of params.data">
+            <mat-checkbox [(ngModel)]="list.checked" *ngIf="(!list.search && ((params.selectedNav=='All') || (params.selectedNav=='Selected' && list.checked)))" disableRipple="true" color="primary" (change)="listChange()">{{list.name}}</mat-checkbox>
+        </ng-container>
+        <div class="no-task-data" *ngIf="!params.listCount.length">No {{title}} Found</div>
+    </ng-container>
+  </div>
+</div>

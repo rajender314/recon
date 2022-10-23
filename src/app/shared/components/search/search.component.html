@@ -1,0 +1,16 @@
+<!-- <mat-form-field floatLabel="never" class="no_uderline">
+  <input autocomplete="off" [placeholder]="searchOpts.placeHolder" (click)="triggerSearch($event)" [(ngModel)]="searchOpts.value" matInput #search (input)="searchList(search.value)">
+  <mat-icon matPrefix>search</mat-icon>
+  <mat-icon matSuffix *ngIf="searching">
+    <mat-progress-spinner class="small-spinner" mode="indeterminate"></mat-progress-spinner>
+  </mat-icon>
+  <mat-icon matSuffix class="close" *ngIf="(!searching && search.value.length)" (click)="$event.stopPropagation();search.value = '';searchList(search.value)">close</mat-icon>
+</mat-form-field> -->
+
+<pi-form-field label=" " leftIcon="true" rightIcon="true">
+  <pi-icon name="icon-search"></pi-icon>
+  <input type="text" pi-input [placeholder]="searchOpts.placeHolder" [(ngModel)]="searchOpts.value" #search (input)="searchList(search.value)" />
+  <mat-spinner *ngIf="searching" class="md spinner" diameter="18"></mat-spinner>
+  <pi-icon *ngIf="(!searching && search.value.length)" (click)="$event.stopPropagation();search.value = '';searchList(search.value)"
+    name="icon-close-slim"></pi-icon>
+</pi-form-field>

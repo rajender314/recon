@@ -1,0 +1,25 @@
+.details-wrapper{
+    .right-section {
+        /*padding: 0 15px;*/
+        right: 0; /* dont remove, it will effect in mobile layout */
+        width: auto !important;
+        display: flex;
+        flex-direction: column;
+        app-admin-detail{
+            display: flex;
+            flex-direction: column;
+        }
+    }
+}
+
+@media screen and (min-width:600px){
+    .pi-master-detail-view .pi-master-view{
+        width: 320px;
+    }
+}
+/*
+@media screen and (min-width: 600px) {
+    .right-section {
+        padding-left: 40px;
+    }
+}*/

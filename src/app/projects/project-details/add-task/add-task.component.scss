@@ -1,0 +1,75 @@
+@import "../../../../assets/styles/mixins";
+::ng-deep .add-task-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    .mat-dialog-heading {
+        justify-content: space-between;
+    }
+    .mat-dialog-content {
+        flex: 1;
+    }
+    mat-select {
+        border: 1px solid #dfe1e6;
+        padding: 10px;
+        border-radius: 4px;
+        background: #fafbfc;
+    }
+}
+
+.mat-option-user-text {
+    display: flex;
+    align-items: center;
+    padding-left: 15px;
+    i {
+        width: 18px;
+        font-size: 18px;
+        height: 18px;
+        margin-right: 8px;
+        color: rgba(23, 43, 77, 0.7);
+        position: relative;
+        bottom: 1px;
+    }
+}
+
+::ng-deep .add-cost-item {
+    .mat-dialog-content {
+        margin: 0;
+        padding: 0;
+    }
+    &.my-dialog .mat-dialog-container .mat-dialog-heading .mat-dialog-title{
+        font-size: 18px;
+        @include semiBoldFont();
+    }
+    .project-no{
+        font-size: 12px;
+    }
+    .pi-field-group {
+        .pi-form-field {
+            margin-top: 0;
+        }
+    }
+}
+
+::ng-deep .select-user-options {
+    .mat-select-content {
+        .mat-optgroup-label {
+            @include semiBoldFont();
+            font-size: 100px;
+        }
+        .mat-optgroup-label,
+        .mat-select-panel .mat-option {
+            font-size: inherit;
+            line-height: 36px;
+            height: 36px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            padding-top: 2px;
+            padding-left: 15px;
+        }
+        .mat-optgroup .mat-option:not(.mat-option-multiple) {
+            padding-left: 0;
+        }
+    }
+}

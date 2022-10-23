@@ -1,0 +1,17 @@
+<div class="mat-dialog-heading">
+    <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+    <button mat-icon-button (click)="closeDialog()" tabindex="-1">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+<mat-dialog-content>
+    <div class="global-grid w-100 bid-grid with-out-margin actions-grid with-check-boxs">
+    <ag-grid-angular style="height: 300px" class="ag-theme-balham" [gridOptions]="gridOptions"></ag-grid-angular>
+</div>
+</mat-dialog-content>
+
+<!-- <mat-dialog-actions>
+    <button pi-button mat-dialog-close>Cancel</button>
+    <button pi-button (click)="saveChanges()">Save Changes</button>
+</mat-dialog-actions> -->

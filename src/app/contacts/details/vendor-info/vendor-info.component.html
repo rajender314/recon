@@ -1,0 +1,40 @@
+<mat-spinner *ngIf="state.loader" diameter="36"></mat-spinner>
+
+<ng-container *ngIf="!state.loader">
+	<ng-container *ngIf="state.selectedTab == 8">
+		<app-general [organization]="state.selected"></app-general>
+	</ng-container>
+
+	<ng-container *ngIf="state.selectedTab == 9">
+		<div class="parent-list-items">
+			<div class="child-list-items" *ngFor="let list of  state.details.list; let i = index" [id]="'capb_' + i">
+				<h4 (click)="showChildren(list, i)">
+					<i *ngIf="list.capabilities.length"
+						class="pixel-icons arrow {{list.isOpen ? 'icon-arrow-down' : 'icon-arrow-right'}}"></i>
+					{{list.name}}
+				</h4>
+				<div class="sub-child-list-items" *ngIf="list.isOpen">
+					<pi-form-field [label]="option.name" *ngFor="let option of list.capabilities">
+						<input type="checkbox" pi-input (change)="onSelectCapability(list.id, option.id)" [disabled]="!state.editable"
+							[(ngModel)]="state.details.modelValues[list.id][option.id]" />
+					</pi-form-field>
+					<div *ngIf="!list.capabilities.length">No Capabilities</div>
+				</div>
+			</div>
+		</div>
+	</ng-container>
+
+	<ng-container *ngIf="state.selectedTab == 10">
+		<app-vendor-equipments [form]="equipmentForm" (noEqData)="checkEqList($event)" [tabDetails]="state.details"
+			[editable]="state.editable" (onUpdate)="afterUpdate($event)"></app-vendor-equipments>
+	</ng-container>
+
+	<ng-container *ngIf="state.selectedTab == 11">
+		<app-certifications [organization]="state.selected" [orgId]="state.org_id"></app-certifications>
+	</ng-container>
+
+	<div *ngIf="state.selectedTab == 9 && state.showFooter && state.editable" class="footer capabilities">
+		<button pi-button color="subtle" (click)="reset()">Cancel</button>
+		<button pi-button color="primary" (click)="save()">Save</button>
+	</div>
+</ng-container>

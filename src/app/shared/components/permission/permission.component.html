@@ -1,0 +1,79 @@
+<div class="header" *ngIf="headers">
+	<div *ngFor="let header of headers">{{header.label}}</div>
+</div>
+<div class="body" [formGroup]="group" *ngIf="!headers || headers?.length == 2">
+	<div class="parent-row" *ngFor="let perm of data">
+		<div class="flex-row" [ngClass]="[(perm.type == 'radio' && perm.options?.length == 3) ? 'secondary-width' : 'primary-width']" [class.limit-width]="perm.access=='1' && perm.is_invited">
+			
+			<div class="label" *ngIf="perm.type != 'checkbox' && perm.type!='link'">{{perm.name}}</div>
+			<!-- routerLink="/users/user_roles" -->
+			<div class="label" *ngIf="perm.type=='link'"><a href="{{perm.url}}">{{perm.name}}</a></div>
+			<!-- [hidden]="perm.type == 'select' || perm.type == 'checkbox' || perm.type == 'textbox'" -->
+			<div *ngIf="perm.access=='1'">
+				<div *ngIf="perm.is_invited=='0'">User not Invited <a class="invite-link" (click)="sendInvitation(perm)">Invite User</a></div>
+				<div *ngIf="perm.is_invited=='1'">User Invited</div>
+				<div *ngIf="perm.is_invited=='2'">User Accessed</div>
+			</div>
+			<div *ngIf="perm.type == 'radio'">
+				<mat-radio-group [disabled]="readonly" [formControlName]="perm[prop]" (change)="onParentChange(perm)">
+					<mat-radio-button disableRipple="true" color="primary" *ngFor="let option of perm.options" [value]="option.value">
+						{{option.label}}
+					</mat-radio-button>
+				</mat-radio-group>
+			</div>
+			<!-- [hidden]="perm.type == 'radio' || perm.type == 'checkbox' || perm.type == 'textbox'" -->
+			<div *ngIf="perm.type == 'select'">
+				<select type="text" class="ak-field-select" name="perm[prop]" [disabled]="readonly" [formControlName]="perm[prop]">
+					<option *ngFor="let option of perm.options" [value]="option.value">{{option.label}}</option>
+				</select>
+			</div>
+			<!-- [hidden]="perm.type == 'select' || perm.type == 'radio' || perm.type == 'textbox'" -->
+			<div class="sub-child" *ngIf="perm.type == 'checkbox'">
+				<mat-checkbox disableRipple="true" color="primary" [disabled]="readonly" [formControlName]="perm[prop]">{{perm['name']}}</mat-checkbox>
+				<div class="radiobtn_visible" *ngIf="perm.radio_group">
+					<mat-radio-group [disabled]="readonly" [formControlName]="perm[prop] + '_option'" [hidden]="!group.controls[perm[prop]].value">
+						<mat-radio-button disableRipple="true" color="primary" *ngFor="let option of perm.radio_group" [value]="option.key">
+							{{option.name}}
+						</mat-radio-button>
+					</mat-radio-group>
+				</div>
+			</div>
+			<!-- [hidden]="perm.type == 'select' || perm.type == 'checkbox' || perm.type == 'radio'" -->
+			<div *ngIf="perm.type == 'textbox'">
+				<input [appPriceFormat]="priceConfig" type="text" class="ak-field-text" name="perm[prop]" [disabled]="readonly" [formControlName]="perm[prop]"
+				 (keyup)="changeTextField(perm[prop], $event)">
+				<!-- <input type="text" class="ak-field-text" name="perm[prop]" [formControlName]="perm[prop]"> -->
+			</div>
+		</div>
+		<div *ngIf="perm.children && perm.children.length" [hidden]="group.controls[perm[prop]].value == 'no' || group.controls[perm[prop]].value == 'none' || group.controls[perm[prop]].value == ''">
+			<app-permission [prop]="prop" [group]="group" [data]="perm.children"></app-permission>
+		</div>
+	</div>
+</div>
+
+<div class="body" [formGroup]="group" *ngIf="headers?.length == 3">
+	<div class="parent-row" *ngFor="let perm of data">
+		<div class="flex-row limit-width" [formGroupName]="perm[prop]">
+			<div class="label">{{perm.name}}</div>
+			<div *ngIf="perm.cells.length == 1 && perm.cells[0].key != headers[1].key"></div>
+			<div class="job_perm"  *ngFor="let cell of perm.cells">
+				<div *ngIf="cell.type == 'select'">
+					<select type="text" class="ak-field-select" name="cell[prop]" [disabled]="readonly" [formControlName]="cell[prop]"
+					 (change)="checkServices && onDropdownChange(group,perm[prop],cell[prop])">
+						<option *ngFor="let option of cell.options" [value]="option.value">{{option.label}}</option>
+					</select>
+				</div>
+				<div *ngIf="perm.type == 'radio'">
+					<mat-radio-group [disabled]="readonly" [formControlName]="cell[prop]">
+						<mat-radio-button disableRipple="true" color="primary" *ngFor="let option of perm.options" [value]="option.value">
+							{{option.label}}
+						</mat-radio-button>
+					</mat-radio-group>
+				</div>
+			</div>
+			<div class="job_perm" *ngIf="perm.cells.length == 1 && perm.cells[0].key != headers[2].key"></div>
+			<!-- <app-permission [hidden]="group.controls[perm[prop]].value == 'no' || group.controls[perm[prop]].value == 'none'" *ngIf="perm.children && perm.children.length"
+		 [prop]="prop" [group]="group" [data]="perm.children"></app-permission> -->
+		</div>
+	</div>
+</div>

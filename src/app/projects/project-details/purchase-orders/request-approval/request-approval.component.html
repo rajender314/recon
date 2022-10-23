@@ -1,0 +1,43 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content style="height: calc(100vh - 550px);">
+  <h2 *ngIf="!data.type">Based on the total cost, you will need an approval before you can send the PO.</h2>
+  <div [formGroup]="form">
+    <!-- <pi-select label="Select the person you want approval from:" [options]="[]"></pi-select> -->
+    <pi-form-field label="Select the person you want approval from:">
+      <!-- infiniteScroll [infiniteScrollDistance]="1" [infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false" -->
+      <mat-select placeholder="Select User" panelClass="select-user-options" formControlName="request_id">
+        <mat-optgroup *ngFor="let dept of users" [label]="dept.name">
+          <mat-option *ngFor="let user of dept.children" [value]="user.id">
+            <span class="mat-option-user-text">
+              <i class="pixel-icons icon-user"></i>
+              {{user.user_name}}
+            </span>
+          </mat-option>
+        </mat-optgroup>
+      </mat-select>
+      <div class="pi-error" *ngIf="form.controls.request_id.hasError('required') && submitted">Please Select
+        User</div>
+    </pi-form-field>
+    <pi-form-field *ngIf="!data.type" label="Select the date you need approval by:" class="date-field">
+      <input pi-input matInput [min]="currentDate" [owlDateTime]="approval"
+        formControlName="request_date" [owlDateTimeTrigger]="approval" placeholder="Choose a date" readonly>
+      <div class="owl-picker-toggle">
+        <i class="pixel-icons icon-calendar" [owlDateTimeTrigger]="approval"></i>
+      </div>
+      <owl-date-time #approval [hour12Timer]="true"></owl-date-time>
+    </pi-form-field>
+    <!-- [max]="currentDate" -->
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="mat-footer p-t-25">
+  <button *ngIf="!data.isNew" pi-button color="subtle" mat-dialog-close>Cancel</button>
+  <button pi-button color="primary" (click)="sendApproval(form)" [disabled]="form.pristine">Send for Approval</button>
+  <!-- [disabled]="!state.unlockCreatePo" -->
+</mat-dialog-actions>

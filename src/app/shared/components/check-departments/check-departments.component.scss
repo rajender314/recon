@@ -1,0 +1,43 @@
+.box{
+    border: 1px solid #DFE1E6;
+    border-bottom: none;
+    .mat-checkbox{
+        display: block;
+        border-bottom: 1px solid #DFE1E6;
+        ::ng-deep .mat-checkbox-layout{
+            padding: 8px 12px;width: 100%;color: rgba(23, 43, 77, 0.8);
+            .mat-checkbox-inner-container{
+                height: 12px;
+                width: 12px;
+                border-radius: 3px;
+                margin-left: 2px;
+                margin-right: 12px;
+                .mat-checkbox-frame{
+                    border: 2px solid #DFE1E6;
+                }
+            }
+        }
+        &:hover{
+            background: #f4f6fb;
+        }
+    }
+    ::ng-deep .mat-checkbox-checked, ::ng-deep .mat-checkbox-indeterminate{
+        .mat-checkbox-layout{
+            .mat-checkbox-inner-container{
+                .mat-checkbox-background{background-color: #0052cc;}
+            }
+        }
+        
+    } 
+
+    .ak-field-group{
+        padding: 0 !important;
+        .ak-field-checkbox{
+            padding: 6px;
+            border-bottom: 1px solid #DFE1E6;
+            &:hover{
+                background: #f4f6fb;
+            }
+        }
+    }
+}

@@ -1,0 +1,47 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+
+<mat-dialog-content>
+	<div class="new-product" style="min-height: 266px;">
+		<div class="d-flex" *ngIf="state.isLoading"  style="height: 100%; position: absolute; left: 0; right:0; top:0; bottom:0; display: flex; margin: 0 auto; justify-content: center; align-items: center;">  
+			<mat-spinner diameter="28" class="md" ></mat-spinner>
+		</div>
+		<h2 [innerHtml]="state.product.product_name"></h2>
+		
+		<div [formGroup]="addProductForm" *ngIf="!state.isLoading">
+			<div class="service" formGroupName="services">
+				<p>Select Services</p>
+				<div class="item" *ngFor="let serv of state.services">
+					<ng-container *ngIf="!serv.is_new">
+						<pi-form-field [label]="serv.services_name">
+							<input type="checkbox" pi-input (change)="isChecked(serv)" [disabled]="serv.is_check" />
+						</pi-form-field>
+						<span class="show-icon" (click)="addNewService(serv)"><i
+								class="pixel-icons icon-recent-notes"></i></span>
+					</ng-container>
+					<ng-container *ngIf="serv.is_new" [formGroupName]="serv.is_new">
+						<pi-form-field [label]="serv.services_name">
+							<input type="checkbox" formControlName="selected" pi-input (change)="isChecked(serv)"
+								[disabled]="serv.is_check" />
+						</pi-form-field>
+						<div class="new_service">
+							<pi-form-field label=" ">
+								<input type="text" pi-input formControlName="services_name" />
+							</pi-form-field>
+						</div>
+					</ng-container>
+				</div>
+			</div>
+		</div>
+	</div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+	<button pi-button mat-dialog-close>Cancel</button>
+	<button pi-button color="primary" (click)="saveChanges()" [disabled]="!state.product.selectedServices?.length || promise">Save
+		Changes</button>
+</mat-dialog-actions>

@@ -1,0 +1,15 @@
+<div class="mat-dialog">
+	<div class="mat-dialog-heading">
+		<h2 mat-dialog-title>Log Out</h2>
+	</div>
+	<mat-dialog-content>
+		<p>Are you sure you want to log out?</p>
+		<pi-form-field [label]="option.name" *ngFor="let option of options">
+			<input type="radio" pi-input name="value" [formControl]="value" [value]="option.id" />
+		</pi-form-field>
+	</mat-dialog-content>
+	<mat-dialog-actions>
+		<button pi-button color="subtle" mat-dialog-close>Cancel</button>
+		<button pi-button color="accent" (click)="logout()">Logout</button>
+	</mat-dialog-actions>
+</div>

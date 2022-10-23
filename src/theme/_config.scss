@@ -1,0 +1,59 @@
+// Colors Related
+@import "_fonts";
+$primary-color: #0747a6;
+$secondary-color: #344458;
+$background-shade: #f8f8f8;
+$sucess: #4caf50;
+$warning: orange;
+$error: red;
+$color-text: #56647d;
+$color-text-weak: #868686;
+$color-text-strong: #000;
+$color-text-heading: #56647d;
+$color-text-link: red;
+$color-text-link-hover: green;
+$white: #fff;
+$black: #000;
+$color-border: #ebecf0;
+$color-background: #f157be;
+$primary-link: #0747a6;
+$color-default-icon-color: #42526e;
+$color-active-icon-color: #0747a6;
+$primary-button: #0747a6;
+$primary-button-hover: #023d80;
+$highlight: #42526e;
+$normol: #d9dcde;
+$grid-color: #5c6c84;
+
+// font-weights
+$light: 300;
+$regular: 400;
+$semi-bold: 600;
+$bold: 800;
+$extra-bold: 900;
+
+// Font Variables
+$primary-font: "SF-Pro-Text-Regular", Sans-Serif;
+
+$menu-color: #deebff;
+$menu-hover-bg: #283c52;
+
+$dark-color: #42526e;
+$light-color: #56647d;
+$brand-color: #0747a6;
+$second-brand-color: #344159;
+$brand-bg: #f7f8fe;
+$second-brand-bg: #f4f8fc;
+$brand-active: #0747a6;
+$border: #ebecf0;
+
+@keyframes slideInLeft {
+  0% {
+    transform: translate3d(-100%, 0, 0);
+    visibility: visible;
+  }
+
+  to {
+    transform: translateZ(0);
+  }
+}

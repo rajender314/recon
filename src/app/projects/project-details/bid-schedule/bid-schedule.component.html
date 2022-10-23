@@ -1,0 +1,222 @@
+<div class="primary-layout-detail">
+	<header>
+		<div class="w-100 d-flex justify-content-center flex-column">
+			<pi-breadcrumb>
+				<ng-container *ngFor="let item of state.breadcrumbs">
+					<pi-breadcrumb-item *ngIf="item.type == 'link'" label="Projects" [routerLink]="item.route">
+					</pi-breadcrumb-item>
+					<pi-breadcrumb-item *ngIf="item.type != 'link'" [innerHtml]="item.label"></pi-breadcrumb-item>
+				</ng-container>
+			</pi-breadcrumb>
+			<div class="w-100 d-flex align-items-center justify-content-between ">
+				<aside class="left-header d-flex flex-width">
+					<h1 [innerHtml]="state.title"><i class="pixel-icons icon-arrow" (click)="changeMasterView()"></i> Distribution List</h1>
+				</aside>
+				<aside class="d-flex right-header flex-width justify-content-end">
+					<app-search (onSearch)="DOMSearch($event)"></app-search>
+					<button pi-button (click)="addVendor()" color="primary" *ngIf="APP.permissions.job_access.vendor_queue!='none' && APP.permissions.job_access.request_bids_from_vendors=='yes'" class="m-l-15 xl-desktop">Add Vendors</button>
+					<span class="max-lg">
+						<div class="colored-group-btn m-l-15 btn-group basic-group-btns " mat-button  >
+							<button class="first-child" (click)="addVendor()" *ngIf="APP.permissions.job_access.vendor_queue!='none' && APP.permissions.job_access.request_bids_from_vendors=='yes'">Add</button>
+							<div class="btn-group">
+								<button class="last-child"  [matMenuTriggerFor]="menu">
+									<i class="pixel-icons icon-arrow-down" style="position: relative; top: 2px;"></i>
+								</button>
+								<mat-menu #menu="matMenu" xPosition="before" class="drop-menu-ui"> 
+								<span>                                           
+									<a (click)="addVendor()" *ngIf="APP.permissions.job_access.vendor_queue!='none' && APP.permissions.job_access.request_bids_from_vendors=='yes'">Add Vendors</a>
+									<a (click)="performActions('add')">Add Milestone</a>									
+								</span>
+								</mat-menu>
+							</div>
+						</div>
+					</span>
+				</aside>
+			</div>
+		</div>
+
+	</header>
+
+	<div class="primary-layout-detail-body flex-column padding-20">
+		<section class="split-screen">
+			<aside class="split-part bid-information">
+				<header>
+					<h3>Bid Deadlines</h3>
+				</header>
+				<div class="split-panel">
+					<div class="panel" *ngIf="state.bidDeadLines.length" style="overflow: hidden;">
+						<div class="panel-header with-datepicker" *ngIf="state.bidDeadLines.length">
+							<h5>ALL PRODUCTS & SERVICES</h5>
+							<pi-form-field [label]="'Bids Due:'" class="date-field plain-date-field">
+								<input pi-input matInput [min]="state.minDate" [max]="state.maxDate"
+									[owlDateTime]="parent" [value]="state.bidDeadline" [owlDateTimeTrigger]="parent"
+									(dateTimeChange)="changeGlobal($event)" placeholder="Choose a date" readonly>
+								<div class="owl-picker-toggle">
+									<i class="pixel-icons icon-calendar" [owlDateTimeTrigger]="parent"></i>
+								</div>
+								<owl-date-time #parent [hour12Timer]="true"></owl-date-time>
+							</pi-form-field>
+						</div>
+						<div class="panel-container" [class.calc-height-footer]="state.showFooter">
+							<virtual-scroller style="height: 100%;" [scrollAnimationTime]="1000"
+								[useMarginInsteadOfTranslate]="true" [bufferAmount]="2" #scroll [items]="state.bidDeadLines"
+								[enableUnequalChildrenSizes]="true">
+							<div class="multigroup-date-list" *ngFor="let item of scroll.viewPortItems; trackBy:index; let i = index">
+								<div class="parent">
+									<i class="pixel-icons icon-products"></i>
+									<span [innerHtml]="item.name"></span>
+								</div>
+								<ul *ngIf="item.services && item.services.length">
+									<li class="service" *ngFor="let child of item.services">
+										<span class="bid-name"><i class="pixel-icons icon-orders"></i>
+											<span>{{child.name}}</span></span>
+										<span class="bid-revision-version">
+											<span class="v-no">R{{child.revision}}</span>
+											<pi-form-field [label]=" " class="date-field plain-date-field">
+												<input pi-input matInput [min]="state.minDate" [max]="state.maxDate"
+													[owlDateTime]="servicePicker" [value]="child.bid_deadline"
+													[owlDateTimeTrigger]="servicePicker"
+													(dateTimeChange)="changeServiceDate($event, child)"
+													placeholder="Choose a date" readonly>
+												<div class="owl-picker-toggle">
+													<i class="pixel-icons icon-calendar"
+														[owlDateTimeTrigger]="servicePicker"></i>
+												</div>
+												<owl-date-time #servicePicker [hour12Timer]="true"></owl-date-time>
+											</pi-form-field>
+										</span>
+									</li>
+								</ul>
+							</div>
+							</virtual-scroller>
+						</div>
+					</div>
+					<div class="no-data empty-msg-ui" *ngIf="!state.bidDeadLines.length && !state.isLoading">
+						<p>No Products and Services</p>
+					</div>
+
+
+					<div class="footer" *ngIf="state.showFooter">
+						<button pi-button (click)="cancelBidDeadlines()">Cancel</button>
+						<button pi-button color="primary" class="m-l-15" (click)="saveBidDeadlines()">Save
+							Changes</button>
+					</div>
+					<div class="spinner-view" *ngIf="state.isLoading">
+							<div class="empty-screen">
+								<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+							</div>
+						</div>
+
+				</div>
+
+
+
+			</aside>
+			<aside class="split-part milestone-information milestones">
+				<header class="d-flex">
+					<aside class="d-flex">
+						<h3>Milestones</h3>
+					</aside>
+					<aside class="d-flex align-items-center">
+						<!-- <button pi-button class="small-btn m-l-8">Select Template</button> -->
+						<pi-select class="select-template-select m-l-8" placeholder="Select Template" [options]="state.vendorTemplates"	[(ngModel)]="selectedMilestone"></pi-select>												
+						<div class="max-lg animate-icon-wrap animate-icon-effect-1 animate-icon-effect-1a" style="margin-left: 8px; overflow: hidden;     cursor: not-allowed;"	*ngIf="!selectedMilestone"><a title="Apply" class="animate-icon" style="background: rgb(235, 237, 241); color: #42536d; width: 32px; height: 32px; cursor: not-allowed;" ><i class="pixel-icons icon-select" style="font-size: 16px; width: 16px;height: 16px;position: relative; top: 8px;"></i></a></div>
+						<div class="max-lg animate-icon-wrap animate-icon-effect-1 animate-icon-effect-1a" style="margin-left: 8px; overflow: hidden;" (click)="performActions('apply')"  
+						*ngIf="selectedMilestone"><a title="Apply" class="animate-icon" style="background: rgb(235, 237, 241); color: #42536d; width: 32px; height: 32px;" ><i class="pixel-icons icon-select" style="font-size: 16px; width: 16px;height: 16px;position: relative; top: 8px;"></i></a>
+						</div>
+						<button pi-button  color="primary" class="small-btn m-l-8 xl-desktop" (click)="performActions('apply')" [disabled]="!selectedMilestone || showFooter">Apply</button>
+						<button pi-button  color="primary" class="small-btn m-l-8 xl-desktop" (click)="performActions('add')">Add Milestone</button>
+					</aside>
+				</header>
+				<div class="split-panel">
+					<!-- <div [sortablejs]="state.milestones" [sortablejsOptions]="sortOptions" style="overflow: auto;">
+						<div class="list-item" *ngFor="let item of state.milestones;let i = index">
+							<div class="list-item-actions">
+								<i class="pixel-icons icon-drag handle"></i>
+								<i class="pixel-icons icon-delete" (click)="performActions('delete', item, i)"></i>
+							</div>
+						</div>
+					</div> -->
+					<div class="spinner-view" *ngIf="inProgress">
+							<div class="empty-screen">
+								<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+							</div>
+						</div>
+					<ng-container *ngIf="!inProgress">
+						<div class="panel" *ngIf="state.milestoneList.length" style="overflow: hidden;">
+							<div class="panel-container" #scrollElement [class.calc-height-footer-milestones]="showFooter">
+								<div [sortablejs]="state.milestoneList" [sortablejsOptions]="sortOptions">
+									<div class="list-item align-items-start milestones-list" *ngFor="let item of state.milestoneList;let i = index" [class.manual-milestones]="!item.id">
+										<div class="d-flex" style="flex:1" [class.manual-milestones-select]="!item.id">
+										<div class="list-item-actions d-flex milestones-action ">
+												<div class="animate-icon-wrap animate-icon-effect-1 animate-icon-effect-1a" >
+													<a class="animate-icon" ><i class="pixel-icons icon-drag handle"></i></a>
+												</div>											
+											<div class="animate-icon-wrap animate-icon-effect-1 animate-icon-effect-1a" >
+												<a class="animate-icon" #deleteMenuPopup="matMenuTrigger" [matMenuTriggerFor]="deleteMenuCard" >
+													<i class="pixel-icons icon-delete"></i>
+												</a>
+												<mat-menu #deleteMenuCard="matMenu" class="card-ui row-card colored bg-delete">
+														<div class="card row-card" (click)="$event.stopPropagation()">
+															<div class="card-header"><i class="pixel-icons icon-exclamation"></i></div>
+															<div class="card-body">
+																<h5 class="card-title" [innerHtml]="'Delete  Milestone'"></h5>
+																<p class="card-text">Are you sure you want to Delete  Milestone?</p>
+																<div class="footer">
+																	<a class="card-link text-btn" (click)="deleteMenuPopup.closeMenu()">Cancel</a>
+																	<a class="card-link act-btn"
+																		(click)="performActions('delete', item, i);deleteMenuPopup.closeMenu();" [innerHtml]="'Delete'"></a>
+																</div>
+															</div>
+														</div>
+													</mat-menu>
+											</div>											
+										</div>
+										<div class="list-item-name m-r-15">
+											<span style=" display: inline-block; padding-top: 3px;" [innerHtml]="item.name" *ngIf="!item.is_new"></span>
+											<div *ngIf="item.is_new">
+												<!-- [inactiveOptions]="state.inactiveMilestones"  -->
+												<pi-select [options]="state.milestones" [(ngModel)]="item.milestone_id"
+													(onChange)="milestoneChange($event, i)"></pi-select>
+												<div class="msgs">
+													<div class="pi-error" *ngIf="!item.milestone_id && checkValidation">
+														Please Select Milestone</div>
+												</div>
+											</div>
+										</div>
+									</div>
+										<div class="list-item-field">
+											<pi-form-field [label]=" " class="date-field plain-date-field" style="max-width: 200px;">
+												<input pi-input matInput [min]="state.minDate" [max]="state.maxDate"
+													[owlDateTime]="picker1" [(ngModel)]="item.start_date"
+													[owlDateTimeTrigger]="picker1" (dateTimeChange)="showFooter = true;"
+													placeholder="Choose a date" readonly>
+												<div class="owl-picker-toggle">
+													<i class="pixel-icons icon-calendar"
+														[owlDateTimeTrigger]="picker1"></i>
+												</div>
+												<pi-icon class="milestone-close" name="icon-close-slim" (click)="item.start_date = null;showFooter = true;" *ngIf="item.start_date"></pi-icon>
+												<owl-date-time #picker1 [hour12Timer]="true"></owl-date-time>
+											</pi-form-field>
+										</div>
+										
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="no-data empty-msg-ui" *ngIf="!state.milestoneList.length">
+							<p>No Milestones Added</p>
+						</div>
+						<div class="footer" *ngIf="showFooter" style="margin-top:0;">
+							<button pi-button (click)="cancelMilestones()">Cancel</button>
+							<button pi-button color="primary" class="m-l-15" (click)="saveMilestones()">Save
+								Changes</button>
+						</div>
+					</ng-container>
+				</div>
+			</aside>
+		</section>
+	</div>
+
+
+</div>

@@ -1,0 +1,102 @@
+<div class="send-estimate-container step-{{selectedIndex}}">
+	<div class="mat-dialog-heading add-estimate-heading">
+		<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+		<button mat-icon-button mat-dialog-close tabindex="-1">
+			<mat-icon>close</mat-icon>
+		</button>
+	</div>
+	<mat-dialog-content>
+		<div style="min-height: 180px; display: flex; align-items: center; justify-content:center; position: relative;" *ngIf="state.loader">
+			<div class="spinner-view" >
+				<div class="empty-screen" >
+					<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+					<p *ngIf="state.downloadProgress">Downloading is in Progress...</p>
+					<p *ngIf="state.sendMailProgress">Email Sending in Progress...</p>
+				</div>
+			</div>
+		</div>
+		<mat-horizontal-stepper [selectedIndex]="selectedIndex" (selectionChange)="stepperChange($event)" #stepper>
+			<mat-step>
+				<div class="send-estimates-container" *ngIf="!state.loader">
+					<ul class="estimates-list">
+						<li *ngFor="let estimate of data.selectedEstimates">
+							{{estimate.estimate_no}}
+						</li>
+					</ul>
+				</div>
+			</mat-step>
+			<mat-step>
+				<div [formGroup]="sendEstimateForm" *ngIf="!state.loader" class="send-estimate-form">
+					<div class="to-select">
+						<pi-select label="To: " placeholder="Select Users" [options]="dropdowns.to" idKey="primary_email" nameKey="primary_email" [multi]="true" formControlName="to">
+						</pi-select>
+					</div>
+					<div>
+						<pi-select label="Cc:" placeholder="Enter email id" [options]="dropdowns.cc" [multi]="true" idKey="primary_email" nameKey="primary_email"
+							formControlName="cc" [createNew]="true"></pi-select>
+					</div>
+					<div>
+						<pi-form-field label="Subject: ">
+							<input type="text" pi-input formControlName="subject" />
+						</pi-form-field>
+					</div>
+					<div>
+						<pi-form-field label=" ">
+							<textarea pi-input minRows="6" maxRows="6" formControlName="message"></textarea>
+						</pi-form-field>
+					</div>
+					<div class="mutliple-fields">
+						<pi-form-field label="Attachments">
+							<div style="display: flex;flex-wrap: wrap;">
+								<div *ngFor="let est of data.selectedEstimates" style="display: flex;align-items: center;margin-right: 10px;padding-bottom: 8px;background: #fafbfc;padding: 6px;border: solid 1px #eef1f3;border-radius: 3px;padding-right: 10px;">
+									<i class="pixel-icons icon-pdf" style="font-size: 24px;width: 24px;height: 20px;line-height: 20px;margin-right: 3px;color: #eb3b3e;"></i>
+									<span [innerHtml]="est.estimate_no"  style="position: relative;top: 1px;color: #172b4d;"></span>
+								</div>
+							</div>
+							<pi-select label=" " placeholder="Select from project files"  [options]="dropdowns.jobFiles" [multi]="true" formControlName="files"
+								nameKey="file_name">
+							</pi-select>
+						</pi-form-field>
+					</div>
+					<div class="file-upload">
+						<div class="uploads">
+							<div ng2FileDrop [ngClass]="{'file-over': hasDropZoneOver}" [uploader]="uploader"
+								class="file-drop-zone">
+								<input id="attachment" type="file" ng2FileSelect [uploader]="uploader" [hidden]="true"
+									multiple />
+								<label for="attachment" class="browse-file">
+									<i class="pixel-icons icon-plus"></i> Upload new Files:
+								</label>
+							</div>
+							<div class="files-sec">
+								<div *ngFor="let file of uploadData.files;let i = index" class="files">
+									<img src="" alt="">
+									<i class="pixel-icons icon-{{file.type}}"></i>
+									<span [innerHtml]="file.original_name"></span>
+									<span class="close" (click)="removeAttachment(i)">
+										<i class="pixel-icons icon-close-slim"></i>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</mat-step>
+		</mat-horizontal-stepper>
+	</mat-dialog-content>
+	<mat-dialog-actions class="mat-footer" [class.send-btn]="selectedIndex == 1">
+		<ng-container *ngIf="selectedIndex == 0">
+			<button pi-button (click)="close()">Cancel</button>
+			<div>
+			<button pi-button class="m-l-15" color="primary" (click)="downloadEstimate()"
+				[disabled]="state.loader">Download
+				PDF's</button>
+			<button pi-button class="m-l-15" color="primary" (click)="stepper.next()" [disabled]="state.loader">Send As
+				Mail
+				Attachment</button>
+			</div>
+		</ng-container>
+		<button pi-button color="primary" *ngIf="selectedIndex == 1" (click)="sendEstimate(sendEstimateForm)"
+			[disabled]="sendEstimateForm.invalid">Send Estimate</button>
+	</mat-dialog-actions>
+</div>

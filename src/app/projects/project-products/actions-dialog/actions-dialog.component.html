@@ -1,0 +1,84 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+<mat-dialog-content>
+	<div *ngIf="!isLoading" class="product-action-dialog">
+		<ng-container *ngIf="data.flag == 'add' || data.flag == 'addService'">
+			<app-add-product [multi]="false" [form]="actionsForm" [products]="products" [disabled]="data.flag == 'addService' ? true : false"></app-add-product>
+		</ng-container>
+		<ng-container *ngIf="data.flag == 'import'">
+			<div class="clone-window">
+			<div *ngIf="state.stepper == 0">
+				<div style="display: flex;">
+					<p>Select a Project to Import Products</p>
+					<span style="flex: 1"></span>
+					<app-search (onSearch)="onSearch($event)"></app-search>
+				</div>
+				<div class="global-grid select-row with-table-gaps with-out-scroll-horizontal ag-no-striped with-actions">				
+					<ag-grid-angular style="height: 358px;" class="ag-theme-balham" [gridOptions]="gridOptions"></ag-grid-angular>
+				</div>
+			</div>
+			</div>
+		</ng-container>
+		<ng-container *ngIf="data.flag == 'clone' || state.stepper == 1">
+			<div class="clone-window">
+				<p *ngIf="data.flag == 'clone'">Clone the following from the Project <b [innerHtml]="data.jobName">Test Project</b></p>
+				<p *ngIf="state.stepper == 1">Import the following from the Project <b [innerHtml]="data.jobName">Test Project</b></p>
+				<div class="columm-wrapper">
+					<div class="specs-info">	
+						<div class="clone-grid global-grid select-row with-table-gaps with-out-scroll-horizontal ag-no-striped with-actions" style="height: 360px">			
+						<ag-grid-angular class="ag-theme-balham" [gridOptions]="treeGridOptions" *ngIf="!state.fetching">
+						</ag-grid-angular>
+						</div>
+					</div>
+					<div class="specs-info" style="border-left: solid 1px #e9e9e9; height: 358px; overflow: hidden;">
+							
+						<div class="select-spec-info" *ngIf="state.selectedService==''">Select a Service to preview the Specs.</div>
+						<b *ngIf="state.selectedService!=''">{{state.selectedService}}</b>
+						<div *ngIf="state.fetchingSpecs != null">
+							<!-- <div *ngIf="!state.fetchingSpecs">
+								<div class="d-flex space-between import-data-item" *ngFor="let spec of state.selectedOptionSpecs.values">
+									<span class="flex" [innerHtml]="spec.label"></span>
+									<span class="flex" [innerHtml]="spec.value || '---'"></span>
+								</div>
+							</div> -->
+							<div style="overflow-y: auto; height: 328px;" *ngIf="!state.fetchingSpecs">
+							<div class="timeline-item clearfix" *ngFor="let spec of state.selectedOptionSpecs.values" >
+									<div class="left-part">
+										<span class="item-company" [innerHtml]="spec.label"></span>
+									</div>
+									<div class="divider"></div>
+									<div class="right-part">
+										<p [innerHtml]="spec.value || '---'"></p>
+									</div>
+								</div>
+							</div>
+							<!-- Specs come here -->
+							<div class="no-msg-center" *ngIf="!state.selectedOptionSpecs.values.length">
+									<div >No Specs</div>
+							</div>
+							<div class="no-msg-center" *ngIf="state.fetchingSpecs" >
+									<mat-spinner diameter="25"></mat-spinner>									
+							</div>				
+							
+						</div>
+						<div *ngIf="!state.selectedOptionSpecs">Please Select Service to view Specs</div>
+					</div>
+				</div>
+			</div>
+		</ng-container>
+	</div>
+</mat-dialog-content>
+<mat-dialog-actions>
+	<!-- <div class="pi-error"></div> -->
+	<button pi-button *ngIf="data.flag == 'import' && state.stepper == 1" (click)="state.stepper = 0;goBack()" style="margin-left:0px;">Back</button>
+	<span style="flex: 1"></span>
+	<button  class="m-l-15" pi-button color="subtle" mat-dialog-close>Cancel</button>
+	<button class="m-l-15" *ngIf="data.flag == 'add' || data.flag == 'addService'" pi-button color="primary" (click)="save()" [disabled]="!checkLength(actionsForm)">Save</button>
+	<button class="m-l-15" *ngIf="data.flag == 'import'" pi-button color="primary" (click)="save()" [disabled]="!gridApi?.getSelectedRows().length">{{state.stepper
+		== 1 ? 'Import Products' : 'Next'}}</button>
+	<button *ngIf="data.flag == 'clone'" pi-button color="primary" (click)="save()" [disabled]="!treeGridApi?.getSelectedRows().length" class="m-l-15">Clone Products</button>
+</mat-dialog-actions>

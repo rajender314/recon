@@ -1,0 +1,60 @@
+<pi-master-detail-view class="recon-admin-layout" [showDetail]="showView">
+
+	<pi-master-view class="admin-sidebar">
+    <app-admin-list 
+      [config]="config" 
+      (onListUpdate)="onListUpdate($event)" 
+      (onSelect)="onSelect($event)" 
+      (onSearch)="onSearch($event)"
+      (onAdd)="onAdd()">
+    </app-admin-list>
+	</pi-master-view>
+
+	<pi-detail-view class="admin-content">
+
+    <app-admin-detail 
+      [config]="config"
+      [isLoading]="isLoading" 
+      [selectedItem]="selectedListItem"
+      (onUpdate)="onUpdate($event)"
+      (onBack)="changeMasterView()"
+      *ngIf="selectedListItem">
+      <ng-content select=".extension"></ng-content>
+    </app-admin-detail>
+
+    <!-- <div class="no-result-flex" *ngIf="!inProgress && !selectedListItem">
+      <p *ngIf="search">No {{config.name}} found for your search string <br/>
+        <b>'{{search}}'</b>
+      </p>
+      <p *ngIf="!search">No {{config.name}} found</p>
+      <button pi-button color="primary" (click)="onAdd(search)" *ngIf="config.permission=='edit'">+ Add New {{config.name}}</button>
+    </div> -->
+    <div class="no-data-screen spinner-view" *ngIf="!inProgress && !selectedListItem ">
+        <div class="empty-screen">
+            <div class="icon-info-holder" *ngIf="search">
+              <div class="icon" >
+                <i class="pixel-icons icon-search"></i>
+              </div>
+              <p class="alert-message text-center" style="text-align: center;" >No {{config.name}} found for your search string<br />
+                <b style="color: #172b4d;">'{{search}}'</b>
+              </p>
+            </div>
+            <div class="icon-info-holder">
+                <ng-container *ngIf="!search?.length">
+                <div class="icon" >
+                  <i class="pixel-icons  icon-categories"></i>
+                </div>	
+                <p class="alert-message text-center" style="text-align: center;" >No {{config.name}} found</p>
+                </ng-container>							
+                <button pi-button color="primary" (click)="onAdd(search)" *ngIf="config.permission=='edit'">+ Add New {{config.name}}</button>
+                
+              </div>
+          
+        </div>
+      </div>
+
+
+
+	</pi-detail-view>
+
+</pi-master-detail-view>

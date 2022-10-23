@@ -1,0 +1,150 @@
+<div class="primary-layout">
+    <div class="pi-detail-view">
+        <div class="primary-layout-detail">
+            <header>
+                <div class="w-100 d-flex align-items-center justify-content-between">
+                    <aside class="left-header d-flex ">
+                        <pi-breadcrumb>
+                            <ng-container *ngFor="let item of data.breadcrumbs">
+                                <pi-breadcrumb-item tabindex="-1" *ngIf="item.type == 'link'" [label]="item.label"
+                                    [routerLink]="item.route" (click)="closeDialog()">
+                                </pi-breadcrumb-item>
+                                <pi-breadcrumb-item *ngIf="item.type != 'link'" [label]="item.label">
+                                </pi-breadcrumb-item>
+                            </ng-container>
+                        </pi-breadcrumb>
+                        <div class="d-flex align-items-center " style="position: relative;">
+                            <div class="ag-cell-custome-actions">
+                                <ul style="padding-top: 0;">
+                                    <li style="margin-right: 0; margin-left: 0;" (click)="close()"><i
+                                            class="pixel-icons icon-arrow"></i></li>
+                                </ul>
+                            </div>
+
+                            <h1 [innerHtml]="data.title"></h1>
+                        </div>
+                    </aside>
+                    <aside class="right-header d-flex">
+                        <button mat-icon-button mat-dialog-close tabindex="-1" class="full-dialog-x-btn">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </aside>
+                </div>
+            </header>
+
+
+
+            <!-- <div class="mat-dialog-heading add-estimate-heading">
+                <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+                <button mat-icon-button mat-dialog-close tabindex="-1">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div> -->
+            <div class="primary-layout-detail-body flex-column o-x-hidden">
+                <div class="sidebar-layout padding-20">
+                    <div class="w-100">
+                        <div class="add-estimate-container">
+                            <div class="estimate-form">
+                                <pi-form-field label="Estimate No." *ngIf="data.type=='edit'">
+                                    <label>{{state.estimateDt.estimate_no}}</label>
+                                </pi-form-field>
+                                <pi-select label="Distribution List" *ngIf="data.type!='edit'"
+                                    [options]="state.distributionList" (onChange)="estimateChange()"
+                                    [(ngModel)]="state.estimateDt.distribution_id" class="distro-select"></pi-select>
+                                <pi-form-field label="Description" *ngIf="data.type!='edit'">
+                                    <textarea pi-input rows="3" [(ngModel)]="state.estimateDt.description"
+                                        (input)="estimateChange()" maxlength="1024"></textarea>
+                                </pi-form-field>
+                            </div>
+                            <div class="products-panel">
+                                <div class="products-panel-header">Select Product and Services to include in this
+                                    Estimate</div>
+                                <div class="panel-header has-chk-box">
+                                    <div class="chk-radio estimate-header-selection">
+                                        <pi-form-field class="child-main-check m-t-0" label="All Products & Services">
+                                            <input type="checkbox" pi-input
+                                                (change)="checkAllProducts(state.checkAllProducts)"
+                                                [(ngModel)]="state.checkAllProducts" />
+                                        </pi-form-field>
+                                        <div class="pull-end d-flex justify-content-between">
+                                            <pi-form-field class="child-check m-t-0 task" label="Task">
+                                                <input type="checkbox" pi-input
+                                                    (change)="checkAllTasks(state.checkAllTasks)"
+                                                    [(ngModel)]="state.checkAllTasks" />
+                                            </pi-form-field>
+                                            <pi-form-field class="child-check m-t-0" label="Expense">
+                                                <input type="checkbox" pi-input
+                                                    (change)="checkAllExpenses(state.checkAllExpenses)"
+                                                    [(ngModel)]="state.checkAllExpenses" />
+                                            </pi-form-field>
+                                            <pi-form-field class="child-check m-t-0 bid" label="Bid">
+                                                <input type="checkbox" pi-input
+                                                    (change)="checkAllBids(state.checkAllBids)"
+                                                    [(ngModel)]="state.checkAllBids" />
+                                            </pi-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-container">
+                                    <virtual-scroller style="height: 100%;" [scrollAnimationTime]="1000"
+                                        [useMarginInsteadOfTranslate]="true" [bufferAmount]="2" #scroll [items]="state.products"
+                                        [enableUnequalChildrenSizes]="true">
+                                    <div class="panel-item" *ngFor="let item of scroll.viewPortItems; let i = index">
+                                        <div class="parent has-chk-box">
+                                            <div class="chk-radio">
+                                                <pi-form-field class="selected-product"
+                                                    label="<i class='pixel-icons icon-products'></i>{{item.name}}">
+                                                    <input type="checkbox" pi-input (change)="checkAllServices(item)"
+                                                        [(ngModel)]="item.selected" />
+                                                </pi-form-field>
+                                            </div>
+                                        </div>
+                                        <ul *ngIf="item.services && item.services.length" class="child-list">
+                                            <li class="service has-chk-box" *ngFor="let child of item.services">
+                                                <div class="chk-radio estimate-header-selection">
+                                                    <pi-form-field class="child-main-check selected-service"
+                                                        label="<i class='pixel-icons icon-orders'></i>{{child.name}}">
+                                                        <input type="checkbox" pi-input
+                                                            (change)="checkParentProduct(child, item)"
+                                                            [(ngModel)]="child.selected" />
+                                                    </pi-form-field>
+                                                    <div class="pull-end d-flex justify-content-between">
+                                                        <pi-form-field class="child-check task" label=" ">
+                                                            <input type="checkbox" pi-input
+                                                                (change)="checkColumnLevel(child, 'task')"
+                                                                [(ngModel)]="child.task" />
+                                                        </pi-form-field>
+                                                        <pi-form-field class="child-check" label=" ">
+                                                            <input type="checkbox" pi-input
+                                                                (change)="checkColumnLevel(child, 'expense')"
+                                                                [(ngModel)]="child.expense" />
+                                                        </pi-form-field>
+                                                        <pi-form-field class="child-check bid" label=" ">
+                                                            <input type="checkbox" pi-input
+                                                                (change)="checkColumnLevel(child, 'bid')"
+                                                                [(ngModel)]="child.bid" />
+                                                        </pi-form-field>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    </virtual-scroller>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="animated-footer padding-20 d-flex justify-content-end">
+                <button pi-button (click)="close()">Cancel</button>
+                <button pi-button class="m-l-15" color="primary" (click)="save()"
+                    [disabled]="!state.unlockCreateEstimate">{{(data.type=='edit')?'Save':'Add'}}</button>
+            </div>
+        </div>
+    </div>
+<div class="spinner-view overlay-spinner" *ngIf="state.loader">
+    <div class="empty-screen">
+        <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content class="custom-select">
+  <form [formGroup]="organizationForm" class="form-flex" autocomplete="off">
+
+    <pi-field-group>
+      <pi-select label="Type" [options]="organizations" id="org_type" name="org_type" formControlName="org_type"></pi-select>
+      <div class="pi-error" *ngIf="organizationForm.controls.org_type.hasError('required') && submitted">Please Select
+        Organization Type</div>
+    </pi-field-group>
+
+    <pi-field-group>
+      <pi-form-field label="Organization Name">
+        <input type="text" class="ak-field-text" id="name" name="name" formControlName="name">
+        <div class="pi-error" *ngIf="organizationForm.controls.name.hasError('required') && submitted">Please Enter
+          Organization Name</div>
+        <div class="pi-error" *ngIf="!organizationForm.controls.name.hasError('required') && duplicateError">{{duplicateError}}</div>
+      </pi-form-field>
+    </pi-field-group>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button pi-button color="subtle" (click)="closeDialog()">Cancel</button>
+  <button pi-button color="primary" (click)="saveOrganization(organizationForm)" [disabled]="organizationForm.pristine">Save</button>
+</mat-dialog-actions>

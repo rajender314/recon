@@ -1,0 +1,312 @@
+<div class="primary-layout">
+	<div class="pi-detail-view">
+		<div class="primary-layout-detail">
+			<!-- <div class="mat-dialog-heading">
+						<i class="pixel-icons icon-arrow" (click)="closeDialog()"></i>
+						<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+						<button mat-icon-button mat-dialog-close tabindex="-1">
+							<mat-icon>close</mat-icon>
+						</button>
+					</div> -->
+			<header>
+				<div class="w-100 d-flex align-items-center justify-content-between">
+					<aside class="left-header d-flex" >
+						<pi-breadcrumb>
+							<ng-container *ngFor="let item of data.breadcrumbs">
+								<pi-breadcrumb-item tabindex="-1" *ngIf="item.type == 'link'" [label]="item.label"
+									[routerLink]="item.route" (click)="closeDialog()">
+								</pi-breadcrumb-item>
+								<pi-breadcrumb-item *ngIf="item.type != 'link'" [label]="item.label">
+								</pi-breadcrumb-item>
+							</ng-container>
+						</pi-breadcrumb>
+						<div class="d-flex " style="position: relative;">
+							<div class="ag-cell-custome-actions" >
+								<ul style="padding-top: 0;">
+									<li style="margin-right: 0; margin-left: 0;" (click)="closeDialog()"><i
+											class="pixel-icons icon-arrow"></i></li>
+								</ul>
+							</div>
+							<h1 mat-dialog-title [innerHtml]="data.title"></h1>
+						</div>
+					</aside>
+					<aside class="right-header d-flex">
+						<button mat-icon-button mat-dialog-close tabindex="-1"
+							style="width:38px;height: 38px; line-height: 38px;position: relative;left: 13px;">
+							<mat-icon>close</mat-icon>
+						</button>
+					</aside>
+				</div>
+			</header>
+			<div class="primary-layout-detail-body flex-column">
+				<div class="sidebar-layout padding-20">
+					<div class="distribution-kitlist">
+						<mat-dialog-content>
+							<div *ngIf="stepper == 0">
+								<div class="kitlist-content" *ngIf="data.flag != 'list'">
+									<p>A kit list allows adding quantities of different versions of multiple products
+										for the
+										same location.
+									</p>
+									<p>It is similar to a standard distribution list, but allows adding each product
+										version as
+										a column.
+									</p>
+								</div>
+								<form [formGroup]="createFormGroup" class="form-flex" autocomplete="off">
+
+									<div *ngIf="data.formFields.length">
+										<div *ngFor="let field of data.formFields">
+											<ng-container *ngIf="field.type == 'select' && field.key != 'job_file'">
+												<pi-select [label]="field.label" [options]="dropdowns[field.options]"
+													[multi]="field.multi" [formControlName]="field.key"></pi-select>
+												<div class="msgs">
+													<div class="pi-error"
+														*ngIf="createFormGroup.controls[field.key].hasError('required') && submitted">
+														Please
+														Select
+														{{field.label}}</div>
+												</div>
+											</ng-container>
+											<ng-container *ngIf="field.type == 'text'">
+												<pi-form-field [label]="field.label">
+													<input type="text" pi-input [name]="field.key"
+														[formControlName]="field.key" />
+													<div class="msgs">
+														<div class="pi-error"
+															*ngIf="createFormGroup.controls[field.key].hasError('required') && submitted">
+															Please
+															Select
+															{{field.label}}</div>
+													</div>
+												</pi-form-field>
+											</ng-container>
+											<ng-container *ngIf="field.type == 'textarea'">
+												<pi-form-field [label]="field.label">
+													<textarea pi-input [name]="field.key" [formControlName]="field.key"
+														maxlength="1024"></textarea>
+													<span class="field-note">Enter text of 1024 characters or
+														less.</span>
+												</pi-form-field>
+											</ng-container>
+										</div>
+									</div>
+
+									<div class="uploader" *ngIf="!createFormGroup.controls.job_file.value">
+										<!-- <div class="uploader-details">
+								<input id="upload" type="file" ng2FileSelect [uploader]="uploader" [hidden]="true" />
+								<label for="upload">Upload {{data.flag == 'list' ? 'Distribution ' : 'Kitting '}} List</label>
+								<span>( Max file size: 3MB )</span>
+							</div> -->
+										<div class="uploader-details">
+											<div class="uploader-drag">
+												<div ng2FileDrop *ngIf="!selectedFile"
+													[ngClass]="{'file-over': hasDropZoneOver}" [uploader]="uploader"
+													class="file-drop-zone" (fileOver)="fileOverBase($event)"
+													(onFileDrop)="fileDrop($event)">
+													Drag Files to attach, or &nbsp;<label for="upload">Browse</label>
+													<input id="upload" type="file" [accept]="allowedMimeType.toString()" ng2FileSelect [uploader]="uploader"
+														[hidden]="true" />
+												</div>
+												<div class="uploaded-file" *ngIf="selectedFile">
+													<i class="pixel-icons icon-close-slim" (click)="deleteFile()"></i>
+													<span [innerHtml]="selectedFile.name"></span>
+													<span [innerHtml]="(selectedFile.size / 1024) + 'KB'"></span>
+												</div>
+
+												<!-- satish <div class="uploader-drag">
+									<div ng2FileDrop *ngIf="!selectedFile" [ngClass]="{'file-over': hasDropZoneOver}" [uploader]="uploader" class="file-drop-zone"
+									(fileOver)="fileOverBase($event)" (onFileDrop)="fileDrop($event)">
+										Drag files to attach, or <span>Browse</span>
+									</div>
+									<div class="uploaded-file" *ngIf="selectedFile">
+										<i class="pixel-icons icon-close-slim" (click)="deleteFile()"></i>
+										<span [innerHtml]="selectedFile.name"></span>
+										<span [innerHtml]="(selectedFile.size / 1024) + 'KB'"></span>
+									</div>
+								</div> -->
+
+												<div class="format-sec">
+													<div class="uploader-formats">
+														<span>Valid file formates are xlsx, xls<i
+																class="required">*</i>.</span>
+														<span>Max file size allowed is 3 MB<i
+																class="required">*</i>.</span>
+														<span>Excel header must be same as the sample format<i
+																class="required">*</i>.</span>
+													</div>
+													<div class="uploader-details">
+														<a [href]="sampleLink"><i
+																class="pixel-icons icon-down-arrow"></i>
+															Download Sample
+															file</a>
+														<a [href]="countrySampleLink"><i
+																class="pixel-icons icon-down-arrow"></i> Download
+															Country Sample</a>
+													</div>
+												</div>
+
+												<!-- <div [innerHtml]="showFileError"></div> -->
+											</div>
+
+										</div>
+										<div [innerHtml]="showFileError"></div>
+									</div>
+								</form>
+							</div>
+
+							<!-- *ngIf="validateResults" -->
+							<div class="" *ngIf="stepper == 1">
+								<pi-select label="Select Sheet" [options]="validateResults.updatedSheets"
+									[formControl]="selectedSheet">
+								</pi-select>
+								<div *ngIf="validateResults.error_status" class="erro-sec">
+									<h2 class="error-title">1 Error occurred</h2>
+									<div *ngIf="!validateResults.errors">
+										<p class="error-content"><i class="pixel-icons icon-exclamation"></i>Excel file
+											header
+											doesn't match
+											with Sample
+											Format</p>
+										<h3 class="format">Sample Format</h3>
+										<div class="excel-header">
+											<span *ngFor="let col of validateResults.sample_columns"
+												[innerHtml]="col"></span>
+										</div>
+										<h3 class="format">Upload Format</h3>
+										<div class="excel-header">
+											<span *ngFor="let col of validateResults.uploaded_columns"
+												[innerHtml]="col.name" [class.has-error]="col.is_error"></span>
+										</div>
+									</div>
+									<div *ngIf="validateResults.errors">
+										<div *ngIf="validateResults.errors.header_match">
+											<p class="error-content"><i class="pixel-icons icon-exclamation"></i>Excel
+												file
+												header doesn't
+												match with Sample
+												Format</p>
+											<h3 class="format">Sample Format</h3>
+											<div class="excel-header">
+												<span *ngFor="let col of validateResults.sample_columns"
+													[innerHtml]="col"></span>
+											</div>
+											<h3 class="format">Upload Format</h3>
+											<div class="excel-header">
+												<span *ngFor="let col of validateResults.uploaded_columns"
+													[innerHtml]="col.name" [class.has-error]="col.is_error"></span>
+											</div>
+										</div>
+										<p *ngIf="validateResults.errors.xids_not_exists" class="error-content"><i
+												class="pixel-icons icon-exclamation"></i>
+											{{validateResults.errors.xids_not_exists.toString()}} client
+											codes does not exists.</p>
+										<div>
+											<p *ngIf="validateResults.errors.distribution" class="error-content"><i
+													class="pixel-icons icon-exclamation"></i>Following
+												distribution types doesn't exist</p>
+											<ul class="error-list">
+												<li *ngFor="let dist of validateResults.errors.distribution"
+													[innerHtml]="dist">
+												</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+								<div *ngIf="!validateResults.error_status">
+									<div class="table" *ngIf="data.flag != 'list'" [formGroup]="successFormGroup">
+										<div class="thead">
+											<div class="trow">
+												<div class="tdata first"><i>s</i></div>
+												<div class="tdata ellipsised-data">Column</div>
+												<div class="tdata">Import as</div>
+												<div class="tdata">Versions</div>
+											</div>
+										</div>
+										<div class="tbody" formArrayName="columns">
+											<div class="trow" *ngFor="let row of kitColumns;let i = index"
+												[formGroupName]="i">
+												<div class="tdata first" [title]="row.column_letter"
+													[innerHtml]="row.column_letter"></div>
+												<div class="tdata ellipsised-data" [title]="row.name"
+													[innerHtml]="row.name">
+												</div>
+												<div class="tdata">
+													<!-- <span [matMenuTriggerFor]="menu">Don't Import <i class="pixel-icons icon-arrow-down"></i></span>
+											<mat-menu #menu="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+												<button mat-menu-item>
+													Import
+												</button>
+											</mat-menu> -->
+													<pi-select [label]="''" [options]="dropdowns.importOptions"
+														(onChange)="changeImport(i, $event)" [multi]="false"
+														formControlName="import" class="custom-select-field">
+													</pi-select>
+												</div>
+												<div>
+													<pi-form-field>
+														<input pi-input formControlName="version"
+															[disabled]="!columns.controls[i].controls.import.value" />
+														<div class="msgs">
+															<div class="pi-error"
+																*ngIf="columns.controls[i].controls.version.hasError('required')">
+																Please Enter Version Name
+															</div>
+														</div>
+													</pi-form-field>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="error" *ngIf="errorMsg.length" [innerHtml]="errorMsg"></div>
+									<div class="table" *ngIf="data.flag == 'list'">
+										<div class="thead">
+											<div class="trow">
+												<div class="tdata first"><i>s</i></div>
+												<div class="tdata ellipsised-data">Column</div>
+											</div>
+										</div>
+										<div class="tbody">
+											<div class="trow"
+												*ngFor="let row of validateResults.uploaded_columns;let i = index">
+												<div class="tdata first" [title]="row.column_letter"
+													[innerHtml]="row.column_letter"></div>
+												<div *ngIf="row.is_standard" [title]="row.name"
+													class="tdata ellipsised-data" [innerHtml]="row.name"></div>
+												<div *ngIf="!row.is_standard" class="tdata">
+													<pi-form-field [label]="row.name">
+														<input type="checkbox" pi-input
+															[(ngModel)]="selectedExtraColumns[row.lable_key]" />
+													</pi-form-field>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</mat-dialog-content>
+						<!-- <hr> -->
+						
+					</div>
+				</div>
+				<mat-dialog-actions [ngClass]="{'back':stepper == 1,'cancel':stepper == 0}"
+				class="animated-footer fixed-footer padding-20">
+				<button pi-button  (click)="stepper == 0 ? closeDialog() : stepper = 0" >{{stepper == 0 ? 'Cancel' : 'Back'}}</button>
+				<!-- <span style="flex: 1"></span> -->
+				<button pi-button color="primary" *ngIf="stepper == 0" (click)="validate()"
+					[disabled]="createFormGroup.pristine || !selectedFile">Next</button>
+				<div *ngIf="stepper == 1 && !validateResults.error_status" style="margin-left: 20px;">
+					<button pi-button color="primary" *ngIf="(data.selectedRow && (data.selectedRow['distro_id'] || data.selectedRow['id']))" (click)="saveDetails(false)">Import & Append</button>
+					<button pi-button color="primary" *ngIf="(data.selectedRow && (data.selectedRow['distro_id'] || data.selectedRow['id']))" (click)="saveDetails(true)">Import & Replace</button>
+					<button pi-button color="primary" *ngIf="!data.selectedRow" (click)="saveDetails(true)">Import</button>
+				</div>
+			</mat-dialog-actions>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="spinner-view overlay-spinner" *ngIf="loader">
+	<div class="empty-screen">
+        <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+    </div>
+</div>

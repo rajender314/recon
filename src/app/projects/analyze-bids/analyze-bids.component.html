@@ -1,0 +1,18 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button (click)="closeAnalyzeBids()" tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+<mat-dialog-content>
+	<form [formGroup]="analyzeBidFormsGroup" class="form-flex" autocomplete="off">
+		<div class="container">
+			<div class="header">
+				<pi-select label="" [options]="state.vendorsDropdown" (onChange)="changeVendor()" formControlName="selectedVendor"></pi-select>
+			</div>
+			<div class="content">
+				<ag-grid-angular style="width: 100%; height: 300px" #topGrid class="ag-theme-balham" [gridOptions]="gridOptions"></ag-grid-angular>
+			</div>
+		</div>
+	</form>
+</mat-dialog-content>

@@ -1,0 +1,176 @@
+.user-profile{
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    .user-section{
+        position: absolute;
+        top: 50%;
+        padding: 0 30px;
+        .user-block{
+            margin: 10px;
+            .user-label{
+                padding: 0 10px;
+            }
+            .user-info{
+                padding: 10px;
+            }
+        }
+    }
+
+    .user-image{
+        position: absolute;
+        top: 20%;    
+        .user-pic{
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            background: #fff;
+            margin: 0 auto;
+            background-image: url('assets/images/avatar.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: right top;
+        }
+    }
+}
+
+.recon-profile{
+    border: solid 1px #d8ddec;
+    max-width: 600px;
+    min-width: 600px;
+    margin: 40px auto;
+    border-radius: 6px;
+    padding: 30px;
+    h1{
+        color: red;
+    }
+    .image-upload.org-upload {
+        width: 100%;
+        height: 100%;
+        // background-color: #f7f9fc;
+        border-radius: 50%;
+        margin: 0 auto;
+        position: relative;
+        label.browse-file {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            i{
+                &.icon-camera{
+                    position: absolute;
+                    right: 0;
+                    bottom: 7px;
+                    font-size: 14px;
+                    background: #fff;
+                    border-radius: 50%;
+                    width: 30px;
+                    height: 30px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border: solid 1px #b7b4b4;
+                    color: #323232;
+                    cursor: pointer;
+                    &::before{
+                        position: relative;
+                        left: 1px;
+                    }
+                    &:hover{
+                        background: #f3f3f3;
+                        color: #2447a6;
+                    }
+                }
+            }
+        }
+    }
+    h5{
+        color: #202124;
+        letter-spacing: .29px;
+        margin: 0;
+        font-size: 14px;
+        text-align: center;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        padding-top: 20px;
+        padding-bottom: 0px;
+    }
+    h6{
+        background-color: #ffffff;
+        border: 1px solid #dadce0;
+        border-radius: 100px;
+        color: #202124;
+        display: inline-block;
+        letter-spacing: .29px;
+        margin: 13px 0 0;
+        max-width: 254px;
+        outline: 0;
+        padding: 8px 16px;
+        text-align: center;
+        text-decoration: none;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        font-size: 14px;
+    }
+    p{
+        
+    }
+}
+.pro-pic {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .text-image{
+        width: 100%;
+        height: 100%;
+        background: #2447a6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        color: #fff;
+        h3{
+            color: #fff; 
+        }
+    }
+    .images{
+        width: 100%;
+        height: 100%;
+        span{
+            width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    display: inline-block;
+    // background-color: red;
+    border-radius: 50%;
+    overflow: hidden;
+        }
+    }
+    
+}
+.profile-detail-info{
+    text-align: center;
+}
+.user-section{
+    padding-top: 20px;
+    border-top: solid 1px #d8ddec;
+    margin-top: 24px;
+    .user-block{
+        padding-bottom: 6px;
+    }
+}
+.user-label{
+    max-width: 180px;
+    width: 100%;
+    text-align: right;
+    display: inline-block;
+    padding-right: 10px;
+}

@@ -1,0 +1,324 @@
+<div class="primary-layout-detail" [class.favorites-tab]="state.activeState.flag == 'favorites'">
+	<!-- ===== {{state.jobs.list.length}} ===== -->
+	<header *ngIf="state.pagination.search.length || state.jobs.list.length || state.hasFilter">
+		<div class="w-100 d-flex align-items-center justify-content-between ">
+			<aside class="left-header d-flex">
+				<!-- <i class="pixel-icons icon-arrow" (click)="changeMasterView()"></i> -->
+				<h1 [innerHtml]="state.activeState.title"></h1>
+			</aside>
+			<aside class="d-flex right-header  justify-content-end  flex-width"
+				*ngIf="state.pagination.search.length ? true : (state.loader || state.jobs.list.length || state.hasFilter)">
+				<!-- <button class="filter-icon-btn icon-buttons" pi-button><i class="pixel-icons icon-filter-new"></i></button> -->
+				<app-search (onSearch)="searchList($event)"></app-search>
+				<a class="m-l-15" *ngIf="state.activeState.flag != 'favorites'" (click)="showFilter('show')"><i
+						class="pixel-icons icon-filter-new"></i>
+					<span [class.has-filter]="state.hasFilter">{{state.hasFilter ? 'Filters Applied' : 'Filters'}}</span></a>
+				<button class="m-l-15" pi-button color="primary" *ngIf="APP.permissions.system_access.new_job=='yes'"
+					[routerLink]="'/projects/create-project'">Add Project</button>
+			</aside>
+		</div>
+	</header>
+	<div class="primary-layout-detail-body flex-column">
+		<div class="no-data-screen"
+			*ngIf="!state.loader && !state.jobs.list.length && !state.isSort && !state.pagination.search.length && !state.hasFilter">
+			<div class="empty-screen">
+				<div class="icon-info-holder">
+					<div class="icon">
+						<i class="pixel-icons icon-pn-projects"></i>
+					</div>
+					<p class="alert-message">No Projects</p>
+					<button pi-icon-button color="primary" *ngIf="APP.permissions.system_access.new_job=='yes'"
+						[routerLink]="'/projects/create-project'">+ Add
+						Project</button>
+				</div>
+			</div>
+		</div>
+		<!-- *ngIf="state.loader" -->
+		<!-- *ngIf="state.loader"  -->
+		<div class="spinner-view"  *ngIf="state.loader" >
+				<div class="empty-screen">
+				  <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>				
+				</div>
+		</div>
+		<div class="no-data-screen spinner-view" style="display: none;" >
+			<div class="empty-screen">
+					<div class="icon-info-holder">
+						<div class="icon">
+							<i class="pixel-icons icon-search"></i>
+						</div>
+						<p class="alert-message">No Projects Found!</p>
+					</div>
+				
+			</div>
+		</div>
+		<!-- <mat-spinner diameter="45" class="md" *ngIf="state.loader"></mat-spinner> -->
+		<ng-container *ngIf="!state.loader ">
+			<div class="container-fluid padding-20 primary-background " *ngIf="state.activeState.flag == 'favorites'">
+				<!-- <h3>Favorites</h3> -->
+				<div class="primary-max-screen-width favorites-cards  w-100" style="position: relative;">
+					<div class="row margin--10" style="margin-bottom: 10px;">
+						<div class="card-ui" *ngFor="let fav of state.favJobs.list | slice: 0:state.limit; let i = index">
+							<div class="favorite-card"  routerLink="/projects/{{fav.id}}/overview" >
+								<div class="job-holder">
+									<div class="job-client-logo">
+										<div class="fav-client-logo">
+											<img *ngIf="fav.logo" style="width: 100%;height: 100%" [src]="fav.logo" />
+										</div>
+									</div>
+									<div class="job-client-info">
+										<h3 [title]="fav.job_title" > {{fav.job_title | slice:0:66}}<span *ngIf="fav.job_title.length > 66">...</span></h3>
+										<p [innerHtml]="fav.job_no"></p>
+									</div>
+								</div>
+
+								<div class="d-flex justify-content-between align-items-center job-fav-info">
+									<div class="job-status-holder">
+										<i (click)="$event.stopPropagation();changeFav(fav, i)"
+											class="pixel-icons icon-favorites-filled" style="color: #f8b952;"></i>
+										<div class="job_status  status_{{fav.status_id}}">{{fav.status_name}}</div>
+									</div>
+									<span [innerHtml]="fav.delivery_due_date"></span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="spinner-view" *ngIf="state.favouritesLoader">
+							<div class="empty-screen">
+							  <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>				
+							</div>
+					</div>
+					<!-- <mat-spinner diameter="45" class="md" *ngIf="state.favouritesLoader"></mat-spinner> -->
+					<div class="no-msg-holder" style="margin-top: 51px;" *ngIf="!state.favJobs?.list.length && !state.favouritesLoader">
+						<div class="msg-alert" >
+							<p>No Favorite Projects</p>
+						</div>
+					</div>
+					<div class="msg-holder" *ngIf="state.limit < state.favJobs?.list.length">
+						<div class="msg-alert" (click)="changeLimit()" >
+							<p>Show More</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="container-fluid padding-20">
+				<div class="primary-max-screen-width">
+					<h3 class="section-header-title" *ngIf="state.activeState.flag == 'favorites'"
+						style="margin-top: 14px;">Recent
+						Projects</h3>
+					<div class="customized-ag-grid with-footer pinned-left" [class.hide]="!state.jobsEmpty" *ngIf="state.jobs.list.length || state.hasFilter">
+						<div style="height: 100%; width: 100%;">
+							<ag-grid-angular @InLeft class="ag-theme-balham projects-grid" [gridOptions]="gridOptions">
+							</ag-grid-angular>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</ng-container>
+	</div>
+</div>
+
+<div class="side-nav-container" *ngIf="displayFilter">
+	<div class="overlay" (click)="showFilter('show')"></div>
+	<div class="side-nav" [class.active]="displayFilter">
+		<div class="side-nav-header greybgdark">
+				<h2 class="ft18 font-normal p-0">Filters</h2>
+		</div>
+		<div class="filter-container">
+			
+			<div class="side-nav-filters proj-filter catg-menu">
+				<mat-accordion>
+					<mat-expansion-panel (opened)="menuOpened('status_filter')"
+						(closed)="state.filters.expansionPanel.status_filter = false"
+						[expanded]="state.filters.expansionPanel.status_filter" hideToggle=true>
+						<mat-expansion-panel-header expandedHeight="40px" collapsedHeight="40px">
+							<mat-panel-title>
+								<div class="mat-t">
+									<i class="pixel-icons"
+										[ngClass]="state.filters.expansionPanel.status_filter ? 'icon-arrow-down' : 'icon-arrow-right'"></i>
+									<span>Project Statuses</span>
+
+								</div>
+							</mat-panel-title>
+						</mat-expansion-panel-header>
+						<div>
+							<div class="container">
+								<div class="hdr-actions">
+									<pi-form-field [label]="'Select All'">
+										<input type="checkbox" pi-input
+											[(ngModel)]="state.filters.selectAll.status_filter"
+											[(indeterminate)]="indeterminate" (change)="selectAll('status_filter')" />
+									</pi-form-field>
+									<span class="clear-all" (click)="menuActions('clear', 'status_filter')">Clear
+										All</span>
+								</div>
+								<div class="content-list">
+									<div class="content-list-visible">
+										<pi-form-field [label]="status.name"
+											*ngFor="let status of state.dropdowns.status_filter">
+											<input type="checkbox" pi-input
+												[(ngModel)]="state.filters.status_filter[status.id]"
+												(change)="change('status_filter')" />
+										</pi-form-field>
+									</div>
+								</div>
+							</div>
+							<div class="footer">
+								<button pi-button
+									(click)="state.filters.expansionPanel.status_filter=false">Cancel</button>
+								<button pi-button color="primary"
+									(click)="saveFilter('status_filter');state.filters.expansionPanel.status_filter=false">Save</button>
+							</div>
+						</div>
+					</mat-expansion-panel>
+
+					<!-- panel-2 -->
+					<mat-expansion-panel (opened)="menuOpened('forms_filter')"
+						(closed)="state.filters.expansionPanel.forms_filter = false"
+						[expanded]="state.filters.expansionPanel.forms_filter" hideToggle=true>
+						<mat-expansion-panel-header expandedHeight="40px" collapsedHeight="40px">
+							<mat-panel-title>
+								<div class="mat-t">
+									<i class="pixel-icons"
+										[ngClass]="state.filters.expansionPanel.forms_filter ? 'icon-arrow-down' : 'icon-arrow-right'"></i>
+									<span>Forms</span>
+								</div>
+							</mat-panel-title>
+						</mat-expansion-panel-header>
+						<div>
+							<div class="container">
+								<div class="forms-search-sec">
+									<mat-radio-group [(ngModel)]="state.gridView" (change)="changeGrid(state.gridView)">
+										<mat-radio-button value="all">All</mat-radio-button>
+										<mat-radio-button value="selected">Selected</mat-radio-button>
+									</mat-radio-group>
+								</div>
+								<div class="hdr-actions">
+									<app-search #formSearchInput (onSearch)="menuSearch(formsGridApi, $event)"></app-search>
+									<span class="clear-all" (click)="menuActions('clear', 'forms_filter')">Clear
+										All</span>
+								</div>
+
+								<ag-grid-angular style="height: 512px" class="ag-theme-balham"
+									[gridOptions]="formFilterGrid">
+								</ag-grid-angular>
+							</div>
+							<div class="footer">
+								<button pi-button
+									(click)="state.filters.expansionPanel.forms_filter=false">Cancel</button>
+								<button pi-button color="primary"
+									(click)="saveFilter('forms'); state.filters.expansionPanel.forms_filter=false">Save</button>
+							</div>
+						</div>
+					</mat-expansion-panel>
+
+					<!-- panel-3 -->
+					<mat-expansion-panel (opened)="menuOpened('clients_filter')"
+						(closed)="state.filters.expansionPanel.clients_filter = false"
+						[expanded]="state.filters.expansionPanel.clients_filter" hideToggle=true>
+						<mat-expansion-panel-header expandedHeight="40px" collapsedHeight="40px">
+							<mat-panel-title>
+								<div class="mat-t">
+									<i class="pixel-icons"
+										[ngClass]="state.filters.expansionPanel.clients_filter ? 'icon-arrow-down' : 'icon-arrow-right'"></i>
+									<span>Clients</span>
+								</div>
+							</mat-panel-title>
+						</mat-expansion-panel-header>
+						<div (click)="$event.stopPropagation()">
+							<div class="container">
+								<!-- <div class="hdr-actions">
+										<pi-form-field [label]="'Select All'">
+											<input type="checkbox" pi-input [(ngModel)]="state.filters.selectAll.clients_filter" [(indeterminate)]="indeterminate"
+											 (change)="selectAll('clients_filter')" />
+										</pi-form-field>
+										<span class="clear-all" (click)="menuActions('clear', 'clients_filter')">Clear All</span>
+									</div>
+									<div class="content-list">
+										<div class="content-list-visible">
+											<pi-form-field [label]="client.name" *ngFor="let client of state.dropdowns.clients_filter">
+												<input type="checkbox" pi-input [(ngModel)]="state.filters.clients_filter[client.id]" (change)="change('clients_filter')" />
+											</pi-form-field>
+										</div>
+									</div> -->
+								<div class="hdr-actions">
+									<app-search #clientSearchInput (onSearch)="menuSearch(clientsGridApi, $event)" class="search-box">
+									</app-search>
+									<span class="clear-all" (click)="menuActions('clear', 'clients_filter')">Clear
+										All</span>
+								</div>
+								<ag-grid-angular style="height: 200px" class="ag-theme-balham"
+									[gridOptions]="clientsFilterGrid">
+								</ag-grid-angular>
+							</div>
+							<div class="footer">
+								<button pi-button
+									(click)="state.filters.expansionPanel.clients_filter=false">Cancel</button>
+								<button pi-button color="primary"
+									(click)="saveFilter('clients_filter');state.filters.expansionPanel.clients_filter=false">Save</button>
+							</div>
+						</div>
+					</mat-expansion-panel>
+
+					<!-- panel-4 -->
+					<mat-expansion-panel (opened)="menuOpened('company_filter')"
+						(closed)="state.filters.expansionPanel.company_filter = false"
+						[expanded]="state.filters.expansionPanel.company_filter" hideToggle=true>
+						<mat-expansion-panel-header expandedHeight="40px" collapsedHeight="40px">
+							<mat-panel-title>
+								<div class="mat-t">
+									<i class="pixel-icons"
+										[ngClass]="state.filters.expansionPanel.company_filter ? 'icon-arrow-down' : 'icon-arrow-right'"></i>
+									<span>Company</span>
+								</div>
+							</mat-panel-title>
+						</mat-expansion-panel-header>
+						<div (click)="$event.stopPropagation()">
+							<div class="container">
+								<div class="hdr-actions">
+									<pi-form-field [label]="'Select All'">
+										<input type="checkbox" pi-input
+											[(ngModel)]="state.filters.selectAll.company_filter"
+											[(indeterminate)]="indeterminate" (change)="selectAll('company_filter')" />
+									</pi-form-field>
+									<span class="clear-all" (click)="menuActions('clear', 'company_filter')">Clear
+										All</span>
+								</div>
+								<div class="content-list">
+									<div class="content-list-visible">
+										<div *ngFor="let parent of state.dropdowns.company_filter">
+											<ng-container *ngIf="parent.is_visible">
+												<pi-form-field [label]="parent.name">
+													<input type="checkbox" pi-input
+														[(ngModel)]="state.filters.company_filter.parent[parent.id]"
+														(change)="changeParent(parent)" />
+												</pi-form-field>
+												<div *ngIf="parent.children.length"
+													[ngClass]='{"child-select":parent.children}'>
+													<ng-container *ngFor="let child of parent.children">
+														<pi-form-field [label]="child.name"
+														*ngIf="child.is_visible">
+															<input type="checkbox" pi-input
+																[(ngModel)]="state.filters.company_filter.child[child.id]"
+																(change)="changeChild(parent, child)" />
+														</pi-form-field>
+													</ng-container>
+												</div>
+											</ng-container>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="footer">
+								<button pi-button
+									(click)="state.filters.expansionPanel.company_filter=false">Cancel</button>
+								<button pi-button color="primary"
+									(click)="saveFilter('company_filter');state.filters.expansionPanel.company_filter=false">Save</button>
+							</div>
+						</div>
+					</mat-expansion-panel>
+				</mat-accordion>
+			</div>
+		</div>
+	</div>
+</div>

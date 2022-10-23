@@ -1,0 +1,179 @@
+<section class="m-t-20">
+	<mat-spinner *ngIf="state.loader" diameter="36"></mat-spinner>
+	<div class="general-details" *ngIf="!state.loader">
+		<form [formGroup]="generalForm" class="form-flex" autocomplete="off">
+			<div class="detail-section" *ngFor="let group of state.section">
+				<div class="view-section" *ngIf="!group.edit">
+					<label class="label">{{group.label}}</label>
+					<div class="value" *ngIf="group.name!='secondary_vendor_codes'">{{group.value}}</div>
+					<div class="value" *ngIf="group.name=='secondary_vendor_codes'">
+						<span *ngFor="let vendor of generalForm.controls[group.name].value;let i = index"><span *ngIf="i!=0">,</span>{{vendor}}</span>
+					</div>
+				</div>
+
+				<div class="edit-section" *ngIf="group.edit">
+					<pi-form-field label="{{group.label}}">
+						<textarea pi-input *ngIf="group.name=='vendor_code' && group.name!='secondary_vendor_codes'" (input)="checkAlphaNumeric(group.name)" [name]="group.name" maxlength="8"
+						 formControlName="{{group.name}}"></textarea>
+						<textarea pi-input *ngIf="group.name!='vendor_code' && group.name!='secondary_vendor_codes'" [name]="group.name" formControlName="{{group.name}}"></textarea>
+						<mat-form-field *ngIf="group.name=='secondary_vendor_codes'" class="secondary-vendor-chip-list">
+							<mat-chip-list #chipList>
+								<mat-chip *ngFor="let vendor of generalForm.controls[group.name].value" [selectable]="selectable" [removable]="removable" (removed)="remove(vendor, group.name)">
+									{{vendor}}
+									<i class="pixel-icons icon-close" matChipRemove *ngIf="true"></i>
+								</mat-chip>
+								<input placeholder="" [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+								 [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event, group.name)">
+							</mat-chip-list>
+							<span class="field-note">Enter Value & press semicolon(;) to add a Choice.</span>
+						</mat-form-field>
+					</pi-form-field>
+					<div class="msgs">
+						<div class="pi-error" *ngIf="!generalForm.pristine">{{state.errorMessage}}</div>
+					</div>
+				</div>
+
+				<div class="edit-actions" *ngIf="group.is_editable && state.editable">
+					<!-- <button pi-button color="primary" *ngIf="!group.edit" (click)="editSection(group)">Edit</button> -->
+					<i class="pixel-icons icon-pencil" *ngIf="!group.edit" (click)="editSection(group)"></i>
+				</div>
+
+				<div class="edit-actions multiple" *ngIf="group.is_editable && group.edit">
+					<button pi-button color="subtle" class="cancel" *ngIf="group.edit" (click)="cancelChanges(group)">Cancel</button>
+					<button pi-button color="primary" *ngIf="group.edit" (click)="save(generalForm)" [disabled]="generalForm.pristine">Save</button>
+				</div>
+
+			</div>
+			<div class="auto-save-section">
+				<!-- <mat-checkbox color="primary" [disableRipple]="true" *ngFor="let attr of state.attributes" (change)="save(generalForm)"
+				 formControlName="attributes[{{attr.id}}]">{{attr.name}}</mat-checkbox> -->
+				 <ng-container *ngFor="let attr of state.attributes">
+						<pi-form-field [label]="attr.name" *ngIf="(attr.name!='W-9 Received' || APP.permissions.system_access.w9_received=='yes')">
+							<input type="checkbox" pi-input [disabled]="!state.editable" (change)="save(generalForm)" formControlName="attributes[{{attr.id}}]"/>
+						</pi-form-field>
+				 </ng-container>
+
+			</div>
+
+			<div class="inline-form">
+				<pi-select label="Vendor Type" [disabled]="!state.editable" [options]="state.dropdowns?.vendorTypes" formControlName="vendor_types_id"></pi-select>
+			</div>
+
+		</form>
+
+		<div class="sectionals">
+			<p class="catg-title"><b>Departments</b> that can access this Vendor:</p>
+			<div class="box-container">
+				<div class="left">
+					<div class="head">
+						<span>{{getSelected.length}} items selected</span>
+						<span class="event-actions" [class.disable-content]="!state.editable" (click)="performAction(null, 'delete', 'selected')">
+							<i class="pixel-icons icon-delete"></i>
+							<span class="link-txt">Remove </span> All
+						</span>
+					</div>
+					<div class="body">
+						<div *ngFor="let dept of state.dropdowns?.departments">
+							<div *ngIf="dept.selected" class="list">
+								<div [innerHtml]="dept.name" class="name"></div>
+								<span class="event-actions" [class.disable-content]="!state.editable" (click)="performAction(dept, 'delete', 'selected')">
+									<i class="pixel-icons icon-minus"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="right">
+					<div class="head">
+						<span fxFlex>
+							<app-search (onSearch)="onSearch($event)"></app-search>
+						</span>
+						<span class="event-actions" [class.disable-content]="!state.editable" (click)="performAction(null, 'add', 'selected')">
+							<i class="pixel-icons icon-plus"></i>
+							<span class="link-txt">Add </span> All
+						</span>
+					</div>
+					<div class="body">
+						<div *ngFor="let dept of state.dropdowns?.departments">
+							<div class="list" *ngIf="!dept.selected">
+								<div [innerHtml]="dept.name" class="name"></div>
+								<span class="event-actions" [class.disable-content]="!state.editable" (click)="performAction(dept, 'add', 'selected')">
+									<i class="pixel-icons icon-plus"></i>
+								</span>
+							</div>
+						</div>
+						<div class="no-data" *ngIf="!state.dropdowns?.departments.length">No Departments Found</div>
+					</div>
+				</div>
+			</div>
+
+			<p class="catg-title"><b>Equipment Categories</b> that apply to this Vendor:</p>
+			<div class="box-card">
+				<div class="head">
+					<span>{{getEquipmentCount}} items selected</span>
+					<span>Default</span>
+				</div>
+				<div class="body">
+					<div class="list-item" *ngFor="let eqCtg of state.dropdowns?.equipments">
+						<pi-form-field [label]="eqCtg.name">
+							<input type="checkbox" pi-input [disabled]="!state.editable" 
+							[(ngModel)]="state.modelValues['equip_catg_ids']['selected'][eqCtg.id]" (change)="state.showFooter = true"
+							/>
+						</pi-form-field>
+						<pi-form-field label=" ">
+							<input type="checkbox" pi-input [(ngModel)]="state.modelValues['equip_catg_ids']['defaults'][eqCtg.id]" (change)="state.showFooter = true"
+							 [disabled]="!state.editable || !state.modelValues['equip_catg_ids']['selected'][eqCtg.id]" />
+						</pi-form-field>
+					</div>
+					<div class="no-data" *ngIf="!state.dropdowns?.equipments.length">No Equipment Categories Found.</div>
+				</div>
+			</div>
+
+			<p class="catg-title"><b>Capabilities</b> that apply to this Vendor:</p>
+			<div class="box-card">
+				<div class="head">
+					<span>{{getCapabilityCount}} items selected</span>
+					<span>Default</span>
+				</div>
+				<div class="body">
+					<div class="list-item" *ngFor="let cap of state.dropdowns?.capabilities">
+						<pi-form-field [label]="cap.name">
+							<input type="checkbox" [disabled]="!state.editable" pi-input [(ngModel)]="state.modelValues['capabilities_ids']['selected'][cap.id]" (change)="state.showFooter = true"
+							/>
+						</pi-form-field>
+						<pi-form-field label=" ">
+							<input type="checkbox" pi-input [(ngModel)]="state.modelValues['capabilities_ids']['defaults'][cap.id]" (change)="state.showFooter = true"
+							 [disabled]="!state.editable || !state.modelValues['capabilities_ids']['selected'][cap.id]" />
+						</pi-form-field>
+					</div>
+					<div class="no-data" *ngIf="!state.dropdowns?.capabilities.length">No Capabilities Found.</div>
+				</div>
+			</div>
+
+			<p class="catg-title">Automatically add this vendor for selected clients:</p>
+			<div class="box-card ag-grid-content">
+				<div class="head">
+					<span>{{gridApi?.getSelectedRows().length}} items selected</span>
+					<div class="list-options">
+						<span [class.active]="client_option === 'all'" (click)="filterGrid('all')">All</span>
+						<span [class.active]="client_option === 'selected'" (click)="filterGrid('selected')">Selected</span>
+					</div>
+					<div>
+						<app-search (onSearch)="filterGrid($event)"></app-search>
+					</div>
+				</div>
+				<div class="body">
+					<div class="global-grid">
+						<ag-grid-angular *ngIf="gridOptions.rowData.length" class="ag-theme-balham" [gridOptions]="gridOptions">
+						</ag-grid-angular>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="footer" *ngIf="state.editable">
+			<button pi-button color="subtle" (click)="reset()">Cancel</button>
+			<button pi-button color="primary" [disabled]="!state.showFooter" (click)="save(generalForm)">Save</button>
+		</div>
+	</div>
+</section>

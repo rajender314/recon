@@ -1,0 +1,362 @@
+:host {
+    position: relative;
+    height: 100%;
+}
+
+.timeline-item {
+    background-color: #f6f7fe;
+    border: 1px solid;
+    border-color: transparent;
+    padding: 12px;
+    margin: 0 auto;
+    max-width: 472px;
+    min-height: 200px;
+    height: 100%;
+}
+.animated-background-wrapper{
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    .animated-background{
+        &.left{
+            width: 50px;
+            height: 40px;
+            border-radius: 4px;
+        }
+        &.right{
+            width: 100%;
+            height: 16px;
+            margin-left: 8px;
+            border-radius: 4px;
+        }
+    } 
+}
+.animated-background{
+    &.bottom{
+        height: 8px;
+        margin-top: 12px;
+        margin-bottom: 40px;
+        border-radius: 2px;
+    }
+}
+@keyframes placeHolderShimmer {
+    0% {
+        background-position: -468px 0;
+    }
+    100% {
+        background-position: 468px 0;
+    }
+}
+.animated-background{
+    margin-bottom: 0px;
+}
+.animated-background,
+.animated-second-background, .loads  {
+    animation-duration: 1.5s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-name: placeHolderShimmer;
+    background: #f6f7f8;
+    background: linear-gradient(to right, #ced2da 8%, #b5b8c0 18%, #ced2da 33%);
+    background-size: 800px 104px;
+    height: 58px;
+    position: relative;
+}
+
+.background-masker {
+    background: #f6f7fe;
+    position: absolute;
+}
+
+/* Every thing below this is just positioning */
+
+.background-masker.header-top,
+.background-masker.header-bottom,
+.background-masker.subheader-bottom {
+    top: 0px;
+    left: 40px;
+    right: 0;
+    height: 13px;
+}
+
+.background-masker.header-left,
+.background-masker.subheader-left,
+.background-masker.header-right,
+.background-masker.subheader-right {
+    top: 10px;
+    left: 40px;
+    height: 8px;
+    width: 10px;
+}
+
+.background-masker.header-bottom {
+    top: 18px;
+    height: 6px;
+}
+
+.background-masker.subheader-left,
+.background-masker.subheader-right {
+    height: 14px;
+    top: 13px;
+}
+
+.background-masker.header-right,
+.background-masker.subheader-right {
+    width: auto;
+    left: 300px;
+    right: 0;
+}
+
+.background-masker.subheader-right {
+    left: 230px;
+}
+
+.background-masker.subheader-bottom {
+    top: 27px;
+    height: 13px;
+}
+
+.background-masker.content-top,
+.background-masker.content-second-line,
+.background-masker.content-third-line,
+.background-masker.content-second-end,
+.background-masker.content-third-end,
+.background-masker.content-first-end {
+    top: 40px;
+    left: 0;
+    right: 0;
+    height: 6px;
+}
+
+.background-masker.content-top {
+    height: 10px;
+}
+
+.background-masker.content-first-end,
+.background-masker.content-second-end,
+.background-masker.content-third-end {
+    width: auto;
+    left: 380px;
+    right: 0;
+    top: 60px;
+    height: 8px;
+}
+
+.background-masker.content-second-line {
+    top: 68px;
+}
+
+.background-masker.content-second-end {
+    left: 420px;
+    top: 74px;
+}
+
+.background-masker.content-third-line {
+    top: 82px;
+}
+
+.background-masker.content-third-end {
+    left: 300px;
+    top: 88px;
+}
+
+.animated-second-background {
+    margin-top: 2px;
+}
+
+.second-background-masker {
+    background: #fff;
+    position: absolute;
+}
+
+.f-line {
+    top: 8px;
+    left: 0;
+    right: 0;
+    height: 6px;
+}
+
+.f-line-right {
+    top: 0px;
+    left: 380px;
+    right: 0px;
+    height: 8px;
+}
+
+.s-line {
+    top: 22px;
+    left: 0;
+    right: 0;
+    height: 6px;
+}
+
+.s-line-right {
+    top: 14px;
+    left: 420px;
+    right: 0px;
+    height: 8px;
+}
+
+.t-line {
+    top: 36px;
+    left: 0;
+    right: 0;
+    height: 6px;
+}
+
+.t-line-right {
+    top: 28px;
+    left: 300px;
+    right: 0px;
+    height: 8px;
+}
+
+.fourth-line {
+    top: 50px;
+    left: 0;
+    right: 0;
+    height: 6px;
+}
+
+.fourth-line-right {
+    top: 42px;
+    left: 380px;
+    right: 0px;
+    height: 8px;
+}
+
+.fifth-line {
+    top: 64px;
+    left: 0;
+    right: 0;
+    height: 6px;
+}
+
+.fifth-line-right {
+    top: 56px;
+    left: 420px;
+    right: 0;
+    height: 8px;
+}
+
+.sixth-line {
+    top: 78px;
+    left: 0;
+    right: 0;
+    height: 6px;
+}
+
+.sixth-line-right {
+    top: 70px;
+    left: 300px;
+    right: 0;
+    height: 8px;
+}
+
+.seventh-line {
+    top: 92px;
+    left: 0;
+    right: 0;
+    height: 6px;
+}
+
+.seventh-line-right {
+    top: 84px;
+    left: 380px;
+    right: 0;
+    height: 8px;
+}
+
+//   loader with icon styles
+.animated-background.user-icon {
+    height: 30px;
+    margin-top: 15px;
+}
+
+.h-t-top {
+    top: 0px;
+    height: 6px;
+    left: 30px;
+    right: 0px;
+}
+
+.h-t-left {
+    width: 10px;
+    left: 30px;
+    height: 30px;
+}
+
+.h-t-right-transparent {
+    top: 6px;
+    height: 6px;
+    left: 160px;
+    right: 0px;
+}
+
+.h-c-top {
+    top: 12px;
+    height: 6px;
+    right: 0;
+    left: 40px;
+}
+
+.h-c-right-transparent {
+    top: 18px;
+    height: 6px;
+    right: 0;
+    left: 240px;
+}
+
+.h-c-bottom {
+    top: 24px;
+    bottom: 0;
+    left: 40px;
+    right: 0;
+    height: 6px;
+}
+
+//  inner side-nav placeholderloader styles
+.placeload {
+    .header {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-top: 20px;
+        .img {
+            width: 20px;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        .header-content {
+            margin-left: 12px;
+            width: 100%;
+            .content-shape {
+                height: 10px;
+                border-radius: 4px;
+                width: 100%;
+            }
+        }
+    }
+}
+// .loads {
+//     -webkit-animation-duration: 1s;
+//     animation-duration: 1s;
+//     -webkit-animation-fill-mode: forwards;
+//     animation-fill-mode: forwards;
+//     -webkit-animation-iteration-count: infinite;
+//     animation-iteration-count: infinite;
+//     -webkit-animation-name: placeHolderShimmer;
+//     animation-name: placeHolderShimmer;
+//     -webkit-animation-timing-function: linear;
+//     animation-timing-function: linear;
+//     background: #f6f7f8;
+//     background: #eeeeee;
+//     background: -webkit-gradient(linear, left top, right top, color-stop(8%, #ced2da), color-stop(18%, #b5b8c0), color-stop(33%, #ced2da));
+//     background: -webkit-linear-gradient(left, #ced2da 8%, #b5b8c0 18%, #ced2da 33%);
+//     background: linear-gradient(to right, #ced2da 8%, #b5b8c0 18%, #ced2da 33%);
+//     -webkit-background-size: 800px 104px;
+//     background-size: 1200px 104px;
+//     position: relative;
+//   }

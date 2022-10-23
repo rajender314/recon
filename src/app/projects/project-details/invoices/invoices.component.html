@@ -1,0 +1,74 @@
+<div class="primary-layout-detail">
+    <header *ngIf="invoiceList.length">
+        <div class="w-100 d-flex justify-content-center flex-column">
+                <app-breadcrumb [list]="breadcrumbs"></app-breadcrumb>
+                <div class="w-100 d-flex align-items-center justify-content-between ">
+                        <aside class="left-header flex-column d-flex flex-width">                
+                                <h1>Invoice</h1>
+                            </aside>
+                            <aside class="d-flex right-header flex-width justify-content-end">
+                                <button pi-button (click)="generateInvoice('next')" color="primary"
+                                    *ngIf="(!selectedInvoice || invoiceList.length == 1) && showGenerateInvoice">Generate
+                                    Invoice</button>
+                                <ng-container *ngIf="selectedInvoice">
+                                    <button class="m-l-15 btn-switching-icon" (click)="printInvoice()" matTooltip="Print"><i  class="pixel-icons icon-print"></i></button>
+                                    <button class="m-l-15 btn-switching-icon" (click)="exportInvoice()" matTooltip="Export as .pdf" ><i class="pixel-icons icon-export-pdf"></i></button>
+                                    <!--  (click)="exportInvoice()" -->
+                                    
+                                    <button class="m-l-15 btn-switching-icon" (click)="editInvoice()" matTooltip="Edit Costs" ><i class="pixel-icons icon-pencil"></i></button>
+                                    
+                                    <!-- <button class="m-l-15" pi-button *ngFor="let action of previewActions" [innerHtml]="action.name" (click)="performActions(action)" [matTooltip]="action.key"></button> -->
+                                    <button pi-button class="m-l-15"
+                                        *ngIf="selectedInvoice && selectedInvoice.invoice_status_id==0 && APP.permissions.job_access.final_invoice=='yes'"
+                                        (click)="finalizeInvoice()">Finalize Invoice</button>
+                                    <button pi-button class="m-l-15" [disabled]="!selectedInvoice.estimates_is_approved" *ngIf="selectedInvoice"
+                                        (click)="regenerateFromEstimates()">Regenerate from  Estimate</button>
+                                   
+                                </ng-container>
+                            </aside>
+                </div>
+            
+        </div>
+    </header>
+    <div class="primary-layout-detail-body flex-column padding-20">
+        <div class="primary-max-screen-width global-grid with-out-margin actions-grid ag-no-striped ag-full-width-grid invoices-list" style="height: calc(100vh - 74px)">
+            <!-- <div class="info custom-tabing-page" *ngIf="!isLoading">
+            <nav mat-tab-nav-bar [disableRipple]="true">
+                <div class="tab-group">
+                    <div>
+                        <a mat-tab-link (click)="onTabChange(tab)" *ngFor="let tab of tabs" [active]="tab.id == activeTab">
+                            {{tab.label}} </a>
+                    </div>
+                </div>
+            </nav>
+        </div> -->
+
+
+            <div [class.no-list]="!invoiceList.length" [ngStyle]="{'height': height}" class="invoice-content"
+                style="overflow: auto;">
+                <router-outlet></router-outlet>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<div class="no-data-screen" *ngIf="!invoiceList.length && !isLoading">
+    <div class="empty-screen">
+        <div class="icon-info-holder">
+            <div class="icon">
+                <i class="pixel-icons icon-invoices"></i>
+            </div>
+            <p class="alert-message" [innerHtml]="errorMsg ? errorMsg : 'No Invoices'"></p>
+        </div>
+        <button pi-button (click)="generateInvoice('init')" color="primary" *ngIf="!errorMsg.length">Generate  Invoice</button>
+    </div>
+</div>
+
+<div class="spinner-view" *ngIf="isLoading">
+    <div class="empty-screen">
+        <div class="icon-info-holder">
+            <mat-spinner diameter="34" class="md"></mat-spinner>
+        </div>
+    </div>
+</div>

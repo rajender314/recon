@@ -1,0 +1,86 @@
+::ng-deep .app-configure-options {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    ag-grid-angular {
+        height: 100%;
+    }
+    .calculate-total-column {
+        display: flex;
+        height: 76px;
+        // margin: 0px 15px;
+        background-color: #f7f7fa;
+        flex-direction: column;
+        align-items: flex-end;
+        color: #172b4d;
+        font-weight: 600;
+        // padding: 0 28px;
+        .calculate-net, .calculate-total{
+            padding: 0 28px;
+        }
+        .calculate-net {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            border-bottom: 1px solid #e8e8ef;
+            .net-value,
+            .net-alert {
+                display: flex;
+                width: 100%;
+                justify-content: flex-end;
+                margin: 2px 0px;
+                .alert-label {
+                    color: #ee9c51;
+                    i.icon-exclamation {
+                        font-size: 16px;
+                        vertical-align: middle;
+                        height: 18px;
+                        width: 16px;
+                    }
+                }
+                .alert-change {
+                    color: #1e54cc;
+                }
+                .value,
+                .alert-change {
+                    width: 100px;
+                    text-align: right;
+                }
+            }
+            .value,
+            .alert-change {
+                width: 100px;
+                text-align: right;
+            }
+        }
+        .calculate-total {
+            display: flex;
+            width: 100%;
+            justify-content: flex-end;
+            margin: 4px 0px;
+            .value,
+            .alert-change {
+                width: 100px;
+                text-align: right;
+            }
+        }
+    }
+}
+::ng-deep .mce-notification{
+    display: none !important;
+}
+.bottom-foooter{
+    .net-total{
+        font-size: 18px;
+        .label{
+            margin-right: 20px;
+        }
+    }
+    .grand-total{
+        color: #1747a6;
+        font-size: 21px;
+        .label{
+            margin-right: 20px;
+        }
+    }
+}

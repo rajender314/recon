@@ -1,0 +1,237 @@
+<pi-master-detail-view class="recon-admin-layout" [showDetail]="showView">
+	<pi-master-view class="admin-sidebar">
+		<div class="sidebar-header">
+			<!-- <span class="my-pixel-icon pink">
+				<i class="pixel-icons icon-vendor-types"></i>
+			</span> -->
+			<div class="page-breadcrumb">
+				<app-admin-popover class="left-hdr-comp" class="align-items" [bgColor]="'pink'" [icon]="'icon-vendor-types'"
+				 [primary]="'Admin'" [secondary]="'Generic Forms'" [data]="adminDashboard"></app-admin-popover>
+			</div>
+			<div class="icon-button-actions" *ngIf="APP.permissions.system_access.generic_forms=='edit'">
+				<button pi-icon-button class="icon-button-wrapper" (click)="openAddDialog()">
+					<i class="pixel-icons icon-plus"></i>
+				</button>
+			</div>
+
+
+			<app-search (onSearch)="onSearch($event)"></app-search>
+		</div>
+		<!-- <div class="left-content"> -->
+
+		<div class="head">
+			<div matBadgeOverlap="false" matBadgePosition="before" class="mat-badge-center">
+				<span [matMenuTriggerFor]="statusFilter">
+					<span>{{totalCount}}</span>
+					<span>{{statusBy}} {{totalCount == 1 ? 'Generic Form' : 'Generic Forms'}}</span>
+					<mat-icon>expand_more</mat-icon>
+				</span>
+				<mat-menu #statusFilter="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before">
+					<button mat-menu-item *ngFor="let status of dropdowns.statusFilter" (click)="onApplyFilter('status', status)">{{status.label}}</button>
+				</mat-menu>
+			</div>
+			<div class="sorting">
+				<span class="sort-action {{sortBy | lowercase}}" (click)="onApplyFilter('sort')">{{sortBy}}</span>
+			</div>
+		</div>
+		<div class="sidebar-body">		
+			<div class="sidebar-content" [class.spinner]="isLoading || !adminList?.length">
+				<div class="body">					
+					<div class="menu-container nested-menu">
+							<div class="d-flex align-center justify-content-center w-100" *ngIf="isLoading" style="height: 300px;flex: 1;justify-content: center;align-items: center;">
+									<mat-spinner diameter="24" class="md"></mat-spinner>
+								</div>
+								<div class="no-data" [hidden]="isLoading || adminList?.length">
+										<div class="d-flex align-center justify-content-center w-100" style="min-height: 300px;flex: 1;justify-content: center;align-items: center;">
+											No Forms Found
+										</div>
+									</div>
+						<ul class="has-sub-list" *ngIf="!isLoading">
+							<li [class.default]="'0' == product?.id" *ngFor="let product of adminList" [class.test]="product.children?.length && !product.showChildren">
+								<div (click)="onSelectItem(product);changeMasterView()" class="parent item-list" [class.active]="product.id == selectedService?.id">
+									<i *ngIf="(product.children && product.children.length)" (click)="toggleChildCompanyCodes(product, $event)"
+									 class="pixel-icons {{product.showChildren?'icon-arrow-right':'icon-arrow-down'}}"> </i>
+									<span *ngIf="!(product.children && product.children.length)" class="no-children"></span>
+									<span class="markup-txt" title="{{product.name}}">
+										<span>{{product.name}}</span>
+									</span>
+									<!-- <span class="reset-action" (click)="$event.stopPropagation();resetDefaults()"><i class="pixel-icons icon-reload"></i></span> -->
+								</div>
+								<ul *ngIf="product.children?.length && !product.showChildren" class="test00">
+									<li *ngFor="let service of product.children">
+										<div (click)="onSelectItem(service);changeMasterView()" class="parent item-list" [class.active]="service.id == selectedService?.id">
+											<i *ngIf="(service.children && service.children.length)" (click)="toggleChildCompanyCodes(service, $event)"
+											 class="pixel-icons {{service.showChildren?'icon-arrow-right':'icon-arrow-down'}}">
+											</i>
+											<span *ngIf="!(service.children && service.children.length)" class="no-children"></span>
+											<span class="markup-txt" title="{{service.name}}">
+												<span>{{service.name}}</span>
+											</span>
+											<!-- <span class="reset-action" (click)="$event.stopPropagation();resetDefaults()"><i class="pixel-icons icon-reload"></i></span> -->
+										</div>
+										<ul *ngIf="service.children?.length && !service.showChildren">
+											<li *ngFor="let subOrg of service.children" [class.active]="subOrg.id == selectedService?.id" (click)="onSelectItem(subOrg);changeMasterView()">
+												<span class="no-children"></span>
+												<span class="markup-txt item-list" title="{{subOrg.name}}">
+													<span>{{subOrg.name}}</span>
+
+												</span>
+												<!-- <span class="reset-action" (click)="$event.stopPropagation();resetDefaults()"><i class="pixel-icons icon-reload"></i></span> -->
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- <div class="body">
+				<mat-spinner diameter="45" class="md" *ngIf="isLoading"></mat-spinner>
+				<div class="no-data" [hidden]="isLoading || adminList?.length">No Generic Form Found</div>
+				<div *ngIf="!isLoading">
+					<ul>
+						<li *ngFor="let parent of adminList">
+							<div class="group-title" (click)="dropdownTrigger($event, parent)">
+								<i *ngIf="parent.children?.length" class="pixel-icons arrow {{parent.isOpen ? 'icon-arrow-down' : 'icon-arrow-right'}}"></i>
+								<span *ngIf="!parent.children?.length" class="icon-filler"></span>
+								<span [innerHtml]="parent.name"></span>
+							</div>
+							<ul *ngIf="parent.children?.length && parent.isOpen">
+								<li *ngFor="let child of parent.children" [class.active]="child.id == selectedDetails?.id" (click)="onSelectItem(child);changeMasterView()">
+									<span [innerHtml]="child.name"></span>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+
+			</div> -->
+
+	</pi-master-view>
+
+	<pi-detail-view class="right-section has-tabs">
+		<section class="admin-fixed-layout">
+			<ng-container *ngIf="adminList?.length">
+				<header class="header tab-header" *ngIf="selectedDetails">
+					<div class="w-100 d-flex flex-column justify-content-between">
+						<app-breadcrumb [list]="breadcrumbs"></app-breadcrumb>
+						<div class="d-flex align-items-center">
+							<h1 [innerHtml]="selectedDetails.name"></h1>
+						</div>
+						<div class="w-100 d-flex align-items-center justify-content-between">
+							<aside class="left-header flex-column d-flex flex-width">
+								<nav *ngIf="selectedDetails" mat-tab-nav-bar class="nav-bar" [disableRipple]="true">
+									<div class="tab-group">
+										<a mat-tab-link (click)="onTabChange(index)" *ngFor="let link of state.tabs;let index = index" [active]="activeTab == index">
+											{{link.label}} </a>
+									</div>
+								</nav>
+							</aside>
+							<aside class="d-flex right-header justify-content-end flex-width">
+									<button pi-button  (click)="addSpecs()" *ngIf="activeTab == 1 && APP.permissions.system_access.generic_forms=='edit'">
+											Add Specs
+										</button>
+							</aside>
+						</div>
+					</div>
+				</header>
+
+				<div class="scroll-body" *ngIf="selectedDetails" style="position: relative;">
+					<!-- Details Tab Content -->
+					<ng-container *ngIf="activeTab == 0 ">						
+						<form [formGroup]="adminForm" class="form-flex padg" autocomplete="off">
+							<pi-form-field label="Generic Form Name">
+								<input type="text" pi-input name="name" [disabled]="APP.permissions.system_access.generic_forms!='edit'"
+								 formControlName="name" maxlength="64" />
+								<div class="msgs">
+									<div class="pi-error" *ngIf="f.name.hasError('required') && submitted">Please Enter Generic Form Name</div>
+									<div class="pi-error" *ngIf="!f.name.hasError('required') && duplicateError">Generic Form {{duplicateError}}</div>
+								</div>
+							</pi-form-field>
+
+							<pi-select label="Status" [options]="dropdowns.statusList" formControlName="status" [disabled]="APP.permissions.system_access.generic_forms!='edit'"></pi-select>
+
+							<pi-form-field label="Description">
+								<textarea pi-input name="description" formControlName="description" [disabled]="APP.permissions.system_access.generic_forms!='edit'"
+								 maxlength="1024"></textarea>
+								<span class="field-note">Description will be shown as tooltip for vendors.<br /> Enter text of 1024 characters
+									or
+									less.</span>
+							</pi-form-field>
+
+							<app-modified-user-info [modifiedInfo]="selectedDetails"></app-modified-user-info>
+
+						</form>
+
+					
+					</ng-container>
+					<!-- Specs Tab Content -->
+					<ng-container *ngIf="activeTab == 1 ">
+						<div class="form-specs" [class.has-spinner]="tabSpinner || !orderSpecs.length">
+								<div class="spinner-view" *ngIf="tabSpinner">
+										<div class="empty-screen">
+										  <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+										</div>
+									  </div>
+							<!-- <mat-spinner diameter="45" class="md" ></mat-spinner> -->
+							<form *ngIf="!tabSpinner" [formGroup]="specsForm" class="form-flex" autocomplete="off">
+								<div class="tasks-list" formGroupName="defaults" *ngIf="orderSpecs && orderSpecs.length">
+									<div [sortablejs]="orderSpecs" class="task-row flex-column" [sortablejsOptions]="sortOptions">
+										<div class="task-container" *ngFor="let spec of orderSpecs; let i = index">
+												<div *ngIf="APP.permissions.system_access.generic_forms=='edit'" class="">														
+														<i class="pixel-icons icon-drag handle"></i>														
+													</div>
+											<app-form-builder class="field-col" [config]="spec" [form]="defaults.controls[spec.id]" [disable]="APP.permissions.system_access.generic_forms!='edit' || defaults.controls[spec.id].disabled"></app-form-builder>
+											<div *ngIf="APP.permissions.system_access.generic_forms=='edit'" class="task-menu">
+												<!-- <button pi-icon-button class="handle">
+														<i class="pixel-icons icon-drag"></i>
+													</button> -->
+												<!-- <i class="pixel-icons icon-drag handle"></i> -->
+												<button pi-icon-button color="subtle" [matMenuTriggerFor]="actions">
+													<i class="pixel-icons icon-more-horizontal"></i>
+												</button>
+												<mat-menu #actions="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions row-actions">
+													<button mat-menu-item (click)="perfomAction(spec, 'mandatory', null, i)">
+														{{defaults.controls[spec.id].value.settings.mandatory ? 'Remove ' : 'Set as '}} Mandatory
+													</button>
+													<button mat-menu-item (click)="perfomAction(spec, 'set', null, i)">Set Default</button>
+													<button mat-menu-item (click)="perfomAction(spec, 'unset', null, i)">Remove Default</button>
+													<button mat-menu-item (click)="perfomAction(spec, 'delete', null, i)">Remove Spec</button>
+												</mat-menu>
+											</div>
+										</div>
+									</div>
+								</div>
+							</form>
+							<div class="no-data" *ngIf="(!orderSpecs || !orderSpecs.length) && !tabSpinner">No Specs Assigned</div>
+							
+						</div>
+					</ng-container>
+				</div>
+				<div class="footer" *ngIf="activeTab == 0  && selectedDetails && APP.permissions.system_access.generic_forms=='edit'">
+						<div class="admin-max-footer">
+							<button pi-button (click)="resetForm(selectedDetails)">Cancel</button>
+							<button class="m-l-15" pi-button color="primary" (click)="saveDetails(adminForm)" [disabled]="adminForm.pristine">Save</button>
+						</div>
+				</div>
+						<div class="footer" *ngIf="orderSpecs && orderSpecs.length && activeTab == 1 && selectedDetails.specData && APP.permissions.system_access.generic_forms=='edit'">
+								<div class="admin-max-footer">	
+							<button pi-button (click)="resetSpecs(selectedDetails.specData)">Cancel</button>
+								<button pi-button color="primary" class="m-l-15" (click)="updateSpecs(specsForm)" [disabled]="specsForm.pristine">Save</button>
+							</div>
+							</div>
+			</ng-container>
+
+			<div class="no-result-flex" *ngIf="!adminList?.length && !isLoading">
+				<p *ngIf="param.search?.length">No Generic Form found for your search string
+					<b>'{{param.search}}'</b>
+				</p>
+				<p *ngIf="!param.search?.length">No Generic Form found</p>
+				<button pi-button color="primary" (click)="openAddDialog(param.search)" *ngIf="APP.permissions.system_access.generic_forms=='edit'">Add
+					New Generic Form</button>
+			</div>
+		</section>
+	</pi-detail-view>
+</pi-master-detail-view>

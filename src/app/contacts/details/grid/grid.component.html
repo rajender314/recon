@@ -1,0 +1,8 @@
+<mat-spinner *ngIf="state.loader" diameter="36"></mat-spinner>
+
+<ng-container *ngIf="!state.loader">
+	<div class="global-grid no-actions-grid with-out-margin ag-no-striped ag-full-width-grid">
+		<ag-grid-angular class="ag-theme-balham" style="height: calc(100vh - 74px);" [gridOptions]="gridOptions">
+		</ag-grid-angular>
+	</div>
+</ng-container>

@@ -1,0 +1,293 @@
+@import "../../../assets/styles/mixins";
+@import "../../../theme/contacts";
+mat-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+// .detail-section {
+    // padding: 10px 8px;
+    // line-height: 24px;
+    // position: relative;
+    // margin: 0;
+    // .view-section .value {
+    //     .icon-pencil {
+    //         // display: none;
+    //     }
+    //     &:hover {
+    //         .icon-pencil {
+    //             display: inline-block;
+    //             cursor: pointer;
+    //         }
+    //     }
+    // }
+    // .ak-field-group {
+    //     position: relative;
+    //     padding-top: 16px !important;
+    // }
+    // .actions {
+    //     position: absolute;
+    //     right: 10px;
+    //     top: 12px;
+    //     i {
+    //         font-size: 14px;
+    //         width: 14px;
+    //         height: 14px;
+    //         cursor: pointer;
+    //     }
+    //     &.multiple {
+    //         position: relative;
+    //         right: auto;
+    //         top: auto;
+    //         justify-content: flex-end;
+    //         display: flex;
+    //         padding: 16px 0 0;
+    //         border-top: 1px dashed #ddd;
+    //         margin-top: 16px;
+    //         .ak-button {
+    //             margin-left: 16px;
+    //         }
+    //     }
+    // }
+    //     .array-button {
+    //         color: #3f9737;
+    //         /*rgba(23, 43, 77, 0.8);  */
+    //         width: 32px;
+    //         height: 32px;
+    //         line-height: 32px;
+    //         position: relative;
+    //         top: -4px;
+    //         i {
+    //             font-size: 12px;
+    //             width: 12px;
+    //             height: 12px;
+    //             line-height: initial;
+    //         }
+    //         .mat-icon {
+    //             width: 20px;
+    //             font-size: 20px;
+    //             height: 20px;
+    //             line-height: initial;
+    //         }
+    //         &.red {
+    //             color: #cb1a1a;
+    //         }
+    //         &.green {
+    //             color: #3f9737;
+    //         }
+    //     }
+    //     .field-groups-2 {
+    //         align-items: flex-end;
+    //         flex-direction: row;
+    //         .ak-field-group {
+    //             &:nth-of-type(1),
+    //             &:nth-of-type(2) {
+    //                 flex: 1;
+    //                 &:nth-child(3) {
+    //                     max-width: 36%;
+    //                     margin-right: 22px;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     &:nth-child(2) {
+    //         .edit-section {
+    //             .ak-field-group {
+    //                 .ak-field-text {
+    //                     max-width: 50px;
+    //                     text-align: right;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     &:nth-child(4) {
+    //         .edit-section {
+    //             .ak-field-group {
+    //                 .actions {
+    //                     top: 8px;
+    //                     height: 24px;
+    //                     width: 24px;
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+    // .auto-save-section {
+    //     .mat-checkbox {
+    //         padding: 8px 0;
+    //         ::ng-deep .mat-checkbox-inner-container {
+    //             width: 16px;
+    //             height: 16px;
+    //         }
+    //     }
+    // }
+    // &:nth-child(2) {
+    //     .view-section {
+    //         .value {
+    //             margin-top: 8px;
+    //             .field-val {
+    //                 display: flex;
+    //                 align-items: center;
+    //                 justify-content: center;
+    //                 width: 62px;
+    //                 height: 38px;
+    //                 margin-right: 8px;
+    //                 border: 1px dotted rgba(151, 151, 151, 0.4);
+    //                 border-radius: 3px;
+    //             }
+    //             span {
+    //                 &.input-suggestion {
+    //                     font-style: italic;
+    //                     opacity: 0.6;
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+// }
+
+// ::ng-deep .edit-section {
+//     position: relative;
+//     .custom-select-group {
+//         &.pi-field-group {
+//             margin-top: 0;
+//         }
+//     }
+//     .pi-form-field {
+//         margin-top: 0;
+//         label {
+//             margin-bottom: 0;
+//             line-height: 24px;
+//             color: rgba(23, 43, 77, 0.5) !important;
+//         }
+//     }
+//     .pi-field {
+//         .test {
+//             position: absolute;
+//             height: auto;
+//             top: 36px;
+//             right: 0;
+//         }
+//         .ak-button {
+//             height: 22px;
+//             line-height: 32px;
+//             min-width: 30px;
+//             padding: 0;
+//             margin-right: 2px;
+//             .pixel-icons {
+//                 font-size: 14px;
+//                 width: 30px;
+//                 height: 22px;
+//                 display: flex;
+//                 align-items: center;
+//                 justify-content: center;
+//                 z-index: 1;
+//             }
+//         }
+//     }
+// }
+// .detail-section {
+//     // max-width: 270px;
+//     // @media only screen and (max-device-width: 767px) {
+//     //     max-width: 100%;
+//     // }
+//     &:nth-child(2) {
+//         ::ng-deep .pi-form-field {
+//             .pi-field {
+//                 margin-top: 8px;
+//                 display: flex;
+//                 align-items: center;
+//                 span {
+//                     font-style: italic;
+//                     opacity: 0.6;
+//                 }
+//             }
+//         }
+//         .ak-field-text {
+//             max-width: 62px;
+//             text-align: center;
+//             margin-right: 8px;
+//         }
+//         .test {
+//             left: 0;
+//         }
+//     }
+// }
+// .title-sec {
+//     display: flex;
+//     align-items: center;
+//     justify-content: space-between;
+//     span {
+//         font-weight: 600;
+//         font-size: 16px;
+//     }
+//     .ak-button {
+//         height: 26px;
+//         line-height: 26px;
+//         padding: 0 10px;
+//     }
+// }
+// .view-mode {
+//     .field-groups-2 {
+//         &.flex-field {
+//             margin-top: 16px;
+//             justify-content: normal;
+//             .flex-field-left {
+//                 &:first-child {
+//                     flex: 0 50%;
+//                 } // &:nth-child(2) {
+//                 //     flex: 0 50%;
+//                 //     order: -1;
+//                 // }
+//             }
+//         }
+//     }
+//     .view-section {
+//         .value {
+//             .custom-label-container {
+//                 flex: 1;
+//                 display: flex;
+//                 .dummy-element {
+//                     flex: 1 1 50%;
+//                 }
+//             }
+//             .field-val {
+//                 &.custom-label {
+//                     color: rgba(23, 43, 77, 0.4);
+//                     flex: 1 1 50%;
+//                 }
+//             }
+//         }
+//         .label-container {
+//             display: flex;
+//             border-top: 1px solid #e8e9ef;
+//             border-bottom: 1px solid #e8e9ef;
+//             padding: 4px 0;
+//             margin: 5px 0 6px;
+//             .label {
+//                 text-transform: uppercase;
+//                 &:first-child {
+//                     flex: 0 49.8%;
+//                 }
+//             }
+//         }
+//     }
+// }
+// ::ng-deep .pi-form-field .pi-field .pi-select-input {
+//     pi-icon {
+//         .icon-arrow-down {
+//             line-height: 12px !important;
+//             @include iconSize(12px);
+//         }
+//     }
+// }
+// .auto-save-section {
+//     padding: 20px 0 30px;
+//     .pi-form-field {
+//         margin-top: 4px;
+//     }
+// }
+// @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: portrait) {}

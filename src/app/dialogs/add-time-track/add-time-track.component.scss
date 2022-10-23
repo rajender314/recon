@@ -1,0 +1,13 @@
+:host{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: space-between;
+}
+
+.edit-field-wrapper .pi-form-field{left: 0;}
+
+.footer{
+    display: flex;
+    justify-content: flex-end;
+}

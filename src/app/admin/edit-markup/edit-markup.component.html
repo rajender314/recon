@@ -1,0 +1,43 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <i class="pixel-icons icon-close-slim"></i>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="addressForm" class="form-flex" autocomplete="off">
+    <pi-form-field label="Markup">
+      <input type="text" pi-input [appPriceFormat]="numberConfig" id="markup" name="markup" formControlName="markup">
+      <div class="pi-error" *ngIf="submitted && addressForm.controls.markup.hasError('required')">Please Enter Markup</div>
+    </pi-form-field>
+    <pi-form-field label="Recovery">
+      <input type="text" [appPriceFormat]="numberConfig" class="ak-field-text" id="recover" name="recover"
+        formControlName="recover">
+      <div class="pi-error" *ngIf="submitted && addressForm.controls.recover.hasError('required')">Please Enter
+        Recovery</div>
+    </pi-form-field>
+  
+    <pi-select label="Include Net" id="count_net" [options]="statusSelection" name="count_net" formControlName="count_net"></pi-select>
+    
+    <pi-select label="XR Applicable" id="xr_applicable" [options]="statusSelection" name="xr_applicable"
+      formControlName="xr_applicable"></pi-select>
+    
+    <pi-select label="Category" id="category" name="category" formControlName="category" [options]="data.categories"></pi-select>
+    
+    <pi-form-field label="Min ($)">
+      <input type="text" pi-input [appPriceFormat]="currencyConfig" id="min_net" name="min_net" formControlName="min_net">
+      <div class="pi-error" *ngIf="submitted && addressForm.controls.min_net.hasError('required')">Please Enter Min Net</div>
+    </pi-form-field>
+    
+    <pi-form-field label="Max ($)">
+      <input type="text" pi-input [appPriceFormat]="currencyConfig" id="max_applied" name="max_applied"
+        formControlName="max_applied">
+      <div class="pi-error" *ngIf="submitted && addressForm.controls.max_applied.hasError('required')">Please Enter Max
+        Applied</div>
+    </pi-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+  <button pi-button color="subtle" (click)="closeDialog()">Cancel</button>
+  <button pi-button color="primary" (click)="saveAddress(addressForm)" [disabled]="addressForm.pristine">Save</button>
+</mat-dialog-actions>

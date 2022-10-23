@@ -1,0 +1,214 @@
+<pi-master-detail-view class="recon-admin-layout" [showDetail]="showView">
+	<pi-master-view class="admin-sidebar">
+		<div class="sidebar-header">
+		<div class="page-breadcrumb">
+				<app-admin-popover class="left-hdr-comp" class="align-items" [bgColor]="'yellow'" [icon]="'icon-cost-codes'"
+				[primary]="'Admin'" [secondary]="'Cost Codes'" [data]="adminDashboard"></app-admin-popover>
+		</div>			
+		<div class="breadcrumb-menu">
+			<div class="icon-button-actions d-flex" *ngIf="APP.permissions.system_access.cost_codes=='edit'">
+				<!-- <button pi-icon-button class="icon-button-wrapper" (click)="openAddDialog()">
+					<i class="pixel-icons icon-plus"></i>
+				</button> -->
+				<div class="animate-icon-wrap animate-icon-effect-1 animate-icon-effect-1a m-l-8"    mattooltip="Add" >
+						<a class="animate-icon" (click)="openAddDialog()"><i class="pixel-icons icon-plus"></i></a>
+				</div>
+				<div class="animate-icon-wrap animate-icon-effect-1 animate-icon-effect-1a m-l-8"    mattooltip="More" >
+				 <a class="animate-icon" [matMenuTriggerFor]="menu"><i class="pixel-icons  icon-more-horizontal"></i></a>
+				
+			
+				<mat-menu #menu="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+					<button mat-menu-item (click)="export()">Export</button>
+				</mat-menu>
+			</div>
+
+			</div>
+		</div>
+		<app-search (onSearch)="onSearch($event)"></app-search>
+		</div>
+		<div class="head">			
+				<div matBadgeOverlap="false" matBadgePosition="before" class="mat-badge-center">
+						<span>{{totalCount}}</span>
+					<span [matMenuTriggerFor]="statusFilter">
+						<span>{{statusBy}} {{totalCount == 1 ? 'Cost Code' : 'Cost Codes'}}</span>
+						<mat-icon>expand_more</mat-icon>
+					</span>
+					<mat-menu #statusFilter="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before">
+						<button mat-menu-item *ngFor="let status of dropdowns.statusFilter" (click)="onApplyFilter('status', status)">{{status.label}}</button>
+					</mat-menu>
+				</div>
+				<div class="sorting">
+					<span class="sort-action {{sortBy | lowercase}}" (click)="onApplyFilter('sort')">{{sortBy}}</span>
+				</div>
+			</div>
+			<div class="d-flex align-center justify-content-center w-100" *ngIf="isLoading" style="height: 80%;flex: 1;justify-content: center;align-items: center;">
+					<mat-spinner diameter="24" class="md" ></mat-spinner>			
+					
+			 </div>
+		<div class="sidebar-body" >				
+				<div class="sidebar-content" [class.spinner]="isLoading || !adminList?.length" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()"
+				[scrollWindow]="false">
+						<div class="body" >
+						 
+						 <div class="no-data" [hidden]="isLoading || adminList?.length">
+							<div class="d-flex align-center justify-content-center w-100" style="min-height: 300px;flex: 1;justify-content: center;align-items: center;">
+								No Cost Code Found
+							</div> 
+							</div>
+							
+
+			<div class="menu-container" *ngIf="!isLoading">
+				<ul>
+					<li  *ngFor="let list of adminList" [class.active]="selectedDetails?.id === list.id" [class.disable]="!list.status"
+					(click)="onSelectItem(list);changeMasterView()">
+						<div class="group-title item-media estimate align-items-start cost-code-item">
+								<div class="figure"><i class="pixel-icons  icon-cost-codes"></i></div>
+								<div class="d-flex flex-column m-item-width">
+									<div class="d-flex align-items-center"><p class="name">{{list.name}}</p></div>
+									<div class="d-flex w-100 justify-content-between"><p [matTooltip]="list.description" *ngIf="list.description" [innerHtml]="list.description"></p></div>
+								</div>
+						</div>
+					</li>
+					<li>
+							
+					</li>
+				</ul>
+			</div>
+							<!-- <mat-list *ngIf="!isLoading">
+								<mat-list-item *ngFor="let list of adminList" [class.active]="selectedDetails?.id === list.id" [class.disable]="!list.status"
+								 (click)="onSelectItem(list);changeMasterView()">
+								 <div class="d-flex menu-items-with-icon">
+									<div class="icon-ui">
+										
+									</div>
+									<div class="d-flex flex-column ">
+											<p>{{list.name}}</p>
+											<p [title]="list.description" *ngIf="list.description" [innerHtml]="list.description"></p>
+										
+									</div>
+								 </div>
+							
+								</mat-list-item>
+							</mat-list> -->
+						</div>
+					</div>
+		</div>
+		
+		<!-- <div class="sidebar-footer">footer</div> -->
+
+	</pi-master-view>
+	<pi-detail-view class="admin-content" >
+			<div class="no-data-screen spinner-view" *ngIf="!adminList?.length && !isLoading" >
+					<div class="empty-screen">
+							<div class="icon-info-holder" *ngIf="param.search?.length">
+								<div class="icon" >
+									<i class="pixel-icons icon-search"></i>
+								</div>
+								<p class="alert-message text-center" style="text-align: center;" >No Cost Code found for your search string <br />
+									<b style="color: #172b4d;">'{{param.search}}'</b>
+								</p>
+							</div>
+							<div class="icon-info-holder">
+								<ng-container *ngIf="!param.search?.length">
+									<div class="icon" >
+										<i class="pixel-icons icon-cost-codes"></i>
+									</div>	
+									<p class="alert-message text-center" style="text-align: center;" >No Cost Code found</p>
+								</ng-container>							
+									<button pi-button color="primary" (click)="openAddDialog(param.search)" *ngIf="APP.permissions.system_access.cost_codes=='edit'">+
+											Add New Cost Code</button>
+								</div>
+						
+					</div>
+				</div>
+				<div class="spinner-view" *ngIf="isLoading">
+						<div class="empty-screen">
+						  <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>				
+						</div>
+				</div>
+		<div class="admin-fixed-layout" *ngIf="adminList?.length">
+			<!-- <div class="right-header" *ngIf="selectedDetails">
+				<app-breadcrumb [list]="breadcrumbs"></app-breadcrumb>
+				<div class="info">
+					<mat-icon class="back-link" (click)="changeMasterView()">arrow_back</mat-icon>
+					<h2 [innerHtml]="selectedDetails.name"></h2>
+				</div>
+			</div> -->
+			<header *ngIf="selectedDetails" class="header">
+					<div class="w-100 d-flex flex-column justify-content-between">
+						<app-breadcrumb [list]="breadcrumbs"></app-breadcrumb>
+						<div class="w-100 d-flex align-items-center justify-content-between ">
+							<aside class="left-header d-flex flex-width">
+								<h1 [innerHtml]="selectedDetails.name"></h1>
+							</aside>
+							<aside class="d-flex right-header justify-content-end flex-width">
+							</aside>
+						</div>
+					</div>
+				</header> 
+			<div class="scroll-body" [class.has-spinner]="fetchingDetails || isLoading">
+					<div class="no-result-flex" *ngIf="!adminList?.length && !isLoading">
+							<p *ngIf="param.search?.length">No Cost Code found for your search string <br />
+								<b>'{{param.search}}'</b>
+							</p>
+							<p *ngIf="!param.search?.length">No Cost Code found</p>
+							<button pi-button color="primary" (click)="openAddDialog(param.search)" *ngIf="APP.permissions.system_access.cost_codes=='edit'">+
+								Add New Cost Code</button>
+						</div>
+					
+				<form *ngIf="!isLoading && !fetchingDetails" [formGroup]="adminForm" class="form-flex" autocomplete="off">
+					<pi-form-field label="Cost Code Name">
+						<input type="text" pi-input name="name" formControlName="name" [disabled]="APP.permissions.system_access.cost_codes!='edit'"
+						 maxlength="64" />
+						<div class="msgs">
+							<div class="pi-error" *ngIf="f.name.hasError('required') && submitted">Please Enter Cost Code Name</div>
+							<div class="pi-error" *ngIf="!f.name.hasError('required') && duplicateError">Cost Code {{duplicateError}}</div>
+						</div>
+					</pi-form-field>
+
+					<pi-select label="Status" [options]="dropdowns.statusList" formControlName="status" [disabled]="APP.permissions.system_access.cost_codes!='edit'"></pi-select>
+
+					<pi-form-field label="Description">
+						<textarea pi-input name="description" formControlName="description" [disabled]="APP.permissions.system_access.cost_codes!='edit'"
+						 maxlength="1024"></textarea>
+						<span class="field-note">Enter text of 1024 characters or less.</span>
+					</pi-form-field>
+
+					<pi-field-group>
+						<pi-form-field label="GL Income">
+							<input [appPhoneFormat]="true" zero="true" minlength="11" maxlength="11" type="text" pi-input name="gl_income" formControlName="gl_income"
+							 [disabled]="APP.permissions.system_access.cost_codes!='edit'" />
+							 <div class="msgs">
+								<div class="pi-error" *ngIf="f.gl_income.hasError('minlength') && submitted">Please Enter Valid Format(00-000-0000)</div>
+							</div>
+						</pi-form-field>
+						<pi-form-field label="GL Expense">
+							<input [appPhoneFormat]="true" zero="true" minlength="11" maxlength="11" type="text" pi-input name="gl_expense"
+							 formControlName="gl_expense" [disabled]="APP.permissions.system_access.cost_codes!='edit'" />
+							 <div class="msgs">
+								<div class="pi-error" *ngIf="f.gl_expense.hasError('minlength') && submitted">Please Enter Valid Format(00-000-0000)</div>
+							</div>
+						</pi-form-field>
+					</pi-field-group>
+
+					<pi-select label="Category" [options]="dropdowns.categories" formControlName="category_id" [disabled]="APP.permissions.system_access.cost_codes!='edit'"></pi-select>
+
+					<pi-field-group>
+						<pi-select label="Type" [options]="dropdowns.types" formControlName="cost_code_type" [disabled]="APP.permissions.system_access.cost_codes!='edit'"></pi-select>
+						<!-- <pi-select label="Tax Type" [options]="dropdowns.taxTypes" formControlName="cost_code_tax_type" [disabled]="APP.permissions.system_access.cost_codes!='edit'"></pi-select> -->
+					</pi-field-group> 
+                    <app-modified-user-info [modifiedInfo]="selectedDetails"></app-modified-user-info>
+					
+				</form>
+			</div>
+			<div class="footer">
+					<div class="admin-max-footer" *ngIf="selectedDetails && APP.permissions.system_access.cost_codes=='edit'">
+							<button pi-button (click)="resetForm(selectedDetails)">Cancel</button>
+							<button pi-button class="m-l-15" color="primary" (click)="saveDetails(adminForm)" [disabled]="adminForm.pristine">Save</button>
+						</div>
+			</div>
+		</div>
+
+		
+	</pi-detail-view>
+</pi-master-detail-view>

@@ -1,0 +1,58 @@
+.gloabal-search-sec {
+    .global-search-modalbox {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        i {
+            font-size: 20px;
+            height: 20px;
+            cursor: pointer;
+            width: 20px;
+            margin-right: 12px;
+            color: rgba(23, 43, 77, 0.8);
+        }
+        ::ng-deep .search {
+            flex: 1;
+            .pi-form-field {
+                max-width: 100%;
+                .ak-field-text {
+                    line-height: 34px;
+                }
+                pi-icon {
+                    height: 45px;
+                }
+            }
+            .mat-spinner {
+                top: 14px;
+            }
+        }
+    }
+}
+
+::ng-deep .ag-theme-balham {
+    .ag-header-cell {
+        &.bg-skyblue {
+            line-height: 42px;
+            background-color: #f7f8fe;
+            &::after {
+                margin-top: 12px;
+            }
+            .ag-cell-label-container {
+                .ag-header-cell-menu-button {
+                    .ag-icon-menu {
+                        height: 42px;
+                    }
+                }
+            }
+        }
+        &.project-name-header-grid{
+            padding-left: 0;
+        }
+    }
+}
+
+::ng-deep .global-search-dialog {
+    .mat-dialog-container {
+        background-color: #f7f8fe;
+    }
+}

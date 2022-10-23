@@ -1,0 +1,39 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<i class="pixel-icons icon-close-slim"></i>
+	</button>
+	<!-- <button mat-icon-button mat-dialog-close tabindex="-1">
+			<i class="pixel-icons icon-close-slim"></i>
+  </button> -->
+</div>
+<mat-dialog-content>
+	<form [formGroup]="addFormGroup" class="form-flex" autocomplete="off">
+		<!-- <p class="pi-error" [innerHtml]="serverError"></p> -->
+		<div *ngFor="let form of data.formFields">
+			<ng-container *ngIf="form.type == 'select'">
+				<pi-select [label]="form.label" [options]="dropdowns[form.options]" [multi]="form.multi" [formControlName]="form.key"></pi-select>
+				<div class="msgs">
+					<div class="pi-error" *ngIf="addFormGroup.controls[form.key].hasError('required') && submitted">Please Select
+						{{form.label}}</div>
+				</div>
+			</ng-container>
+			<ng-container *ngIf="form.type == 'text'">
+				<pi-form-field [label]="form.label">
+					<input type="text" *ngIf="form.validations?.maxlength" [maxlength]="form.validations?.maxlength" pi-input [name]="form.key"
+					 [formControlName]="form.key" />
+					<input type="text" *ngIf="!form.validations || !form.validations?.maxlength" pi-input [name]="form.key"
+					 [formControlName]="form.key" />
+					<div class="msgs">
+						<div class="pi-error" *ngIf="addFormGroup.controls[form.key].hasError('required') && submitted">Please Enter
+							{{form.label}} Name</div>
+					</div>
+				</pi-form-field>
+			</ng-container>
+		</div>
+	</form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+	<button pi-button mat-dialog-close>Cancel</button>
+	<button pi-button class="m-l-15" color="primary" (click)="save(addFormGroup)" [disabled]="addFormGroup.pristine">Save</button>
+</mat-dialog-actions>

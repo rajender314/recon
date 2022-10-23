@@ -1,0 +1,33 @@
+ul {
+    list-style-type: none;
+    margin-top: 10px;
+    padding: 0;
+    li {
+        color: rgba(23, 43, 77, 0.8);
+    }
+}
+
+.link-color {
+    color: #0553cb;
+}
+
+::ng-deep .pi-form-field {
+    &.browse-file {
+        >label {
+            width: 100%;
+            padding: 0;
+            background: #F8FAFC 100%;
+            border: 1px dashed #B4BBC6;
+            text-align: center;
+            transition: background 0.3s ease-in-out;
+            border-radius: 2px;
+            color: #0553cb !important;
+            letter-spacing: -0.12px;
+            height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            cursor: pointer;
+        }
+    }
+}

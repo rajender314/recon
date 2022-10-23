@@ -1,0 +1,15 @@
+.p-t{
+    padding-top: 25px;
+}
+.icon-button-actions{
+    position: absolute;
+    top: 48px;
+    right: 10px;
+}
+.permission-view{
+    max-width: 1100px;
+    ::ng-deep app-permission{
+        max-width: 1100px;
+        width: 100%;
+    }
+}

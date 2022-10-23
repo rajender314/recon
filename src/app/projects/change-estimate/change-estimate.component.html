@@ -1,0 +1,185 @@
+<div class="primary-layout-detail">
+    <header class="tab-header" [ngClass]="{'estimate-preview' : state.activeTab.type==2 }">
+        <div class="w-100 d-flex flex-column">
+            <app-breadcrumb [list]="state.breadcrumbs"></app-breadcrumb>
+            <div class="estimate-info d-flex align-items-center">
+                <h1>{{state.estimate_no}}</h1>
+                <span *ngIf="state.selectedEstimate?.parent_id=='0'" class="status estimate-status status_{{state.estimates_status_id}}">{{state.estimates_status}}</span>
+            </div>
+            <div class="w-100 d-flex align-items-center justify-content-between ">
+                <aside>
+                    <!-- <mat-icon class="back-link" (click)="backToEstimates()">arrow_back</mat-icon> -->
+                    <!-- <span class="back-link" (click)="backToEstimates()"><i class="pixel-icons icon-arrow"></i>Back to list</span> -->
+                    <!-- <div class="estimate-name"> / </div> -->
+                    <nav mat-tab-nav-bar class="nav-bar" [disableRipple]="true">
+                        <div class="tab-group">
+                            <div>
+                                <a mat-tab-link (click)="setActiveTab(link)" *ngFor="let link of state.links" [active]="link.type==state.activeTab.type">
+                                    {{link.label}} </a>
+                            </div>
+
+                        </div>
+                    </nav>
+                </aside>
+                <aside class="estimates-menu-detail d-flex" style="margin-bottom: 8px;">
+                    <!-- revDropDwn -->
+                    <!-- <ng-container *ngIf="state.selectedEstimate && state.selectedEstimate.revDropDwn && state.selectedEstimate.revDropDwn.length && state.selectedEstimate.isRevDrwn">
+                            <pi-select class="revision-select" label=" " (onChange)="changeRevision()" style="width: 70px;" [options]="state.selectedEstimate.revDropDwn" idKey="id" nameKey="rev_no" [(ngModel)]="state.selectedEstimate.selected_revision"></pi-select>
+                        </ng-container> -->
+                    <div class="m-l-15 btn-group basic-group-btns" *ngIf="state.selectedEstimate && state.selectedEstimate.revDropDwn && state.selectedEstimate.revDropDwn.length && state.selectedEstimate.isRevDrwn">
+                        <button class="first-child" style="padding: 0 9px;">{{getSelectedRevision()}}</button>
+                        <div class="btn-group">
+                            <button class="last-child" style="min-width: 28px;" mat-button [matMenuTriggerFor]="menu">
+                                <i class="pixel-icons icon-arrow-down"></i>
+                            </button>
+                            <mat-menu #menu="matMenu" xPosition="before" class="drop-menu-ui">
+                                <button mat-menu-item *ngFor="let rev of state.selectedEstimate.revDropDwn" (click)="changeRevision(rev)">{{rev.rev_no}}</button>
+                                <!-- <a *ngFor="let action of state.globalActions" [innerHtml]="action.label" (click)="performActions(action.flag, action.key)">Add Product
+                                    </a> -->
+                                <!-- <p>1549848</p> -->
+                            </mat-menu>
+                        </div>
+                    </div>
+
+                    <ng-container *ngIf="state.activeTab.type==2">
+                        <ng-container *ngFor="let action of state.buttons.preview">
+                            <ng-container *ngIf="action.visible">
+                                <ng-container *ngIf="action.type == 'icon'">
+                                    <button class="m-l-8 btn-switching-icon" [matTooltip]="action.label" (click)="buttonActions('preview', action)">
+                                        <i class="pixel-icons {{action.icon}}"></i>
+                                    </button>
+                                </ng-container>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+                    <!-- <button class="m-l-8 btn-switching-icon" matTooltip="Print" *ngIf="state.activeTab.type==2" (click)="printEstimate()"><i class="pixel-icons icon-print"></i></button>
+                        <button class="m-l-8 btn-switching-icon"  *ngIf="state.activeTab.type==2 && APP.permissions.job_access.export_estimate=='yes'" (click)="exportEstimate()" matTooltip="Export as .pdf"><i class="pixel-icons icon-export-pdf"></i></button> -->
+                    <button class="m-l-8 btn-switching-icon expand-collapse-btn" *ngIf="state.activeTab.type==0"
+                        (click)="shortView()" [matTooltip]="((state.expandAll)?'Collapse All':'Expand All')">
+                        <i *ngIf="state.expandAll" class="pixel-icons icon-arrow-right"></i>
+                        <i *ngIf="!state.expandAll" class="pixel-icons icon-arrow-down"></i>
+                    </button>
+                    <!-- <button class="m-l-8 btn-switching-icon" *ngIf="state.activeTab.type==0" [class.] (click)="hideCancelledProducts()" [matTooltip]="((state.hideCancelledProducts)?'Show All Products':'Hide Cancelled Products')"><i *ngIf="state.hideCancelledProducts" class="pixel-icons icon-hide" ></i><i *ngIf="!state.hideCancelledProducts" class="pixel-icons icon-view" ></i></button> -->
+                    <button class="m-l-8 btn-switching-icon" *ngIf="state.activeTab.type==0 && state.showHideProductIcon"
+                        [class.hide]="state.hideCancelledProducts" (click)="hideCancelledProducts()" [matTooltip]="((state.hideCancelledProducts)?'Show All Products':'Hide Cancelled Products')">
+                        <i class="pixel-icons icon-hide" *ngIf="state.hideCancelledProducts"></i>
+                        <i class="pixel-icons icon-view" *ngIf="!state.hideCancelledProducts"></i>
+                    </button>
+                    <ng-container *ngIf="state.allowEditable && ((APP.permissions.job_access.edit_cancelled_jobs=='yes' && state.projectStatusID=='5') || state.projectStatusID!='5')">
+                        <button class="m-l-8 btn-switching-icon" *ngIf="(state.co.gridOptions.rowData.length && state.activeTab.type==0 && state.selectedEstimate?.parent_id=='0' && state.selectedEstimate.id==state.selectedEstimate.selected_revision) && state.estimates_status_id !=5"
+                            (click)="editOrder()" matTooltip="Edit Order">
+                            <i class="pixel-icons icon-edit-order-2"></i>
+                        </button>
+                        <!-- <button  class="m-l-15" pi-button *ngIf="(state.co.gridOptions.rowData.length && state.activeTab.type==0)" (click)="editOrder()">Edit Order</button> -->
+                        <button class="m-l-8 btn-switching-icon" *ngIf="state.estimates_status_id!='4' && state.estimates_status_id!='3' && state.selectedEstimate?.parent_id=='0' && state.selectedEstimate.id==state.selectedEstimate.selected_revision && state.estimates_status_id !=5"
+                            (click)="editEstimate()" matTooltip="Edit Estimate">
+                            <i class="pixel-icons icon-pencil"></i>
+                        </button>
+                        <!--  && !state.selectedEstimate.isRevDrwn -->
+                        <button class="m-l-8 btn-switching-icon" *ngIf="state.estimates_status_id=='5' && state.selectedEstimate?.parent_id=='0' && state.selectedEstimate.id==state.selectedEstimate.selected_revision"
+                            (click)="performActions({key:'rev'})" matTooltip="Create Revision">
+                            <i class="pixel-icons icon-revert"></i>
+                        </button>
+                        <button class="m-l-8 btn-switching-icon" *ngIf="state.selectedEstimate?.parent_id=='0' && state.selectedEstimate?.cost!='$0.00' && state.selectedEstimate.id==state.selectedEstimate.selected_revision && APP.permissions.job_access.split_estimate=='yes' && xs && state.estimates_status_id !=5"
+                            (click)="splitEstimate()" matTooltip="{{(state.selectedEstimate && state.selectedEstimate.child && state.selectedEstimate.child.length)?'Consolidate Estimate':'Split Estimate'}}">
+                            <i class="pixel-icons icon-{{(state.selectedEstimate && state.selectedEstimate.child && state.selectedEstimate.child.length)?'consolidate':'split-estimate'}}"></i>
+                        </button>
+
+                        <!-- <button class="m-l-8 btn-switching-icon" *ngIf="APP.permissions.job_access.clone_estimates=='yes' && state.projectStatusID!='5' && (state.estimates_status_id!='3' && state.estimates_status_id!='4') && state.selectedEstimate?.parent_id=='0' && state.selectedEstimate.id==state.selectedEstimate.selected_revision"
+                        (click)="cloneEstimate()" matTooltip="Clone Estimate">
+                        <i class="pixel-icons icon-clone"></i> 
+                    </button>  -->
+                        <button class="m-l-8 btn-switching-icon" *ngIf="APP.permissions.job_access.apply_internal_costs == 'yes' && (state.estimates_status_id=='1' || state.estimates_status_id=='2') && state.selectedEstimate?.parent_id=='0' && state.selectedEstimate.id==state.selectedEstimate.selected_revision && !state.is_internal_cost && state.activeTab.type==0"
+                            [disabled]="state.disableInternalCost" color="primary" (click)="applyInternalCost()"
+                            matTooltip="Apply Internal Cost">
+                            <i class="pixel-icons icon-internal-cost-recovery"></i>
+                        </button>
+                        <button class="m-l-8 btn-switching-icon" style="position: relative;" [matMenuTriggerFor]="menu"
+                            *ngIf="state.buttons.menu?.length && state.selectedEstimate?.parent_id=='0' && state.selectedEstimate.id==state.selectedEstimate.selected_revision">
+                            <i class="pixel-icons icon-more-horizontal"></i>
+                        </button>
+                        <mat-menu #menu="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+                            <ng-container *ngFor="let action of state.buttons.menu">
+                                <button *ngIf="action.visible" mat-menu-item (click)="performActions(action)"
+                                    [innerHtml]="action.label"></button>
+                            </ng-container>
+                        </mat-menu>
+
+                        <!-- for lg screens-->
+                        <button pi-button class="m-l-8" pi-button *ngIf="APP.permissions.job_access.split_estimate=='yes' && state.selectedEstimate?.parent_id=='0' && state.selectedEstimate?.cost!='$0.00' && state.selectedEstimate.id==state.selectedEstimate.selected_revision 
+                        && APP.permissions.job_access.split_estimate=='yes' && !xs && state.estimates_status_id !=5"
+                            (click)="splitEstimate()">{{(state.selectedEstimate && state.selectedEstimate.child &&
+                            state.selectedEstimate.child.length)?"Consolidate Estimate":"Split Estimate"}}</button>
+                    </ng-container>
+                    <!-- <button pi-button class="m-l-8" *ngIf="state.projectStatusID!='5' && state.estimates_status_id!='2' && state.selectedEstimate?.parent_id=='0' && state.selectedEstimate.id==state.selectedEstimate.selected_revision && !state.is_internal_cost && state.activeTab.type==0"
+                        [disabled]="state.disableInternalCost" color="primary" (click)="applyInternalCost()" matTooltip="Apply Internal Cost">Apply Internal Cost</button> -->
+                    <!-- <button class="m-l-15 btn-switching-icon" style="position: relative; top: 3px;" [matMenuTriggerFor]="menu">
+                            <i class="pixel-icons icon-more-horizontal"></i>
+                          </button>
+                        <mat-menu #menu="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+                            <ng-container *ngFor="let action of state.actions">
+                                <button *ngIf="action.visible" mat-menu-item (click)="performActions(action)" [innerHtml]="action.label"></button>
+                            </ng-container>
+                        </mat-menu> -->
+
+                    <ng-container *ngIf="state.allowEditable && ((APP.permissions.job_access.edit_cancelled_jobs=='yes' && state.projectStatusID=='5') || state.projectStatusID!='5')">
+                        <ng-container *ngFor="let action of state.actions">
+                            <ng-container *ngIf="action.visible && state.selectedEstimate?.parent_id=='0' && state.selectedEstimate.id==state.selectedEstimate.selected_revision">
+                                <!-- <ng-container *ngIf="action.type == 'icon'">
+                                    <button class="m-l-8 btn-switching-icon" (click)="performActions(action)" matTooltip="{{action.label}}">
+                                        <i class="pixel-icons {{action.icon}}"></i>
+                                    </button>
+                                </ng-container> -->
+                                <ng-container>
+                                    <button pi-button color="primary" class="m-l-8" (click)="performActions(action)"
+                                        [innerHtml]="action.label"></button>
+                                </ng-container>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+                    <button pi-button class="m-l-8 {{(state.estimates_status_id=='3')?'approve-btn ak-button ak-button__appearance-default ':'ak-button ak-button__appearance-default'}} {{(state.estimates_status_id=='3')?'approve-btn':'un-approve'}}"
+                        *ngIf="state.allowEditable && (state.estimates_status_id=='3' || state.estimates_status_id=='4') && APP.permissions.job_access.estimates=='approve' && state.selectedEstimate?.parent_id=='0'"
+                        (click)="approveEstimate()">{{(state.estimates_status_id=='3')?'Approve':'Unapprove'}}</button>
+                    <!-- <button pi-button class="m-l-8" (click)="postEstimate()" *ngIf="false">Send Estimate</button> -->
+                    <!-- <button pi-button class="m-l-15" pi-button color="primary" *ngIf="state.estimates_status_id!='4' && state.estimates_status_id!='3'" (click)="editEstimate()">Edit Estimate</button> -->
+                    <button pi-button class="m-l-8" pi-button color="primary" *ngIf="state.allowEditable && state.estimates_status_id=='4' && APP.permissions.job_access.prebill=='yes' && state.selectedEstimate?.is_gp_sync=='0' && state.selectedEstimate?.parent_id=='0'"
+                        [disabled]="state.disablePrebill" (click)="prebillEstimate()">Prebill</button>
+                    <ng-container *ngIf="state.activeTab.type == 2 && false">
+                        <button pi-button class="m-l-8" *ngIf="false">Lock Posted Service</button>
+                        <button pi-button class="m-l-8" (click)="estimatingComplete()">Estimating Complete</button>
+                    </ng-container>
+
+                </aside>
+            </div>
+        </div>
+    </header>
+    <div class="primary-layout-detail-body flex-column padding-20">
+        <div class=" primary-max-screen-width  ">
+
+        </div>
+        <div class="spinner-view" *ngIf="state.loader">
+            <div class="empty-screen">
+                <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+            </div>
+        </div>
+        <!-- <mat-spinner *ngIf="state.loader" diameter="36"></mat-spinner> -->
+
+        <app-configure-options [estimate]="state.selectedEstimate" class="fixed-footer-layout" [options]="state.co"
+            [gridApi]="coGridApi" *ngIf="state.activeTab.type==0 && !state.loader" [class.hide]="state.showCoGrid">
+        </app-configure-options>
+
+        <app-estimates-timeline [estimate]="state.selectedEstimate" [options]="state.timeline" *ngIf="state.activeTab.type==1 && !state.loader">
+        </app-estimates-timeline>
+
+        <app-estimates-preview [estimate]="state.selectedEstimate" [options]="state.preview" *ngIf="state.activeTab.type==2 && !state.loader">
+        </app-estimates-preview>
+
+        <app-estimates-overview [estimate]="state.selectedEstimate" [status]="state.estimates_status_id" [projectStatusID]="state.projectStatusID" 
+            [allowEditable]="state.allowEditable"  *ngIf="state.activeTab.type==3 && !state.loader">
+        </app-estimates-overview>
+
+    </div>
+
+    <div class="estimates-footer"></div>
+
+</div>

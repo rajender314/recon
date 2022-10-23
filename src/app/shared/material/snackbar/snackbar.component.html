@@ -1,0 +1,10 @@
+<div class="snackbar-container">
+  <div class="success" *ngIf="data.status == 'success'">
+    <mat-icon>check_circle</mat-icon>
+    <div [innerHtml]="data.msg"></div>
+  </div>
+
+  <div class="error" *ngIf="data.status == 'error'">
+    <div [innerHtml]="data.msg" style="text-transform: capitalize;"></div>
+  </div>
+</div>

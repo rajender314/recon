@@ -1,0 +1,195 @@
+<div class="mat-dialog-heading">
+		<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+		<button mat-icon-button (click)="close()" tabindex="-1">
+				<mat-icon>close</mat-icon>
+			</button>
+</div>
+<mat-dialog-content>
+	<div [formGroup]="taskFormGroup">
+		<pi-field-group>
+			<div style="flex: 1 1 100%">
+				<pi-select label="Task Type" formControlName="task_type_id" nameKey="display_name"
+					[options]="dropdowns.taskTypes"
+					(onChange)="selectionChange($event, 'taskTypes', 'task_type_id', 'task_type_name')">
+				</pi-select>
+				<div class="msgs">
+					<div class="pi-error"
+						*ngIf="taskFormGroup.controls['task_type_id'].hasError('required') && submitted">
+						Please Enter Task Type
+					</div>
+				</div>
+			</div>
+			<pi-form-field>
+				<pi-field-group>
+					<pi-form-field label="Start Date">
+						<ng-container *ngIf="!showDateInput">
+							<div (click)="addStartDate()">Add Start Date</div>
+						</ng-container>
+						<ng-container *ngIf="showDateInput">
+							<input pi-input matInput [min]="minDate" formControlName="start_date"
+								[matDatepicker]="startDate" (focus)="startDate.open()" placeholder="Choose a date"
+								readonly>
+							<mat-datepicker-toggle matSuffix [for]="startDate">
+								<i class="pixel-icons icon-calendar" matDatepickerToggleIcon></i>
+							</mat-datepicker-toggle>
+							<mat-datepicker #startDate></mat-datepicker>
+						</ng-container>
+					</pi-form-field>
+					<pi-form-field label="End Date">
+						<input pi-input matInput [min]="minDate" formControlName="due_date" [matDatepicker]="endDate"
+							(focus)="endDate.open()" placeholder="Choose a date" [max]="dueMaxDate" readonly>
+						<mat-datepicker-toggle matSuffix [for]="endDate">
+							<i class="pixel-icons icon-calendar" matDatepickerToggleIcon></i>
+						</mat-datepicker-toggle>
+						<mat-datepicker #endDate></mat-datepicker>
+						<div class="msgs">
+							<div class="pi-error"
+								*ngIf="taskFormGroup.controls['due_date'].hasError('required') && submitted">
+								Please Select End Date
+							</div>
+						</div>
+					</pi-form-field>
+				</pi-field-group>
+			</pi-form-field>
+		</pi-field-group>
+
+		<pi-field-group>
+			<!-- <pi-form-field label="Task">
+				<input type="text" pi-input formControlName="task_name" />
+			</pi-form-field> -->
+			<div style="flex: 1 1 100%">
+				<pi-select label="Task" formControlName="task_id" [options]="dropdowns.tasksList" [createNew]="true"
+					(onChange)="selectionChange($event, 'tasksList', 'task_id', 'task_name')"></pi-select>
+				<div class="msgs">
+					<div class="pi-error" *ngIf="taskFormGroup.controls['task_id'].hasError('required') && submitted">
+						Please Enter Task Name
+					</div>
+				</div>
+			</div>
+			<pi-select formControlName="jobs_id" label="Project" nameKey="job_title" [options]="dropdowns.jobsList"
+				[disabled]="!isGlobal"></pi-select>
+		</pi-field-group>
+
+		<pi-field-group>
+			<pi-form-field label="Assignee" >
+				<pi-field-group direction="column">
+					<pi-form-field label="Internal">
+						<input type="radio" pi-input name="assignee_type" formControlName="assignee_type" value="1"
+							(change)="changeAssigneType($event)" />
+					</pi-form-field>
+
+					<pi-form-field label="Group">
+						<input type="radio" pi-input name="assignee_type" formControlName="assignee_type" value="2"
+							(change)="changeAssigneType($event)" />
+					</pi-form-field>
+
+					<pi-form-field label="External">
+						<input type="radio" pi-input name="assignee_type" formControlName="assignee_type" value="3"
+							(change)="changeAssigneType($event)" />
+					</pi-form-field>
+				</pi-field-group>
+				<pi-select *ngIf="taskFormGroup.controls.assignee_type.value == 2" label=""
+					[options]="dropdowns.assigneeList[taskFormGroup.controls.assignee_type.value]"
+					formControlName="assignee_id"
+					(onChange)="selectionChange($event, 'assigneeList', 'assignee_id', 'assignee_name')"></pi-select>
+				<pi-select *ngIf="taskFormGroup.controls.assignee_type.value != 2" label="" [minSearchLength]='3'
+					[options]="dropdowns.assigneeList[taskFormGroup.controls.assignee_type.value]"
+					formControlName="assignee_id"
+					(onChange)="selectionChange($event, 'assigneeList', 'assignee_id', 'assignee_name')"></pi-select>
+				<div class="msgs">
+					<div class="pi-error"
+						*ngIf="taskFormGroup.controls['assignee_id'].hasError('required') && submitted">
+						Please Enter User Name
+					</div>
+				</div>
+			</pi-form-field>
+			<pi-form-field label="Associate with">
+				<ng-container *ngIf="products.displayText.product.length">
+					{{products.displayText.product}}
+					{{products.displayText.service}}
+				</ng-container>
+				<ng-container *ngIf="!products.displayText.product.length">
+					No Products/Services Selected
+				</ng-container>
+				<!-- <pi-select label="" [options]="[]"></pi-select> -->
+				<div class="btn-group basic-group-btns" #productsTrigger="matMenuTrigger"
+					[matMenuTriggerFor]="productsMenu">
+					<button class="first-child" [innerHtml]="'select'"></button>
+					<div class="btn-group">
+						<button class="last-child"><i class="pixel-icons icon-arrow-down"></i></button>
+					</div>
+				</div>
+			</pi-form-field>
+		</pi-field-group>
+
+		<pi-field-group>
+			<pi-form-field>
+				<pi-field-group>
+					<pi-form-field label="Estimated Hrs (HH:MM)">
+						<input type="text" pi-input formControlName="estimate_hrs" />
+						<div class="msgs">
+							<div class="pi-error"
+								*ngIf="taskFormGroup.controls['estimate_hrs'].hasError('pattern') && submitted">
+								Please Enter Valid Time (HH:MM)
+							</div>
+						</div>
+					</pi-form-field>
+					<pi-form-field></pi-form-field>
+				</pi-field-group>
+			</pi-form-field>
+			<pi-form-field label="Note">
+				<textarea pi-input formControlName="note"></textarea>
+			</pi-form-field>
+		</pi-field-group>
+	</div>
+
+	<div *ngIf="dynamicForm.spec_ids.length" [formGroup]="forms">
+		<div formGroupName="defaults">
+			<div *ngFor="let spec of dynamicForm.defaults">
+				<app-form-builder [config]="spec" [form]="defaults.controls[spec.id]"></app-form-builder>
+			</div>
+		</div>
+	</div>
+
+	<mat-menu #productsMenu="matMenu" xPosition="before" class="drop-menu-ui">
+		<div class="my-dialog" (click)="$event.stopPropagation();">
+			<header>
+				<p>Products/Services</p>
+				<button pi-button color="primary"
+					(click)="productsTrigger.closeMenu();generateText(products.list)">Done</button>
+			</header>
+			<aside>
+				<mat-spinner diameter="45" class="md" *ngIf="products.isLoading"></mat-spinner>
+				<div class="products-container dsf" *ngIf="!products.isLoading">
+					<div class="product" *ngFor="let product of products.list">
+						<div class="product-name">
+							<div class="ak-field-group chk-radio">
+								<pi-form-field label="<div><i class='pixel-icons icon-products'></i><span>{{product.name}}</span></div>">
+									<input type="checkbox" pi-input
+										(change)="checkAllServices(product,product.selected)"
+										[(ngModel)]="product.selected" />
+								</pi-form-field>
+							</div>
+						</div>
+						<div class="service" *ngFor="let service of product.services">
+							<div class="service-name">
+								<div class="ak-field-group chk-radio">
+									<pi-form-field label="<i class='pixel-icons icon-orders' ></i>{{service.name}}">
+										<input type="checkbox" pi-input
+											(change)="checkService(product, service.selected)"
+											[(ngModel)]="service.selected" />
+									</pi-form-field>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</aside>
+		</div>
+	</mat-menu>
+
+</mat-dialog-content>
+<mat-dialog-actions class="mat-footer">
+	<button pi-button color="subtle" (click)="close()">Cancel</button>
+	<button pi-button color="primary" (click)="addTask(taskFormGroup)" [disabled]="taskFormGroup?.pristine">Add</button>
+</mat-dialog-actions>

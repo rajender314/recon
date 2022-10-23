@@ -1,0 +1,123 @@
+<div class="primary-layout track-time">
+	<div class="pi-detail-view">
+		<div class="primary-layout-detail">
+			<header>
+				<div class="w-100 d-flex align-items-center justify-content-between ">
+					<aside class="left-header fx-33">
+						<h1>Track Time</h1>
+					</aside>
+					<aside class="align-items-center d-flex flex fx-33 justify-content-center track-time-date-picker">
+						<button pi-icon-button class="m-r-5" (click)="goToPrev()"><i
+								class="pixel-icons icon-arrow-left"></i></button>
+						<pi-form-field [label]=" " class="date-field custom-date-field">
+							<ng-container *ngIf="selectedView == 'timeGridDay' || selectedView == 'list'">
+								<input [class.is-focus]="datePicker.opened" pi-input matInput
+									[matDatepicker]="datePicker" [formControl]="datePikerControl"
+									(focus)="datePicker.open()" placeholder="Choose a date" readonly>
+								<!-- [min]="field.minDate" [max]="field.maxDate" (dateChange)="onDateSelect($event)" -->
+								<mat-datepicker-toggle matSuffix [for]="datePicker">
+									<i class="pixel-icons icon-calendar" matDatepickerToggleIcon></i>
+								</mat-datepicker-toggle>
+								<mat-datepicker #datePicker></mat-datepicker>
+							</ng-container>
+							<ng-container *ngIf="selectedView == 'timeGridWeek'">
+								<pi-select style="margin-top: 0" [label]=" " [formControl]="weekPickerControl"
+									(onChange)="onWeekChange($event)" [options]="weekNoList" nameKey="week_name"
+									idKey="week_no" [multi]="false"></pi-select>
+							</ng-container>
+						</pi-form-field>
+						<button pi-icon-button class="m-l-5" (click)="goToNext()"><i
+								class="pixel-icons icon-arrow-right"></i></button>
+					</aside>
+					<aside class="d-flex fx-33 justify-content-end">
+						<div class="d-flex">
+							<button pi-button class="m-r-15" (click)="today()" [disabled]="isEnable()">Today</button>
+							<div class="multiple-switch all-select">
+								<pi-form-field class="justify-content-center d-flex align-items-center h-32"
+									[label]="view.label" *ngFor="let view of calendarViews"
+									[class.active]="view.value == selectedView">
+									<input type="radio" pi-input name="nav_tab" [(ngModel)]="selectedView"
+										[value]="view.value" (change)="changeView(selectedView)" />
+								</pi-form-field>
+							</div>
+							<button pi-button color="primary" (click)="addTask()" *ngIf="trackConfig.allowAdd">Add</button>
+						</div>
+					</aside>
+				</div>
+			</header>
+			<div>
+				<ng-container *ngIf="showView">
+					<div *ngIf="selectedView == 'timeGridDay'" class="split-view-calendar d-flex">
+						<div class="left-view-calendar">
+							<div class="event-title">
+								<h3>My Timesheet for {{datePikerControl.value|date: "MMM dd, yyyy"}}</h3>
+								<span [innerHtml]="totalDuration">4h 15m</span>
+							</div>
+							<div class="add-event-btn">
+								<button pi-button (click)="showFilter('show')" *ngIf="trackConfig.allowAdd"><i
+										class="pixel-icons icon-plus-slim"></i>Add</button>
+							</div>
+							<div class="events-wrapper">
+								<div class="events" [ngClass]="event.className" *ngFor="let event of tasksList">
+									<h2 *ngIf="event.jobs_name" [innerHtml]="event.jobs_name">Academy Omini Offer</h2>
+									<div class="d-flex justify-content-between align-items-center">
+										<p [innerHtml]="event.jobs_tasks_name">Project time line</p><span
+											[innerHtml]="event.track_time_total">2h:00m</span>
+									</div>
+								</div>
+							</div>
+							<!-- <div >No Tasks Available for selected Date</div> -->
+							<div class="no-data-screen ng-star-inserted" *ngIf="!tasksList.length">
+								<div class="empty-screen">
+									<div class="icon-info-holder">
+										<div class="icon">
+											<i class="pixel-icons icon-task-completed"></i>
+										</div>
+										<p class="alert-message">No Tasks Available for selected Date</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<full-calendar class="custom-calendar right-view-calendar" #calendar
+							[header]="calendarConfig.header" [nowIndicator]="calendarConfig.nowIndicator"
+							[weekNumbers]="calendarConfig.weekNumbers" [editable]="calendarConfig.editable"
+							[eventLimit]="calendarConfig.eventLimit" [height]="calendarConfig.height"
+							[plugins]="calendarConfig.plugins" [columnHeaderFormat]="calendarConfig.columnHeaderFormat"
+							[defaultView]="selectedView" [events]="tasksList"
+							[selectable]="true" [unselectAuto]="false" (select)="dateTimeSelection($event)"
+							(eventDrop)="onEventDrop($event)"
+							(eventClick)="onEventClick($event)"
+							(eventRender)="calendarConfig.eventRender($event)">
+						</full-calendar>
+					</div>
+					<full-calendar *ngIf="selectedView == 'timeGridWeek'" class="custom-calendar" #calendar
+						[header]="calendarConfig.header" [nowIndicator]="calendarConfig.nowIndicator"
+						[weekNumbers]="calendarConfig.weekNumbers" [editable]="calendarConfig.editable"
+						[eventLimit]="calendarConfig.eventLimit" [height]="calendarConfig.height"
+						[plugins]="calendarConfig.plugins" [columnHeaderFormat]="calendarConfig.columnHeaderFormat"
+						[defaultView]="selectedView" [events]="tasksList"
+						[selectable]="true" [unselectAuto]="false" (select)="dateTimeSelection($event)"
+						(eventDrop)="onEventDrop($event)"
+						(eventClick)="onEventClick($event)"
+						(eventRender)="calendarConfig.eventRender($event)">
+					</full-calendar>
+				</ng-container>
+			</div>
+
+			<div class="side-nav-container" *ngIf="showSidenav">
+				<div class="overlay" (click)="!disableOutSideClick ? showFilter('show') : ''"></div>
+				<div class="side-nav" [class.active]="showSidenav">
+					<div class="side-nav-header">
+						<div class="side-nav-title d-flex align-items-center">
+							<i class="pixel-icons icon-left-arrow cur-pointer" (click)="showFilter('show')"></i>
+							<h2>Track Time</h2>
+						</div>
+					</div>
+					<div class="side-nav-content">
+						<app-add-time-track (onClose)="onAfterClose($event)" [config]="trackConfig"></app-add-time-track>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,32 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+
+<mat-dialog-content>
+	<div class="dd-dragel">	
+	<ul class="dd-list">
+		<div [sortablejs]="data.products" class="dd-item" [sortablejsOptions]="{ animation: 150 }">
+			<li *ngFor="let product of data.products" class="dd-handle">
+				<i class="pixel-icons icon-drag"></i> <span [innerHtml]="product.product_name"></span>
+				<ng-container *ngIf="product.services.length">
+					<ul class="dd-list">
+						<div [sortablejs]="product.services" [sortablejsOptions]="{ animation: 150 }" class="dd-item">
+							<li *ngFor="let service of product.services" class="dd-handle">
+								<i class="pixel-icons icon-drag"></i><span [innerHtml]="service.services_name"></span>
+							</li>
+						</div>
+					</ul>
+				</ng-container>
+			</li>
+		</div>
+	</ul>
+</div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+	<button pi-button mat-dialog-close>Cancel</button>
+	<button pi-button color="primary" (click)="reOrder()">Save Changes</button>
+</mat-dialog-actions>

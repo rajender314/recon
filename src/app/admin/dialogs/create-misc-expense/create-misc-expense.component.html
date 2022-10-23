@@ -1,0 +1,23 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+<mat-dialog-content class="custom-select">
+	<form [formGroup]="createFormGroup" class="form-flex" autocomplete="off">
+		<pi-form-field label="Misc - Expense Name">
+			<input type="text" pi-input id="name" name="name" formControlName="name" maxlength="64">
+			<div class="pi-error" *ngIf="f.name.hasError('required') && submitted">Please Enter Misc - Expense Name</div>
+			<div class="pi-error" *ngIf="!f.name.hasError('required') && duplicateError">Misc - Expense {{duplicateError}}</div>
+		</pi-form-field>
+		<pi-field-group>
+			<pi-select label="Cost Codes" [options]="data.dropdowns.costCodes" id="cost-code" name="cost-code" formControlName="costcode_id"></pi-select>
+			<div class="pi-error" *ngIf="f.costcode_id.hasError('required') && submitted">Please Select Cost Code</div>
+		</pi-field-group>
+	</form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+	<button pi-button (click)="closeDialog()">Cancel</button>
+	<button pi-button class="m-l-15" color="primary" (click)="saveDetails(createFormGroup)" [disabled]="createFormGroup.pristine">Save</button>
+</mat-dialog-actions>

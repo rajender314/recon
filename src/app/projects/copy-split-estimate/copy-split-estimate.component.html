@@ -1,0 +1,35 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <div class="copy-split-container" *ngIf="!loader">
+    <div class="header">
+      <div class="column">Division</div>
+      <div class="column right">Pre Tax</div>
+      <div class="column right">Tax</div>
+      <div class="column right">Total</div>
+    </div>
+    <div class="content">
+      <div class="row" *ngFor="let estimate of data.split_estimates">
+        <div class="column">{{estimate.split_org}}</div>
+        <div class="column right">{{estimate.pre_tax}}</div>
+        <div class="column right">{{estimate.tax}}</div>
+        <div class="column right">{{estimate.cost}}</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="column"></div>
+      <div class="column right">${{state.preTax}}</div>
+      <div class="column right">${{state.tax}}</div>
+      <div class="column right">${{state.cost}}</div>
+    </div>
+  </div>
+  <div class="spinner-view" *ngIf="loader">
+    <div class="empty-screen">
+      <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+    </div>
+  </div>
+</mat-dialog-content>

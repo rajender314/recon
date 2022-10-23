@@ -1,0 +1,30 @@
+<mat-spinner diameter="45" class="md" *ngIf="state.loader"></mat-spinner>
+<div class="client-access-container" *ngIf="!state.loader">
+    <div class="header">
+        <div>Clients: {{ gridApi?.getSelectedRows()?.length}} Selected</div>
+        <span style="flex: 1"></span>
+        <span class="filter" [matMenuTriggerFor]="statusFilter">{{state.selectedFilter}}
+            <i class="pixel-icons icon-arrow-down"></i>
+        </span>
+        <mat-menu #statusFilter="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before"
+            class="more-actions">
+            <button mat-menu-item *ngFor="let status of state.statusFilter"
+                (click)="changeFilter(status)">{{status.label}}</button>
+        </mat-menu>
+        <div class="col-field-multiple toggle-radio m-l-15">
+            <pi-form-field [label]="view.label" *ngFor="let view of state.gridViewList"
+                [class.active]="view.value == state.gridView">
+                <input type="radio" pi-input name="nav_tab" [disabled]="readonly" [(ngModel)]="state.gridView"
+                    [value]="view.value" (change)="changeGrid(state.gridView)" />
+            </pi-form-field>
+        </div>
+        <app-search class="m-l-15" (onSearch)="onSearch($event)"></app-search>
+    </div>
+    <div class="global-grid with-check-boxs">
+        <ag-grid-angular class="ag-theme-balham user-client-access-grid with-table-gaps accordion-grid with-out-margin actions-grid ag-no-striped ag-full-width-grid " [gridOptions]="gridOptions"></ag-grid-angular>
+    </div>
+    <div class="full-width fixed-footer bx-shadow" *ngIf="!readonly">
+        <button pi-button class="cancel" (click)="resetForm()">Cancel</button>
+        <button class="m-l-15" pi-button color="primary" (click)="saveSelectedClientAccess()">Save</button>
+    </div>
+</div> 

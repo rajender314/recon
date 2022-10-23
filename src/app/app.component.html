@@ -1,0 +1,14 @@
+<div class="app">
+  <app-header></app-header>
+  <div class="app-container">
+    <div [hidden]="loading" style="width: 100%">
+        <router-outlet></router-outlet>
+      </div>
+      <!-- <div class="loader" [hidden]="!loading"></div> -->
+  </div>
+  <div class="spinner-view overlay-spinner" *ngIf="showOverlay">
+      <div class="empty-screen">
+          <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+      </div>
+  </div>
+</div>

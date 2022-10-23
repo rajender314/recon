@@ -1,0 +1,12 @@
+<div class="gloabal-search-sec">
+  <div class="global-search-modalbox">
+    <!-- <mat-icon class="back-link" (click)="close()">arrow_back</mat-icon> -->
+    <i _ngcontent-c26="" class="pixel-icons icon-arrow back-link" (click)="close()"></i>
+    <app-search (onSearch)="onSearch($event)"></app-search>
+  </div>
+
+  <div>
+    <ag-grid-angular style="height: calc(100vh - 109px)" class="ag-theme-balham" [gridOptions]="gridOptions">
+    </ag-grid-angular>
+  </div>
+</div>

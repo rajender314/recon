@@ -1,0 +1,21 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <i class="pixel-icons icon-close-slim"></i>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="organizationForm" class="form-flex" autocomplete="off">
+
+    <pi-form-field label="Sub Organization Name">
+      <input type="text" pi-input id="name" name="name" formControlName="name">
+      <div class="pi-error" *ngIf="organizationForm.controls.name.hasError('required') && submitted">Please Enter Sub
+        Organization Name</div>
+      <div class="pi-error" *ngIf="!organizationForm.controls.name.hasError('required') && duplicateError">{{duplicateError}}</div>
+    </pi-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+  <button pi-button color="subtle" (click)="closeDialog()">Cancel</button>
+  <button pi-button color="primary" (click)="saveOrganization(organizationForm)" [disabled]="organizationForm.pristine">Save</button>
+</mat-dialog-actions>

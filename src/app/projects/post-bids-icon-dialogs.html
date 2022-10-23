@@ -1,0 +1,199 @@
+<div class="container custom-arrow" *ngIf="params.data.type == 'service'">
+	<pi-select label="" [options]="revisions" [formControl]="selectedRevison"></pi-select>
+	<div class="dropdown"><i class="pixel-icons icon-triangle-arrow-up"></i>
+	<i class="pixel-icons icon-triangle-arrow"></i></div>
+</div>
+<div class="icon-actions" *ngIf="params.data.type=='vendor'">
+	<i class="pixel-icons icon-messages" [matMenuTriggerFor]="messageMenu" #messageTrigger="matMenuTrigger"
+		(menuOpened)="getMessages()"></i>
+</div>
+
+<mat-menu #messageMenu="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before"
+	class="more-actions msg-dialog analyze-bids-matmenu-message">
+	<div class="my-dialog" (click)="$event.stopPropagation()">
+
+		<div class="discussion-screen">
+			<div class="info">
+				<h2>Messages</h2>
+				<!-- <button pi-icon-button (click)="closeMenu()">
+					<i class="pixel-icons  icon-close-slim"></i>
+				</button> -->
+				<button (click)="closeMenu()" mat-icon-button tabindex="-1">
+					<mat-icon>close</mat-icon>
+				      </button>
+			</div>
+			<div class="discussions">
+				<div class="spinner-view" *ngIf="messages.inProgress">
+					<div class="empty-screen">
+						<div class="icon-info-holder">
+							<mat-spinner diameter="38" class="md"></mat-spinner>
+						</div>
+					</div>
+				</div>
+
+				<ng-container *ngIf="!messages.inProgress">
+					<ng-container *ngIf="!messages.isNew">
+						<div class="list-group" *ngIf="!messages.noData" #messageListSection>
+							<div class="item" *ngFor="let msg of messages.list">
+								<div class="discussions-image"></div>
+								<div class="data">
+									<h5>
+										<div class="user text-ellipsis" [innerHTML]="msg.created"></div>
+									</h5>
+									<div class="time">{{msg.created_date | fromNow}}</div>
+									<div class="msg">
+										<div class="plain" [innerHTML]="msg.message"></div>
+									</div>
+									<div class="attachments" *ngIf="msg.attachment?.length">
+									  <div *ngFor="let atchmt of msg.attachment">
+									    <div class="attachment-preview"
+									      *ngIf="atchmt.extension == 'jpg' || atchmt.extension == 'png' || atchmt.extension == 'jpeg'">
+									      <div class="file-attached">
+									        <img src="{{atchmt.preview_path}}" alt="attachment preview" /></div>
+									      <div class="overlay">
+									        <div class="content">
+									          <span class="title">{{atchmt.original_name}}</span>
+									          <div class="details">
+									            <div style="display: flex;align-items: center;">
+									              <i class="pixel-icons icon-{{atchmt.extension}}"></i>
+									              <p>{{ atchmt.filesize/1024 | number:'.2' }} KB </p>
+									            </div>
+									            <span class="download-attachment" (click)="singleDownload(atchmt)">
+									              <i class="pixel-icons icon-download"></i>
+									            </span>
+									          </div>
+									        </div>
+									      </div>
+									    </div>
+									    <div class="discussions-file-details" *ngIf="atchmt.extension == 'zip' || atchmt.extension == 'pdf'">
+									      <div class="file-types">
+									        <i class="pixel-icons icon-{{atchmt.extension}}"></i>
+									      </div>
+									      <div class="file-names">
+									        <p class="file-type-name">
+									          <span class="title">{{atchmt.original_name}}</span>
+									          <span>{{ atchmt.filesize/1024 | number:'.2' }} KB </span>
+									        </p>
+									      </div>
+									      <span class="download-attachment" (click)="singleDownload(atchmt)">
+									        <i class="pixel-icons icon-download"></i>
+									      </span>
+									    </div>
+									  </div>
+									</div>
+									<!-- <div class="attachments" *ngIf="msg.attachment?.length">
+										<div class="discussions-file-details">
+										
+											<div class="file-names">
+												<p class="file-name">
+													{{msg.attachment.length+" "+((msg.attachment.length==1)?"File":"Files")}}
+												</p>
+												<p class="file-type-name" *ngFor="let atchmt of msg.attachment">
+													{{atchmt.original_name}}</p>
+											</div>
+											<span class="download-attachment">
+												<i class="pixel-icons icon-download"></i>
+											</span>
+										</div>
+									</div> -->
+								</div>
+							</div>
+						</div>
+						<div *ngIf="messages.noData" class="no_data">No Messages Created Yet!</div>
+						<!-- <div class="no-data-screen"  *ngIf="messages.noData">
+							<div class="empty-screen">
+							  <div class="icon-info-holder">
+								<div class="icon">
+								  <i class="pixel-icons icon-pn-messages"></i>
+								</div>
+								<p class="no_data">No Messages Created Yet!</p>
+							  </div>
+							</div>
+						  </div> -->
+						<div class="footer">
+							<app-send-box [options]="{container: messageListContainer, jobs_id: jobsId, thread_id: bidThreadId}"
+							  (addMessage)="onMessageAdd($event)" style="width: 100%;"></app-send-box>
+							<!-- <div class="msg-typeing">
+								<div class="text-msg">
+									<pi-form-field>
+										<textarea id="newMessage" pi-input placeholder="Message" rows="2" minRows="2"
+											maxRows="10" [(ngModel)]="messages.newMessage"
+											(focus)="messages.showButtons = true;"
+											(keydown)="onKeydown($event)"></textarea>
+									</pi-form-field>
+									<button class="restore-btn button" *ngIf="messages.showButtons"
+										(click)="messages.showButtons = false;">
+										<i class="material-icons">settings_backup_restore</i>
+									</button>
+								</div>
+								<div class="send-btn">
+									<button class="send-btn-action button" (click)="createMessage()">
+										<i class="material-icons">send</i>
+									</button>
+								</div>
+
+
+							</div> -->
+							<!-- <div class="job-attachments-list">
+                                <p><i class="material-icons">attachment</i> Attachments :</p>
+                                <a class="attachment-file"><i class="pixel-icons icon-pdf"></i> <span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                <a class="attachment-file"><i class="pixel-icons icon-png"></i><span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                <a class="attachment-file"><i class="pixel-icons icon-jpg"></i><span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                <a class="attachment-file"><i class="pixel-icons icon-gif"></i><span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                <a class="attachment-file"> <i class="pixel-icons icon-doc"></i><span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                <a class="attachment-file"><i class="pixel-icons icon-docx"></i><span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                <a class="attachment-file"> <i class="pixel-icons icon-txt"></i><span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                <a class="attachment-file"><i class="pixel-icons icon-xlsx"></i><span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                <a class="attachment-file"><i class="pixel-icons icon-zip"></i><span>Test</span> <span
+                                        class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                            </div> -->
+							<div *ngIf="messages.showButtons" class="job-attachments-list">
+								<!-- <div class="attachments"></div> -->
+								<div class="uploads">
+									<div ng2FileDrop [ngClass]="{'file-over': hasDropZoneOver}" [uploader]="uploader"
+										class="file-drop-zone">
+										<input id="attachment" type="file" [accept]="allowedMimeType.toString()" ng2FileSelect [uploader]="uploader"
+											[hidden]="true" multiple />
+										<label for="attachment" class="browse-file">Upload New Files :
+											<span class="upload-file-discussion">
+												<i class="pixel-icons icon-plus-slim"></i>
+											</span>
+										</label>
+									</div>
+								</div>
+								<div class="files-sec">
+										<div *ngFor="let file of messages.uploadData.files;let i = index"
+											class="attachment-file">
+											<img src="" alt="">
+											<i class="pixel-icons icon-{{file.type}}"></i>
+											<span [innerHtml]="file.original_name"></span>
+											<span class="remove-pill" (click)="removeAttachment(i)">
+												<i class="pixel-icons icon-close-slim"></i>
+											</span>
+										</div>
+									</div>
+							</div>
+
+						</div>
+					</ng-container>
+					<ng-container *ngIf="messages.isNew">
+						<div class="first-msg">
+							<div class="hello"></div>
+							<p>Hello</p>
+							<button pi-button color="primary" (click)="createDiscussion()">Create Discussion</button>
+						</div>
+
+					</ng-container>
+				</ng-container>
+			</div>
+		</div>
+	</div>
+</mat-menu>

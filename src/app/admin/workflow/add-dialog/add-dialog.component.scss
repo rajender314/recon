@@ -1,0 +1,9 @@
+@import "../../../../assets/styles/mixins";
+::ng-deep .pi-form-field .pi-field .pi-select-input{
+    pi-icon{
+        .icon-arrow-down{
+            line-height: 12px !important;
+            @include iconSize(12px);
+        }
+    }
+}

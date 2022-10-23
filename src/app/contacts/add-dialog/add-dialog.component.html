@@ -1,0 +1,68 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<i class="pixel-icons icon-close-slim"></i>
+	</button>
+</div> 
+<mat-dialog-content>
+	<form [formGroup]="addContactForm" class="form-flex" autocomplete="off">
+		<!-- <p class="pi-error" [innerHtml]="serverError"></p> -->
+		<div *ngFor="let form of data.formFields">
+			<ng-container *ngIf="form.type == 'select'">
+				<pi-select [label]="form.label" [options]="dropdowns[form.options]" [multi]="form.multi" [formControlName]="form.key"></pi-select>
+				<div class="msgs">
+					<div class="pi-error" *ngIf="addContactForm.controls[form.key].hasError('required') && submitted">Please Select
+						{{form.label}}</div>
+				</div>
+			</ng-container>
+			<ng-container *ngIf="form.type == 'text'">
+				<pi-form-field [label]="form.label">
+					<input type="text" *ngIf="form.validations?.maxlength" [maxlength]="form.validations?.maxlength" pi-input [name]="form.key"
+					 [formControlName]="form.key" />
+					<input type="text" *ngIf="!form.validations || !form.validations?.maxlength" pi-input [name]="form.key"
+					 [formControlName]="form.key" />
+					<div class="msgs">
+						<div class="pi-error" *ngIf="addContactForm.controls[form.key].hasError('required') && submitted">Please Enter
+							{{form.label}} Name</div>
+					</div>
+				</pi-form-field>
+			</ng-container>
+			<ng-container *ngIf="form.type == 'chips'">
+				<pi-form-field [label]="form.label">
+					<mat-chip-list #chipList>
+						<mat-chip *ngFor="let opt of options" [selectable]="true" [removable]="true" (removed)="remove(opt)">
+							{{opt}}
+							<i class="pixel-icons icon-close" matChipRemove *ngIf="true"></i>
+						</mat-chip>
+						<input placeholder="" [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+						 [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event)">
+					</mat-chip-list>
+					<span class="field-note">Enter Value & press semicolon(;) to add a Choice.</span>
+				</pi-form-field>
+			</ng-container>
+			<ng-container *ngIf="form.type == 'textarea'">
+				<pi-form-field [label]="form.label">
+					<textarea pi-input [name]="form.key" [formControlName]="form.key" maxlength="1024"></textarea>
+					<span class="field-note">Enter text of 1024 characters or less.</span>
+				</pi-form-field>
+			</ng-container>
+			<ng-container *ngIf="form.type == 'checkbox_grp'" [formGroupName]="form.key">
+				<label>{{form.label}}</label>
+				<pi-form-field [label]="option.label" *ngFor="let option of form.options">
+					<input type="checkbox" pi-input [formControlName]="option.key" />
+				</pi-form-field>
+				<div *ngIf="!form.options.length">No Options</div>
+			</ng-container>
+
+			<ng-container *ngIf="form.type == 'checkbox'">
+				<pi-form-field [label]="form.label">
+					<input type="checkbox" pi-input [formControlName]="form.key" />
+				</pi-form-field>
+			</ng-container>
+		</div>
+	</form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+	<button pi-button color="subtle" mat-dialog-close>Cancel</button>
+	<button pi-button color="primary" (click)="saveDetails(addContactForm)" [disabled]="addContactForm.pristine">Save</button>
+</mat-dialog-actions>

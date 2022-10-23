@@ -1,0 +1,235 @@
+<div class="primary-layout">
+    <div class="pi-detail-view">
+        <div class="primary-layout-detail">
+            <header>
+                <div class="w-100 d-flex align-items-center justify-content-between">
+                    <aside class="left-header d-flex ">
+                        <pi-breadcrumb>
+                            <ng-container *ngFor="let item of data.breadcrumbs">
+                                <pi-breadcrumb-item tabindex="-1" *ngIf="item.type == 'link'" [label]="item.label"
+                                    [routerLink]="item.route" (click)="close()">
+                                </pi-breadcrumb-item>
+                                <pi-breadcrumb-item *ngIf="item.type != 'link'" [label]="item.label">
+                                </pi-breadcrumb-item>
+                            </ng-container>
+                        </pi-breadcrumb>
+                        <div class="d-flex align-items-center " style="position: relative;">
+                            <div class="ag-cell-custome-actions">
+                                <ul style="padding-top: 0;">
+                                    <li style="margin-right: 0; margin-left: 0;" (click)="close()"><i
+                                            class="pixel-icons icon-arrow"></i></li>
+                                </ul>
+                            </div>
+
+                            <h1 [innerHtml]="data.title"></h1>
+                        </div>
+                    </aside>
+                    <aside class="right-header d-flex ">
+                        <button mat-icon-button (click)="close()" tabindex="-1" class="full-dialog-x-btn">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </aside>
+                </div>
+            </header>
+            <div class="primary-layout-detail-body flex-column o-x-hidden">
+                <div class="sidebar-layout padding-20 add-po-stepper">
+                    <mat-dialog-content>
+                        <mat-horizontal-stepper [selectedIndex]="state.index" (selectionChange)="changeStep($event)">
+                            <mat-step label="Step 1" state="phone">
+                                <div class="container" *ngIf="state.index==0">
+                                    <h3>Select a Vendor to create a Purchase Order.</h3>
+                                    <div class="step-content">
+                                        <div class="vendors-container" @showMoreAnimate
+                                            *ngFor="let container of state.vendors; let containerIndex = index;">
+                                            <header>
+                                                <pi-form-field label="{{container.label}}">
+                                                    <input type="checkbox" (change)="checkAllVendors(container)"
+                                                        pi-input [(ngModel)]="container.selected"
+                                                        [disabled]="!container.children.length" />
+                                                </pi-form-field>
+                                            </header>
+                                            <section>
+                                                <ng-container @showMoreAnimate
+                                                    *ngFor="let vendor of container.children | slice: 0:container.limit; let i = index;">
+                                                    <div class="container-row justify-content-between">
+                                                        <pi-form-field
+                                                            label="<i class='pixel-icons icon-vendor-shape'></i> <span>{{vendor.vendor_name}}</span>">
+                                                            <input type="checkbox"
+                                                                (change)="checkSelectedVendor(container, vendor)"
+                                                                pi-input [(ngModel)]="vendor.selected" />
+                                                        </pi-form-field>
+                                                        <div class="pull-end d-flex justify-content-between">
+                                                            <div class="vendor-icons">
+                                                                <div class="products-count">
+                                                                    <i class="pixel-icons icon-products"></i><span
+                                                                        class="count">{{vendor.product_count}}</span>
+                                                                </div>
+                                                                <div class="service-count">
+                                                                    <i class="pixel-icons icon-orders"></i><span
+                                                                        class="count">{{vendor.service_count}}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="pos-count">
+                                                                <span
+                                                                    class="count">{{vendor.po_cnt+((vendor.po_cnt=='1')?" PO":" POS")}}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                                <ng-container *ngIf="!container.children.length">
+                                                    <div class="no-data-vendor">No Vendors Available</div>
+                                                </ng-container>
+                                                <ng-container *ngIf="container.limit < container.children.length">
+                                                    <!-- *ngIf="container.children.length>4 && !container.showMore && containerIndex==0" -->
+                                                    <div class="container-row show-more"
+                                                        (click)="changeLimit(container)">
+                                                        Show More</div>
+                                                </ng-container>
+                                            </section>
+                                        </div>
+                                    </div>
+                                    <div class="animated-footer justify-content-end d-flex">
+                                        <button pi-button (click)="close()">Cancel</button>
+                                        <button pi-button class="m-l-15" color="primary" matStepperNext
+                                            (click)="addVendors()" [disabled]="state.isDisable">Next</button>
+                                    </div>
+                                </div>
+                            </mat-step>
+                            <mat-step label="Step 2" state="chat">
+                                <div class="container" *ngIf="state.index==1">
+                                    <div class="step-content">
+                                        <div class="add-service-container">
+                                            <!--  style="flex-direction: row;" -->
+                                            <div class="sidebar-layout">
+                                                <aside class="sidebar bid-product-ui p-r-15">
+                                                    <div class="estimate-form">
+                                                        <!-- style="flex: 0 0 30%" -->
+                                                        <!-- <pi-select label="Vendor" [options]="state.vendorsList" (onChange)="vendorChange($event)"
+                                                                    [(ngModel)]="state.selectedVendorId" class="vendor-select" [disabled]="!data.isNew"></pi-select> -->
+                                                        <mat-list>
+                                                            <mat-list-item
+                                                                [class.active]="item.id == state.selectedVendorId"
+                                                                *ngFor="let item of state.vendorsList"
+                                                                (click)="vendorChange(item.id)" [innerHtml]="item.name">
+                                                            </mat-list-item>
+                                                        </mat-list>
+                                                    </div>
+                                                </aside>
+                                                <aside class="sidebar-content p-l-15">
+                                                    <div class="container">
+                                                        <!--  style="flex: 1;" -->
+                                                        <div class="products-panel">
+                                                            <div class="products-panel-header">Select Product and
+                                                                Services to
+                                                                include in this PO
+                                                            </div>
+                                                            <div class="panel-header has-chk-box">
+                                                                <div class="chk-radio po-header-selection">
+                                                                    <pi-form-field class="child-main-check m-t-0"
+                                                                        label="All Products & Services">
+                                                                        <input type="checkbox" pi-input
+                                                                            (change)="parentCheck('selected', state.selectedVendor.checkAllProducts)"
+                                                                            [(ngModel)]="state.selectedVendor.checkAllProducts" />
+                                                                    </pi-form-field>
+                                                                    <div
+                                                                        class="pull-end d-flex justify-content-between">
+                                                                        <pi-form-field class="child-check m-t-0 task"
+                                                                            label="Task">
+                                                                            <input type="checkbox" pi-input
+                                                                                (change)="parentCheck('task', state.selectedVendor.checkAllTasks)"
+                                                                                [(ngModel)]="state.selectedVendor.checkAllTasks" />
+                                                                        </pi-form-field>
+                                                                        <pi-form-field class="child-check m-t-0"
+                                                                            label="Expense">
+                                                                            <input type="checkbox" pi-input
+                                                                                (change)="parentCheck('expense', state.selectedVendor.checkAllExpenses)"
+                                                                                [(ngModel)]="state.selectedVendor.checkAllExpenses" />
+                                                                        </pi-form-field>
+                                                                        <pi-form-field class="child-check m-t-0 bid"
+                                                                            label="Bid">
+                                                                            <input type="checkbox" pi-input
+                                                                                (change)="parentCheck('bid', state.selectedVendor.checkAllBids)"
+                                                                                [(ngModel)]="state.selectedVendor.checkAllBids" />
+                                                                        </pi-form-field>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="panel-container">
+                                                                <div class="panel-item"
+                                                                    *ngFor="let item of state.selectedVendorDetails[state.selectedVendorId]">
+                                                                    <div class="parent has-chk-box">
+                                                                        <div class="chk-radio">
+                                                                            <pi-form-field [label]="item.product_name">
+                                                                                <input type="checkbox" pi-input
+                                                                                    (change)="checkAllServices(item)"
+                                                                                    [(ngModel)]="item.selected" />
+                                                                            </pi-form-field>
+                                                                        </div>
+                                                                    </div>
+                                                                    <ul *ngIf="item.services && item.services.length"
+                                                                        class="child-list">
+                                                                        <li class="service has-chk-box"
+                                                                            *ngFor="let child of item.services">
+                                                                            <div class="chk-radio po-header-selection">
+                                                                                <pi-form-field class="child-main-check"
+                                                                                    [label]="child.services_name">
+                                                                                    <input type="checkbox" pi-input
+                                                                                        (change)="checkService(child, item)"
+                                                                                        [(ngModel)]="child.selected"
+                                                                                        [disabled]="!child.is_service_available" />
+                                                                                </pi-form-field>
+                                                                                <div class="pull-end d-flex justify-content-between">
+                                                                                    <pi-form-field
+                                                                                        class="child-check task"
+                                                                                        label=" ">
+                                                                                        <input type="checkbox" pi-input
+                                                                                            (change)="checkColumnLevel(child, 'task')"
+                                                                                            [(ngModel)]="child.task"
+                                                                                            [disabled]="!child.selected" />
+                                                                                    </pi-form-field>
+                                                                                    <pi-form-field class="child-check"
+                                                                                        label=" ">
+                                                                                        <input type="checkbox" pi-input
+                                                                                            (change)="checkColumnLevel(child, 'expense')"
+                                                                                            [(ngModel)]="child.expense"
+                                                                                            [disabled]="!child.selected" />
+                                                                                    </pi-form-field>
+                                                                                    <pi-form-field
+                                                                                        class="child-check bid"
+                                                                                        label=" ">
+                                                                                        <input type="checkbox" pi-input
+                                                                                            (change)="checkColumnLevel(child, 'bid')"
+                                                                                            [(ngModel)]="child.bid"
+                                                                                            [disabled]="!child.selected" />
+                                                                                    </pi-form-field>
+                                                                                </div>
+                                                                            </div>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </aside>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="animated-footer justify-content-end d-flex">
+                                        <button *ngIf="!data.isNew" pi-button color="subtle"
+                                            (click)="close()">Cancel</button>
+                                        <button *ngIf="data.isNew" pi-button matStepperPrevious>Back</button>
+                                        <!-- (click)="back()" -->
+                                        <button pi-button color="primary" class="m-l-15"
+                                            (click)="addPurchaseOrder()">Add Purchase
+                                            Order</button>
+                                        <!-- [disabled]="!state.unlockCreatePo" -->
+                                    </div>
+                                </div>
+                            </mat-step>
+                        </mat-horizontal-stepper>
+                    </mat-dialog-content>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

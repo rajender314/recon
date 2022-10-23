@@ -1,0 +1,20 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button (click)="close()" tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <p>Select the Version you want to Download</p>
+  <div *ngFor="let item of filesList" style="display: flex;align-items: center;justify-content: space-between;margin-bottom: 10px;">
+    <div [innerHtml]="item.version"></div>
+    <div class="file-info" style="display: flex;align-items: center;" (click)="downloadFile(item)">
+      <div class="icon file">
+        <i class="pixel-icons icon-{{item.file_type}}"></i>
+      </div>
+      <div [innerHtml]="item.file_name"></div>
+    </div>
+    <div [innerHtml]="item.size"></div>
+    <i class="pixel-icons icon-download" (click)="downloadFile(item)"></i>
+  </div>
+</mat-dialog-content>

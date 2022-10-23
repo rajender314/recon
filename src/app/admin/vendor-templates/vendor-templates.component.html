@@ -1,0 +1,253 @@
+<pi-master-detail-view class="recon-admin-layout" [showDetail]="showView">
+
+  <pi-master-view class="admin-sidebar">
+    <div class="sidebar-header">
+      <!-- <span class="my-pixel-icon orange">
+        <i class="pixel-icons icon-vendor-templates"></i>
+      </span> -->
+      <div class="page-breadcrumb">
+        <app-admin-popover class="left-hdr-comp" class="align-items" [bgColor]="'orange'" [icon]="'icon-vendor-templates'"
+          [primary]="'Admin'" [secondary]="'Vendor Templates'" [data]="adminDashboard"></app-admin-popover>
+      </div>
+      <div class="icon-button-actions" *ngIf="APP.permissions.system_access.vendor_templates=='edit'">
+        <button pi-icon-button class="icon-button-wrapper m-l-6" [matMenuTriggerFor]="menu">
+          <i class="pixel-icons icon-more-horizontal"></i>
+        </button>
+        <mat-menu #menu="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+          <button mat-menu-item (click)="export()">Export</button>
+        </mat-menu>
+      </div>
+      <app-search (onSearch)="onSearch($event)"></app-search>
+    </div>
+    <!-- <div class="left-content" [class.spinner]="isLoading || !leftNav?.length"> -->
+    <div class="head">
+      <div matBadgeOverlap="false" matBadgePosition="before" class="mat-badge-center">
+        <span [matMenuTriggerFor]="statusFilter">
+          <span>{{totalCount}}</span>
+          <span>{{statusBy+(totalCount==1?" Vendor Template":" Vendor Templates")}}</span>
+          <mat-icon>expand_more</mat-icon>
+        </span>
+        <mat-menu #statusFilter="matMenu" class="more-actions" [overlapTrigger]="false" yPosition="below" xPosition="before">
+          <button mat-menu-item *ngFor="let status of dropdowns.statusFilter" (click)="onApplyFilter('status', status)">{{status.label}}</button>
+        </mat-menu>
+      </div>
+      <div class="sorting">
+        <span class="sort-action {{sortBy | lowercase}}" (click)="onApplyFilter('sort')">{{sortBy}}</span>
+      </div>
+
+      <!-- <div [matBadge]="totalCount" matBadgeOverlap="false" matBadgePosition="before" class="mat-badge-center">
+            <span>{{(totalCount==1?" Vendor Template":" Vendor Templates")}}</span>
+          </div> -->
+    </div>
+    <div class="sidebar-body">
+      <div class="d-flex align-center justify-content-center w-100" *ngIf="isLoading" style="height: 80%;flex: 1;justify-content: center;align-items: center;">
+        <mat-spinner diameter="24" class="md"></mat-spinner>
+      </div>     
+      <!-- <ul *ngIf="product.children?.length && !product.showChildren" class="test00">
+                                  <li *ngFor="let service of product.children">
+                                      <div (click)="onSelectItem(service);changeMasterView()" class="parent item-list" [class.active]="service.id == selectedService?.id">
+                                          <i *ngIf="(service.children && service.children.length)" (click)="toggleChildCompanyCodes(service, $event)"
+                                            class="pixel-icons {{service.showChildren?'icon-arrow-right':'icon-arrow-down'}}">
+                                          </i>
+                                          <span *ngIf="!(service.children && service.children.length)" class="no-children"></span>
+                                          <span class="markup-txt" title="{{service.name}}">
+                                            <i class="pixel-icons icon-sub-organisations"></i><span>{{service.name}}</span>                        
+                                          </span>
+                                          <span class="reset-action" (click)="$event.stopPropagation();resetDefaults()"><i class="pixel-icons icon-reload"></i></span>
+                                          </div>
+                                        
+                                  </li>
+                                </ul> -->
+
+      <!-- <div class="no-data" [hidden]="isLoading || leftNav?.length">No Templates Found</div> -->
+
+      <!-- <div *ngIf="!isLoading">
+        <mat-list class="vendor-list">
+          <ng-container *ngFor="let item of leftNav">
+            <mat-list-item class="parent">
+              <i mat-line *ngIf="(item.children && item.children.length && APP.permissions.system_access.vendor_templates=='edit')"
+                (click)="toggleChildOrgs(item, $event)" class="pixel-icons {{item.showChildren?'icon-arrow-right':'icon-arrow-down'}}">
+              </i>
+             
+              <span mat-line [innerHtml]="item.label"></span>
+              <i class="pixel-icons icon-plus" mat-line *ngIf="APP.permissions.system_access.vendor_templates=='edit'"
+                (click)="addTemplate(item)"></i>
+            </mat-list-item>
+
+
+            <ng-container *ngIf="(item.children && item.children.length && !item.showChildren)">
+              <mat-list-item [class.active]="child.id == selectedItem?.id" class="child" *ngFor="let child of item.children"
+                (click)="onSelectItem(child, item);changeMasterView()">
+                <span mat-line [innerHtml]="child.label"></span>
+              </mat-list-item>
+            </ng-container>
+          </ng-container>
+        </mat-list>
+      </div> -->
+
+      <!-- start New  -->
+      <div class="sidebar-content"  [class.spinner]="isLoading || !leftNav?.length" >
+          <div class="body"> 
+              <div class="no-data" [hidden]="isLoading || leftNav?.length">
+                  <div class="d-flex align-center justify-content-center w-100" style="min-height: 300px;flex: 1;justify-content: center;align-items: center;">
+                    No Templates Found
+                  </div> 
+                </div>
+                <div class="menu-container nested-menu" *ngIf="!isLoading">
+                  <ul class="has-sub-list" >
+                    <li *ngFor="let item of leftNav" >
+                        <div class="parent item-list" >
+                            <i mat-line *ngIf="(item.children && item.children.length && APP.permissions.system_access.vendor_templates=='edit')"
+                            (click)="toggleChildOrgs(item, $event)" class="pixel-icons {{item.showChildren?'icon-arrow-right':'icon-arrow-down'}}">
+                          </i>
+                            <span *ngIf="!(item.children && item.children.length)" class="no-children"></span>
+                            <span class="markup-txt" title="{{item.label}}">
+                             <span>{{item.label}}</span>
+                              </span>
+                              <!-- <span class="reset-action" ><i class="pixel-icons icon-plus"></i></span>    -->
+                              <div class="animate-icon-wrap animate-icon-effect-1 animate-icon-effect-1a m-l-8"   *ngIf="APP.permissions.system_access.vendor_templates=='edit'" (click)="addTemplate(item)" >
+                                  <a class="animate-icon" (click)="openAddDialog()"><i class="pixel-icons icon-plus"></i></a>
+                              </div>             
+                          </div>
+                              <ul *ngIf="(item.children && item.children.length && !item.showChildren)">
+                                  <li [class.active]="child.id == selectedItem?.id"  *ngFor="let child of item.children"
+                                  (click)="onSelectItem(child, item);changeMasterView()">
+                                      <div (click)="onSelectItem(service);changeMasterView()" class="parent item-list" [class.active]="child.id == selectedService?.id">
+                                          <span class="markup-txt" title="{{child.label}}">
+                                            <span [innerHtml]="child.label"></span>                        
+                                          </span>
+                                        </div>                                        
+                                  </li>
+                                </ul>
+                    </li>
+                  </ul>
+                </div>
+          </div>
+      </div>
+
+      <!-- End New markup -->
+    </div>
+
+  </pi-master-view>
+
+  <pi-detail-view class="right-section company-codes has-tabs">
+      <div class="spinner-view" *ngIf="detailsLoader">
+          <div class="empty-screen">
+            <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>				
+          </div>
+      </div>
+    <!-- <mat-spinner diameter="45" class="md" *ngIf="detailsLoader"></mat-spinner> -->
+    <section class="admin-fixed-layout ">
+      <header class="header tab-header" *ngIf="selectedItem?.id && !isLoading">
+        <div class="w-100 d-flex flex-column justify-content-between">
+          <app-breadcrumb [list]="breadcrumbs"></app-breadcrumb>
+          <div class="d-flex align-items-center">
+            <h1 [innerHtml]="selectedItem?.label"></h1>
+          </div>
+          <div class="w-100 d-flex align-items-center justify-content-between">
+            <aside class="left-header flex-column d-flex flex-width">
+              <nav *ngIf="selectedItem?.id" mat-tab-nav-bar class="nav-bar" [disableRipple]="true">
+                <div class="tab-group">
+                  <a mat-tab-link (click)="onTabChange(index)" *ngFor="let link of state.tabs;let index = index"
+                    [active]="activeTab == index">
+                    {{link.label}} </a>
+                </div>
+              </nav>
+            </aside>
+            <aside class="d-flex right-header justify-content-end flex-width">
+                <div class="task-header" *ngIf="activeTab==1 && !detailsLoader && APP.permissions.system_access.vendor_templates=='edit'">
+                    <button  class="m-l-15" pi-button (click)="duplicateMilestone()" matTooltip="Duplicate">Duplicate</button>
+                    <button class="m-l-15" pi-button *ngIf="milestones.length" (click)="removeAllMilestones()" matTooltip="Remove All Milestones">Remove All</button>
+                    <button class="m-l-15" color="primary" pi-button (click)="addMilestones()" matTooltip="Add Milestones">Add</button>
+                    
+                    <!-- <div class="task-menu" *ngIf="milestones.length">
+                      <button pi-icon-button [matMenuTriggerFor]="menu" >
+                        <i class="pixel-icons icon-more-horizontal"></i>
+                      </button>
+                      <mat-menu #menu="matMenu" class="more-actions">
+                        <button mat-menu-item (click)="removeAllMilestones()">
+                          <span>Remove All Milestones</span>
+                        </button>
+                      </mat-menu>
+                    </div> -->
+                  </div>
+            </aside>
+          </div>
+        </div>
+      </header>
+      <ng-container  [formGroup]="templatesForm"  *ngIf="leftNav.length && selectedItem?.id && !isLoading"> <!-- Details Tab Content -->
+        <div class="scroll-body">
+        <ng-container *ngIf="activeTab==0 && !detailsLoader">
+            <div class="form-wrapper w-100">
+              <pi-form-field label="Template Name">
+                <input autocomplete="" pi-input maxlength="64" type="text" class="ak-field-text" id="name" name="name"
+                  (input)="removeDuplicate()" [disabled]="APP.permissions.system_access.vendor_templates!='edit'"
+                  formControlName="name">
+                <div class="msgs">
+                  <div class="pi-error" *ngIf="templatesForm.controls.name.hasError('required') && submitted && !duplicateError">Please
+                    Enter Template Name</div>
+                  <div class="pi-error" *ngIf="duplicateError">{{duplicateError}}</div>
+                </div>
+              </pi-form-field>
+              <!-- <pi-form-field>
+                  <label for="status">Status</label>
+                  <pi-select label="Single" id="status" name="status" [options]="detailStatusFilter" [idKey]="value" [nameKey]="label" [disabled]="APP.permissions.system_access.vendor_templates!='edit'" formControlName="status"></pi-select>
+                </pi-form-field> -->
+
+              <pi-select label="Status" [options]="detailStatusFilter" [disabled]="APP.permissions.system_access.vendor_templates!='edit'"
+                formControlName="status"></pi-select>
+              <app-modified-user-info [modifiedInfo]="selectedItem"></app-modified-user-info>             
+            </div>
+          </ng-container>
+
+          <!-- Milestones Tab Content-->
+          <ng-container *ngIf="activeTab==1 && !detailsLoader">
+              <div  style="color: #9ca4b3; padding-top: 20px; width:100%;" *ngIf="!milestones.length && !detailsLoader" >No Milestones Found</div>
+              
+            <div class="task-container w-100"  >
+              <div class="task-body  w-100">
+                <div class="tasks-list" *ngIf="milestones.length">
+                  <div [sortablejs]="milestones" [sortablejsOptions]="{ handle: '.handle', animation: 150 }">
+                    <div class="task-row" *ngFor="let task of milestones">
+                      <div class="task-container">
+                      <i class="pixel-icons icon-drag handle" *ngIf="APP.permissions.system_access.vendor_templates=='edit'"></i>
+                      
+                        <div class="task-item">
+                          <div class="task-info">{{task.name}}</div>
+                          
+                        </div>
+                        <div class="task-menu" *ngIf="APP.permissions.system_access.vendor_templates=='edit'">
+                            <button pi-icon-button [matMenuTriggerFor]="menu">
+                              <i class="pixel-icons icon-more-horizontal"></i>
+                            </button>
+                            <mat-menu #menu="matMenu" class="more-actions">
+                              <button mat-menu-item (click)="removeMilestone(task)">
+                                Remove Milestone
+                              </button>
+                            </mat-menu>
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>             
+            </div>
+          </ng-container>
+
+          </div>
+          <div class="footer" *ngIf="APP.permissions.system_access.vendor_templates=='edit' &&  activeTab==0 && !detailsLoader">
+              <div class="admin-max-footer">
+                  <button pi-button class="cancel" (click)="resetForm()">Cancel</button>
+                  <button pi-button class="m-l-15" color="primary" (click)="saveDetails()" [disabled]="templatesForm.pristine">Save</button>
+              </div>  
+          </div>
+          <div class="footer" *ngIf="APP.permissions.system_access.vendor_templates=='edit' && activeTab==1 && !detailsLoader && milestones.length">
+              <div class="admin-max-footer">
+                  <button pi-button class="cancel" (click)="resetMilestones()">Cancel</button>
+                  <button pi-button class="m-l-15" color="primary" [disabled]="milestonesRef.length == milestones.length"  (click)="saveMilestones()">Save</button>
+              </div>
+          </div>
+      </ng-container >     
+    </section>
+  </pi-detail-view>
+</pi-master-detail-view>

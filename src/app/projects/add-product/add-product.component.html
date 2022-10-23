@@ -1,0 +1,110 @@
+<div class="add-product-wrapper" [formGroup]="form">
+	<div class="product-item" *ngFor="let prod of state.products; let i = index">
+		<div formArrayName="products">
+			<div [formGroupName]="i">
+				<div class="product-section">
+					<i class="pixel-icons {{prod.isOpen ? 'icon-arrow-down' : 'icon-arrow-right'}} prod-arrow" (click)="toggleProduct(prod)"></i>
+					<pi-field-group>
+						<pi-form-field label="Product Name">
+							<input type="text" pi-input formControlName="product_name" />
+						</pi-form-field>
+						<pi-select label="Product Type" [options]="state.dropdowns.productTypes" [multi]="false" formControlName="products_id"
+						 (onChange)="changeProductType($event, prod)"></pi-select>
+					</pi-field-group>
+				</div>
+				<div class="services-section" *ngIf="prod.isOpen">
+					<div class="service-header">
+						<h4>SERVICE NAME</h4>
+						<button pi-icon-button color="subtle" [matMenuTriggerFor]="menu" [disabled]="!prod.services.length">
+							Add <i class="pixel-icons icon-arrow-down"></i>
+						</button>
+						<mat-menu #menu="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+							<button mat-menu-item (click)="addNewService(prod, serv)" *ngFor="let serv of prod.services" [innerHtml]="serv.services_name || serv.job_service_name"></button>
+						</mat-menu>
+					</div>
+
+					<div class="service-content">
+
+						<mat-spinner diameter="45" class="md" *ngIf="state.fetchingData"></mat-spinner>
+						<span class="no-data" *ngIf="!prod.services.length && !state.fetchingData">No Services Available</span>
+
+						<div class="service-list" *ngIf="!state.fetchingData">
+							<div class="service-item" formGroupName="services" *ngFor="let service of prod.services; let j = index">
+								<div class="sub-list">
+									<div class="list-header">
+										<i class="pixel-icons {{service.isOpen ? 'icon-arrow-down' : 'icon-arrow-right'}}"></i>
+										<pi-form-field [label]="!service.is_new ? (service.services_name || service.job_service_name) : service.old_services_name">
+											<!-- *ngIf="!service.is_new" -->
+											<input type="checkbox" pi-input (change)="isChecked(prod, service)" [disabled]="service.is_check" />
+										</pi-form-field>
+										<div class="new_service" *ngIf="service.is_new" [formGroupName]="service.is_new">
+											<pi-form-field label=" ">
+												<input type="text" pi-input formControlName="services_name" [disabled]="service.is_check" />
+											</pi-form-field>
+										</div>
+									</div>
+									<div *ngIf="!service.is_check">
+										<span class="options-label" [ngClass]="{'disabled-label' : !service.isOpen}">Option:</span>
+										<mat-tab-group [ngClass]="{'disabled-tab' : !service.isOpen}" dynamicHeight [disableRipple]="true">
+											<!-- (selectedIndexChange)="onTabChange($event, service)" -->
+											<mat-tab *ngFor="let tab of service.options;let k = index" [label]="tab.name || tab.option_no">
+												<div class="prdt-content" *ngIf="service.isOpen && !state.fetchingSpecs">
+													<div *ngFor="let spec of tab.formLayout; let l = index">
+														<pi-field-group *ngIf="spec.length > 1">
+															<div class="field-set" *ngFor="let layout of spec">
+																<app-form-builder *ngIf="layout" [config]="layout" [form]="products.controls[i].controls['services'].controls[service.jobs_service_revisions_id || service.form_id].controls.options.controls[k].controls.form_save_values.controls[layout.index]"></app-form-builder>
+															</div>
+														</pi-field-group>
+														<div *ngIf="spec.length == 1">
+															<div class="field-set" *ngFor="let layout of spec">
+																<app-form-builder *ngIf="layout" [config]="layout" [form]="products.controls[i].controls['services'].controls[service.jobs_service_revisions_id || service.form_id].controls.options.controls[k].controls.form_save_values.controls[layout.index]"></app-form-builder>
+															</div>
+														</div>
+													</div>
+													<!-- <div *ngFor="let spec of tab.specs; let l = index">
+														<app-form-builder [config]="spec" [form]="products.controls[i].controls['services'].controls[service.form_id].controls.options.controls[k].controls.form_save_values.controls[l]"></app-form-builder>
+													</div> -->
+													<span class="no-data" *ngIf="!tab.specs.length">Nothing to show</span>
+													<div class="actions">
+														<a (click)="addSpecs(prod, service)">
+															<i class="pixel-icons icon-plus-slim"></i>Add Specs
+														</a>
+													</div>
+												</div>
+											</mat-tab>
+											<mat-tab disabled *ngIf="service.isOpen">
+												<ng-template mat-tab-label>
+													<a class="add-tab" (click)="addOption(prod, service)">
+														<i class="pixel-icons icon-plus-slim"></i>
+													</a>
+												</ng-template>
+											</mat-tab>
+										</mat-tab-group>
+									</div>
+
+									<!-- <div class="clone-service" *ngIf="service.is_new" [formGroupName]="service.is_new">
+										<span [innerHtml]="service.old_services_name"></span>
+										<pi-form-field label=" ">
+											<input type="text" pi-input formControlName="services_name" />
+										</pi-form-field>
+										<i class="pixel-icons icon-delete" (click)="deleteService(service, i)"></i>
+									</div> -->
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="product-actions" *ngIf="multi">
+				<button pi-button>
+					<i class="pixel-icons icon-minus" [class.disable]="state.products.length == 1" (click)="performAction('delete', prod, i)"></i>
+				</button>
+				<button pi-button>
+					<i class="pixel-icons icon-plus-slim" (click)="performAction('add', prod)"></i>
+				</button>
+			</div>
+		</div>
+
+	</div>
+</div>

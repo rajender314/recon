@@ -1,0 +1,36 @@
+:host { flex: 1; }
+
+.notification-container { display: flex;flex-direction: column;flex: 1;
+    .msg { min-height: 15px;padding: 10px;margin-top: -1px;background: #FaFaeB;
+        color: #646260;border-top: 1px dotted #e9e0aa;border-bottom: 1px dotted #e9e0aa; }
+    .body { display: flex; }
+}
+
+.project-info.address {
+    .fields { flex: 1; 
+        .view-field-wrapper { display: flex;flex-direction: column; 
+            span { margin-top: 0; }
+        }
+    }
+}
+
+.msg_notify_t{
+    min-height: 15px;
+    padding: 10px;
+    margin-top: -1px;
+    background: #FaFaeB;
+    color: #646260;
+    border-top: 1px dotted #e9e0aa;
+    border-bottom: 1px dotted #e9e0aa;
+}
+.msg_notify_t_info{
+    display: flex;
+    padding: 16px 10px 6px;
+    justify-content: space-between;
+    .t_info_box:not(.first){
+        margin-top: 20px;
+    }
+}
+.click_edit{
+    cursor: pointer;
+}

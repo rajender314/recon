@@ -1,0 +1,23 @@
+<div class="mat-dialog-heading">
+    <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+    <button mat-icon-button mat-dialog-close tabindex="-1">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+<mat-dialog-content>
+    <p class="sub-heading">Select Vendor Milestones to include in this PO</p>
+    <div class="global-grid with-out-margin with-check-boxs">
+        <ag-grid-angular [class.invisible]="loader" style="height: 100%;" class="ag-theme-balham"
+            [gridOptions]="gridOptions">
+        </ag-grid-angular>
+    </div>
+    <div class="spinner-view" *ngIf="loader">
+        <div class="empty-screen">
+            <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button pi-button mat-dialog-close>Cancel</button>
+    <button pi-button color="primary" (click)="addMilestones()" [disabled]="!gridApi?.getSelectedRows().length">Add Selection</button>
+</mat-dialog-actions>

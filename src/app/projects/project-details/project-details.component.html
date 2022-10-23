@@ -1,0 +1,313 @@
+<pi-master-detail-view class="primary-layout" [showDetail]="state.showView">
+    <pi-master-view class="component-menu" @projectsSubMenu>
+        <header class="page-breadcrumb">
+            <a class="back-link" [routerLink]="parentState ? '/projects/' + parentState : '/projects'">
+                <i class="pixel-icons icon-arrow"></i>
+                <span>Projects</span>
+            </a>
+        </header>
+        <div class="user-switching">
+            <!-- [matMenuTriggerFor]="menu" [disableRipple]="true" -->
+            <!-- *ngIf="!state.projectDetails?.job_title" -->
+            <div class="fake-ui-animater" *ngIf="!state.projectDetails?.job_title">
+                <div class="icon"></div>
+                <div class="content">
+                    <ul>
+                        <li></li>
+                        <li style="width: 180px;"></li>
+                        <li style="width: 150px;"></li>
+                        <li style="width: 60px;"></li>
+                    </ul>
+                    <div class="footer-icons">
+                        <ul>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="user-switch-ui" *ngIf="state.projectDetails?.job_title">
+                <div class="user-switch-page-icon">
+                    <i class="pixel-icons icon-pn-projects"></i>
+                </div>
+                <div class="user-switch-details">
+                    <p [innerHtml]="state.projectDetails?.job_title">Clybourn & Halstead BB 2018 P13</p>
+                </div>
+                <mat-menu #menu="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+                    <button mat-menu-item>Weekly Production Fees</button>
+                    <button mat-menu-item>Von Miller Pro Camp POS</button>
+                </mat-menu>
+            </div>
+            <div class="user-job-details" *ngIf="state.projectDetails?.job_title">
+                <p [innerHtml]="state.projectDetails?.job_no"></p>
+                <p>
+                    <span class="due-label">Due:</span>
+                    <span class="due-date" [innerHtml]="state.projectDetails?.delivery_due_date_format"></span>
+                </p>
+                <span class="job_status status_{{state.projectDetails?.job_status_id}}" [innerHtml]="state.projectDetails?.status_name">APPROVED</span>
+                <div class="icons-container">
+                    <ng-container>
+                        <div class="animate-icon-wrap animate-icon-effect-1 animate-icon-effect-1a" matTooltip="Log Time"
+                            (click)="showFilter('show')">
+                            <a class="animate-icon"><i class="pixel-icons icon-recents"></i></a>
+                        </div>
+                    </ng-container>
+                    <div class="animate-icon-wrap animate-icon-effect-1 animate-icon-effect-1a" matTooltip="Messages" (click)="jobMessaging()">
+                        <a class="animate-icon"><i class="pixel-icons icon-messages"></i></a>
+                        <!-- showMessages = !showMessages -->
+                        <div class="message-overlay" [hidden]="!showMessages"></div>
+                        <div class="message-box" [hidden]="!showMessages"  cdkDrag  appResizable (click)="$event.stopPropagation()">
+                                <div class="example-handle" cdkDragHandle>
+                                        <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
+                                          <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+                                          <path d="M0 0h24v24H0z" fill="none"></path>
+                                        </svg>
+                                      </div>
+                            <div class="message-section" >
+                                <div class="d-flex"><span>sdsd</span></div>
+                                <div class="d-flex"><span>sdsdsdsds</span></div>
+                                <div class="d-flex"><span>dfcd</span></div>
+                                <div class="d-flex"><span>fdfpdpfd</span></div>
+                            </div>
+                                <div class="grabber bottom-grabber"></div>
+                                <div class="grabber right-grabber"></div>
+                        </div>
+                    </div>
+                    <!-- <i class="pixel-icons icon-messages" style="visibility: hidden;"></i> -->
+                    <div class="animate-icon-wrap animate-icon-effect-1 animate-icon-effect-1a" matTooltip="More">
+                        <a class="animate-icon" [matMenuTriggerFor]="projectActions"><i class="pixel-icons  icon-more-horizontal"></i></a>
+                    </div>
+                    <!-- <button pi-icon-button [matMenuTriggerFor]="projectActions"><i class="pixel-icons icon-more-horizontal"></i></button> -->
+                </div>
+                <mat-menu #projectActions="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions project-option-actions">
+                    <!-- <button mat-menu-item ><i class="pixel-icons icon-print-job-hallow"></i><span>Print Project</span></button>
+                        <button mat-menu-item ><i class="pixel-icons icon-clone-job"></i><span>Clone Project</span></button>
+                        <button mat-menu-item ><i class="pixel-icons icon-cancel-job"></i><span>Cancel this Project</span></button> -->
+                    <button mat-menu-item (click)="uploadInsertionOrder()" *ngIf="!state.projectDetails?.finalized_invoice"><i class="pixel-icons icon-upload-new"></i><span>Upload
+                            Insertion Order</span></button>
+                    <span style="border-bottom: solid 1px #f7f7f8; margin-bottom: 3px; margin-top: 3px; display: block;"></span>
+                    <button mat-menu-item *ngIf="APP.permissions.job_access.allow_exporting_insertion_order=='yes'"
+                        (click)="exportMedia(1)"><i class="pixel-icons icon-export-v1"></i><span>Insertion Order</span>
+                    </button>
+                    <button mat-menu-item *ngIf="APP.permissions.job_access.allow_exporting_rop=='yes'" (click)="exportMedia(2)"><i
+                            class="pixel-icons icon-export-v1"></i><span>Export ROP</span></button>
+                    <button mat-menu-item *ngIf="APP.permissions.job_access.allow_exporting_blue_soho=='yes'" (click)="exportMedia(3)"><i
+                            class="pixel-icons icon-export-v1"></i><span>Export Blue SoHo</span></button>
+                    <span style="border-bottom: solid 1px #f7f7f8; margin-bottom: 3px; margin-top: 3px; display: block;"></span>
+                    <button mat-menu-item *ngIf="(APP.permissions.job_access.admin_cancel_job=='yes'|| state.projectDetails?.is_related_to_project) && state.projectDetails?.job_status_id!=5"
+                        (click)="cancelProject(1)"><i class="pixel-icons icon-cancel-job"></i><span>Cancel Project</span></button>
+                    <button mat-menu-item *ngIf="APP.permissions.job_access.set_job_to_complete=='yes' && state.projectDetails?.job_status_id!=8 && state.projectDetails?.job_status_id!=5"
+                        (click)="cancelProject(2)"><i class="pixel-icons icon-job-complete"></i><span>Complete Project</span></button>
+                    <!-- <button mat-menu-item class="has-divider" ><i class="pixel-icons icon-job-complete"></i><span>Set  Project Complete</span></button>
+                        <button mat-menu-item ><i class="pixel-icons icon-time-entries"></i><span>Time Entries</span></button> -->
+                </mat-menu>
+            </div>
+            <!-- <div class="proj-name">
+                    <i class="pixel-icons icon-pn-projects"></i>
+                    Clybourn & Halstead BB 2018 P13
+                </div> -->
+            <!-- <div class="proj-actions">
+                    <i class="pixel-icons icon-recents"></i>
+                    <i class="pixel-icons icon-messages"></i>
+                    <i class="pixel-icons icon-more-horizontal"></i>
+                </div> -->
+        </div>
+        <div class="menu-container recon-scroll">
+            <div class="internal-links" @projectsSubMenuLeft *ngIf="!state.subNav.show">
+                <ng-container *ngFor="let section of state.sections">
+                    <ul class="group-links">
+                        <ng-container *ngFor="let item of section.children">
+                            <li *ngIf="item.show" (click)="changeMasterView()" [routerLink]="'/projects/' + state.projectID + '/' + item.id"
+                                [routerLinkActive]="'active'" (click)="onSelectSection(item)">
+                                <i class="pixel-icons {{item.icon}}"></i>
+                                <span>{{item.name}}</span>
+                                <span class="count" *ngIf="item.count && tabCount[item.count]!=0">{{tabCount[item.count]}}</span>
+                            </li>
+                        </ng-container>
+                    </ul>
+                </ng-container>
+            </div>
+            <div class="menu-sub-container projects-invoicelist" @projectsSubMenuRight *ngIf="state.subNav.show">
+                <header (click)="backToProjects()">
+                    <i class="pixel-icons icon-left-arrow"></i>
+                    <span [innerHtml]="state.subNav.title"></span>
+                </header>
+
+                <div (click)="showAll()" class="count-includes subitems_{{state.subNav.allText | lowercase}} {{state.subNav.className}}"
+                    [class.active]="!state.subNav.selectedItem">
+                    <pi-icon name="{{state.subNav.icons}}" size="sm"></pi-icon>
+                    <div class="d-flex count-tab-name">
+                        <span [innerHtml]="state.subNav.allText" class="text-include"></span>
+                        <span [innerHtml]="(state.subNav.count?state.subNav.count:state.subNav.list.length)" class="count"></span>
+                    </div>
+                </div>
+                <ul *ngIf="state.subNav.list?.length">
+                    <virtual-scroller [scrollAnimationTime]="1000" [useMarginInsteadOfTranslate]="true" [bufferAmount]="2"
+                        #scroll [items]="state.subNav.list" [enableUnequalChildrenSizes]="true">
+                        <li *ngFor="let parent of scroll.viewPortItems; trackBy:index; let i = index" [id]="'sub_nav_' + parent[state.subNav.idKey]"
+                            class="no-hover-effect">
+                            <div class="hover-div group-title item-media {{state.subNav.className}}" (click)="onSelect('parent', parent);changeMasterView();dropdownTrigger($event, parent, parent[state.subNav.idKey])"
+                                [ngClass]="{'active': state.subNav.selectedItem ? parent[state.subNav.idKey] == state.subNav.selectedItem[state.subNav.idKey] : false, 'align-items-start  estimates-item': parent.estimate_no, 'child-estimate': (parent.parent_id && parent.parent_id!='0') }">
+
+                                <!-- [class.active]="state.subNav.selectedItem ? parent[state.subNav.idKey] == state.subNav.selectedItem[state.subNav.idKey] : false"> -->
+                                <!-- [class.test]="{{parent.estimate_no}}" -->
+
+                                <div class="figure" *ngIf="(!parent.parent_id || parent.parent_id=='0')">
+                                    <i class="pixel-icons {{state.subNav.icons}}"></i>
+                                    <!-- <pi-icon name="{{state.subNav.icons}}" size="md" background="#9099af" color="#fff"></pi-icon> -->
+                                </div>
+                                <div class="d-flex flex-column m-item-width" *ngIf="(!parent.parent_id || parent.parent_id=='0')">
+                                    <div class="d-flex align-items-center">
+                                        <!-- <i *ngIf="parent.children && parent.children.length" class="pixel-icons arrow {{parent.isOpen ? 'icon-arrow-down' : 'icon-arrow-right'}}"></i> -->
+                                        <!-- <i class="pixel-icons {{state.subNav.icons}}"></i> -->
+                                        <span [innerHtml]="parent[state.subNav.displayKey]"></span>
+                                    </div>
+                                    <div class="d-flex w-100 justify-content-between item-presents {{state.subNav.statusClass}}"
+                                        *ngIf="state.subNav.statusIdKey">
+                                        <div class="item-status {{state.subNav.statusClass}} status  status_{{parent[state.subNav.statusIdKey]}}">{{parent[state.subNav.statusNameKey]}}</div>
+                                        <div class="item-cost status_{{parent[state.subNav.statusIdKey]}}" *ngIf="state.subNav.costKey"
+                                            matTooltip="{{(state.subNav.prefix)?state.subNav.prefix+formatNumber(parent[state.subNav.costKey]):parent[state.subNav.costKey]}}">{{(state.subNav.prefix)?state.subNav.prefix+formatNumber(parent[state.subNav.costKey]):parent[state.subNav.costKey]}}</div>
+                                    </div>
+
+                                </div>
+                                <div class="figure" *ngIf="(parent.parent_id && parent.parent_id!='0')">
+                                    <i class="pixel-icons {{state.subNav.icons}}"></i>
+                                </div>
+                                <div class="d-flex flex-column m-item-width" *ngIf="(parent.parent_id && parent.parent_id!='0')">
+                                    <div class="d-flex w-100 justify-content-between item-presents sub-item-presents">
+                                        <!-- <i *ngIf="parent.children && parent.children.length" class="pixel-icons arrow {{parent.isOpen ? 'icon-arrow-down' : 'icon-arrow-right'}}"></i> -->
+                                        <span [innerHtml]="parent[state.subNav.displayKey]"></span>
+                                        <span class="item-cost child-cost" style="min-width:60px;" *ngIf="state.subNav.costKey"
+                                            matTooltip="{{(state.subNav.prefix)?state.subNav.prefix+formatNumber(parent[state.subNav.costKey]):parent[state.subNav.costKey]}}">{{(state.subNav.prefix)?state.subNav.prefix+formatNumber(parent[state.subNav.costKey]):parent[state.subNav.costKey]}}</span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- <ul class="accordion-menu-list" *ngIf="(parent.parent_id && parent.parent_id!='0')" (click)="onSelect('parent', parent);changeMasterView();dropdownTrigger($event, parent, i)">
+                            <li><span><i class="pixel-icons {{state.subNav.icons}}"></i></span><span class="accordion-menu-list-item">{{parent[state.subNav.displayKey]}}</span></li>
+                        </ul> -->
+
+                            <ul *ngIf="parent.children && parent.children.length" class="">
+                                <!--  && parent.isOpen -->
+                                <li *ngFor="let child of parent.children" [id]="'sub_nav_' + child[state.subNav.idKey]"
+                                    (click)="onSelect('child', child);changeMasterView()" class=" sub-{{state.subNav.className}} group-title  group-title item-media align-items-start"
+                                    class="no-hover-effect" [class.active]="state.subNav.selectedItem ? child[state.subNav.idKey] == state.subNav.selectedItem[state.subNav.idKey] : false">
+                                    <div class="hover-div d-flex">
+                                        <div class="figure"><i class="pixel-icons {{state.subNav.icons}}"></i></div>
+                                        <div class="d-flex flex-column m-item-width">
+                                            <div class="d-flex w-100 justify-content-between item-presents sub-item-presents">
+                                                <span [innerHtml]="child[state.subNav.displayKey]"></span>
+                                                <span class="item-cost child-cost" style="min-width: 60px;" matTooltip="{{child.cost}}">{{child.cost}}</span>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </li>
+                            </ul>
+
+                        </li>
+                    </virtual-scroller>
+                </ul>
+
+
+                <ul *ngIf="state.subNav.list?.length && false">
+                    <li *ngFor="let parent of state.subNav.list; let i = index" [id]="'sub_nav_' + parent[state.subNav.idKey]"
+                        class="no-hover-effect">
+                        <div class="hover-div group-title item-media {{state.subNav.className}}" (click)="onSelect('parent', parent);changeMasterView();dropdownTrigger($event, parent, parent[state.subNav.idKey])"
+                            [ngClass]="{'active': state.subNav.selectedItem ? parent[state.subNav.idKey] == state.subNav.selectedItem[state.subNav.idKey] : false, 'align-items-start  estimates-item': parent.estimate_no, 'child-estimate': (parent.parent_id && parent.parent_id!='0') }">
+
+                            <!-- [class.active]="state.subNav.selectedItem ? parent[state.subNav.idKey] == state.subNav.selectedItem[state.subNav.idKey] : false"> -->
+                            <!-- [class.test]="{{parent.estimate_no}}" -->
+
+                            <div class="figure" *ngIf="(!parent.parent_id || parent.parent_id=='0')">
+                                <i class="pixel-icons {{state.subNav.icons}}"></i>
+                                <!-- <pi-icon name="{{state.subNav.icons}}" size="md" background="#9099af" color="#fff"></pi-icon> -->
+                            </div>
+                            <div class="d-flex flex-column m-item-width" *ngIf="(!parent.parent_id || parent.parent_id=='0')">
+                                <div class="d-flex align-items-center">
+                                    <!-- <i *ngIf="parent.children && parent.children.length" class="pixel-icons arrow {{parent.isOpen ? 'icon-arrow-down' : 'icon-arrow-right'}}"></i> -->
+                                    <!-- <i class="pixel-icons {{state.subNav.icons}}"></i> -->
+                                    <span [innerHtml]="parent[state.subNav.displayKey]"></span>
+                                </div>
+                                <div class="d-flex w-100 justify-content-between item-presents {{state.subNav.statusClass}}"
+                                    *ngIf="state.subNav.statusIdKey">
+                                    <div class="item-status {{state.subNav.statusClass}} status  status_{{parent[state.subNav.statusIdKey]}}">{{parent[state.subNav.statusNameKey]}}</div>
+                                    <div class="item-cost status_{{parent[state.subNav.statusIdKey]}}" *ngIf="state.subNav.costKey"
+                                        matTooltip="{{(state.subNav.prefix)?state.subNav.prefix+formatNumber(parent[state.subNav.costKey]):parent[state.subNav.costKey]}}">{{(state.subNav.prefix)?state.subNav.prefix+formatNumber(parent[state.subNav.costKey]):parent[state.subNav.costKey]}}</div>
+                                </div>
+
+                            </div>
+                            <div class="figure" *ngIf="(parent.parent_id && parent.parent_id!='0')">
+                                <i class="pixel-icons {{state.subNav.icons}}"></i>
+                            </div>
+                            <div class="d-flex flex-column m-item-width" *ngIf="(parent.parent_id && parent.parent_id!='0')">
+                                <div class="d-flex w-100 justify-content-between item-presents sub-item-presents">
+                                    <!-- <i *ngIf="parent.children && parent.children.length" class="pixel-icons arrow {{parent.isOpen ? 'icon-arrow-down' : 'icon-arrow-right'}}"></i> -->
+                                    <span [innerHtml]="parent[state.subNav.displayKey]"></span>
+                                    <span class="item-cost child-cost" style="min-width:60px;" *ngIf="state.subNav.costKey"
+                                        matTooltip="{{(state.subNav.prefix)?state.subNav.prefix+formatNumber(parent[state.subNav.costKey]):parent[state.subNav.costKey]}}">{{(state.subNav.prefix)?state.subNav.prefix+formatNumber(parent[state.subNav.costKey]):parent[state.subNav.costKey]}}</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- <ul class="accordion-menu-list" *ngIf="(parent.parent_id && parent.parent_id!='0')" (click)="onSelect('parent', parent);changeMasterView();dropdownTrigger($event, parent, i)">
+                            <li><span><i class="pixel-icons {{state.subNav.icons}}"></i></span><span class="accordion-menu-list-item">{{parent[state.subNav.displayKey]}}</span></li>
+                        </ul> -->
+
+                        <ul *ngIf="parent.children && parent.children.length" class="">
+                            <!--  && parent.isOpen -->
+                            <li *ngFor="let child of parent.children" [id]="'sub_nav_' + child[state.subNav.idKey]"
+                                (click)="onSelect('child', child);changeMasterView()" class=" sub-{{state.subNav.className}} group-title  group-title item-media align-items-start"
+                                class="no-hover-effect" [class.active]="state.subNav.selectedItem ? child[state.subNav.idKey] == state.subNav.selectedItem[state.subNav.idKey] : false">
+                                <div class="hover-div d-flex">
+                                    <div class="figure"><i class="pixel-icons {{state.subNav.icons}}"></i></div>
+                                    <div class="d-flex flex-column m-item-width">
+                                        <div class="d-flex w-100 justify-content-between item-presents sub-item-presents">
+                                            <span [innerHtml]="child[state.subNav.displayKey]"></span>
+                                            <span class="item-cost child-cost" style="min-width: 60px;" matTooltip="{{child.cost}}">{{child.cost}}</span>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </li>
+                        </ul>
+
+                    </li>
+                </ul>
+
+                <!-- <mat-list *ngIf="state.subNav.list?.length">
+                        <mat-list-item *ngFor="let child of state.subNav.list" [class.active]="child.selected">
+                            <div *ngIf="child.selected">{{child.name}}</div>
+                            <div class="has-icon" *ngIf="!child.selected"><i class="pixel-icons {{state.subNav.icons}}"></i> {{child.name}}</div>
+                        </mat-list-item>
+                    </mat-list> -->
+            </div>
+        </div>
+    </pi-master-view>
+    <pi-detail-view @projectsMainMenu>
+        <router-outlet></router-outlet>
+    </pi-detail-view>
+</pi-master-detail-view>
+
+<div class="side-nav-container log" *ngIf="displayFilter">
+    <div class="overlay" (click)="showFilter('show')"></div>
+    <div class="side-nav-left" [class.active]="displayFilter">
+        <div class="log-time-nav-bar">
+            <div class="side-nav-bar">
+                <div class="wrapper" (click)="$event.stopPropagation();" (keydown.tab)="$event.stopPropagation()"
+                    (keydown.shift.tab)="$event.stopPropagation()">
+                    <div class="track-time">
+                        <h3><i class="pixel-icons icon-arrow" (click)="showFilter('show')"></i><span>Time</span></h3>
+                        <app-add-time-track (onClose)="showFilter('show');" [config]="trackConfig"></app-add-time-track>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

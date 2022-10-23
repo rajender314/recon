@@ -1,0 +1,60 @@
+<pi-master-detail-view class="details-wrapper">
+
+	<pi-master-view class="left-section">
+		<div class="left-header">
+
+			<div class="info">
+				<h4>Products</h4>
+			</div>
+
+			<div class="actions">
+				<i class="pixel-icons icon-plus" (click)="openAddDialog()"></i>
+
+				<button pi-icon-button color="subtle" [matMenuTriggerFor]="menu">
+					<mat-icon>more_horiz</mat-icon>
+				</button>
+				<mat-menu #menu="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+					<button mat-menu-item (click)="performActions('import')">Import Products</button>
+					<button mat-menu-item (click)="performActions('clone')">Clone Products</button>
+				</mat-menu>
+
+			</div>
+		</div>
+
+		<div class="left-content" [class.spinner]="state.isLoading || !state.productList?.length">
+			<!-- <div class="head">
+				<div [matBadge]="totalCount" matBadgeOverlap="false" matBadgePosition="before" class="mat-badge-center">
+					<span [matMenuTriggerFor]="statusFilter">{{statusBy}} {{totalCount == 1 ? 'Cost Code' : 'Cost Codes'}}
+						<mat-icon>expand_more</mat-icon>
+					</span>
+					<mat-menu #statusFilter="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before">
+						<button mat-menu-item *ngFor="let status of dropdowns.statusFilter" (click)="onApplyFilter('status', status)">{{status.label}}</button>
+					</mat-menu>
+				</div>
+				<div class="sorting">
+					<span class="sort-action {{sortBy | lowercase}}" (click)="onApplyFilter('sort')">{{sortBy}}</span>
+				</div>
+			</div> -->
+
+			<div class="body" >
+				<mat-spinner diameter="45" class="md" *ngIf="state.isLoading"></mat-spinner>
+
+				<div class="no-data" [hidden]="state.isLoading || state.productList?.length">No Cost Code Found</div>
+
+				<mat-list *ngIf="!state.isLoading">
+					<mat-list-item *ngFor="let list of state.productList" [class.active]="state.selectedProduct?.id === list.id" [class.disable]="!list.status"
+					 (click)="onSelectItem(list);changeMasterView()">
+						<span>{{list.name}}</span>
+						<span [title]="list.description" *ngIf="list.description" [innerHtml]="list.description"></span>
+					</mat-list-item>
+				</mat-list>
+			</div>
+		</div>
+
+	</pi-master-view>
+
+	<pi-detail-view class="right-section">
+		2222222
+	</pi-detail-view>
+
+</pi-master-detail-view>

@@ -1,0 +1,248 @@
+<mat-spinner *ngIf="details.organizationsListSpinner" diameter="36"></mat-spinner>
+<pi-master-detail-view *ngIf="!details.organizationsListSpinner" size="sm" [showDetail]="details.showView"
+    class="primary-layout">
+    <pi-master-view class="component-menu">
+        <!-- <app-placeholderloading></app-placeholderloading> -->
+        <header class="page-breadcrumb">
+            <a class="back-link" [routerLink]="['/organizations']">
+                <i class="pixel-icons icon-arrow"></i><span>Organizations</span></a>
+        </header>
+        <div class="user-switching">
+            <div class="user-switching-dropdown">
+                <span ng2FileSelect [uploader]="uploader" class="my-pixel-icon green">
+                    <i class="pixel-icons icon-company-codes"></i>
+                </span>
+                <button mat-button [disableRipple]="true" [matMenuTriggerFor]="menu">
+                    <span class="detail-orgname">{{details.selectedOrganization.name}}</span>
+                    <i class="pixel-icons icon-arrow-down"></i>
+                </button>
+                <mat-menu #menu="matMenu" yPosition="below" [overlapTrigger]="false" (closed)="closeSearch()"
+                    class="orgs-list">
+                    <app-search [search]="details.orgSearch" (click)="$event.stopPropagation()"
+                        (onSearch)="searchOrgList($event)"></app-search>
+                    <mat-spinner *ngIf="details.orgSearchSpinner" diameter="36"></mat-spinner>
+                    <app-organizations infiniteScroll [infiniteScrollDistance]="1" [infiniteScrollThrottle]="50"
+                        (scrolled)="onScroll()" [scrollWindow]="false" *ngIf="!details.orgSearchSpinner"
+                        [organizations]="details.organizations" (trigger)="getSelectedOrganization($event)"
+                        [orgCount]="details.organizations.length" [listType]="'select'" [isPopup]="true" [orgType]="0">
+                    </app-organizations>
+                </mat-menu>
+            </div>
+        </div>
+        <div class="menu-container">
+            <div class="internal-links">
+                <ul class="group-links">
+                    <ng-container *ngFor="let tab of details.tabsList">
+                        <li *ngIf="((details.selectedOrganization.level!=2 && details.selectedOrganization.org_type==2) || (details.selectedOrganization.level!=1 && details.selectedOrganization.org_type==3) || tab.id!=4)"
+                            (click)="getTabDetails(tab);changeMasterView()"
+                            [class.active]="details.selectedTab.id==tab.id">
+                            <i class="pixel-icons {{tab.icon}}"></i><span>{{tab.name}}</span>
+                            <span class="count"
+                                *ngIf="tab.id==3 && details.orgDetails.c_count!=0">{{details.orgDetails.c_count}}</span>
+                            <span class="count"
+                                *ngIf="tab.id==4 && details.orgDetails.sub_orgs!=0">{{details.orgDetails.sub_orgs}}</span>
+                        </li>
+                    </ng-container>
+                </ul>
+                <h4 *ngIf="details.selectedOrganization.org_type==2">CLIENT INFO</h4>
+                <ul class="group-links" *ngIf="details.selectedOrganization.org_type==2">
+                    <li class="p-left" *ngFor="let tab of details.clientTabs"
+                        (click)="getTabDetails(tab);changeMasterView()" [class.active]="details.selectedTab.id==tab.id">
+                        <span>{{tab.name}}</span>
+                    </li>
+                </ul>
+                <h4 *ngIf="details.selectedOrganization.org_type==3">VENDOR INFO</h4>
+                <ul class="group-links" *ngIf="details.selectedOrganization.org_type==3">
+                    <li class="p-left" *ngFor="let tab of details.vendorTabs"
+                        (click)="getTabDetails(tab);changeMasterView()" [class.active]="details.selectedTab.id==tab.id">
+                        {{tab.name}}
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+        <div>
+        </div>
+    </pi-master-view>
+    <pi-detail-view [class.overview-section]="details.selectedTab.id==1">
+        <div class="primary-layout-detail">
+            <header>
+                <div class="w-100 d-flex flex-column justify-content-between primary-max-screen-width">
+                    <pi-breadcrumb>
+                        <pi-breadcrumb-item label="Organizations" [routerLink]="['/organizations']">
+                        </pi-breadcrumb-item>
+                        <pi-breadcrumb-item>{{details.selectedOrganization.name}}</pi-breadcrumb-item>
+                    </pi-breadcrumb>
+                    <div class="w-100 d-flex align-items-center justify-content-between ">
+                        <aside class="left-header d-flex flex-width">
+                            <h1> {{details.selectedTab.name}}</h1>
+                        </aside>
+                        <aside class="d-flex right-header justify-content-end flex-width">
+                            <!-- <ng-container class="header-title-right"> -->
+                            <div class="header-options" *ngIf="details.selectedTab.filter">
+                                <label>Show:</label>
+
+                                <span [matMenuTriggerFor]="layout">{{selectedAction}}
+                                    <i class="pixel-icons icon-arrow-down"></i>
+                                </span>
+                                <mat-menu #layout="matMenu" [overlapTrigger]="false" yPosition="below"
+                                    xPosition="before" class="more-actions grp-actions">
+                                    <button [disableRipple]="true" mat-menu-item (click)="filterAction('')">All</button>
+                                    <button mat-menu-item (click)="filterAction(true)">Active</button>
+                                    <button mat-menu-item (click)="filterAction(false)">Inactive</button>
+                                </mat-menu>
+                            </div>
+                            <app-search class="m-l-15" [search]="details.search" *ngIf="details.selectedTab.search"
+                                (onSearch)="searchList($event)"></app-search>
+                            <button pi-button color="primary" class="m-l-15" *ngIf="details.selectedTab.add"
+                                (click)="addRelatedTab()">{{details.addTabTitle}}</button>
+                            <button pi-button color="primary" class="m-l-15"
+                                *ngIf="details.selectedOrganization.parent_id" (click)="goToParent()">Go To
+                                Parent</button>
+                            <!-- </ng-container> -->
+                        </aside>
+                    </div>
+                </div>
+            </header>
+
+            <!-- <div class="right-content 000222" [class.sticky-footer]="details.selectedTab.id == 9 || details.selectedTab.id == 10"> -->
+            <div class="primary-layout-detail-body flex-column padding-15">
+                <div class="primary-max-screen-width calc-height">
+                    <mat-spinner *ngIf="details.spinner" diameter="36"></mat-spinner>
+                    <!-- <div class="no-data" *ngIf="(!details.settings.data.length && details.selectedTab.listView && !details.spinner)">No
+                Data Found!</div> -->
+                    <!-- <hot-table #handsontable *ngIf="(details.selectedTab.id!=2 && details.settings.data.length && details.selectedTab.listView && !details.spinner)" [settings]="details.settings"></hot-table> -->
+                    <div class="global-grid no-actions-grid with-out-margin ag-no-striped ag-full-width-grid">
+                        <!-- <ag-grid-angular *ngIf="(details.settings.data.length && details.selectedTab.listView && !details.spinner)"
+                    class="ag-theme-balham org-grid" [class.organization-address-grid]="details.selectedTab.id == 2"
+                    [class.organizations-contacts-grid]="details.selectedTab.id == 3" [class.sub-organization-grid]="details.selectedTab.id == 4"
+                    [gridOptions]="details.settings"></ag-grid-angular> -->
+                        <ag-grid-angular
+                            *ngIf="(details.settings.data.length && details.selectedTab.listView && !details.spinner)"
+                            class="ag-theme-balham" style="height: calc(100vh - 74px);"
+                            [gridOptions]="details.settings"></ag-grid-angular>
+                    </div>
+                    <app-certifications [organization]="details.selectedOrganization"
+                        *ngIf="details.selectedTab.id==11"></app-certifications>
+                    <app-general [organization]="details.selectedOrganization" *ngIf="details.selectedTab.id==8">
+                    </app-general>
+                    <!-- <app-overview [organization]="details.selectedOrganization" (onShowMore)="onShowMore($event)"
+                        [list]="details.organizationsList" (listChange)="onListChange($event)"
+                        *ngIf="details.selectedTab.id==1"></app-overview> -->
+                    <app-others [organization]="details.selectedOrganization" [users]="details.users"
+                        *ngIf="details.selectedTab.id==7"></app-others>
+
+                    <!-- Custom Attributes -->
+                    <ng-container *ngIf="details.selectedTab.id == 5">
+                        <div [sortablejs]="details.tabDetails.list" [sortablejsOptions]="sortOptions"
+                            class="drag-drop-row-container">
+                            <div class="drag-drop-row" *ngFor="let attr of details.tabDetails.list; let i = index"
+                                [class.active]="attr.id == details.tabDetails.selected.id">
+                                <div class="column drag-drop-handle">
+                                    <i class="pixel-icons icon-drag handle"></i>
+                                </div>
+                                <div class="column-wrapper">
+                                    <div class="column">
+                                        <span class="label">{{attr.label}}</span>
+                                        <span class="description">{{attr.description}}</span>
+                                    </div>
+                                    <div class="column gray-bold">{{attr.value}}</div>
+                                    <div class="column light-text">
+                                        <span *ngIf="attr.settings.print_in_estimate">
+                                            <i class="pixel-icons icon-select"></i>Print in Estimate</span>
+                                        <span *ngIf="attr.settings.edit_in_job">
+                                            <i class="pixel-icons icon-select"></i>Edit in Job</span>
+                                        <span *ngIf="attr.sync">Syncs with GP({{getSyncLabel(attr.sync)}})</span>
+                                    </div>
+                                    <div class="column action-icons">
+                                        <i class="pixel-icons icon-pencil" (click)="performAction('edit', i)"></i>
+                                        <i class="pixel-icons icon-delete" (click)="performAction('delete', i)"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="no-data" *ngIf="!details.tabDetails.list.length && !details.spinner">
+                            {{this.details.search.value ? 'No Custom Attributes Found for your search string' : 'No
+                            Custom
+                            Attributes Found'}}
+                        </div>
+                    </ng-container>
+
+                    <!-- Internal Invoice -->
+                    <ng-container *ngIf="details.selectedTab.id == 6">
+                        <div class="drag-drop-row-container">
+                            <div class="drag-drop-row" *ngFor="let attr of details.tabDetails.list; let i = index"
+                                [class.active]="attr.id == details.tabDetails.selected.id">
+                                <div class="column m-w-100">
+                                    <span [innerHtml]="attr.cost_code_name"></span>
+                                </div>
+                                <div class="column gray-bold flex-start">{{attr.name}}</div>
+                                <div class="column light-text">{{attr.description}}</div>
+                                <div class="column action-icons flex-1">
+                                    <i class="pixel-icons icon-pencil" (click)="performAction('edit', i)"></i>
+                                    <i class="pixel-icons icon-delete" (click)="performAction('delete', i)"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="!details.tabDetails.list.length && !details.spinner">
+                            {{this.details.search.value ? 'No Internal Invoice Found for your search string' : 'No
+                            Internal
+                            Invoice Found'}}
+                        </div>
+                    </ng-container>
+
+                    <!-- Capabilities -->
+                    <ng-container *ngIf="details.selectedTab.id == 9 && !details.spinner">
+                        <div class="parent-list-items">
+                            <div class="child-list-items" *ngFor="let list of  details.tabDetails.list; let i = index"
+                                [id]="'capb_' + i">
+                                <h4 (click)="showChildren(list, i)">
+                                    <i *ngIf="list.capabilities.length"
+                                        class="pixel-icons arrow {{list.isOpen ? 'icon-arrow-down' : 'icon-arrow-right'}}"></i>
+                                    {{list.name}}
+                                </h4>
+                                <div class="sub-child-list-items" *ngIf="list.isOpen">
+                                    <pi-form-field [label]="option.name" *ngFor="let option of list.capabilities">
+                                        <input type="checkbox" pi-input
+                                            (change)="onSelectCapability(list.id, option.id)"
+                                            [(ngModel)]="details.tabDetails.modelValues[list.id][option.id]" />
+                                    </pi-form-field>
+                                    <div *ngIf="!list.capabilities.length">No Capabilities</div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <!-- Equipments -->
+                    <ng-container *ngIf="details.selectedTab.id == 10 && !details.spinner">
+                        <!-- <div class="no-data" *ngIf="no_equipments">No Equipment Found.</div> -->
+                        <app-vendor-equipments [form]="form" (noEqData)="checkEqList($event)"
+                            [tabDetails]="details.tabDetails" (onUpdate)="afterUpdate($event)"></app-vendor-equipments>
+                    </ng-container>
+
+                    <!-- <div *ngIf="!details.spinner && (details.selectedTab.id == 9)" class="footer capabilities">
+                        <button pi-button color="subtle" (click)="reset()">Cancel</button>
+                        <button pi-button color="primary" [disabled]="!details.selectedTab.footer" (click)="save()">Save</button>
+                    </div> -->
+                </div>
+            </div>
+            <div *ngIf="!details.spinner && (details.selectedTab.id == 9) && details.selectedTab.footer"
+                class="footer capabilities">
+                <button pi-button color="subtle" (click)="reset()">Cancel</button>
+                <button pi-button color="primary" (click)="save()">Save</button>
+            </div>
+            <div class="no-data-screen"
+                *ngIf="(!details.settings.data.length && details.selectedTab.listView && !details.spinner) || no_equipments || ((details.selectedTab.id == 5 || details.selectedTab.id == 6) ? !details.tabDetails.list.length : false)">
+                <div class="wrapper">
+                    <div class="icon" *ngIf="details.selectedTab.listView"><i class="pixel-icons"
+                            [ngClass]="details.addImage"></i></div>
+                    <p>{{details.addTitle}}</p>
+                    <button pi-icon-button color="primary" *ngIf="details.selectedTab.add" (click)="addRelatedTab()">
+                        <i class="pixel-icons icon-plus-slim"></i>{{details.addTabTitle}}
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </pi-detail-view>
+</pi-master-detail-view>

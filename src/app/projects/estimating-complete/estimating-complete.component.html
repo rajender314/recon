@@ -1,0 +1,163 @@
+
+<div class="estimate-action-window primary-layout step-{{selectedIndex}}">
+		<div class="pi-detail-view">
+		   <div class="primary-layout-detail">		
+			<header [class.popup-header]="selectedIndex != 0">
+				<div class="w-100 d-flex flex-column">
+					<!-- <div *ngIf="selectedIndex != 0">brudcrumb</div> -->
+					<pi-breadcrumb *ngIf="selectedIndex != 0">
+							<ng-container *ngFor="let item of data.breadcrumbs">
+							  <pi-breadcrumb-item tabindex="-1" *ngIf="item.type == 'link'" [label]="item.label" [routerLink]="item.route" (click)="closeDialog()">
+							  </pi-breadcrumb-item>
+							  <pi-breadcrumb-item *ngIf="item.type != 'link'" [label]="item.label">
+							  </pi-breadcrumb-item>
+							</ng-container>
+						  </pi-breadcrumb>
+					<div class="w-100 d-flex justify-content-between align-items-center">
+						<aside class="left-header d-flex ">
+							<div class="d-flex align-items-center">
+									<div class="ag-cell-custome-actions" *ngIf="stepper.selectedIndex == 2 || stepper.selectedIndex == 1" >
+											<ul style="padding-top: 0;">
+											  <li style="margin-right: 0; margin-left: 0;" (click)="closeDialog()"><i class="pixel-icons icon-arrow"></i></li>
+											</ul>
+										  </div><h1 style="font-size: 18px;" [innerHtml]="data.title"></h1></div>
+						</aside>
+						<aside class="right-header d-flex">
+							<button mat-icon-button [matDialogClose]="successData" tabindex="-1"> <mat-icon>close</mat-icon></button>
+					</aside>
+					</div>
+				</div>				
+			</header>
+			<div class="primary-layout-detail-body flex-column" [class.padding-l-0]="stepper.selectedIndex == 0">
+				<div class="sidebar-layout padding-20">
+								<mat-horizontal-stepper [selectedIndex]="selectedIndex" (selectionChange)="stepperChange($event)" #stepper>
+									<mat-step>
+										<div class="step-0-container">
+											<div class="msg_large" [innerHtml]="data.msg">Do you want to post costs to Estimates?</div>
+											<div class="msg_sub"><i class="pixel-icons icon-notifications"></i>
+												<span>Projects Coordinator will be notified about Estimate Availability</span></div>											
+											<div class="overlay-spinner spinner-view " *ngIf="ajaxSpinner">
+												<div class="empty-screen">
+												<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+												</div>
+											</div>
+										</div>
+									</mat-step>
+									<mat-step>
+										<div class="step-1-container">
+											<div class="alert-holders">
+													<div class="new-alert-notifications sucess">
+														<div class="icon-container">
+															<i class="pixel-icons icon-select"></i>
+														</div>
+														<span>{{data.flag == 'Approve' ? 'Estimate Approved Successfully' : 'Costs Posted Successfully'}}</span>
+													</div>
+											</div>
+											
+											<div class="d-flex justify-content-between w-100 estimate-taskadding">
+												<div class="msg">Take a moment to update the Projects Schedule </div>
+												<div class="action">
+													<span (click)="addTask()">+ Add Task</span>
+												</div>
+											</div>
+											
+											<ng-container *ngIf="data.flag == 'Post'">
+												<div
+													class="global-grid bid-grid ag-custome-pi-select task-grid with-out-margin with-table-gaps actions-grid ag-no-striped">
+													<div class="overlay-spinner spinner-view" *ngIf="gridSpinner">
+														<div class="empty-screen">
+															<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+														</div>
+													</div>
+													<ag-grid-angular class="ag-theme-balham"
+														[ngStyle]="{'visibility': !gridSpinner ? 'visible' : 'hidden'}" style="height: 100%;"
+														[gridOptions]="gridOptions"></ag-grid-angular>
+												</div>
+												
+											</ng-container>
+											<ng-container *ngIf="data.flag == 'Approve'">
+												<ng-container *ngIf="estimateTasks.length || !is_task_prebill || !is_threshold">
+													<ng-container *ngIf="estimateTasks.length">
+														<!-- <div class="dotted-border"></div> -->
+														<div class="alert warn">
+															<i class="pixel-icons icon-exclamation"></i>
+															<span>Estimate Approval tasks pending to you</span>
+														</div>
+														<div class="list-container">
+															<ng-container *ngFor="let task of estimateTasks">
+																<div class="task-list">
+																	<div class="task-name" [innerHtml]="task.task_name">3rd Proof</div>
+																	<div class="task-time" [innerHtml]="task.due_date">Mon, Sep 30, 03:00 PM
+																	</div>
+																	<div class="task-action">
+						
+																		<mat-spinner diameter="25" class="md parent-spinner" *ngIf="task.isLoading">
+																		</mat-spinner>
+																		<span style="flex: 1"></span>
+																		<ng-container *ngIf="task.status != 5">
+																			<div [matMenuTriggerFor]="statusMenu"
+																				class="status-list m-t-2 status-pills  task-status-pills  status_{{task.status}}">
+																				<span>{{task.status_name}}</span><i
+																					class="pixel-icons icon-arrow-down"></i>
+																			</div>
+																			<mat-menu #statusMenu="matMenu" xPosition="after"
+																				class="drop-menu-ui status-list-menu">
+																				<div *ngFor="let st of task.status_dropdown"
+																					(click)="statusChange(st, task)"
+																					style="display: inline-block;">
+																					<a [innerHtml]="st.name"
+																						[class.active]="st.id == task.status"
+																						class="status_{{st.id}}"></a></div>
+																			</mat-menu>
+																		</ng-container>
+																		<ng-container *ngIf="task.status == 5">
+																			<span class="success">
+																				<i class="pixel-icons icon-select"></i>Completed
+																			</span>
+																		</ng-container>
+																	</div>
+																</div>
+															</ng-container>
+														</div>
+													</ng-container>
+													<ng-container>
+														<div class="dotted-border" style="border: #e9e9e9 solid 1px;"></div>
+														<div class="global-grid bid-grid task-grid with-out-margin with-table-gaps actions-grid ag-no-striped"
+															style="max-height:  50vh; height: auto;" *ngIf="showGrid">
+															<ag-grid-angular class="ag-theme-balham"
+																[ngStyle]="{'visibility': !gridSpinner ? 'visible' : 'hidden'}"
+																style="height: 100%;" [gridOptions]="gridOptions"></ag-grid-angular>
+														</div>
+														<ng-container
+															*ngIf="!showGrid && !prebillDetails.is_task_prebill && !prebillDetails.is_threshold">
+															<div class="alert warn">
+																<i class="pixel-icons icon-exclamation"></i>
+																<span>There are no Prebill tasks in the Projects</span>
+															</div>
+															<button pi-button (click)="addPrebill()">Add Prebill Task</button>
+														</ng-container>
+													</ng-container>
+												</ng-container>
+											</ng-container>
+										</div>
+									</mat-step>
+								</mat-horizontal-stepper>
+
+				</div>
+			</div>
+			<div class="split-footer padding-20"  style="padding-left: 64px !important;">
+				<div class="justify-content-start"><button pi-button *ngIf="selectedIndex == 1" [matDialogClose]="successData">Ignore Tasks Update</button></div>
+				<div class="justify-content-end d-flex align-items-center">
+					<div class="d-flex " [ngStyle]="{'padding':selectedIndex == 0 ? '21px 0px' : '0px 0px' }">
+							<button pi-button class="m-l-15" *ngIf="selectedIndex == 0" color="subtle" [matDialogClose]="successData">Cancel</button>
+							<button color="primary" class="m-l-15"  pi-button (click)="postCosts()" *ngIf="selectedIndex == 0" [disabled]="ajaxSpinner" [innerHtml]="data.btnTxt">Post Costs to Estimate</button>
+							<button pi-button class="m-l-15" color="primary" *ngIf="selectedIndex == 1" (click)="saveDetails()" [disabled]="promise">Save</button>
+						
+					</div>
+				</div>
+			</div>
+
+
+</div>
+</div>
+</div>

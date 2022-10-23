@@ -1,0 +1,13 @@
+<div class="mat-dialog-heading add-estimate-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+    <pi-select label="Select Estimate to clone from" [options]="state.list" nameKey="estimate_no" [multi]="false" [(ngModel)]="state.selectedEstimate"></pi-select>
+</mat-dialog-content>
+<mat-dialog-actions class="mat-footer">
+  <button pi-button color="subtle" (click)="close()">Cancel</button>
+  <button pi-button color="primary" (click)="save()" [disabled]="state.selectedEstimate=='' && state.loader">{{data.title}}</button>
+</mat-dialog-actions>

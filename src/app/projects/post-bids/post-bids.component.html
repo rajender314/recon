@@ -1,0 +1,275 @@
+<div class="right-header">
+    <p></p>
+    <div class="info">
+        <i class="back-link pixel-icons icon-arrow" (click)="changeMasterView()"></i>
+        <h2 [innerHtml]="'Post Bids'"></h2>
+    </div>
+</div>
+<div class="right-content">
+    <mat-spinner diameter="45" class="md" *ngIf="loader"></mat-spinner>
+    <mat-tab-group [disableRipple]="true" [selectedIndex]="state.activeTab" (selectedIndexChange)="onTabChange($event)">
+        <mat-tab label="Vendor Schedule">
+            <div class="tab-container width_inbind" *ngIf="!loader && state.activeTab==0">
+                <div class="left-container">
+                    <div class="heading">Bid Deadlines</div>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div>ALL PRODUCTS & SERVICES</div>
+                            <mat-form-field class="date-pkr">
+                                <input matInput [min]="state.minDate" (dateChange)="changeParentDate($event)" [value]="state.bidDeadline" [matDatepicker]="picker">
+                                <mat-datepicker-toggle matSuffix [for]="picker">
+                                    <i matDatepickerToggleIcon class="pixel-icons icon-calendar"></i>
+                                </mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="panel-container">
+                            <div class="panel-item" *ngFor="let item of state.bidDeadlines">
+                                <div class="parent"><i class="pixel-icons icon-inventory"></i> {{item.name}}</div>
+                                <ul *ngIf="item.services && item.services.length">
+                                    <li class="service" *ngFor="let child of item.services">
+                                        <span><i class="pixel-icons icon-orders"></i> {{child.name}}</span>
+                                        <span class="v-no">{{child.revision}}</span>
+                                        <mat-form-field class="date-pkr">
+                                            <input matInput [min]="state.minDate" (dateChange)="changeServiceDate($event, child)" [value]="child.bid_deadline" [matDatepicker]="picker">
+                                            <mat-datepicker-toggle matSuffix [for]="picker">
+                                                <i matDatepickerToggleIcon class="pixel-icons icon-calendar"></i>
+                                            </mat-datepicker-toggle>
+                                            <mat-datepicker #picker></mat-datepicker>
+                                        </mat-form-field>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer" *ngIf="state.showBidDeadlineFooter">
+                        <button pi-button (click)="cancelBidDeadlines()">Cancel</button>
+                        <button pi-button color="primary" (click)="saveBidDeadlines()">Save Changes</button>
+                    </div>
+                </div>
+                <div class="right-container">
+                    <form [formGroup]="vendorFormsGroup">
+                        <div class="heading">
+                            <span>Milestones</span>
+                            <button pi-link-button>Apply</button>
+                            <pi-select label="" [options]="state.templates" formControlName="selectedTemplate"></pi-select>
+                            <button pi-button color="default" (click)="addMilestone()">Add Milestone</button>
+                        </div>
+                        <div class="panel">
+                            <div class="panel-header">
+                                <span>MILESTONES</span>
+                                <span>DUE DATE</span>
+                            </div>
+                            <ul *ngIf="state.milestones && state.milestones.length">
+                                <li *ngFor="let item of state.milestones">
+                                    <span>
+                                        <i class="remove-icon pixel-icons icon-close-slim" (click)="removeMilestone(item)"></i>
+                                        <span *ngIf="!item.new">{{item.name}}</span>
+                                        <pi-select label="" *ngIf="item.new" [options]="state.milestonesDropdown" formControlName="selectedMilestone"></pi-select>
+                                    </span>
+                                    <mat-form-field class="date-pkr">
+                                        <input matInput [min]="state.minDate" [value]="item.date" [matDatepicker]="picker">
+                                        <mat-datepicker-toggle matSuffix [for]="picker">
+                                            <i matDatepickerToggleIcon class="pixel-icons icon-calendar"></i>
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #picker></mat-datepicker>
+                                    </mat-form-field>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </mat-tab>
+
+        <mat-tab label="Add Vendors">
+            <div class="tab-container vendor-count width_inbind" *ngIf="!loader && state.activeTab==1">
+                <div class="left-container">
+                    <div class="heading">Products & Services</div>
+                    <div class="panel">
+                        <div class="panel-header has-chk-box">
+                            <div class="ak-field-group chk-radio">
+                                <pi-form-field label="All Products & Services">
+                                    <input type="checkbox" pi-input (change)="checkAllProducts(state.checkAllProducts)" [(ngModel)]="state.checkAllProducts"
+                                    />
+                                </pi-form-field>
+                            </div>
+                        </div>
+                        <div class="panel-container">
+                            <div class="panel-item" *ngFor="let item of state.bidDeadlines">
+                                <div class="parent has-chk-box">
+                                    <div class="ak-field-group chk-radio">
+                                        <pi-form-field label="<i class='pixel-icons icon-inventory'></i>{{item.name}}">
+                                            <input type="checkbox" pi-input (change)="checkAllServices(item)" [(ngModel)]="item.selected" />
+                                        </pi-form-field>
+                                    </div>
+                                </div>
+                                <ul *ngIf="item.services && item.services.length">
+                                    <li class="service has-chk-box" *ngFor="let child of item.services">
+                                        <div class="ak-field-group chk-radio">
+                                            <pi-form-field label="<i class='pixel-icons icon-orders'></i>{{child.name}}">
+                                                <input type="checkbox" pi-input (change)="checkParentProduct(child, item)" [(ngModel)]="child.selected" />
+                                            </pi-form-field>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-container">
+                    <div class="vendors-header">
+                        <div class="heading justify-text">Vendors: <b>{{vendorsGrid?.getSelectedRows()?.length}}</b> Selected</div>
+                        <app-search (onSearch)="onSearch($event)"></app-search>
+                    </div>
+                    <div class="filters">
+                        <div class="filter-content">
+                                <button pi-button color="subtle" #capabilitiesTrigger="matMenuTrigger" [matMenuTriggerFor]="CapabilitiesFilter">
+                                        Capabilities
+                                    <i class="pixel-icons icon-arrow-down"></i>
+                                </button>
+                                <mat-menu #CapabilitiesFilter="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="catg-menu">
+                                    <div (click)="$event.stopPropagation()">
+                                        <div class="header">Capabilities</div>
+                                        <div class="content">
+                                            <div class="hdr-actions">
+                                                <pi-form-field [label]="'Select All'">
+                                                    <input type="checkbox" pi-input [(ngModel)]="state.capabilities.checkAll" [(indeterminate)]="indeterminate" (change)="selectAll('capabilities')" />
+                                                </pi-form-field>
+                                                <span class="clear-all" (click)="menuActions('clear', 'capabilities')">Clear All</span>
+                                            </div>
+                                            <div class="content-list">
+                                                <pi-form-field [label]="ctg.name" *ngFor="let ctg of state.capabilities.list">
+                                                    <input type="checkbox" pi-input [(ngModel)]="ctg.selected" (change)="changeCategory('capabilities')" />
+                                                </pi-form-field>
+                                            </div>
+                                        </div>
+                                        <div class="footer">
+                                            <button pi-button (click)="menuActions('cancel', 'capabilities');capabilitiesTrigger.closeMenu();">Cancel</button>
+                                            <button pi-button color="primary" (click)="menuActions('apply', 'capabilities');capabilitiesTrigger.closeMenu();">Apply</button>
+                                        </div>
+                                    </div>
+                                </mat-menu>
+                                <div class="col-field-multiple">
+                                    <pi-form-field [label]="nav.label" *ngFor="let nav of state.filterSelection" [class.active]="nav.value == state.selectedFilter">
+                                        <input type="radio" pi-input name="nav_tab" [(ngModel)]="state.selectedFilter" [value]="nav.value" />
+                                    </pi-form-field>
+                                </div>
+                                <button pi-button color="subtle" #equipmentsTrigger="matMenuTrigger" [matMenuTriggerFor]="EquipmentsFilter">
+                                        Equipments
+                                    <i class="pixel-icons icon-arrow-down"></i>
+                                </button>
+                                <mat-menu #EquipmentsFilter="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="catg-menu">
+                                    <div (click)="$event.stopPropagation()">
+                                        <div class="header">Equipments</div>
+                                        <div class="content">
+                                            <div class="hdr-actions">
+                                                <pi-form-field [label]="'Select All'">
+                                                    <input type="checkbox" pi-input [(ngModel)]="state.equipments.checkAll" [(indeterminate)]="indeterminate" (change)="selectAll('equipments')" />
+                                                </pi-form-field>
+                                                <span class="clear-all" (click)="menuActions('clear', 'equipments')">Clear All</span>
+                                            </div>
+                                            <div class="content-list">
+                                                <pi-form-field [label]="ctg.name" *ngFor="let ctg of state.equipments.list">
+                                                    <input type="checkbox" pi-input [(ngModel)]="ctg.selected" (change)="changeCategory('equipments')" />
+                                                </pi-form-field>
+                                            </div>
+                                        </div>
+                                        <div class="footer">
+                                            <button pi-button (click)="menuActions('cancel', 'equipments');equipmentsTrigger.closeMenu();">Cancel</button>
+                                            <button pi-button color="primary" (click)="menuActions('apply', 'equipments');equipmentsTrigger.closeMenu();">Apply</button>
+                                        </div>
+                                    </div>
+                                </mat-menu>
+                                <button pi-button color="subtle" #vendorTypesTrigger="matMenuTrigger" [matMenuTriggerFor]="VendorTypesFilter">
+                                        Vendor Types
+                                    <i class="pixel-icons icon-arrow-down"></i>
+                                </button>
+                                <mat-menu #VendorTypesFilter="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="catg-menu">
+                                    <div (click)="$event.stopPropagation()">
+                                        <div class="header">Vendor Types</div>
+                                        <div class="content">
+                                            <div class="hdr-actions">
+                                                <pi-form-field [label]="'Select All'">
+                                                    <input type="checkbox" pi-input [(ngModel)]="state.vendorTypes.checkAll" [(indeterminate)]="indeterminate" (change)="selectAll('vendorTypes')" />
+                                                </pi-form-field>
+                                                <span class="clear-all" (click)="menuActions('clear', 'vendorTypes')">Clear All</span>
+                                            </div>
+                                            <div class="content-list">
+                                                <pi-form-field [label]="ctg.name" *ngFor="let ctg of state.vendorTypes.list">
+                                                    <input type="checkbox" pi-input [(ngModel)]="ctg.selected" (change)="changeCategory('vendorTypes')" />
+                                                </pi-form-field>
+                                            </div>
+                                        </div>
+                                        <div class="footer">
+                                            <button pi-button (click)="menuActions('cancel', 'vendorTypes');vendorTypesTrigger.closeMenu();">Cancel</button>
+                                            <button pi-button color="primary" (click)="menuActions('apply', 'vendorTypes');vendorTypesTrigger.closeMenu();">Apply</button>
+                                        </div>
+                                    </div>
+                                </mat-menu>
+                        </div>
+                        <div class="filter-actions">
+                            <button pi-button *ngIf="checkFiltersApplied()" (click)="clearVendorFilter()">Clear Filter</button>
+                            <button pi-button *ngIf="checkFiltersApplied()" (click)="applyVendorFilter()" color="primary">Apply Filter</button>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-container">
+                            <ag-grid-angular class="ag-theme-balham" [gridOptions]="state.vendors.options"></ag-grid-angular>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <button pi-button color="primary" (click)="addVendorsToQueue()" [disabled]="!vendorsGrid?.getSelectedRows()?.length || !state.unlockAddVendors">Add
+                            to Queue</button>
+                    </div>
+                </div>
+            </div>
+        </mat-tab>
+
+        <mat-tab label="Vendor Queue">
+            <div class="vendor-queue-container vendor-count" *ngIf="!loader && state.activeTab==2">
+                <div class="heading justify-text">Vendors: <b>{{vendorQueueGrid?.getSelectedRows()?.length}}</b> Selected</div>
+                <div class="panel">
+                    <div class="panel-header"></div>
+                    <div class="panel-container">
+                        <ag-grid-angular class="ag-theme-balham" [gridOptions]="state.vendorQueue.options"></ag-grid-angular>
+                    </div>
+                </div>
+                <div class="footer">
+                    <button pi-button (click)="deleteBids()" [disabled]="!vendorQueueGrid?.getSelectedRows()?.length">Delete</button>
+                    <button pi-button (click)="skipExport()" [disabled]="!vendorQueueGrid?.getSelectedRows()?.length">Skip
+                        Export
+                    </button>
+                    <button pi-button color="primary" (click)="requestBids()" [disabled]="!vendorQueueGrid?.getSelectedRows()?.length">Request
+                        Bids
+                    </button>
+                </div>
+            </div>
+        </mat-tab>
+
+        <mat-tab label="Analyze Bids">
+            <div class="analyze-bids-container" *ngIf="!loader && state.activeTab==3">
+                <div class="heading">
+                    <div>Unlock All Services</div>
+                    <div class="actions">
+                        <button pi-button (click)="exportBids()">Export</button>
+                        <button pi-button (click)="addVendorsToQueue()" [disabled]="!state.allowPostBids">Post Bids</button>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"></div>
+                    <div class="panel-container">
+                        <ag-grid-angular *ngIf="gridOptions?.rowData?.length" class="ag-theme-balham" [gridOptions]="gridOptions"></ag-grid-angular>
+                        <div class="no-data" *ngIf="!gridOptions?.rowData?.length">No Data Found</div>
+                    </div>
+                </div>
+                <!-- <div class="secondary-footer">
+                    <button pi-button (click)="addVendorsToQueue()" [disabled]="!vendorQueueGrid?.getSelectedRows()?.length">Export</button>
+                    <button pi-button (click)="addVendorsToQueue()" [disabled]="!vendorQueueGrid?.getSelectedRows()?.length">Post Bids</button>
+                </div> -->
+            </div>
+        </mat-tab>
+
+    </mat-tab-group>
+</div>

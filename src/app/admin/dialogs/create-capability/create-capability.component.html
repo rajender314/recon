@@ -1,0 +1,23 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+<mat-dialog-content>
+	<form [formGroup]="createFormGroup" class="form-flex" autocomplete="off">
+
+		<pi-form-field [label]="'Capability Name'">
+			<input type="text" pi-input name="name" formControlName="name" maxlength="64" />
+			<div class="msgs">
+				<div class="pi-error" *ngIf="f.name.hasError('required') && submitted">Please Enter Capability Name</div>
+				<div class="pi-error" *ngIf="!f.name.hasError('required') && duplicateError">Capability {{duplicateError}}</div>
+			</div>
+		</pi-form-field>
+
+	</form>
+</mat-dialog-content>
+<mat-dialog-actions>
+	<button pi-button color="subtle" (click)="closeDialog()">Cancel</button>
+	<button pi-button color="primary" (click)="saveDetails(createFormGroup)" [disabled]="createFormGroup.pristine">Save</button>
+</mat-dialog-actions>

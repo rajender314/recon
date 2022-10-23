@@ -1,0 +1,54 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title style="text-transform: capitalize;">{{data.title}}</h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+
+<mat-dialog-content>
+	<div *ngIf="!data.buildHtml" [innerHtml]="data.content"></div>
+	<div *ngIf="data.buildHtml">
+		<div class="split-header">
+			<p>Approved Estimate in this job has been split across 2 Organizations, create all the 2 Invoices?</p>
+		</div>
+		<div class="split-invoices-list-container">
+			<div class="invoice-list" *ngFor="let org of data.list">
+				<div class="parent-org">
+					<div class="s-no">-</div>
+					<div class="s-xid">{{org.estimate_no}}</div>
+					<div class="s-p-s">-</div>
+					<div class="s-cost">${{org.total}}</div>
+					<div class="s-percent">100%</div>
+				</div>
+				<div class="child-orgs" *ngFor="let child of org.child">
+					<div class="row">
+						<div class="s-no">{{child.split_name}}</div>
+						<div class="s-xid">{{child.split_org_xid}}</div>
+						<div class="s-p-s">
+							<div class="products-count ng-star-inserted">
+								<i class="pixel-icons icon-products"></i>
+								<span class="count">{{child.p_cnt}}</span>
+							</div>
+							<div class="service-count ng-star-inserted">
+								<i class="pixel-icons icon-orders"></i>
+								<span class="count">{{child.s_cnt}}</span>
+							</div>
+						</div>
+						<div class="s-cost">${{child.sr_sum}}</div>
+						<div class="s-percent">{{child.percentage}}%</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="p-t-25">
+	<button pi-button (click)="closeDialog()" *ngIf="buttons.no">{{buttons.no}}</button>
+	<button pi-button color="primary" (click)="remove()" *ngIf="buttons.yes" style="text-transform: capitalize;">{{buttons.yes}}</button>
+</mat-dialog-actions>
+<div class="spinner-view overlay-spinner" *ngIf="loader">
+	<div class="empty-screen">
+		<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+	</div>
+</div>

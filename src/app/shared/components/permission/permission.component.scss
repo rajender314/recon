@@ -1,0 +1,220 @@
+.header {
+    display: flex;
+    font-weight: 600;
+    padding: 5px 0;
+    /*5px 74px 5px 0; /*5px;*/
+    color: rgba(23, 43, 77, 0.6);
+    /* #6B778C;*/
+    justify-content: space-between;
+    div {
+        font-size: 13px;
+        max-width: 100px;
+        text-align: center;
+        @media screen and (min-width: 600px) {
+            text-align: left;
+            max-width: 100%;
+            font-size: 14px;
+        }
+    }
+    div:first-child {
+        max-width: 150px;
+        flex: 1;
+        text-align: left;
+        @media screen and (min-width: 600px) {
+            flex: 1;
+            max-width: 200px;
+        }
+    }
+}
+
+.body {
+    border: 1px solid #DFE1E6;
+    border-bottom: none;
+    .parent-row {
+        border-bottom: 1px solid #DFE1E6;
+        background: #fff;
+        &:hover {
+            background: #f4f6fb;
+            /*#fefef4;*/
+        }
+    }
+    .flex-row {
+        display: flex;
+        align-items: flex-start;
+        border: none;
+        padding: 8px 12px;
+        color: rgba(23, 43, 77, 0.8);
+        &.primary-width{
+            .label{
+                max-width: 460px;
+                padding-top: 6px;
+            }
+        }
+        &.secondary-width{
+            .label{
+                max-width: 380px;
+                padding-top: 6px;
+            }
+        }
+        &.limit-width{
+        .label {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 136px;
+            min-width: 136px;
+            font-size: 13px;
+            @media screen and (min-width: 600px) {
+                font-size: 13px;
+                /*14px;*/
+                max-width: 140px;
+                /*220px;*/
+                min-width: 140px;
+                /*158px */
+            }
+            @media screen and (min-width:960px) {
+                font-size: 14px;
+                max-width: 190px;
+                min-width: 190px;
+            }
+        }
+    }    
+        .invite-link {
+            cursor: pointer;
+            color: #0765ef;
+            &:hover {
+                color: #024cb9;
+            }
+        }
+        /*.field-groups{margin-left: 10px;}*/
+        .job_perm {
+            min-width: 76px;
+            min-height: 38px;
+            @media screen and (min-width: 600px) {
+                min-width: 90px;
+            }
+            select {
+                font-size: 13px;
+                padding-right: 24px;
+                @media screen and (min-width: 600px) {
+                    font-size: 14px;
+                    padding-right: 35px;
+                }
+            }
+        }
+        >div {
+            .mat-radio-group {
+                .mat-radio-button {
+                    padding: 2px 8px;
+                    background: #f5f6f8;
+                    /* #ddeaff */
+                    /*margin-left: 2px;
+                    border-radius: 2px;*/
+                    @media screen and (min-width: 600px) {
+                        padding: 5px 14px;
+                    }
+                    ::ng-deep .mat-radio-label {
+                        position: relative;
+                        .mat-radio-container {
+                            position: absolute;
+                            opacity: 0;
+                        }
+                        .mat-radio-label-content {
+                            padding-left: 0;
+                            font-size: 13px;
+                            @media screen and (min-width: 960px) {
+                                font-size: 14px;
+                            }
+                        }
+                    }
+                    &.mat-radio-checked {
+                        background: #ddeaff;
+                    }
+                    &:first-child {
+                        border-radius: 2px 0 0 2px;
+                    }
+                    &:last-child {
+                        border-radius: 0 2px 2px 0;
+                    }
+                }
+            }
+        }
+        .sub-child {
+            width: 100%;
+            .mat-checkbox {
+                color: rgba(23, 43, 77, 0.8);
+                display: block;
+                /*border-bottom: 1px solid #DFE1E6;
+                padding: 8px 12px;*/
+                ::ng-deep .mat-checkbox-layout {
+                    .mat-checkbox-inner-container {
+                        height: 12px;
+                        width: 12px;
+                        border-radius: 3px;
+                        margin-left: 2px;
+                        margin-right: 12px;
+                        .mat-checkbox-frame {
+                            border: 2px solid #DFE1E6;
+                        }
+                    }
+                }
+                &:hover {
+                    background: #f4f6fb;
+                }
+            }
+            ::ng-deep .mat-checkbox-checked,
+            ::ng-deep .mat-checkbox-indeterminate {
+                .mat-checkbox-layout {
+                    .mat-checkbox-inner-container {
+                        .mat-checkbox-background {
+                            background-color: #0052cc;
+                        }
+                    }
+                }
+            }
+        }
+        .radiobtn_visible {
+            margin: 10px 0;
+            border: 1px solid #DFE1E6;
+            background: #fff;
+            border-bottom: none;
+            .mat-radio-group {
+                .mat-radio-button {
+                    background: transparent;
+                    /* #ddeaff */
+                    display: flex;
+                    padding: 12px 24px;
+                    border-bottom: 1px solid #ddd;
+                    margin: 0;
+                    border-radius: 0;
+                    ::ng-deep .mat-radio-label {
+                        .mat-radio-container {
+                            position: relative;
+                            opacity: 1;
+                            margin-right: 8px;
+                            width: 12px;
+                            height: 12px;
+                            .mat-radio-outer-circle {
+                                width: 12px;
+                                height: 12px;
+                            }
+                            .mat-radio-inner-circle {
+                                display: none;
+                            }
+                        }
+                    }
+                    &.mat-radio-checked {
+                        background: transparent;
+                        ::ng-deep .mat-radio-label {
+                            .mat-radio-container {
+                                .mat-radio-outer-circle {
+                                    border-color: #3f51b5;
+                                    border-width: 4px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

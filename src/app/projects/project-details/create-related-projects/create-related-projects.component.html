@@ -1,0 +1,47 @@
+<div class="mat-dialog-heading" style="    padding-bottom: 1px;">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <div class="projects-container" *ngIf="!loader">
+    <div class="primary-max-screen-width ">
+      <nav mat-tab-nav-bar class="nav-bar" [disableRipple]="true">
+        <div class="tab-group">
+          <div>
+            <a mat-tab-link (click)="setActiveTab(link)" *ngFor="let link of state.links" [active]="link.type==state.activeTab.type">
+              {{link.label}} </a>
+          </div>
+
+        </div>
+      </nav>
+      <app-search *ngIf="state.activeTab.type==0" (onSearch)="search($event)"></app-search>
+    </div>
+    <mat-horizontal-stepper [linear]="isLinear" #stepper>
+      <mat-step>
+        <ng-container *ngIf="stepper.selectedIndex == 0">
+          <div class="global-grid select-row with-out-margin with-out-scroll-horizontal with-footer with-table-gaps with-out-margin ag-no-striped with-actions">
+            <ag-grid-angular class="ag-theme-balham" style="height: 300px;" [class.invisible]="state.loader" [gridOptions]="gridOptions"></ag-grid-angular>
+          </div>
+        </ng-container>
+      </mat-step>
+      <mat-step>
+        <div class="multi-user-selection">
+        <ng-container *ngIf="stepper.selectedIndex == 1">
+          <pi-select label="Select the company codes to create new Related Projects" style="max-width: 100%;" [options]="state.companyCodes" [multi]="true" [(ngModel)]="state.company_code"></pi-select>
+        </ng-container>
+      </div>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </div>
+  <div class="spinner-view" *ngIf="loader">
+    <div class="empty-screen">
+      <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+  <button pi-button (click)="closeDialog()">Cancel</button>
+  <button pi-button color="primary" (click)="addRelatedJobs()" [disabled]="loader || promise || (state.activeTab.type==0 && !gridApi?.getSelectedRows()?.length) || (state.activeTab.type==1 && !state.company_code.length)">Save</button>
+</mat-dialog-actions>

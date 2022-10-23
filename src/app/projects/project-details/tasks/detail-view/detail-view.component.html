@@ -1,0 +1,850 @@
+<div *ngIf="!state.isLoading && state.selectedTask" class="recon-sticky-layout tasks-view" style="height: 100%;">
+	<div class="recon-sticky-header tasks-header bottom-border">
+		<div class="d-flex flex-column w-100">
+			<div class="d-flex align-items-center justify-content-between">
+
+				<div class="d-flex align-items-center">
+					<span class="status-pills notification">{{'#'+ state.selectedTask.display_id}}</span>
+					<h3 [innerHtml]="state.selectedTask.task_name"></h3>
+					<!-- <span *ngIf="state.selectedTask.billing_type_id == 3"> : <b>Round
+							{{state.selectedTask.round_id}}</b></span> -->
+				</div>
+
+				<div class="ag-cell-custome-actions">
+					<ul>
+						<ng-container *ngIf="state.selectedTask.slug != 'job_start_date' && allowEdit &&  state.selectedTask.status !=2">
+							<li (click)="detailActions('edit')" matTooltip="Edit" *ngIf="!state.showButtons && state.selectedTask.is_enable" class="m-l-10">
+								<i class="pixel-icons icon-pencil"></i>
+							</li>
+						</ng-container>
+						<ng-container *ngIf="state.selectedTask.slug != 'job_start_date' && allowEdit && state.selectedTask.status !=2">
+							<ng-container *ngIf="!state.selectedTask.is_milestones">
+								<li class="m-l-10" matTooltip="Log Time" #logTimeTrigger="matMenuTrigger" (menuOpened)="resetLogForm()" (click)="addLog()" [matMenuTriggerFor]="logTimeMenu"><i
+									 class="pixel-icons icon-clock"></i></li>
+								<mat-menu #logTimeMenu="matMenu" xPosition="before">
+									<div class="my-dialog split_logTime" (click)="$event.stopPropagation();" style="padding: 12px 20px;" (keydown.tab)="$event.stopPropagation()"
+									 (keydown.shift.tab)="$event.stopPropagation()">
+										<header style="font-weight: 600;">Log Time</header>
+										<app-add-time-track (onClose)="onAfterClose($event)" [config]="trackConfig">
+										</app-add-time-track>
+									</div>
+								</mat-menu>
+							</ng-container>
+						</ng-container>
+						<li class="m-l-10" matTooltip="Close" style="background: transparent" (click)="detailActions('change-state')">
+							<i class="pixel-icons icon-close"></i>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="d-flex justify-content-between tasks-sub-header bottom-border">
+				<div class="d-flex" *ngIf="allowEdit">
+					<ng-container *ngFor="let action of state.selectedTask.status_buttons">
+						<button class="m-r-15 inner-btns m-t-10" [innerHtml]="action.name" (click)="transitionChange(action)"></button>
+					</ng-container>
+				</div>
+				<div class="d-flex" *ngIf="state.selectedTask.slug != 'job_start_date' && allowEdit">
+					<button class="m-l-15 m-t-10 inner-btns" *ngIf="state.selectedTask.parent_id == 0 ? !state.showButtons && state.selectedTask.is_enable && !state.selectedTask.is_milestones && state.selectedTask.status !=2 : false"
+					 (click)="detailActions('sub-task')">Add Sub Task</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="recon-scroll-body">
+		<ng-container *ngIf="state.selectedTask.parent_id != 0">
+			<div class="fx-100">
+				<h2 style="padding-bottom: 0;">Parent Task: <b class="link" [innerHtml]="state.selectedTask?.parent_task_name" (click)="goToParent(state.selectedTask.parent_id)"></b></h2>
+			</div>
+		</ng-container>
+		<div class="project-info">
+			<div class="field-wrapper">
+				<ng-container [formGroup]="taskForm">
+					<ng-container *ngFor="let field of formFields; let i = index">
+						<ng-container *ngIf="field.showView">
+							<div class="fields multi-col">
+								<span class="field-name" [innerHtml]="field.label"></span>
+								<div class="view-field-wrapper" *ngIf="!field.is_edit">
+									<!-- [class.editable]="field.can_edit" -->
+									<span *ngIf="field.type != 'date' && field.type != 'select'">{{taskForm.controls[field.key].value?taskForm.controls[field.key].value:'--'}}</span>
+									<span *ngIf="field.type == 'date'">{{taskForm.controls[field.key].value?(taskForm.controls[field.key].value | date:
+										'MMM dd, yyyy hh:mm a'):'--'}}</span>
+									<span *ngIf="field.type == 'select'">{{state.selectedTask[field.display_name] || '--'}}</span>
+									<!-- <i *ngIf="field.can_edit" class="pixel-icons icon-pencil"
+																	(click)="toggleInlineEdit(field)"></i> -->
+								</div>
+								<div class="edit-field-wrapper" *ngIf="field.is_edit">
+									<ng-container *ngIf="field.type == 'text'">
+										<pi-form-field [label]=" ">
+											<input type="text" pi-input [formControlName]="field.key" />
+											<div class="msgs">
+												<div class="pi-error" *ngIf="taskForm.controls[field.key].hasError('required') && state.submitted">
+													Please Enter {{field.label}}
+												</div>
+											</div>
+										</pi-form-field>
+									</ng-container>
+									<ng-container *ngIf="field.type == 'select'">
+										<ng-container *ngIf="field.key == 'task_id'">
+											<pi-select *ngIf="!field.minLength" [nameKey]="field.nameKey || 'name'" [label]=" " [createNew]="true" [options]="dropdowns[field.options][state.selectedTask?.is_milestones ? 'milestones' : (state.selectedTask.task_type_id == 33 ? 'wop' : 'tasks')]"
+											 [multi]="field.multi" [formControlName]="field.key">
+											</pi-select>
+										</ng-container>
+										<ng-container *ngIf="field.key == 'assignee_type'">
+											<pi-select *ngIf="!field.minLength" [nameKey]="field.nameKey || 'name'" [label]=" " (onChange)="changeAssigneType($event)"
+											 [options]="dropdowns[field.options]" [multi]="field.multi" [formControlName]="field.key">
+											</pi-select>
+										</ng-container>
+										<ng-container *ngIf="field.key == 'assignee_id'">
+											<pi-select *ngIf="!field.minLength" [nameKey]="field.nameKey || 'name'" [label]=" " [inactiveOptions]="dropdowns.inactiveOptions.assigneeList"
+											 [options]="dropdowns[field.options][taskForm.controls.assignee_type.value]" [multi]="field.multi" [formControlName]="field.key">
+											</pi-select>
+											<pi-select *ngIf="field.minLength" [minSearchLength]="field.minLength" [nameKey]="field.nameKey || 'name'" [label]=" " [options]="dropdowns[field.options][taskForm.controls.assignee_type.value]"
+											 [multi]="field.multi" [formControlName]="field.key">
+											</pi-select>
+										</ng-container>
+										<ng-container *ngIf="field.key != 'task_id' && field.key != 'assignee_id' && field.key != 'assignee_type'">
+											<pi-select *ngIf="!field.minLength" [nameKey]="field.nameKey || 'name'" [label]=" " [options]="dropdowns[field.options]"
+											 [multi]="field.multi" [formControlName]="field.key">
+											</pi-select>
+											<pi-select *ngIf="field.minLength" [minSearchLength]="field.minLength" [nameKey]="field.nameKey || 'name'" [label]=" " [options]="dropdowns[field.options]"
+											 [multi]="field.multi" [formControlName]="field.key">
+											</pi-select>
+										</ng-container>
+										<div class="msgs">
+											<div class="pi-error" *ngIf="taskForm.controls[field.key].hasError('required') && state.submitted">
+												Please Select {{field.label}}</div>
+										</div>
+									</ng-container>
+									<ng-container *ngIf="field.type == 'textarea'">
+										<pi-form-field [label]=" ">
+											<textarea pi-input [name]="field.key" [formControlName]="field.key" maxlength="1024"></textarea>
+											<span class="field-note">Enter text of 1024 characters or less.
+											</span>
+										</pi-form-field>
+									</ng-container>
+									<ng-container *ngIf="field.type == 'date'">
+										<pi-form-field [label]=" " class="date-field">
+											<!-- [max]="maxDate"  -->
+											<input pi-input matInput [min]="field.min" [max]="field.max" [owlDateTime]="i" [formControlName]="field.key" (blur)="checkDateValidation(field.key)"
+											 [owlDateTimeTrigger]="i" placeholder="Choose a date">
+											<div class="owl-picker-toggle">
+												<i class="pixel-icons icon-calendar" [owlDateTimeTrigger]="i"></i>
+											</div>
+											<owl-date-time #i [hour12Timer]="true"></owl-date-time>
+											<div class="msgs">
+												<div class="pi-error" *ngIf="taskForm.controls[field.key].hasError('required') && state.submitted">
+													Please Select {{field.error_label}}</div>
+												<div class="pi-error" *ngIf="!taskForm.controls[field.key].hasError('required') && taskForm.controls[field.key].hasError('invalidDate') && state.submitted">
+													Please Enter Valid {{field.error_label}}</div>
+												<div class="pi-error" *ngIf="!taskForm.controls[field.key].hasError('required') && taskForm.controls[field.key].hasError('min') && state.submitted">
+													Entered Date cannot be less than current date
+												</div>
+												<div class="pi-error" *ngIf="!taskForm.controls[field.key].hasError('required') && taskForm.controls[field.key].hasError('max') && state.submitted">
+													Entered Date cannot be greater than parent due date
+												</div>
+											</div>
+										</pi-form-field>
+									</ng-container>
+									<!-- <div class="actions">
+																	<button pi-icon-button (click)="saveInlineEdit(field)"><i
+																			class="pixel-icons icon-select" color=""></i></button>
+																	<button pi-icon-button (click)="cancelInlineEdit(field)"><i
+																			class="pixel-icons icon-close-slim"></i></button>
+																</div> -->
+								</div>
+							</div>
+						</ng-container>
+					</ng-container>
+
+
+					<!-- <div class="fields multi-col">
+                            <span class="field-name">Updated</span>
+                            <div class="view-field-wrapper">
+                                <span [innerHtml]="state.selectedTask.updated_on"></span>
+                            </div>
+                        </div>
+                        <div class="fields multi-col">
+                            <span class="field-name">Created By</span>
+                            <div class="view-field-wrapper">
+                                <span [innerHtml]="state.selectedTask.created_name"></span>
+                            </div>
+						</div> -->
+					<div class="fields multi-col" *ngIf="state.selectedTask.task_type_id == 1">
+						<span class="field-name">Estimated Hrs <em>(HH:MM)</em></span>
+						<div class="view-field-wrapper" *ngIf="!time.is_edit">
+							<span [innerHtml]="state.selectedTask[time.display_name] || '---'"></span>
+						</div>
+						<div class="edit-field-wrapper" *ngIf="time.is_edit">
+							<pi-form-field label="">
+								<input type="text" pi-input formControlName="estimate_hrs" (blur)="checkTimeValidation()" />
+								<div class="msgs">
+									<div class="pi-error" *ngIf="taskForm.controls['estimate_hrs'].hasError('required') && state.submitted">
+										Please Enter Estimated Hours (HH:MM)
+									</div>
+									<div class="pi-error" *ngIf="taskForm.controls['estimate_hrs'].hasError('inValidTime') && state.submitted">
+										Please Enter Valid Time (HH:MM)
+									</div>
+								</div>
+							</pi-form-field>
+						</div>
+					</div>
+
+					<div class="fields multi-col">
+						<span class="field-name">Status <span class="task-status-info"><i *ngIf="!state.selectedTask.is_enable" matTooltip="Task is in completed state. You
+							cannot edit" class="pixel-icons icon-info-circle"></i> <i *ngIf="state.selectedTask.is_enable && state.selectedTask.parent_id == 0 && state.selectedTask.job_default_task != 1"
+								 matTooltip="Complete all sub-tasks to
+							complete this task" class="pixel-icons icon-info-circle"></i></span></span>
+						<!-- <span *ngIf="!state.selectedTask.is_enable" style="display: inline-block;border: 1px solid #ccc;border-radius: 50%;
+                            width: 16px;height: 16px;text-align: center;font-size: 12px;margin-left: 6px;"
+                                title="Task is in completed state. You cannot edit">i</span> -->
+						<!-- <i class="pixel-icons info-circle"></i> -->
+						<!-- <span class="field-name"><em *ngIf="state.selectedTask.is_enable && state.selectedTask.parent_id == 0"
+								style="font-size: 12px; opacity: .7;">(Complete all sub-tasks to
+								complete this task)</em></span> -->
+						<!-- <span class="field-name"
+                                style="display: inline-block;border: 1px solid #ccc;border-radius: 50%;
+                                width: 16px;height: 16px;text-align: center;font-size: 12px;margin-left: 6px;"
+                                *ngIf="state.selectedTask.is_enable && state.selectedTask.parent_id == 0 && state.selectedTask?.child"
+                                title="Complete all sub-tasks to complete this task">i</span> -->
+						<div class="view-field-wrapper" style="margin-top:6px;" *ngIf="!allowEdit || !state.selectedTask.is_enable || state.selectedTask.slug == 'delivery_due_date'">
+							<span>
+								<div class="status-pills  task-status-pills  status_{{taskForm.controls.status.value}}">
+									<span>{{taskForm.controls.status_name.value}}</span>
+								</div>
+							</span>
+						</div>
+						<div class="edit-field-wrapper" style="margin-top:6px;" *ngIf="allowEdit && state.selectedTask.is_enable && state.selectedTask.slug != 'delivery_due_date'">
+							<!-- *ngIf="state.showButtons" -->
+							<div [matMenuTriggerFor]="statusMenu" class="status-list m-t-2 status-pills  task-status-pills  status_{{taskForm.controls.status.value}}">
+								<span>{{taskForm.controls.status_name.value}}</span><i class="pixel-icons icon-arrow-down"></i>
+							</div>
+							<mat-menu #statusMenu="matMenu" xPosition="after" class="drop-menu-ui status-list-menu">
+								<div *ngFor="let st of state.selectedTask.status_dropdown" (click)="statusChange(st)" style="display: inline-block;">
+									<a [innerHtml]="st.name" [class.active]="st.id == taskForm.controls.status.value" class="status_{{st.id}}"></a></div>
+							</mat-menu>
+						</div>
+					</div>
+
+					<!-- <div class="fields fx-100">
+                                        <span class="field-name">Dependences</span>
+                                        <ul>
+                                            <li>
+                                                <span>Final Bill Due</span>
+                                                <span>Active</span>
+                                            </li>
+                                            <li>
+                                                <span>Deliver</span>
+                                                <span>Active</span>
+                                            </li>
+                                        </ul>
+                                    </div> -->
+
+					<div class="fields fx-100" *ngIf="taskForm.controls[note.key].value.length || note.is_edit">
+						<span class="field-name">Note</span>
+						<div class="view-field-wrapper" *ngIf="!note.is_edit">
+							<span [innerHtml]="state.selectedTask[note.display_name]"></span>
+						</div>
+						<div class="edit-field-wrapper" *ngIf="note.is_edit && allowEdit">
+							<ng-container *ngIf="note.type == 'textarea'">
+								<pi-form-field [label]=" ">
+									<textarea pi-input [name]="note.key" [formControlName]="note.key" maxlength="1024"></textarea>
+									<span class="field-note">Enter text of 1024 characters or less.
+									</span>
+								</pi-form-field>
+							</ng-container>
+						</div>
+					</div>
+					<!-- <div class="fields fx-100  tasks-po">
+                            <span class="field-name">PO</span>
+                            <div class="view-field-wrapper">
+                                <i class="pixel-icons icon-pn-purchase-orders"></i>
+                                <span>PO#00118691</span>
+                            </div>
+                        </div>
+                        <div class="fields fx-100 tasks-estimate">
+                            <span class="field-name">Estimate</span>
+                            <div class="view-field-wrapper">
+                                <i class="pixel-icons icon-pn-estimates"></i>
+                                <span>ALBDSCO IV00034216-1-0</span>
+                            </div>
+                        </div> -->
+				</ng-container>
+
+				<ng-container *ngIf="showDynamicForm">
+					<div [formGroup]="forms" style="display: flex;flex-wrap: wrap;width: 100%;">
+						<ng-container formGroupName="defaults">
+							<ng-container *ngFor="let spec of state.selectedTask.form_data.specDt">
+								<div class="fields multi-col" *ngIf="!state.showButtons">
+									<span class="field-name" [innerHtml]="spec.spectDt.label"></span>
+									<div class="view-field-wrapper">
+										<span *ngIf="spec.spectDt.key == 'dropdown'" [innerHtml]="spec.form_save_values.display_name || '---'"></span>
+										<span *ngIf="spec.spectDt.key != 'dropdown'" [innerHtml]="spec.form_save_values.value || '---'"></span>
+									</div>
+								</div>
+								<div class="fields multi-col" *ngIf="state.showButtons">
+									<div class="edit-field-wrapper">
+										<app-form-builder [config]="spec.spectDt" [form]="defaults.controls[spec.spectDt.id]"></app-form-builder>
+									</div>
+								</div>
+							</ng-container>
+						</ng-container>
+					</div>
+
+					<div *ngIf="taskForm.controls['task_type_id'].value != 45" style="width: 100%">
+						<p> Address where files will be sent:</p>
+						<div style="display: flex;flex-wrap: wrap;width: 100%;" [formGroup]="editAddressForm">
+							<div class="fields multi-col">
+								<ng-container *ngIf="!state.showButtons">
+									<span class="field-name" [innerHtml]="'Address 1'"></span>
+									<div class="view-field-wrapper">
+										<span [innerHtml]="state.selectedTask.form_data.address.address1 || '---'"></span>
+									</div>
+								</ng-container>
+								<div class="edit-field-wrapper" *ngIf="state.showButtons">
+									<pi-form-field label=" ">
+										<input type="text" pi-input placeholder="Address 1" [formControlName]="'address1'" />
+									</pi-form-field>
+								</div>
+							</div>
+							<div class="fields multi-col">
+								<ng-container *ngIf="!state.showButtons">
+									<span class="field-name" [innerHtml]="'Address 2'"></span>
+									<div class="view-field-wrapper">
+										<span [innerHtml]="state.selectedTask.form_data.address.address2 || '---'"></span>
+									</div>
+								</ng-container>
+								<div class="edit-field-wrapper" *ngIf="state.showButtons">
+									<pi-form-field label=" ">
+										<input type="text" pi-input placeholder="Address 2" [formControlName]="'address2'" />
+									</pi-form-field>
+								</div>
+							</div>
+							<div class="fields multi-col">
+								<ng-container *ngIf="!state.showButtons">
+									<span class="field-name" [innerHtml]="'City'"></span>
+									<div class="view-field-wrapper">
+										<span [innerHtml]="state.selectedTask.form_data.address.city || '---'"></span>
+									</div>
+								</ng-container>
+								<div class="edit-field-wrapper" *ngIf="state.showButtons">
+									<pi-form-field label=" ">
+										<input type="text" pi-input placeholder="City" [formControlName]="'city'" />
+									</pi-form-field>
+								</div>
+							</div>
+							<div class="fields multi-col">
+								<ng-container *ngIf="!state.showButtons">
+									<span class="field-name" [innerHtml]="'Country'"></span>
+									<div class="view-field-wrapper">
+										<span [innerHtml]="state.selectedTask.form_data.address.country_name || '---'"></span>
+									</div>
+								</ng-container>
+								<div class="edit-field-wrapper" *ngIf="state.showButtons">
+									<pi-select [label]=" " [options]="dropdowns.countries" [multi]="false" [formControlName]="'country_id'">
+									</pi-select>
+								</div>
+							</div>
+							<div class="fields multi-col">
+								<ng-container *ngIf="!state.showButtons">
+									<span class="field-name" [innerHtml]="'State'"></span>
+									<div class="view-field-wrapper">
+										<span [innerHtml]="state.selectedTask.form_data.address.state_name || '---'"></span>
+									</div>
+								</ng-container>
+								<div class="edit-field-wrapper" *ngIf="state.showButtons">
+									<pi-select [label]=" " [options]="dropdowns.states" [multi]="false" [formControlName]="'state_id'">
+									</pi-select>
+								</div>
+							</div>
+							<div class="fields multi-col">
+								<ng-container *ngIf="!state.showButtons">
+									<span class="field-name" [innerHtml]="'Postal Code'"></span>
+									<div class="view-field-wrapper">
+										<span [innerHtml]="state.selectedTask.form_data.address.postal_code || '---'"></span>
+									</div>
+								</ng-container>
+								<div class="edit-field-wrapper" *ngIf="state.showButtons">
+									<pi-form-field label=" ">
+										<input type="text" placeholder="Postal Code" pi-input [formControlName]="'postal_code'" />
+									</pi-form-field>
+								</div>
+							</div>
+						</div>
+					</div>
+				</ng-container>
+
+				<app-modified-user-info style="flex: 0 0 100%;" [modifiedInfo]="infoConfig"></app-modified-user-info>
+
+				<div *ngIf="state.selectedTask.parent_id == 0 && state.selectedTask?.child && state.selectedTask?.child.length" class="fx-100 sub-task-lists">
+					<h2 style="text-transform: none;">Sub Tasks</h2>
+					<ul>
+						<li *ngFor="let sub of state.selectedTask?.child">
+							<i class='pixel-icons icon-sub-task'></i>{{sub.task_name}}
+						</li>
+					</ul>
+				</div>
+				<div class="tasks-accordion w-100">
+					<mat-expansion-panel class="fx-100" style="padding-right: 0" [hideToggle]="true" (opened)="getProductsServices();state.accordian.products.isOpen = true"
+					 (closed)="state.accordian.products.isOpen = false">
+						<mat-expansion-panel-header expandedHeight="42px" collapsedHeight="42px">
+							<mat-panel-title>
+								<div class="mat-t">
+									<i class="pixel-icons" style="top:3px;" [ngClass]="state.accordian.products.isOpen ? 'icon-arrow-down' : 'icon-arrow-right'"></i>
+									<span style="padding-top:0;">Tagged Products/Services</span>
+								</div>
+								<div class="d-flex pill-products-services">
+									<span>
+										<i class="pixel-icons icon-products"></i>
+										<span [innerHtml]="state.selectedTask.product_cnt"></span>
+									</span>
+									<span>
+										<i class="pixel-icons icon-orders"></i>
+										<span [innerHtml]="state.selectedTask.service_cnt"></span>
+									</span>
+								</div>
+							</mat-panel-title>
+							<mat-panel-description>
+								<!-- Counts -->
+
+							</mat-panel-description>
+						</mat-expansion-panel-header>
+						<ng-template matExpansionPanelContent>
+							<mat-spinner diameter="24" class="md" *ngIf="state.accordian.products.isLoading">
+							</mat-spinner>
+							<div class="nested-products-container" *ngIf="!state.accordian.products.isLoading">
+								<ng-container *ngFor="let product of state.accordian.products.list">
+									<ng-container *ngIf="state.selectedTask.product_cnt != 0">
+										<div class="product" *ngIf="state.selectedTask.products[product.id]">
+											<div class="product-name">
+												<div class="ak-field-group chk-radio">
+													<pi-form-field label="<i class='pixel-icons icon-products'></i>{{product.name}}">
+													</pi-form-field>
+												</div>
+											</div>
+											<ng-container *ngFor="let service of product.services">
+												<div class="service" *ngIf="state.selectedTask.associate_products.indexOf(service.jsr_id)>-1">
+													<div class="service-name">
+														<div class="ak-field-group chk-radio">
+															<pi-form-field label="<i class='pixel-icons icon-orders' ></i>{{service.name}}">
+															</pi-form-field>
+														</div>
+													</div>
+												</div>
+											</ng-container>
+										</div>
+									</ng-container>
+								</ng-container>
+								<!-- <div class="product"
+                                        *ngFor="let product of state.accordian.products.list">
+                                        <div class="product-name">
+                                            <div class="ak-field-group chk-radio">
+                                                <pi-form-field
+                                                    label="<i class='pixel-icons icon-products'></i>{{product.name}}">
+                                                    <input [disabled]="!state.showButtons" type="checkbox"
+                                                        pi-input
+                                                        (change)="checkAllServices(product,product.selected)"
+                                                        [(ngModel)]="product.selected" />
+                                                </pi-form-field>
+                                            </div>
+                                        </div>
+                                        <div class="service" *ngFor="let service of product.services">
+                                            <div class="service-name">
+                                                <div class="ak-field-group chk-radio">
+                                                    <pi-form-field
+                                                        label="<i class='pixel-icons icon-orders' ></i>{{service.name}}">
+                                                        <input [disabled]="!state.showButtons"
+                                                            type="checkbox" pi-input
+                                                            (change)="checkService(product, service.selected)"
+                                                            [(ngModel)]="service.selected" />
+                                                    </pi-form-field>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+								<!-- <div *ngIf="state.selectedTask.product_cnt != 0">
+									<div class="product" *ngFor="let product of state.accordian.products.list">
+										<div class="product-name"
+											*ngIf="!state.showButtons ? productControl.value == product.id : true">
+											<div class="ak-field-group chk-radio">
+												<ul *ngIf="!state.showButtons">
+													<li>
+														<p class="read-task-product"><i
+																class='pixel-icons icon-products'></i><span>{{product.name}}</span>
+														</p>
+														<ul>
+															<ng-container *ngFor="let service of product.services">
+																<li *ngIf="service.selected">
+																	<p class="read-task-service"><i
+																			class='pixel-icons icon-orders'></i><span>{{service.name}}</span>
+																	</p>
+																</li>
+															</ng-container>
+
+														</ul>
+													</li>
+												</ul>
+												<ng-container *ngIf="state.showButtons">
+													<pi-form-field
+														label="<i class='pixel-icons icon-products'></i>{{product.name}}">
+														<input type="radio" pi-input name="product"
+															(change)="checkAllServices(product,product.selected)"
+															[formControl]="productControl" [value]="product.id" />
+													</pi-form-field>
+												</ng-container>
+											</div>
+										</div>
+										<ng-container *ngIf="state.showButtons">
+											<div class="service" *ngFor="let service of product.services">
+												<div class="service-name"
+													*ngIf="!state.showButtons ? serviceControl.value == service.jsr_id : true">
+													<div class="ak-field-group chk-radio">
+														<pi-form-field
+															label="<i class='pixel-icons icon-orders' ></i>{{service.name}}">
+															<input type="radio" pi-input name="service"
+																(change)="checkService(product, service.selected)"
+																[formControl]="serviceControl"
+																[value]="service.jsr_id" />
+														</pi-form-field>
+													</div>
+												</div>
+											</div>
+
+										</ng-container>
+
+									</div>
+								</div> -->
+								<div class="no-data" *ngIf="!state.accordian.products.list.length || state.selectedTask.product_cnt == 0">
+									No Products/Services Added</div>
+							</div>
+							<!-- <div class="edit-field-wrapper" *ngIf="state.showButtons">
+                                    <div [matMenuTriggerFor]="statusMenu"
+                                        style="display: inline-flex;align-items: center;margin-left: 0;"
+                                        class="status status_{{taskForm.controls.status.value}}">
+                                        <div [innerHtml]="taskForm.controls.status_name.value"></div>
+                                        <i class="pixel-icons icon-arrow-down"></i>
+                                    </div>
+                                </div> -->
+						</ng-template>
+					</mat-expansion-panel>
+					<mat-expansion-panel *ngIf="!state.selectedTask.is_milestones" class="fx-100" style="padding-right: 0" [hideToggle]="true"
+					 (opened)="state.accordian.time.isOpen = true" (closed)="state.accordian.time.isOpen = false">
+						<mat-expansion-panel-header expandedHeight="30px" collapsedHeight="30px">
+							<mat-panel-title>
+								<div class="mat-t">
+									<i class="pixel-icons" [ngClass]="state.accordian.time.isOpen ? 'icon-arrow-down' : 'icon-arrow-right'"></i>
+									<span>Time Tracking</span>
+								</div>
+							</mat-panel-title>
+						</mat-expansion-panel-header>
+						<ng-template matExpansionPanelContent>
+							<!-- <span *ngIf="state.selectedTask?.log?.length">Hours</span> -->
+							<ul *ngIf="state.selectedTask?.log?.length">
+								<li class="d-flex" style="align-items: center;" *ngFor="let log of state.selectedTask.log; let i = index">
+									<div class="d-flex flex-column">
+										<p><span [innerHtml]="log.log_time"></span> <span> <b>
+													{{log.created_by}}</b> updated on {{log.created_on | date: 'MMM dd, yyyy'}}</span></p>
+									</div>
+									<span class="delete-logs-task" #logTimeEditTrigger="matMenuTrigger" (menuOpened)="resetLogForm()" [matMenuTriggerFor]="logTimeMenuEdit" (click)="editLog(log, i)" *ngIf="state.showButtons"><i class="pixel-icons icon-pencil"></i></span>
+									<span class="delete-logs-task" (click)="deleteLog(log, i)" *ngIf="state.showButtons"><i class="pixel-icons icon-delete"></i></span>
+								</li>
+							   <mat-menu #logTimeMenuEdit="matMenu" xPosition="before">
+								   <div class="my-dialog split_logTime" (click)="$event.stopPropagation();" style="padding: 12px 20px;" (keydown.tab)="$event.stopPropagation()"
+									(keydown.shift.tab)="$event.stopPropagation()">
+									   <header style="font-weight: 600;">Log Time</header>
+									   <app-add-time-track (onClose)="onAfterClose($event)" [config]="trackConfig">
+									   </app-add-time-track>
+								   </div>
+							   </mat-menu>
+							</ul>
+							<div class="no-data" *ngIf="!state.selectedTask?.log?.length">No Logs Added
+							</div>
+						</ng-template>
+					</mat-expansion-panel>
+					<!-- <mat-expansion-panel class="fx-100" style="padding-right: 0" [hideToggle]="true" (opened)="state.accordian.billing.isOpen = true"
+                            (closed)="state.accordian.billing.isOpen = false">
+                            <mat-expansion-panel-header expandedHeight="40px" collapsedHeight="40px">
+                                <mat-panel-title>
+                                    <div class="mat-t">
+                                        <i class="pixel-icons" [ngClass]="state.accordian.billing.isOpen ? 'icon-triangle-arrow' : 'icon-triangle-arrow-right'"></i>
+                                        <span>Billing Information</span>
+                                    </div>
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <ng-container>
+                                Hello
+                            </ng-container>
+                        </mat-expansion-panel> -->
+				</div>
+
+				<div *ngIf="false" class="task-discussions">
+					<div class="discussions">
+						<h5>Discussions</h5>
+						<ul class="user-message-threads">
+							<li>
+								<div class="dp" style="background-image: url('')">
+
+								</div>
+								<div class="content">
+									<h5>Ham Chuwon <span>10:42 AM</span></h5>
+									<p>Florida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida,
+										USFlorida, USFlorida, USFlorida, USv</p>
+									<div class="atachment-in-discussions">
+										<div class="atachment-formate">
+											<i class="pixel-icons icon-jpg"></i>
+										</div>
+										<div class="atachment-details">
+											<p>image.jpg</p>
+											<span>3 MB JPG File</span>
+										</div>
+
+									</div>
+								</div>
+							</li>
+							<li>
+								<div class="dp" style="background-image: url('')">
+
+								</div>
+								<div class="content">
+									<h5>Ham Chuwon <span>10:42 AM</span></h5>
+									<p>Florida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida,
+										USFlorida, USFlorida, USFlorida, USv</p>
+									<div class="atachment-in-discussions">
+										<div class="atachment-formate">
+											<i class="pixel-icons icon-jpg"></i>
+										</div>
+										<div class="atachment-details">
+											<p>image.jpg</p>
+											<span>3 MB JPG File</span>
+										</div>
+
+									</div>
+								</div>
+							</li>
+							<li>
+								<div class="dp" style="background-image: url('')">
+
+								</div>
+								<div class="content">
+									<h5>Ham Chuwon <span>10:42 AM</span></h5>
+									<p>Florida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida,
+										USFlorida, USFlorida, USFlorida, USv</p>
+									<div class="atachment-in-discussions">
+										<div class="atachment-formate">
+											<i class="pixel-icons icon-jpg"></i>
+										</div>
+										<div class="atachment-details">
+											<p>image.jpg</p>
+											<span>3 MB JPG File</span>
+										</div>
+
+									</div>
+								</div>
+							</li>
+							<li>
+								<div class="dp" style="background-image: url('')">
+
+								</div>
+								<div class="content">
+									<h5>Ham Chuwon <span>10:42 AM</span></h5>
+									<p>Florida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida, USFlorida,
+										USFlorida, USFlorida, USFlorida, USv</p>
+									<div class="atachment-in-discussions">
+										<div class="atachment-formate">
+											<i class="pixel-icons icon-jpg"></i>
+										</div>
+										<div class="atachment-details">
+											<p>image.jpg</p>
+											<span>3 MB JPG File</span>
+										</div>
+
+									</div>
+								</div>
+							</li>
+
+						</ul>
+						<div class="type-discussion">
+							<form>
+								<textarea class="form-control" placeholder="Type message..." rows="1"></textarea>
+								<button type="submit" class="btn prepend"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+									 class="eva eva-paper-plane">
+										<g data-name="Layer 2">
+											<g data-name="paper-plane">
+												<rect width="24" height="24" opacity="0"></rect>
+												<path d="M21 4a1.31 1.31 0 0 0-.06-.27v-.09a1 1 0 0 0-.2-.3 1 1 0 0 0-.29-.19h-.09a.86.86 0 0 0-.31-.15H20a1 1 0 0 0-.3 0l-18 6a1 1 0 0 0 0 1.9l8.53 2.84 2.84 8.53a1 1 0 0 0 1.9 0l6-18A1 1 0 0 0 21 4zm-4.7 2.29l-5.57 5.57L5.16 10zM14 18.84l-1.86-5.57 5.57-5.57z">
+												</path>
+											</g>
+										</g>
+									</svg></button>
+							</form>
+						</div>
+					</div>
+				</div>
+
+				<ng-container *ngIf="state.selectedTask.job_default_task == 0 && !state.selectedTask.is_milestones">
+					<div class="discussions" style="flex: 1;justify-content: space-between;position: relative;">
+						<h3>Discussions</h3>
+						<div class="spinner-view" *ngIf="messages.inProgress">
+							<div class="empty-screen">
+								<div class="icon-info-holder">
+									<mat-spinner diameter="24" class="md"></mat-spinner>
+								</div>
+							</div>
+						</div>
+
+						<!-- <mat-spinner diameter="45" class="md" ></mat-spinner> -->
+						<ng-container *ngIf="!messages.inProgress">
+							<ng-container *ngIf="!messages.isNew">
+								<div class="list-group" *ngIf="!messages.noData" #messageListSection>
+									<div class="item" *ngFor="let msg of messages.list">
+										<div class="discussions-image">
+											<!-- <pi-avatar size="lg" appearance="circle"></pi-avatar> -->
+										</div>
+
+										<div class="data">
+											<h5>
+												<div class="user text-ellipsis" [innerHTML]="msg.created">
+												</div>
+											</h5>
+											<div class="time">{{msg.created_date | fromNow}}</div>
+											<div class="msg">
+												<div class="plain" [innerHTML]="msg.message"></div>
+											</div>
+											<div class="attachments" *ngIf="msg.attachment?.length">
+												<div class="discussions-file-details">
+													<!-- <div class="file-types"> -->
+													<!-- <i class="pixel-icons icon-pdf"></i> -->
+													<!-- <i class="pixel-icons icon-png"></i> -->
+													<!-- <i class="pixel-icons icon-jpg"></i>
+                                                                            <i class="pixel-icons icon-gif"></i>
+                                                                            <i class="pixel-icons icon-doc"></i>
+                                                                            <i class="pixel-icons icon-docx"></i>
+                                                                            <i class="pixel-icons icon-txt"></i>
+                                                                            <i class="pixel-icons icon-xlsx"></i>
+                                                                            <i class="pixel-icons icon-zip"></i> -->
+													<!-- </div> -->
+													<div class="file-names">
+														<p class="file-name">
+															{{msg.attachment.length+" "+((msg.attachment.length==1)?"File":"Files")}}
+														</p>
+														<p class="file-type-name" *ngFor="let atchmt of msg.attachment">
+															{{atchmt.original_name}}</p>
+													</div>
+													<span class="download-attachment">
+														<!-- (click)="downloadAllFiles(msg.attachment)" -->
+														<i class="pixel-icons icon-download"></i>
+													</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="no-data" *ngIf="messages.noData">No Messages Created Yet!
+								</div>
+
+								<div class="footer" *ngIf="allowEdit && (!messages.inProgress && !messages.isNew)">
+									<app-send-box style="width: 100%;" [options]="{container: messageListContainer, jobs_id: state.projectID, thread_id: messages.threadId}"
+									 (addMessage)="onMessageAdd($event)"></app-send-box>
+									<div class="msg-typeing" *ngIf="false">
+										<div class="text-msg">
+											<pi-form-field>
+												<textarea id="newMessage" pi-input placeholder="Message" rows="2" minRows="2" maxRows="10" [(ngModel)]="messages.newMessage"
+												 (focus)="messages.showButtons = true;" (blur)="messages.newMessage.length ? messages.showButtons = false : ''"
+												 (keydown)="onKeydown($event)"></textarea>
+											</pi-form-field>
+											<!-- <button class="restore-btn button"
+                                                    *ngIf="messages.showButtons"
+                                                    (click)="messages.showButtons = false;">
+                                                    <i class="material-icons">settings_backup_restore</i>
+                                                </button> -->
+										</div>
+										<div class="send-btn">
+											<button class="send-btn-action button" (click)="createMessage()">
+												<i class="material-icons">send</i>
+											</button>
+										</div>
+
+
+									</div>
+									<!-- <div class="job-attachments-list">
+                                                            <p><i class="material-icons">attachment</i> Attachments :</p>
+                                                            <a class="attachment-file"><i class="pixel-icons icon-pdf"></i> <span>Test</span> <span
+                                                                    class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                                            <a class="attachment-file"><i class="pixel-icons icon-png"></i><span>Test</span> <span
+                                                                    class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                                            <a class="attachment-file"><i class="pixel-icons icon-jpg"></i><span>Test</span> <span
+                                                                    class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                                            <a class="attachment-file"><i class="pixel-icons icon-gif"></i><span>Test</span> <span
+                                                                    class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                                            <a class="attachment-file"> <i class="pixel-icons icon-doc"></i><span>Test</span> <span
+                                                                    class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                                            <a class="attachment-file"><i class="pixel-icons icon-docx"></i><span>Test</span> <span
+                                                                    class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                                            <a class="attachment-file"> <i class="pixel-icons icon-txt"></i><span>Test</span> <span
+                                                                    class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                                            <a class="attachment-file"><i class="pixel-icons icon-xlsx"></i><span>Test</span> <span
+                                                                    class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                                            <a class="attachment-file"><i class="pixel-icons icon-zip"></i><span>Test</span> <span
+                                                                    class="remove-pill"><i class="pixel-icons icon-close-slim"></i></span></a>
+                                                        </div> -->
+									<div *ngIf="messages.showButtons" class="job-attachments-list">
+										<!-- <div class="attachments"></div> -->
+										<div class="uploads">
+											<div ng2FileDrop [ngClass]="{'file-over': hasDropZoneOver}" [uploader]="uploader" class="file-drop-zone">
+												<input id="attachment" type="file" ng2FileSelect [uploader]="uploader" [hidden]="true" multiple />
+												<label for="attachment" class="browse-file">Upload New Files :
+													<span class="upload-file-discussion">
+														<i class="pixel-icons icon-plus-slim"></i>
+													</span>
+												</label>
+											</div>
+										</div>
+										<div class="files-sec">
+											<div *ngFor="let file of messages.uploadData.files;let i = index" class="attachment-file">
+												<img src="" alt="">
+												<i class="pixel-icons icon-{{file.type}}"></i>
+												<span [innerHtml]="file.original_name"></span>
+												<span class="remove-pill" (click)="removeAttachment(i)">
+													<i class="pixel-icons icon-close-slim"></i>
+												</span>
+											</div>
+										</div>
+									</div>
+
+								</div>
+							</ng-container>
+							<ng-container *ngIf="messages.isNew">
+								<div class="first-msg">
+									<div class="hello"></div>
+									<p>Hello</p>
+									<button pi-button color="primary" (click)="createDiscussion()" [disabled]="!allowEdit">Create Discussion
+									</button>
+								</div>
+
+							</ng-container>
+						</ng-container>
+					</div>
+				</ng-container>
+			</div>
+
+			<!-- <div class="actions" *ngIf="state.showButtons">
+                    <button pi-icon-button (click)="cancelTask()">Cancel</button>
+                    <button pi-icon-button (click)="saveTask(taskForm)" color="primary">Save</button>
+                </div> -->
+		</div>
+	</div>
+	<div *ngIf="state.showButtons" class="recon-sticky-footer" style="display: flex;justify-content: flex-end;align-items: center;
+            background-color: #f7f8fb;height: 50px;padding: 0 24px;color: #bdbdbd;
+            z-index: 1;margin: 0 -20px;     border-top: 1px solid #dedede;">
+		<div>
+			<button pi-icon-button (click)="cancelTask()" class="m-r-15" [disabled]="state.isAjaxProcess">Cancel</button>
+			<button pi-icon-button (click)="saveTask(taskForm)" color="primary" [disabled]="state.isAjaxProcess">Save</button>
+		</div>
+	</div>
+</div>
+
+<div class="spinner-view" *ngIf="state.isLoading">
+	<div class="empty-screen">
+		<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+	</div>
+</div>

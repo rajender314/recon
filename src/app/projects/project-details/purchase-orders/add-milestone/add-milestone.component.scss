@@ -1,0 +1,8 @@
+.timeline-list{display: flex;align-items: center;margin: 10px 0;
+    .pi-form-field{margin: 0;flex: 0 0 40%}
+    .date-field{flex: 0 0 40%}
+}
+p.sub-heading { margin-top: 0; color: rgba(0, 0, 0, 0.6); }
+.global-grid { height: 365px; 
+    .invisible { visibility: hidden; }
+}

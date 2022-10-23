@@ -1,0 +1,418 @@
+// @import "../../../assets/styles/mixins";
+// // ::ng-deep ag-grid-angular.ag-theme-balham .ag-header-cell.product-service-header-grid {
+// //     padding-left: 12px !important;
+// // }
+app-configure-options {
+    flex: 1;
+    &.hide{
+        visibility: hidden;
+    }
+}
+
+::ng-deep .estimate-info{
+  pi-select{
+    width: 70px;
+    margin-top: 0;
+    input{
+      line-height: 10px;
+    }
+  }
+} 
+
+// ::ng-deep .change-estimates-container {
+//     display: flex;
+//     flex: 1;
+//     flex-direction: column;
+//     width: 100%;
+//     height: 100%;
+//     padding: 0;
+//     /*15px 30px;*/
+//     // background-color: #f7f8fe;
+//     .app-configure-options {
+//         // border: 1px solid #d9dae0;
+//         margin-top: 10px;
+//         ag-grid-angular {
+//             border-bottom: 1px solid #d9dae0;
+//             ag-body-viewport-wrapper {
+//                 overflow: hidden !important;
+//             }
+//         }
+//         &.hide{
+//             visibility: hidden;
+//         }
+//     }
+//     .estimates-header {
+//         display: flex;
+//         flex-direction: column;
+//         .edit-order {
+//             margin-right: 10px;
+//         }
+//         padding: 15px 16px 0;
+//         .header-top {
+//             display: flex;
+//             align-items: center;
+//             .back-link {
+//                 cursor: pointer;
+//                 display: flex;
+//                 align-items: center;
+//                 font-size: 13px;
+//                 font-weight: 600;
+//                 color: #0553cb;
+//                 @include semiBoldFont();
+//                 .icon-arrow {
+//                     font-size: 14px;
+//                     width: 14px;
+//                     height: 14px;
+//                     margin-right: 8px;
+//                     font-weight: 600;
+//                 }
+//             }
+//             .estimate-name {
+//                 color: rgba(23, 43, 77, 0.5);
+//                 font-size: 14px;
+//                 margin-left: 8px;
+//                 @include mediumFont();
+//             }
+//         }
+//         .header-bottom {
+//             .tab-group {
+//                 display: flex;
+//                 flex-direction: column-reverse;
+//                 justify-content: space-between;
+//                 width: 100%;
+//             }
+//         }
+//         @media screen and (min-width:960px) {
+//             padding: 15px 15px 0;
+//             .header-bottom {
+//                 .tab-group {
+//                     flex-direction: row;
+//                 }
+//             }
+//         }
+//         &.estimate-preview{
+//             background: #f6f7fe;
+//         }
+//     }
+//     .estimates-content {
+//         flex: 1;
+//         display: flex;
+//         padding: 0 16px;
+//         overflow: auto;
+//         &.estimate-preview{
+//             display: block;
+//             background: #f6f7fe;
+//         }
+//         .mat-spinner {
+//             position: absolute;
+//             top: 50%;
+//             left: 50%;
+//             transform: translate(-50%, -50%);
+//         }
+//         @media screen and (min-width: 960px) {
+//             padding: 0 15px;
+//         }
+//     }
+// }
+
+// ::ng-deep .change-estimate-popup {
+//     width: 100%;
+//     height: 100%;
+//     max-width: 100% !important;
+// }
+
+// ag-grid-angular.ag-theme-balham {
+//     flex: 1;
+//     width: 100%;
+//     @include regularFont;
+//     font-size: 13px;
+
+//     .text-right {
+//         text-align: right;
+//     }
+//     .text-edit{
+//         border: 1px solid;
+//         height: 30px;
+//         padding: 2px;
+//         display: flex;
+//         /* text-align: right; */
+//         align-items: center;
+//         margin-top: 3px;
+//         justify-content: flex-end;
+//     }
+//     .ag-ltr .ag-row-group-leaf-indent {
+//         margin-left: 0;
+//     }
+//     .ag-root {
+//         border: none;
+//     }
+//     .ag-cell {
+//         line-height: 35px;
+//         color: rgba(23, 43, 77, 0.8);
+//     }
+//     .ag-cell-focus {
+//         border-color: transparent !important;
+//     } // .ag-cell{}
+//     .ag-row {
+//         border-bottom-color: #e5e5eb;
+//     }
+//     .ag-header,
+//     .ag-row-odd {
+//         background-color: transparent;
+//     }
+//     .ag-row-hover,
+//     .ag-row-selected {
+//         background-color: #eceef7;
+//     }
+//     .ag-header-cell-text {
+//         font-weight: 500;
+//         font-size: 12px;
+//     }
+//     .ag-tool-panel {
+//         border-color: transparent;
+//     }
+  
+//     .ag-ltr .ag-cell-first-right-pinned,
+//     .ag-pinned-right-header {
+//         border-left: 1px solid transparent;
+//     }
+//     /*.ag-header-cell-menu-button{display: none;}
+//     .ag-header-cell-label{width: calc(100% - 0px);}
+//     .ag-header-cell::after, .ag-header-group-cell::after{border-right: 1px solid transparent;}*/
+//     .ag-side-bar {
+//         border-right: 1px solid transparent;
+//         background-color: transparent;
+//     }
+//     .ag-status-bar {
+//         border-bottom: 1px solid transparent;
+//     }
+//     ::ng-deep .edit-opts {
+//         color: rgba(23, 43, 77, 0.6);
+//         i {
+//             font-size: 14px;
+//             width: 14px;
+//             height: 14px;
+//             &:hover {
+//                 color: rgba(23, 43, 77, 0.8);
+//             }
+//         }
+//     }
+// }
+
+
+
+// ::ng-deep .products-grid {
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: center;
+//     .product {
+//         font-size: 14px;
+//         i {
+//             &.icon-products {
+//                 @include iconSize(20px);
+//                 margin-right: 6px;
+//                 margin-left: 6px;
+//                 color: #5678e3;
+//             }
+//         }
+//     }
+    
+//     .service {
+//         padding-left: 48px;
+//         i {
+//             display: flex;
+//             align-items: center;
+//             justify-content: center;
+//             @include iconSize(14px);
+//             &.icon-orders {
+//                 color: #dc4f66;
+//                 @include iconSize(16px);
+//                 margin-right: 10px;
+//                 margin-left: 6px;
+//             }
+//         }
+//     }
+//     .service, .product {
+//         align-items: center;
+//         display: flex;
+//         span {
+//             font-size: 14px;
+//         }
+//         .order-revision {
+//             color: rgba(23, 43, 77, 0.5);
+//         }
+//         .estimate-actions-menu {
+//             display: flex;
+//             align-items: center; // margin-right: 10px;
+//             color: rgba(23, 43, 77, 1);
+//             .ak-button {
+//                 min-width: 24px;
+//                 padding: 0;
+//                 height: 24px;
+//             }
+//         }
+//         .order-value {
+//             flex: 1;
+//             color: #172b4d;
+//             overflow: hidden;
+//             text-overflow: ellipsis;
+//             // max-width: calc(100% - 70px);
+//             padding-right: 0px;
+//         }
+//         i {
+//             display: flex;
+//             align-items: center;
+//             justify-content: center;
+//             margin: 0;
+//             @include iconSize(14px);
+//             &.icon-arrow-down,
+//             &.icon-arrow-right {
+//                 @include iconSize(12px);
+//                 margin-right: 8px;
+//             }
+//         }
+//     } .misc,
+//     .task,
+//     .cost {
+//         padding-left: 0px;
+//         /*98px; /*82px; /*69px;*/
+//         .pi-form-field {
+//             &:first-child {
+//                 margin-top: 0;
+//             }
+//         }
+//     }
+// }
+
+// ::ng-deep .pi-form-field {
+//     >label {
+//         font-weight: 400 !important;
+//     }
+//     .pi-field .pi-select-input {
+//         padding: 8px 32px 8px 10px;
+        
+//         pi-icon {
+//             .icon-arrow-down {
+//                 line-height: 12px !important;
+//                 @include iconSize(12px);
+//             }
+//         }
+//     }
+//     .pi-select-input.active,
+//     .pi-select-input:focus,
+//     .ak-field-checkbox:focus+label::after,
+//     .ak-field-radio:focus+label::after {
+//         box-shadow: inset 0 0 0 1px #4c9aff;
+//     }
+// } 
+// // ::ng-deep .products-grid, ::ng-deep .gross-grid, ::ng-deep .net-grid, ::ng-deep .units-grid, ::ng-deep .rate-grid{
+// //     white-space: normal !important;
+// // }
+// ::ng-deep .price-header {
+//     border-left: 1px solid #e5e5eb !important;
+//     display: flex;
+//     justify-content: flex-end;
+// }
+
+// ::ng-deep .totalprice-grid {
+//     border-left: 1px solid #e5e5eb !important;
+//     @include semiBoldFont();
+//     text-align: right;
+//     font-size: 14px;
+//     padding-right: 26px !important;
+// }
+
+// // ::ng-deep .note-grid {
+// //     display: flex;
+// //     align-items: center;
+// //     justify-content: center;
+// //     .notes-section {
+// //         display: flex;
+        
+// //     }
+// // }
+
+
+
+// ::ng-deep .more-actions.more-grid-actions.editor-grid{
+//     transition-duration: .5s;
+//     width: 518px;
+//     height: 320px;
+//     .specs-list-container{
+//         overflow-y: auto;
+//         height: 190px;
+//         overflow-x: hidden;
+//     }
+//     editor{
+//         max-width: 450px;
+//     }
+//     .d-footer{
+//         margin-top: 12px;
+//         justify-content: flex-end;
+//         display: flex;
+//         margin-right: 35px;
+//     }
+// }
+
+::ng-deep .full-width-modal.edit_estimate {
+    .panel-container {
+      overflow: auto;
+      height: calc(100vh - 232px);
+    }
+  }
+
+  .nav-bar {
+    width: 100%;
+    // margin-top: 10px;
+    .mat-tab-nav-bar {
+      white-space: nowrap;
+      overflow: auto;
+    }
+    .mat-tab-link {
+      min-width: 40px;
+      padding: 20px 0;
+      height: 30px;
+      margin: 0 12px;
+      font-size: 13px;
+      /*margin-right: 24px;*/
+      color: rgba(23, 43, 77, 0.8);
+      &:first-child {
+        margin-left: 0;
+      }
+      &:focus:not(.mat-tab-disabled) {
+        opacity: 0.6;
+      }
+      &.mat-tab-label-active {
+        color: #3f51b5;
+        opacity: 1 !important;
+      }
+      @media screen and (min-width: 1100px) {
+        margin: 0 15px;
+        font-size: 14px;
+      }
+      @media screen and (max-width: 1100px) {
+        margin: 0 6px;
+        font-size: 14px;
+      }
+      @media screen and (max-width: 1020px) {
+        margin: 0 6px;
+        font-size: 14px;
+      }
+      
+    }
+  }
+
+  .estimates-menu-detail{
+    @media screen and (max-width: 1050px) {
+    .m-l-8{
+      margin-left: 2px !important;
+    }
+    .btn-group.basic-group-btns button.last-child {
+      min-width: 22px !important;
+    }
+    .btn-switching-icon{
+      // height: 30px;
+      width: 30px;
+    }
+  }
+  }

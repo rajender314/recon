@@ -1,0 +1,409 @@
+<div class="primary-layout-detail">
+	<header>
+		<div class="w-100 d-flex justify-content-center flex-column">
+			<pi-breadcrumb>
+				<ng-container *ngFor="let item of state.breadcrumbs">
+					<pi-breadcrumb-item *ngIf="item.type == 'link'" label="Projects" [routerLink]="item.route">
+					</pi-breadcrumb-item>
+					<pi-breadcrumb-item *ngIf="item.type != 'link'" [innerHtml]="item.label"></pi-breadcrumb-item>
+				</ng-container>
+			</pi-breadcrumb>
+			<div class="w-100 d-flex align-items-center justify-content-between ">
+				<aside class="left-header d-flex flex-width">
+					<!-- <i class="pixel-icons icon-arrow" (click)="changeMasterView()"></i> -->
+					<h1>Project Info</h1>
+				</aside>
+				<aside class="d-flex right-header flex-width justify-content-end">
+					<!--<app-search (onSearch)="searchList($event)"></app-search>-->
+				</aside>
+
+			</div>
+		</div>
+
+	</header>
+	<div class="primary-layout-detail-body flex-column padding-20" #reconscroll>
+		<div [formGroup]="projectInfo" class="project-info secondary-max-screen-width">
+			<ng-container *ngFor="let section of state.sections">
+				<h2 class="title" [innerHtml]="section.name" *ngIf="section.display != 'none'"></h2>
+				<div class="field-wrapper">
+					<ng-container *ngFor="let field of section.formFields; let i = index">
+						<ng-container *ngIf="field.children">
+							<!-- <div style="display: flex"> -->
+							<ng-container *ngFor="let childField of field.children let j = index">
+								<ng-container *ngIf="childField.is_visible">
+									<div class="fields multi-col ">
+										<span class="field-name" [innerHtml]="childField.label"></span>
+										<div class="view-field-wrapper" *ngIf="!childField.is_edit" [class.editable]="childField.can_edit">
+											<span *ngIf="childField.type != 'date' && childField.type != 'select'">{{projectInfo.controls[childField.key].value?projectInfo.controls[childField.key].value:'--'}}</span>
+											<span *ngIf="childField.type == 'date'">{{projectInfo.controls[childField.key].value?(projectInfo.controls[childField.key].value | date: 'MMM dd, yyyy
+												hh:mm a'):'--'}}</span>
+											<span *ngIf="childField.type == 'select'">{{state.projectDetails[childField.display_name] || '--'}}</span>
+											<i *ngIf="childField.can_edit" class="pixel-icons icon-pencil" (click)="toggleInlineEdit(childField)"></i>
+										</div>
+										<div class="edit-field-wrapper" *ngIf="childField.is_edit">
+											<ng-container *ngIf="childField.type == 'text'">
+												<pi-form-field [label]=" ">
+													<input type="text" pi-input [formControlName]="childField.key" [maxlength]="childField.maxlength"/>
+													<div class="msgs">
+														<div class="pi-error" *ngIf="projectInfo.controls[childField.key].hasError('required') && state.submitted">
+															Please Enter {{childField.label}}
+														</div>
+													</div>
+												</pi-form-field>
+											</ng-container>
+											<ng-container *ngIf="childField.type == 'select'">
+												<pi-select [nameKey]="childField.nameKey || 'name'" [label]=" " [createNew]="childField.key=='client_initiator'" [options]="state.dropdowns[childField.options]" [multi]="childField.multi"
+												 [formControlName]="childField.key">
+												</pi-select>
+												<div class="msgs">
+													<div class="pi-error" *ngIf="projectInfo.controls[childField.key].hasError('required') && submitted">
+														Please Select {{childField.label}}</div>
+												</div>
+											</ng-container>
+											<ng-container *ngIf="childField.type == 'textarea'">
+												<pi-form-field [label]=" ">
+													<textarea pi-input [name]="childField.key" [formControlName]="childField.key" maxlength="1024"></textarea>
+													<span class="field-note">Enter text of 1024 characters or less.</span>
+												</pi-form-field>
+											</ng-container>
+											<ng-container *ngIf="childField.type == 'date'">
+												<!-- <p>{{projectInfo.controls[childField.key].value}}</p> -->
+												<pi-form-field [label]=" " class="date-field">
+													<input pi-input matInput [min]="childField.key == 'start_date' ? state.minDate : (projectInfo.controls.start_date.value || state.minDate)" [owlDateTime]="ij" [formControlName]="childField.key" [owlDateTimeTrigger]="ij"
+													 placeholder="Choose a date" readonly>
+													<div class="owl-picker-toggle">
+														<i class="pixel-icons icon-calendar" [owlDateTimeTrigger]="ij"></i>
+													</div>
+													<owl-date-time #ij [hour12Timer]="true"></owl-date-time>
+												</pi-form-field>
+											</ng-container>
+											<div class="actions">
+												<button pi-icon-button (click)="saveInlineEdit(childField)">
+													<i class="pixel-icons icon-select" color=""></i>
+												</button>
+												<button pi-icon-button (click)="cancelInlineEdit(childField)">
+													<i class="pixel-icons icon-close-slim"></i>
+												</button>
+											</div>
+										</div>
+									</div>
+								</ng-container>
+
+
+							</ng-container>
+							<!-- </div> -->
+						</ng-container>
+						<ng-container *ngIf="!field.children && field.is_visible">
+							<div class="fields">
+								<span class="field-name" [innerHtml]="field.label"></span>
+								<div class="view-field-wrapper" *ngIf="!field.is_edit" [class.editable]="field.can_edit">
+									<span *ngIf="field.type != 'date' && field.type != 'select'">{{projectInfo.controls[field.key].value?projectInfo.controls[field.key].value:'--'}}</span>
+									<span *ngIf="field.type == 'date'">{{projectInfo.controls[field.key].value?(projectInfo.controls[field.key].value | date: 'MMM dd, yyyy hh:mm a'):'--'}}</span>
+									<span *ngIf="field.type == 'select'">{{state.projectDetails[field.display_name] || '--'}}</span>
+									<i *ngIf="field.can_edit" class="pixel-icons icon-pencil" (click)="toggleInlineEdit(field)"></i>
+								</div>
+								<div class="edit-field-wrapper" *ngIf="field.is_edit">
+									<ng-container *ngIf="field.type == 'text'">
+										<pi-form-field [label]=" ">
+											<input type="text" pi-input [formControlName]="field.key" [maxlength]="field.maxlength"/>
+											<div class="msgs">
+												<div class="pi-error" *ngIf="projectInfo.controls[field.key].hasError('required') && state.submitted">
+													Please Enter {{field.label}}
+												</div>
+											</div>
+										</pi-form-field>
+									</ng-container>
+									<ng-container *ngIf="field.type == 'select'">
+										<pi-select [nameKey]="field.nameKey || 'name'" [label]=" " [options]="state.dropdowns[field.options]" [multi]="field.multi"
+										 [formControlName]="field.key"></pi-select>
+										<div class="msgs">
+											<div class="pi-error" *ngIf="projectInfo.controls[field.key].hasError('required') && state.submitted">
+													Please Select <span [innerHTML]="field?.errorLabel || field.label"></span></div>
+										</div>
+									</ng-container>
+									<ng-container *ngIf="field.type == 'textarea'">
+										<pi-form-field [label]=" ">
+											<textarea pi-input [name]="field.key" [formControlName]="field.key" maxlength="1024"></textarea>
+											<span class="field-note">Enter text of 1024 characters or less.</span>
+										</pi-form-field>
+									</ng-container>
+									<ng-container *ngIf="field.type == 'date'">
+										<pi-form-field [label]=" " class="date-field">
+											<input pi-input matInput [min]="state.minDate" [owlDateTime]="ij" [formControlName]="field.key" [owlDateTimeTrigger]="ij"
+											 placeholder="Choose a date" readonly>
+											<div class="owl-picker-toggle">
+												<i class="pixel-icons icon-calendar" [owlDateTimeTrigger]="ij"></i>
+											</div>
+											<owl-date-time #ij [hour12Timer]="true"></owl-date-time>
+										</pi-form-field>
+									</ng-container>
+									<div class="actions">
+										<button pi-icon-button (click)="saveInlineEdit(field)">
+											<i class="pixel-icons icon-select" color=""></i>
+										</button>
+										<button pi-icon-button (click)="cancelInlineEdit(field)">
+											<i class="pixel-icons icon-close-slim"></i>
+										</button>
+									</div>
+								</div>
+							</div>
+
+						</ng-container>
+					</ng-container>
+				</div>
+			</ng-container>
+
+			<div class="address-section">
+				<div class="address-wrapper default-address inline-form">
+					<div class="header">Default Shipping Address
+						<!-- <i class="pixel-icons icon-pencil" (click)="toggleInlineEdit(state.projectDetails.address?.shipping)"></i> -->
+						<i class="pixel-icons icon-pencil" (click)="changeAddress('shipping')"></i>
+					</div>
+
+					<div class="address-info">
+						<div *ngIf="state.projectDetails.address?.shipping" class="address-card">
+							<!-- <i class="pixel-icons icon-billing-and-shipping"></i> -->
+							<svg width="51px" height="51px" viewBox="0 0 51 51" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+								<!-- Generator: Sketch 53.1 (72631) - https://sketchapp.com -->
+								<title>billing and shipping</title>
+								<desc>Created with Sketch.</desc>
+								<defs>
+									<linearGradient x1="12.2784586%" y1="2.06%" x2="99.9996481%" y2="98.367%" id="linearGradient-1">
+										<stop stop-color="#5DA3DB" offset="0%"></stop>
+										<stop stop-color="#A766CF" offset="100%"></stop>
+									</linearGradient>
+								</defs>
+								<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+									<g id="billing-and-shipping" fill="url(#linearGradient-1)">
+										<g id="Shape">
+											<path d="M32,49 L44,49 L44,2 L7,2 L7,49 L19,49 L19,39 C19,38.4477153 19.4477153,38 20,38 L31,38 C31.5522847,38 32,38.4477153 32,39 L32,49 Z M46,49 L50,49 C50.5522847,49 51,49.4477153 51,50 C51,50.5522847 50.5522847,51 50,51 L1,51 C0.44771525,51 6.76353751e-17,50.5522847 0,50 C-1.78657678e-16,49.4477153 0.44771525,49 1,49 L5,49 L5,1 C5,0.44771525 5.44771525,4.62867309e-14 6,4.61852778e-14 L45,4.60742555e-14 C45.5522847,4.59728025e-14 46,0.44771525 46,1 L46,49 Z M11,5 L18,5 C18.5522847,5 19,5.44771525 19,6 L19,13 C19,13.5522847 18.5522847,14 18,14 L11,14 C10.4477153,14 10,13.5522847 10,13 L10,6 C10,5.44771525 10.4477153,5 11,5 Z M12,7 L12,12 L17,12 L17,7 L12,7 Z M22,5 L29,5 C29.5522847,5 30,5.44771525 30,6 L30,13 C30,13.5522847 29.5522847,14 29,14 L22,14 C21.4477153,14 21,13.5522847 21,13 L21,6 C21,5.44771525 21.4477153,5 22,5 Z M23,7 L23,12 L28,12 L28,7 L23,7 Z M33,5 L40,5 C40.5522847,5 41,5.44771525 41,6 L41,13 C41,13.5522847 40.5522847,14 40,14 L33,14 C32.4477153,14 32,13.5522847 32,13 L32,6 C32,5.44771525 32.4477153,5 33,5 Z M34,7 L34,12 L39,12 L39,7 L34,7 Z M11,16 L18,16 C18.5522847,16 19,16.4477153 19,17 L19,24 C19,24.5522847 18.5522847,25 18,25 L11,25 C10.4477153,25 10,24.5522847 10,24 L10,17 C10,16.4477153 10.4477153,16 11,16 Z M12,18 L12,23 L17,23 L17,18 L12,18 Z M22,16 L29,16 C29.5522847,16 30,16.4477153 30,17 L30,24 C30,24.5522847 29.5522847,25 29,25 L22,25 C21.4477153,25 21,24.5522847 21,24 L21,17 C21,16.4477153 21.4477153,16 22,16 Z M23,18 L23,23 L28,23 L28,18 L23,18 Z M33,16 L40,16 C40.5522847,16 41,16.4477153 41,17 L41,24 C41,24.5522847 40.5522847,25 40,25 L33,25 C32.4477153,25 32,24.5522847 32,24 L32,17 C32,16.4477153 32.4477153,16 33,16 Z M34,18 L34,23 L39,23 L39,18 L34,18 Z M11,27 L18,27 C18.5522847,27 19,27.4477153 19,28 L19,35 C19,35.5522847 18.5522847,36 18,36 L11,36 C10.4477153,36 10,35.5522847 10,35 L10,28 C10,27.4477153 10.4477153,27 11,27 Z M12,29 L12,34 L17,34 L17,29 L12,29 Z M22,27 L29,27 C29.5522847,27 30,27.4477153 30,28 L30,35 C30,35.5522847 29.5522847,36 29,36 L22,36 C21.4477153,36 21,35.5522847 21,35 L21,28 C21,27.4477153 21.4477153,27 22,27 Z M23,29 L23,34 L28,34 L28,29 L23,29 Z M33,27 L40,27 C40.5522847,27 41,27.4477153 41,28 L41,35 C41,35.5522847 40.5522847,36 40,36 L33,36 C32.4477153,36 32,35.5522847 32,35 L32,28 C32,27.4477153 32.4477153,27 33,27 Z M34,29 L34,34 L39,34 L39,29 L34,29 Z M21,40 L21,49 L30,49 L30,40 L21,40 Z">
+											</path>
+										</g>
+									</g>
+								</g>
+							</svg>
+							<div *ngIf="!isEdit">
+								<p [innerHtml]="state.projectDetails.address?.shipping.address1"></p>
+								<p [innerHtml]="state.projectDetails.address?.shipping.city"></p>
+								<p>
+									<span [innerHtml]="state.projectDetails.address?.shipping.state"></span> -
+									<span [innerHtml]="state.projectDetails.address?.shipping.postal_code"></span>
+								</p>
+								<p [innerHtml]="state.projectDetails.address?.shipping.country"></p>
+							</div>
+							<div *ngIf="isEdit" [formGroup]="editAddressForm" class="no-label">
+								<pi-form-field label=" ">
+									<input type="text" pi-input [formControlName]="'address1'" />
+								</pi-form-field>
+								<pi-field-group> 
+									<pi-form-field label=" ">
+										<input type="text" pi-input [formControlName]="'city'" />
+									</pi-form-field>
+									<pi-select [label]=" " [options]="state.dropdowns.countries" [multi]="false" [formControlName]="'country_id'"></pi-select>
+								</pi-field-group>
+								<pi-field-group>
+									<pi-select [label]=" " [options]="state.dropdowns.states" [multi]="false" [formControlName]="'state_id'"></pi-select>
+									<pi-form-field label=" ">
+										<input type="text" pi-input [formControlName]="'postal_code'" />
+									</pi-form-field>
+								</pi-field-group>
+							</div>
+						</div>
+						<!-- <div class="address-actions" *ngIf="state.projectDetails.address?.shipping && state.projectDetails.address?.shipping.is_edit">
+										<a *ngIf="state.projectDetails.address?.shipping && state.projectDetails.address?.shipping.is_edit" class="blue-link"
+										 (click)="changeAddress('shipping')">Change
+											Address</a>
+									</div>
+									<a *ngIf="!state.projectDetails.address?.shipping" class="blue-link" (click)="changeAddress('shipping')">Add
+										Address</a> -->
+						<div class="no-data" *ngIf="!state.projectDetails.address?.shipping">No Address Found</div>
+					</div>
+					<div class="field-wrapper">
+						<div class="fields">
+							<span class="field-name" [innerHtml]="state.distribution.label"></span>
+							<div class="view-field-wrapper" [class.editable]="state.distribution.can_edit" *ngIf="!state.distribution.is_edit">
+								<!-- <span>
+											{{projectInfo.controls[state.distribution.key].value ? projectInfo.controls[state.distribution.key].value :
+											'--'}}
+										</span> -->
+								<span>{{state.projectDetails[state.distribution.display_name] || '--'}}</span>
+								<i *ngIf="state.distribution.can_edit" class="pixel-icons icon-pencil" (click)="toggleInlineEdit(state.distribution)"></i>
+							</div>
+							<div class="edit-field-wrapper" *ngIf="state.distribution.is_edit">
+								<pi-select [options]="state.dropdowns.distributionTypes" [multi]="false" formControlName="distribution_type"></pi-select>
+								<div class="actions">
+									<button pi-icon-button (click)="saveInlineEdit(state.distribution)">
+										<i class="pixel-icons icon-select" color=""></i>
+									</button>
+									<button pi-icon-button (click)="cancelInlineEdit(state.distribution)">
+										<i class="pixel-icons icon-close-slim"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="address-wrapper">
+					<div class="header">
+						<pi-form-field label="Add Billing Address">
+							<input type="checkbox" (change)="save(projectInfo)" pi-input formControlName="add_billing_address" />
+						</pi-form-field>
+						<!-- <i class="pixel-icons icon-pencil" *ngIf="projectInfo.controls.add_billing_address.value" (click)="toggleInlineEdit(state.projectDetails.address?.billing)"></i> -->
+						<i class="pixel-icons icon-pencil" *ngIf="projectInfo.controls.add_billing_address.value" (click)="changeAddress('billing')"></i>
+					</div>
+					<div class="address-info" *ngIf="projectInfo.controls.add_billing_address.value">
+						<div *ngIf="state.projectDetails.address?.billing">
+							<svg width="51px" height="51px" viewBox="0 0 51 51" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+								<!-- Generator: Sketch 53.1 (72631) - https://sketchapp.com -->
+								<title>billing and shipping</title>
+								<desc>Created with Sketch.</desc>
+								<defs>
+									<linearGradient x1="12.2784586%" y1="2.06%" x2="99.9996481%" y2="98.367%" id="linearGradient-1">
+										<stop stop-color="#5DA3DB" offset="0%"></stop>
+										<stop stop-color="#A766CF" offset="100%"></stop>
+									</linearGradient>
+								</defs>
+								<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+									<g id="billing-and-shipping" fill="url(#linearGradient-1)">
+										<g id="Shape">
+											<path d="M32,49 L44,49 L44,2 L7,2 L7,49 L19,49 L19,39 C19,38.4477153 19.4477153,38 20,38 L31,38 C31.5522847,38 32,38.4477153 32,39 L32,49 Z M46,49 L50,49 C50.5522847,49 51,49.4477153 51,50 C51,50.5522847 50.5522847,51 50,51 L1,51 C0.44771525,51 6.76353751e-17,50.5522847 0,50 C-1.78657678e-16,49.4477153 0.44771525,49 1,49 L5,49 L5,1 C5,0.44771525 5.44771525,4.62867309e-14 6,4.61852778e-14 L45,4.60742555e-14 C45.5522847,4.59728025e-14 46,0.44771525 46,1 L46,49 Z M11,5 L18,5 C18.5522847,5 19,5.44771525 19,6 L19,13 C19,13.5522847 18.5522847,14 18,14 L11,14 C10.4477153,14 10,13.5522847 10,13 L10,6 C10,5.44771525 10.4477153,5 11,5 Z M12,7 L12,12 L17,12 L17,7 L12,7 Z M22,5 L29,5 C29.5522847,5 30,5.44771525 30,6 L30,13 C30,13.5522847 29.5522847,14 29,14 L22,14 C21.4477153,14 21,13.5522847 21,13 L21,6 C21,5.44771525 21.4477153,5 22,5 Z M23,7 L23,12 L28,12 L28,7 L23,7 Z M33,5 L40,5 C40.5522847,5 41,5.44771525 41,6 L41,13 C41,13.5522847 40.5522847,14 40,14 L33,14 C32.4477153,14 32,13.5522847 32,13 L32,6 C32,5.44771525 32.4477153,5 33,5 Z M34,7 L34,12 L39,12 L39,7 L34,7 Z M11,16 L18,16 C18.5522847,16 19,16.4477153 19,17 L19,24 C19,24.5522847 18.5522847,25 18,25 L11,25 C10.4477153,25 10,24.5522847 10,24 L10,17 C10,16.4477153 10.4477153,16 11,16 Z M12,18 L12,23 L17,23 L17,18 L12,18 Z M22,16 L29,16 C29.5522847,16 30,16.4477153 30,17 L30,24 C30,24.5522847 29.5522847,25 29,25 L22,25 C21.4477153,25 21,24.5522847 21,24 L21,17 C21,16.4477153 21.4477153,16 22,16 Z M23,18 L23,23 L28,23 L28,18 L23,18 Z M33,16 L40,16 C40.5522847,16 41,16.4477153 41,17 L41,24 C41,24.5522847 40.5522847,25 40,25 L33,25 C32.4477153,25 32,24.5522847 32,24 L32,17 C32,16.4477153 32.4477153,16 33,16 Z M34,18 L34,23 L39,23 L39,18 L34,18 Z M11,27 L18,27 C18.5522847,27 19,27.4477153 19,28 L19,35 C19,35.5522847 18.5522847,36 18,36 L11,36 C10.4477153,36 10,35.5522847 10,35 L10,28 C10,27.4477153 10.4477153,27 11,27 Z M12,29 L12,34 L17,34 L17,29 L12,29 Z M22,27 L29,27 C29.5522847,27 30,27.4477153 30,28 L30,35 C30,35.5522847 29.5522847,36 29,36 L22,36 C21.4477153,36 21,35.5522847 21,35 L21,28 C21,27.4477153 21.4477153,27 22,27 Z M23,29 L23,34 L28,34 L28,29 L23,29 Z M33,27 L40,27 C40.5522847,27 41,27.4477153 41,28 L41,35 C41,35.5522847 40.5522847,36 40,36 L33,36 C32.4477153,36 32,35.5522847 32,35 L32,28 C32,27.4477153 32.4477153,27 33,27 Z M34,29 L34,34 L39,34 L39,29 L34,29 Z M21,40 L21,49 L30,49 L30,40 L21,40 Z">
+											</path>
+										</g>
+									</g>
+								</g>
+							</svg>
+							<div>
+								<p [innerHtml]="state.projectDetails.address?.billing.address1"></p>
+								<p [innerHtml]="state.projectDetails.address?.billing.city"></p>
+								<p>
+									<span [innerHtml]="state.projectDetails.address?.billing.state"></span> -
+									<span [innerHtml]="state.projectDetails.address?.billing.postal_code"></span>
+								</p>
+								<p [innerHtml]="state.projectDetails.address?.billing.country"></p>
+							</div>
+						</div>
+						<!-- <a *ngIf="state.projectDetails.address?.billing && state.projectDetails.address?.billing.is_edit" class="blue-link"
+									 (click)="changeAddress('billing')">Change
+										Address</a>
+									<a *ngIf="!state.projectDetails.address?.billing" class="blue-link" (click)="changeAddress('billing')">Add
+										Address</a> -->
+						<div class="no-data" *ngIf="!state.projectDetails.address?.billing">No Address Found</div>
+					</div>
+					<!-- <pi-form-field label="Vendor Funded">
+									<input type="checkbox" pi-input formControlName="vendor_funded" />
+								</pi-form-field>
+								<div class="brdr-btm">
+									<pi-form-field label="Create Related Jobs">
+										<input type="checkbox" pi-input formControlName="create_related_jobs" />
+									</pi-form-field>
+									<div *ngIf="projectInfo.controls.create_related_jobs.value">
+										<pi-select label=" " [options]="state.dropdowns.companyCodes" [multi]="true" formControlName="related_company_codes"></pi-select>
+									</div>
+								</div> -->
+
+					<pi-form-field label="Show Project in Client Portal" style="margin-top: 26px">
+						<input type="checkbox" (change)="save(projectInfo)" pi-input formControlName="job_in_client_portal" />
+					</pi-form-field>
+				</div>
+
+			</div>
+
+			<div *ngIf="state.projectDetails.org_id && state.projectDetails.savedCustomAttr.length">
+				<h3>Custom Attributes</h3>
+				<mat-spinner diameter="25" class="md" *ngIf="state.fetchingAttributes"></mat-spinner>
+
+				<div *ngIf="!state.fetchingAttributes">
+					<div *ngIf="state.projectDetails.savedCustomAttr.length" formArrayName="custom_attributes">
+						<div *ngFor="let attr of state.projectDetails.custom_attributes; let i = index">
+							<!-- <pi-form-field [formGroupName]="i" [label]="attr.label">
+												<input type="text" pi-input formControlName="value" />
+											</pi-form-field> -->
+							<!-- <div [innerHtml]="attr.label"></div>
+										<div [innerHtml]="attr.value"></div> -->
+
+							<ng-container [formGroupName]="i" *ngIf="attr.key == 'dropdown'">
+								<div class="field-wrapper">
+									<div class="fields">
+										<span class="field-name" [innerHtml]="attr.label"></span>
+										<div class="view-field-wrapper " *ngIf="!attr.is_edit" [class.editable]="attr.settings.edit_in_job">
+											<span>{{attr.selected || '--'}}</span>
+											<!-- projectInfo.controls.selected.value -->
+											<i *ngIf="attr.settings.edit_in_job" class="pixel-icons icon-pencil" (click)="toggleInlineEdit(attr)"></i>
+										</div>
+										<div class="edit-field-wrapper" *ngIf="attr.is_edit">
+											<pi-select [label]=" " [disabled]="!attr.settings.edit_in_job" [options]="attr.options" [multi]="false" formControlName="selected">
+											</pi-select>
+											<div class="actions">
+												<button pi-icon-button (click)="saveInlineEditCA(attr, i)">
+													<i class="pixel-icons icon-select" color=""></i>
+												</button>
+												<button pi-icon-button (click)="cancelInlineEdit(attr)">
+													<i class="pixel-icons icon-close-slim"></i>
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</ng-container>
+							<ng-container [formGroupName]="i" *ngIf="attr.key == 'single_line_text'">
+								<div class="field-wrapper">
+									<div class="fields">
+										<span class="field-name" [innerHtml]="attr.label"></span>
+										<div class="view-field-wrapper " *ngIf="!attr.is_edit" [class.editable]="attr.settings.edit_in_job">
+											<span>{{attr.value || '--'}}</span>
+											<i *ngIf="attr.settings.edit_in_job" class="pixel-icons icon-pencil" (click)="toggleInlineEdit(attr)"></i>
+										</div>
+										<div class="edit-field-wrapper" *ngIf="attr.is_edit">
+											<pi-form-field>
+												<input type="text" pi-input [disabled]="!attr.settings.edit_in_job" formControlName="value" />
+											</pi-form-field>
+											<div class="actions">
+												<button pi-icon-button (click)="saveInlineEditCA(attr, i)">
+													<i class="pixel-icons icon-select" color=""></i>
+												</button>
+												<button pi-icon-button (click)="cancelInlineEdit(attr)">
+													<i class="pixel-icons icon-close-slim"></i>
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</ng-container>
+
+							<!-- <ng-container [formGroupName]="i" *ngIf="attr.key == 'dropdown'">
+											<pi-field-group>
+												<pi-select [label]="attr.label" [disabled]="!attr.settings.edit_in_job" [options]="attr.options" [multi]="false" formControlName="selected"></pi-select>
+											</pi-field-group>
+										</ng-container> -->
+
+							<!-- <ng-container [formGroupName]="i" *ngIf="attr.key == 'single_line_text'">
+											<pi-form-field [label]="attr.label">
+												<input type="text" pi-input [disabled]="!attr.settings.edit_in_job" formControlName="value" />
+											</pi-form-field>
+										</ng-container> -->
+						</div>
+					</div>
+					<div class="no-data" *ngIf="!state.projectDetails.savedCustomAttr.length">Nothing to show</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 
+<div class="right-header">
+	<app-breadcrumb [list]="state.breadcrumbs"></app-breadcrumb>
+	<div class="info">
+		<i class="back-link pixel-icons icon-arrow" (click)="changeMasterView()"></i>
+		<h2>Project Info</h2>
+	</div>
+</div> -->
+<!-- 
+<div class="right-content">
+	
+</div> -->
+<!-- <div class="footer">
+	<div class="wrapper">
+		<button pi-button (click)="cancel(state.projectDetails)">Cancel</button>
+		<button pi-button color="primary" (click)="save(projectInfo)" [disabled]="projectInfo.pristine">Save</button>
+	</div>
+</div> -->

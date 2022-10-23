@@ -1,0 +1,48 @@
+@import "../../../../../assets/styles/mixins";
+:host {
+    height: 100%;
+}
+.status-list{
+    padding: 5px 10px;
+    height: auto;
+    border-radius: 4px;
+    font-family: "SFProText-Regular", Sans-Serif;
+    &.status_12{
+        background: #8380d2;
+    }
+    &.status_10 {
+        background: #326ccb;;
+    }
+    &.status_6{
+        background: #18279a;
+    }
+    &.status_13{
+        background: #279159;
+    }
+    &.status_3{
+        background: #5c8d3c;
+    }
+    &.status_14{
+        background: #c81b1c;
+    }
+    &.status_2{
+        background: #969696;
+    }
+    span{
+        margin: 0 !important;
+        color: #fff;
+        margin-right: 10px !important;
+        font-size: 14px;
+        font-family: "SFProText-Regular", Sans-Serif;
+        font-weight: normal;
+    }
+    i{
+        top: auto;
+        left: auto;
+        height: 12px;
+        line-height: 12px;
+        color: #fff;
+        position: relative;
+        top: 1px;
+    }
+}

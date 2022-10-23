@@ -1,0 +1,40 @@
+<!-- <div class="types">
+	<div class="heading">
+		<a routerLink="/admin/">Admin</a>
+		<div class="secondary">
+			<h4>Task Type</h4>
+			<div class="action">
+				<button pi-button (click)="add()">Add Task Type</button>
+				<app-search (onSearch)="onSearch($event)"></app-search>
+			</div>
+		</div>
+	</div>
+	<ag-grid-angular class="ag-theme-balham" [gridOptions]="gridOptions">
+	</ag-grid-angular>
+</div> -->
+
+<div class="primary-layout">
+	<pi-detail-view>
+		<section class="primary-layout-detail">
+			<header>
+				<div class="w-100 d-flex align-items-center justify-content-between primary-max-screen-width">
+					<aside class="left-header d-flex flex-width">
+						<a routerLink="/admin/" style="padding-bottom: 4px;">Admin</a>
+						<h1>Task Type</h1>
+					</aside>
+					<aside class="d-flex right-header flex-width justify-content-end">
+							<app-search (onSearch)="onSearch($event)"></app-search>
+							<button class="m-l-15" color="primary" pi-button (click)="add()" *ngIf="(APP.permissions.system_access.task_types=='edit')?true:false">Add Task Type</button>
+					</aside>
+				</div>
+			</header>
+			<div class="primary-layout-detail-body flex-column padding-20">
+				<div class="primary-max-screen-width global-grid with-table-gaps with-out-margin actions-grid ag-no-striped ag-full-width-grid">
+						<ag-grid-angular class="ag-theme-balham" [gridOptions]="gridOptions">
+							</ag-grid-angular>
+				</div>
+			</div>
+		</section>
+	</pi-detail-view>
+
+</div>

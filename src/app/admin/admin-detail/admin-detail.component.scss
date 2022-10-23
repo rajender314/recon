@@ -1,0 +1,115 @@
+.right-header{
+    // border-bottom: 1px solid #cdcdcd;
+    // padding: 0 16px; /*15px;*/
+    ::ng-deep ul.breadcrumb{margin: 9px 0 0;}
+    .info{
+        display: inline-flex;
+        align-items: baseline;
+        color: rgba(23, 43, 77, 0.8); 
+        h2{
+            margin: 0 10px 20px 0;
+            padding: 0;
+            max-width: 340px;
+            flex-wrap: wrap;
+            min-height: auto;
+            display: flex;
+            align-items: center;
+        }
+        h3{
+            color: rgba(23, 43, 77, 0.5);
+            font-weight: 500; 
+        }
+        .back-link{
+            position: relative;
+            top: 5px;
+            margin-right: 4px;
+            font-size: 22px;
+            display: inline-flex;
+        }
+    }
+}
+
+ul.breadcrumb{
+    list-style: none;display: flex;
+    margin: 9px 0 0;padding: 0;
+    .breadcrumb-item+.breadcrumb-item{
+        padding-left: .5rem;
+        &::before{
+            display: inline-block;
+            padding-right: .5rem;
+            color: rgba(23, 43, 77, 0.6); /*#6c757d;*/
+            content: "/";
+        }
+    }
+}
+
+.right-content{
+    padding: 0 16px;
+    margin:0;
+    overflow: auto;
+    ::ng-deep .pi-form-field{
+        .pi-field .pi-select-input{
+            pi-icon{
+                i{
+                    width: 12px;
+                    height: 12px;
+                    line-height: 12px !important;
+                    font-size: 12px;
+                }
+            }
+        }
+    }
+    .footer{
+        padding: 10px 0;
+        border-top: 1px solid #cdcdcd;
+        margin: 25px 0;
+        display: flex;
+        justify-content: flex-end;
+        button{
+            min-width: 98px;
+            justify-content: center;
+            height: 2.5em;
+            &:last-child{
+                // margin-left: 35px;
+            }
+        }
+        &.full-width{
+            padding:24px 0;
+            @media screen and (min-width: 960px){
+                padding: 24px 16px;
+            }
+        }
+    }
+    .field-note{
+        color: rgba(23, 43, 77, 0.5);
+        font-size: 13px;
+    }
+    .note{
+        color: rgba(23, 43, 77, 0.6);
+        font-size: 13px;
+        margin: 20px 0;
+        p{
+            color: rgba(23, 43, 77, 0.6);
+            font-size: 13px;
+            margin: 0;    
+        }
+    }
+}
+
+@media screen and (min-width: 960px){
+    .right-header{
+        padding: 0;
+        margin: 0 30px;
+        .info{
+            .back-link{
+                display: none;
+            }
+        }
+    }
+    .right-content{
+        padding: 0 20px;
+        form{
+            max-width: 490px;
+        }
+    }
+}

@@ -1,0 +1,26 @@
+<div class="mat-dialog-heading add-credit-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+      <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <div class="add-credit-container" [class.hide]="state.loader">
+    <div class="service-name">{{data.data.job_service_name}}</div>
+    <pi-form-field label="Credit Amount">
+      <input type="text" [appPriceFormat]="numberConfig" pi-input [(ngModel)]="data.data.gross_amount" />
+    </pi-form-field>
+   <div class="custom-editor">
+      <editor [init]="{plugins: 'link', branding: false, menubar:false, statusbar: false, toolbar: 'bold italic strikethrough forecolor backcolor permanentpen formatpainter | link image media pageembed | alignleft aligncenter alignright alignjustify'}" (onInit)="onEditorActive()" [(ngModel)]="data.data.notes"></editor>
+   </div>
+  </div>
+  <div class="spinner-view" *ngIf="state.loader">
+    <div class="empty-screen">
+      <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+    </div>                
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions class="mat-footer">
+  <button pi-button color="subtle" (click)="close()">Cancel</button>
+  <button pi-button color="primary" (click)="save()">{{data.title}}</button>
+</mat-dialog-actions>

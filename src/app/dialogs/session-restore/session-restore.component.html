@@ -1,0 +1,16 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title>Session Expired</h2>
+	<!-- <button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button> -->
+</div>
+
+<mat-dialog-content>
+	<ng-container *ngIf="data.type == 401">Your Session has Expired Please Login Again to Continue Access</ng-container>
+	<ng-container *ngIf="data.type == 502">502 Bad Gateway error</ng-container>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+	<!-- <button pi-button color="subtle">Restore</button> -->
+	<button *ngIf="data.type == 401" pi-button color="primary" (click)="refresh()">Logout</button>
+</mat-dialog-actions>

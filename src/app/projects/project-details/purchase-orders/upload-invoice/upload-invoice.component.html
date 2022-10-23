@@ -1,0 +1,79 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button (click)="close()" tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+
+</div>
+<mat-dialog-content>
+	<div>Add Invoices to the upload queue and click the Start button, You can upload upto <b>5
+			files</b>
+		of <b>18MB</b> or less at once.</div>
+	<div>
+		<div class="head"></div>
+		<div class="body">
+			<div ng2FileDrop [uploader]="uploader" class="file-drop-zone">
+				<!-- [ngClass]="{'file-over': hasDropZoneOver}" (fileOver)="fileOverBase($event)" -->
+				<ng-container *ngIf="!uploader.queue.length">
+					Base drop zone
+				</ng-container>
+				<ng-container *ngIf="uploader.queue.length">
+					<ul class="list-unstyled  files-list">
+						<li class="" *ngFor="let item of uploader.queue">
+							<div class="file-names-and-size">
+								<div class="uploaded-file">
+									<div class="file-formate">
+										<i class="pixel-icons icon-{{item.customType}}"></i>
+										<!-- <i class="pixel-icons icon-gif"></i>
+											<i class="pixel-icons icon-doc"></i>
+											<i class="pixel-icons icon-docx"></i>
+											<i class="pixel-icons icon-txt"></i>
+											<i class="pixel-icons icon-xlsx"></i>
+											<i class="pixel-icons icon-zip"></i>  -->
+									</div>
+									<div class="file-details">
+										<h5 class="" [innerHtml]="item.file.name"></h5>
+										<ng-container>
+											<p>{{ item.file.size/1024 | number:'.2' }} KB </p>
+										</ng-container>
+									</div>
+								</div>
+
+							</div>
+							<div class="status-and-close">
+								<div class="upload-status">
+									<span *ngIf="item.isSuccess" title="Success" class="success"><i
+											class="pixel-icons icon-select"></i></span>
+									<span *ngIf="item.isCancel" title="Cancel" class="cancel"><i
+											class="pixel-icons icon-close-slim"></i> </span>
+									<span *ngIf="item.isError" title="Error" class="error"><i
+											class="pixel-icons icon-exclamation"></i></span>
+								</div>
+								<span class="rm-btn" (click)="item.remove();serverMsg = ''">Remove</span>
+
+							</div>
+						</li>
+					</ul>
+				</ng-container>
+			</div>
+		</div>
+		<div class="uploader-ui">
+			<div class="uploader-sec">
+				<div class="uploader-input">
+					<input id="attachment" type="file" ng2FileSelect [uploader]="uploader" [hidden]="true" multiple />
+					<label for="attachment" class="browse-file"><i class="pixel-icons icon-plus-slim"></i> <span> Add
+							Files: </span></label>
+				</div>
+				<button pi-button (click)="uploader.uploadAll()"
+					[disabled]="uploader.isUploading || !isButtonEnable">Start Upload</button>
+			</div>
+			<div class="test">
+
+				<div [innerHtml]="serverMsg"></div>
+
+				<div class="file-size" [innerHtml]="getTotalSize(uploader.queue) + ' KB'"></div>
+
+			</div>
+		</div>
+	</div>
+</mat-dialog-content>

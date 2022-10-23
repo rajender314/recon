@@ -1,0 +1,192 @@
+<div class="message-top-header">
+  <div class="header">
+    <!-- <app-list-header title="Messages" [matMenuTriggerFor]="menu"></app-list-header> -->
+    <div class="messages-menu">
+      <pi-icon name="{{(selectedTab.type=='notification' || selectedTab.type=='notifications_old')?'pixel-icons icon-notifications':'pixel-icons icon-messages'}}"
+        size="sm" background="#8E44AD" color="#FFF"></pi-icon>
+      <div class="info">
+        <!-- <h4 class="sub-title" *ngIf="subTitle">Admin</h4> -->
+        <h3 class="title" [matMenuTriggerFor]="menu">{{selectedTab.name}} <i class="pixel-icons icon-arrow-down"></i></h3>
+
+        <span (click)="createDiscussion()" *ngIf="selectedTab.type!='notification' && selectedTab.type!='notifications_old'"
+          class="add-new-msg-new-btn" matTooltip="Create Message"><i class="pixel-icons icon-plus"></i></span>
+
+      </div>
+    </div>
+    <mat-menu #menu="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="after" class="more-actions">
+      <button mat-menu-item *ngFor="let tab of tabs" [class.active]="tab === selectedTab" (click)="selectTab(tab)">{{tab.name}}</button>
+    </mat-menu>
+  </div>
+
+  <!-- <div class="tabs">
+            <nav mat-tab-nav-bar>
+              <a mat-tab-link
+                 *ngFor="let tab of tabs"
+                 [active]="tab === selectedTab"
+                 (click)="selectTab(tab)">
+                 {{tab.name}}
+              </a>
+            </nav>
+          </div> -->
+
+  <div class="search-sort">
+    <div class="header">
+      <div class="sort-label">Sort By: <span [matMenuTriggerFor]="menuTest">{{sort}}<i class="pixel-icons icon-arrow-down"></i></span></div>
+      <div class="ag-cell-custome-actions" *ngIf="selectedTab.type!='notifications_old'">
+        <ul style="padding-top:0px;">
+          <li class="flag" [class.active]="flag == true" (click)="onFlag()" matTooltip="{{flag == true?'Unflag Messages':'Flag Messages'}}"><i
+              class="pixel-icons icon-flag"></i></li>
+          <li class="unread" [class.active]="unread == true" (click)="onUnread()" matTooltip="{{unread == true?'Read Messages':'Unread Messages'}}"
+            matTooltip=""><i class="pixel-icons icon-filter-new"></i></li>
+          <li class="reload" [class.active]="reload == true" (click)="onReload()" matTooltip="Refresh"><i class="pixel-icons icon-reload"></i></li>
+        </ul>
+      </div>
+    </div>
+    <mat-menu #menuTest="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="after" class="more-actions">
+      <button mat-menu-item *ngFor="let tab of sortList" [class.active]="tab.value === sort" (click)="onSort(tab.value)">{{tab.label}}</button>
+    </mat-menu>
+  </div>
+  <app-search class="p-l-r-16 msg-search" style="margin-bottom:6px;" (onSearch)="onSearch($event)"></app-search>
+  <ng-container >
+    <div class="align-items-center d-flex w-100 justify-content-between" style="padding: 6px 16px;border-top: 1px solid #E7E7EA;">
+      <div><pi-form-field label="Select All" style="margin-top:0;">
+          <input type="checkbox" pi-input  [(ngModel)]="selectAll" (ngModelChange)="onSelectAll()"/>
+      </pi-form-field></div>
+      <div>
+        <span *ngIf="selectedThreads?.length">{{selectedThreads?.length}} items selected</span>
+      </div>
+    </div>
+  </ng-container>
+</div>
+<div class="messages-list-left" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()"
+  [scrollWindow]="false">
+  <div class="list" *ngIf="!noItems && !state.loader">
+    <!-- <div class="new-messages">5 New Messages <i class="pixel-icons icon-down-arrow"></i> </div> -->
+    <ng-container *ngIf="this.selectedTab.type=='notification'">
+      <div class="item" *ngFor="let item of list" [class.active]="item === selectedListItem" (click)="selectListItem(item)">
+        <div class="item-left">
+          <!-- more-threads -->
+          <pi-avatar size="md" [user]="item.user_info" appearance="circle"></pi-avatar>
+          <!-- <div class="avator img-2"></div>
+        <div class="avator img-2"></div>
+        <div class="avator img-2"></div> -->
+        </div>
+        <div class="item-right">
+          <div class="info">
+            <div class="subject" [innerHtml]="item.subject" [class.bold]="!item.read"></div>
+            <div class="time">{{item.thread_created_date | date:'MMM dd'}}</div>
+            <!-- | date:'shortTime' -->
+          </div>
+          <div class="sub-info">
+            <div class="sub-title" [innerHTML]="item.thread_created"></div>
+            <div class="icons-sec">
+              <div class="icons " style="height: 14px;">
+                <span *ngIf="item.is_flag">
+                  <i class="pixel-icons icon-flag"></i>
+                </span>
+                <span class="unread active" *ngIf="!item.read"></span>
+              </div>
+              <!-- <div class="count">
+                <span class="unread" *ngIf="item.unread_count">{{item.unread_count}}</span>
+                <span class="total" *ngIf="item.thread_count">{{item.thread_count}}</span>
+              </div> -->
+            </div>
+
+          </div>
+          <div class="title" [innerHTML]="item.jobs_no"></div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="this.selectedTab.type=='notifications_old'">
+      <div class="item" *ngFor="let item of list" [class.active]="item === selectedListItem" (click)="selectListItem(item)">
+        <div class="item-left">
+          <pi-avatar size="md" [user]="item.user_info" appearance="circle"></pi-avatar>
+        </div>
+        <div class="item-right">
+          <div class="info">
+            <div class="subject" [innerHtml]="item.sub" [class.bold]="!item.read"></div>
+            <div class="time">{{item.when | date:'MMM dd'}}</div>
+            <!-- | date:'shortTime' -->
+          </div>
+          <div class="sub-info">
+            <div class="sub-title" [innerHTML]="item.from"></div>
+            <div class="icons-sec">
+              <div class="icons " style="height: 14px;">
+                <span *ngIf="item.is_flag">
+                  <i class="pixel-icons icon-flag"></i>
+                </span>
+                <span class="unread active" *ngIf="item.unread"></span>
+              </div>
+              <!-- <div class="count">
+                <span class="unread" *ngIf="item.unread_count">{{item.unread_count}}</span>
+                <span class="total" *ngIf="item.thread_count">{{item.thread_count}}</span>
+              </div> -->
+            </div>
+
+          </div>
+          <div class="title" [innerHTML]="item.job_no"></div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="this.selectedTab.type!='notification' && this.selectedTab.type!='notifications_old'">
+      <div class="item" *ngFor="let item of list" [class.active]="item === selectedListItem" (click)="selectListItem(item)">
+        <div class="" style="width: 24px;height: 50px; position: relative; z-index: 2;" (click)="$event.stopPropagation()" *ngIf="this.selectedTab.type!='archive'">
+          <pi-form-field label=" ">
+            <input pi-input type="checkbox" [ngModel]="item.selected" (ngModelChange)="onSelectThread($event,item)"/>
+          </pi-form-field>
+        </div>
+        <div class="item-left group-message-for-{{item.users.length}}" [class.group-message-for-more]="item.users.length > 4" >          
+          <!-- more-threads -->
+          <div class="avator" *ngFor="let user of item.users | slice:0:(item.users.length>4?3:4)">
+            <pi-avatar style="width: 100%;height: 100%; color: #859099;  background-color: #dde2e8;" size="md" [user]="user"
+              appearance="circle"></pi-avatar>
+          </div>
+          <div class="avator more" *ngIf="item.users.length > 4">
+            <span>+{{item.users.length - 3}}</span>
+          </div>
+          <!-- <div class="avator img-1">
+            <pi-avatar size="md"  appearance="circle"></pi-avatar>
+        </div>
+        <div class="avator img-2">
+            <pi-avatar size="md"  appearance="circle"></pi-avatar>
+        </div>
+        <div class="avator img-3"></div> -->
+        </div>
+        <div class="item-right">
+          <div class="info">
+            <div class="subject" [innerHTML]="item.users.length ? (item.users[item.users.length - 1].firstName + ' ' + item.users[item.users.length - 1].lastName) : item.tag"
+              [class.bold]="item.unread_count!=0"></div>
+            <div class="time">{{item.thread_created_date | date:'MMM dd'}}</div>
+          </div>
+          <div class="sub-info">
+
+            <div class="title" [innerHtml]="item.jobs_no"></div>
+            <div class="icons-sec">
+              <div class="icons " style="height: 14px;">
+                <span *ngIf="item.is_flag">
+                  <i class="pixel-icons icon-flag"></i>
+                </span>
+                <span class="unread active" *ngIf="item.unread_count!=0"></span>
+              </div>
+              <div class="count">
+                <span class="unread" *ngIf="item.unread_count">{{item.unread_count}}</span>
+                <span class="total" *ngIf="item.thread_count">{{item.thread_count}}</span>
+              </div>
+            </div>
+
+          </div>
+          <div class="message" [innerHTML]="item.subject"></div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+<div class="spinner-view" *ngIf="state.loader">
+  <div class="empty-screen">
+    <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>				
+  </div>
+</div>
+<!-- <mat-spinner diameter="24" class="md" *ngIf="state.loader"></mat-spinner> -->
+
+<div class="no_items" *ngIf="noItems && !state.loader && selectedTab.type!='notification'">No Messages found</div>
+<div class="no_items" *ngIf="noItems && !state.loader && selectedTab.type=='notification'">No Notifications found</div>

@@ -1,0 +1,204 @@
+@import "../../../assets/styles/mixins";
+::ng-deep .details-wrapper {
+    .right-section {
+        position: relative;
+        mat-spinner.content-loader {
+            position: absolute !important;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .right-header {
+            .info {
+                display: flex !important;
+                flex-wrap: wrap;
+                h2 {
+                    flex: 1;
+                    word-break: initial;
+                }
+                .search {
+                    padding: 0;
+                    width: 100%;
+                    border-bottom: none;
+                    margin-left: auto;
+                    @media screen and (min-width: 960px) {
+                        width: auto;
+                    }
+                }
+            }
+        }
+        .form-container {
+            max-width: 490px;
+            margin-bottom: 25px;
+            .num-field {
+                display: flex;
+                align-items: baseline;
+                flex-wrap: wrap;
+                label {
+                    line-height: 1.4;
+                }
+                input {
+                    max-width: 50px;
+                    margin: 0 10px;
+                    text-align: right;
+                }
+            }
+        }
+        .grid-ftr.footer {
+            padding: 24px 16px;
+        }
+    }
+}
+
+::ng-deep .pi-form-field .pi-field .pi-select-input.multi {
+    .selected-list {
+        .opt {
+            >pi-icon {
+                .icon-close {
+                    height: 10px;
+                    width: 10px;
+                    cursor: pointer;
+                    margin-top: 2px;
+                    line-height: 10px !important;
+                    font-size: 10px !important;
+                }
+                &:hover {
+                    background-color: transparent !important;
+                }
+            }
+            &:hover {
+                background-color: #c7c9cc !important;
+            }
+        }
+    }
+}
+
+::ng-deep ag-grid-angular.ag-theme-balham {
+    flex: 1;
+    width: 100%;
+    @include regularFont;
+    font-size: 13px;
+    .ag-side-buttons,
+    .ag-group-expanded,
+    .ag-group-contracted,
+    .ag-group-child-count {
+        display: none;
+    }
+    .ag-ltr .ag-row-group-leaf-indent {
+        margin-left: 0;
+    }
+    .ag-root {
+        border: none;
+    }
+    .ag-cell {
+        line-height: 38px;
+        color: rgba(23, 43, 77, 0.8);
+    }
+    .ag-cell-focus {
+        border-color: transparent !important;
+    }
+    .ag-row {
+        border-bottom-color: #e5e5eb;
+    }
+    .ag-header,
+    .ag-row-odd {
+        background-color: transparent;
+    }
+    .ag-row-hover,
+    .ag-row-selected {
+        background-color: #eceef7;
+    }
+    .ag-header-cell-text {
+        font-weight: 500;
+        font-size: 12px;
+    }
+    .ag-tool-panel {
+        border-color: transparent;
+    }
+    .ag-ltr .ag-cell-last-left-pinned,
+    .ag-pinned-left-header {
+        border-right: 1px solid transparent;
+    }
+    .ag-ltr .ag-cell-first-right-pinned,
+    .ag-pinned-right-header {
+        border-left: 1px solid transparent;
+    }
+    /*.ag-header-cell-menu-button{display: none;}
+    .ag-header-cell-label{width: calc(100% - 0px);}
+    .ag-header-cell::after, .ag-header-group-cell::after{border-right: 1px solid transparent;}*/
+    .ag-side-bar {
+        border-right: 1px solid transparent;
+    }
+    .ag-status-bar {
+        border-bottom: 1px solid transparent;
+    }
+    ::ng-deep .edit-opts {
+        color: rgba(23, 43, 77, 0.6);
+        i {
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+            &:hover {
+                color: rgba(23, 43, 77, 0.8);
+            }
+        }
+    }
+}
+
+.right-content{
+    .inline-form.custom-format{
+        ::ng-deep .pi-form-field{margin-right: 10px;}
+        ::ng-deep .pi-form-field.pi-chip{
+            > label{display: none}
+        }
+        .custom-row{display: flex;align-items: center;}
+        .actions{margin-top: 24px;
+            button{min-width: 12px;
+                .pixel-icons{font-size: 12px;width: 12px;height: 12px;}
+            }
+            button:not(:first-child){margin-left: 10px;}
+        }
+    }
+}
+
+::ng-deep .mat-chip-list .mat-chip-list-wrapper{
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+    margin: 0;
+    input.mat-input-element{
+        border: none;
+        padding: 6px 0;
+        &:focus{
+            outline: none;
+        }
+    }
+    .mat-chip{
+        background-color: #dfe1e6;
+        border-radius: 2px;
+        margin: 6px;
+        padding: 2px 24px 2px 6px;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        position: relative;
+        i{
+            height: 10px;
+            width: 10px;
+            cursor: pointer;
+            margin-top: 1px;
+            line-height: 10px !important;
+            font-size: 10px !important;
+            position: absolute;
+            right: 6px;
+            color: #172b4d;
+            opacity: 1;
+            &:hover{opacity: 1;}
+        }
+        &:hover{
+            background-color: #c7c9cc;
+        }
+    }
+}

@@ -1,0 +1,310 @@
+<div class="d-flex justify-content-between select-notifications">
+    <div class="multy-select-check">
+        <pi-form-field label="Select All">
+            <input pi-input type="checkbox" [ngModel]="selectAll" (ngModelChange)="onSelectAll($event)" />
+        </pi-form-field>
+
+        <div class="icons-container" *ngIf="selectedIds?.length">
+                <div class="animate-icon-wrap animate-icon-effect-1 animate-icon-effect-1a" matTooltip="More">
+                        <a class="animate-icon" [matMenuTriggerFor]="noteActions"><i class="pixel-icons  icon-more-horizontal"></i></a> 
+                </div> 
+                <mat-menu #noteActions="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before"
+                class="more-actions project-option-actions">
+                <ng-container *ngFor="let each of actionList[from]">
+                        <button mat-menu-item (click)="threadAction(each.key)" [matTooltip]="each.label"><span>{{each.label}}</span></button>
+                </ng-container>
+               
+            </mat-menu> 
+            </div>
+    </div>
+    <!-- <div *ngIf="selectedIds?.length">
+        <ng-container *ngFor="let each of actionList[from]">
+            <a (click)="threadAction(each.key)" [matTooltip]="each.label"><i class="pixel-icons {{each.icon}}"></i></a>
+        </ng-container>
+    </div> -->
+   
+</div>
+<ng-template #notificationTemplate let-notificationsList="notifications">
+    <div class="notification-card" *ngFor="let notify of notificationsList">
+        <!-- CheckBox Template --> 
+                <div  *ngIf="from != 'jobstories'" class="select-check-box" style="" (click)="$event.stopPropagation()">
+                    <pi-form-field label=" ">
+                        <input pi-input type="checkbox" [(ngModel)]="notify.selected" (ngModelChange)="onSelectThread($event,notify)" />
+                    </pi-form-field>
+                </div>
+            <!--code for Project Create Code-->
+            <div class="notification-item" *ngIf="(notify.sub_category_new_id==1 || notify.sub_category_new_id==2) && notify.category_new_id==1">
+                <span class="unread active" *ngIf="notify?.read == false"><i></i></span>
+                <span class="" *ngIf="notify?.is_flag">
+                    <i class="pixel-icons icon-flag"></i>
+                </span>
+                <div class="notification-client">
+                    <pi-icon name="icon-pn-projects-1" size="md" background="#fe6562" color="#fff"></pi-icon>
+                </div>
+                <div class="notification-detail">
+                    <div class="job-info">
+                        <div class="user text-ellipsis">{{notify.jobs_no}}</div>
+                    </div>
+                    <div class="info">
+                        <div class="plain">{{notify.subject}}</div>
+                        <div class="time" matTooltip={{notify.thread_created_date}}>{{notify.thread_created_date | fromNow}}</div>
+                    </div>
+                    <div class="action-by">
+                        <pi-avatar size="xs" [user]="notify.user_info" appearance="circle"></pi-avatar>
+                        <div class="user text-ellipsis" >{{notify.thread_created}}</div>
+                    </div>
+                    <ul>
+                    <li *ngFor="let tags of notify.body_tags">
+                        <a (click)="closeNotifyWindow()" [attr.href]="tags.redirecUrl">
+                            <div class="notification-info">
+                                <div class="notification-data-name">
+                                    <i class="pixel-icons icon-pn-projects-1"></i><span>{{notify.jobs_no}}</span>                                    
+                                </div>
+                                <div class="notification-data-info">
+                                    <span class="redirec_icon">
+                                            <i class="pixel-icons icon-arrow-right"></i>
+                                    </span>                                       
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+                </div>
+            </div>
+            <!--code for Tasks Code-->
+            <div class="notification-item" *ngIf="notify.category_new_id==2">
+                <span class="unread active" *ngIf="notify?.read == false"><i></i></span>
+                <span class="" *ngIf="notify?.is_flag"></span>
+                <div class="notification-client">
+                    <pi-icon name="icon-task-fill" size="md" background="#1876bb" color="#fff"></pi-icon>
+                </div>
+                <div class="notification-detail">
+                    <div class="job-info">
+                        <div class="user text-ellipsis">{{notify.jobs_no}}</div>
+                    </div>
+                    <div class="info">
+                        <div class="plain">{{notify.subject}}</div>
+                        <div class="time" matTooltip={{notify.thread_created_date}}>{{notify.thread_created_date | fromNow}}</div>
+                    </div>
+                    <div class="action-by">
+                        <pi-avatar size="xs" [user]="notify.user_info" appearance="circle"></pi-avatar>
+                        <div class="user text-ellipsis">{{notify.thread_created}}</div>
+                    </div>
+                    <div class="task-activity-list">
+                    <div *ngFor="let tags of notify.body_tags">
+                        
+                            <div class="task-info" *ngIf="notify.sub_category_new_id==7 || notify.sub_category_new_id==8">
+                                <div class="task-details">
+                                    <label style="color: #8894a3;">Task Name</label>
+                                    <a (click)="closeNotifyWindow()" [attr.href]="tags.redirecUrl" class="task-data" style="display: block;padding-right: 20px;font-size: 14px;color: #344b63;margin-top: 2px;">{{tags.taskName}}</a>
+                                </div>
+                                <div class="task-details">
+                                    <label style="color: #8894a3;">Due Date</label>
+                                    <a (click)="closeNotifyWindow()" [attr.href]="tags.redirecUrl" class="task-data" style="display: block;padding-right: 20px;font-size: 14px;color: #344b63; margin-top: 2px;">{{tags.dueDate}}</a>
+                                </div>
+                                <div class="task-details" *ngIf="notify.sub_category_new_id!=7" style="margin-top: 16px;">
+                                    <label style="color: #8894a3;">Assignee</label>
+                                    <a (click)="closeNotifyWindow()" [attr.href]="tags.redirecUrl" class="task-data" class="task-data">
+                                        <div class="action-by">
+                                            <pi-avatar size="sm" appearance="circle" *ngIf="tags.assignee_name" style="width: 18px; height: 18px; font-size: 12px; line-height: 12px">
+                                            </pi-avatar>
+                                            <div class="user text-ellipsis" style="color: #344b63;">{{tags.assignee_name}}</div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+                        <div class="task-info" *ngIf="notify.sub_category_new_id!=7 && notify.sub_category_new_id!=8">
+                                <a (click)="closeNotifyWindow()" [attr.href]="tags.redirecUrl" class="task-alert">
+                                <i class="pixel-icons icon-task-fill"></i><span>{{tags.taskName}}</span>                                
+                            </a>
+                        </div>
+                    </div>
+                </div></div>
+            </div>
+            <!--code for Tasks Code-->
+            <div class="notification-item" *ngIf="notify.sub_category_new_id!=1 && notify.sub_category_new_id!=2 && notify.category_new_id==1">
+                <span class="unread active" *ngIf="notify?.read == false"><i></i></span>
+                <span class="" *ngIf="notify?.is_flag">
+                    <i class="pixel-icons icon-flag"></i>
+                </span>
+                <div class="notification-client">
+                    <pi-icon name="icon-products" size="md" background="#4e79df" color="#fff" *ngIf="notify.sub_category_new_id==3 || notify.sub_category_new_id !=6"></pi-icon>
+                    <pi-icon name="icon-orders" size="md" background="#dc4f66" color="#fff" *ngIf="notify.sub_category_new_id==6"></pi-icon>
+                    
+                </div>
+                <div class="notification-detail">
+                    <div class="job-info">
+                        <div class="user text-ellipsis">{{notify.jobs_no}}</div>
+                    </div>
+                    <div class="info">
+                        <div class="plain">{{notify.subject}}</div>
+                        <div class="time" matTooltip={{notify.thread_created_date}}>{{notify.thread_created_date | fromNow}}</div>
+                    </div>
+                    <div class="action-by">
+                        <pi-avatar size="xs" [user]="notify.user_info" appearance="circle"></pi-avatar>
+                        <div class="user text-ellipsis">{{notify.thread_created}}</div>
+                    </div>
+                    <ul style="display: block;">
+                        <li>
+                            <a>
+                                <div class="notification-info">
+                                    <div class="notification-data-name"><i class="pixel-icons icon-products"></i><span style="padding-left: 5px;">{{notify.parent_product_name}}</span></div>
+                                    <div class="notification-data-info">
+                                        <!-- <span class="redirec_icon"><i class="pixel-icons icon-arrow-right"></i></span> -->
+                                    </div>
+                                </div>
+                            </a> 
+                        </li>
+                        <li *ngFor="let tags of notify.body_tags">
+                            <a style="padding-left: 29px;" (click)="closeNotifyWindow()" [attr.href]="tags.redirecUrl">
+                                <div class="notification-info">
+                                    <div class="notification-data-name"><i class="pixel-icons icon-orders"></i> <span style="padding-left: 5px;">{{tags.jobServiceName}}</span></div>
+                                    <div class="notification-data-info">
+                                        <span class="redirec_icon"><i class="pixel-icons icon-arrow-right"></i></span>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        </ul>
+                    </div>
+            </div>
+            <!--code for Estimates Code-->
+            <div class="notification-item {{notify.sub_category_new_id==15?'un-approve':''}}"  *ngIf="notify.category_new_id==4">
+                <span class="unread active" *ngIf="notify?.read == false"><i></i></span>
+                <span class="" *ngIf="notify?.is_flag"> 
+                    <i class="pixel-icons icon-flag"></i>
+                </span>
+                <div class="notification-client">
+                    <pi-icon name="icon-pn-estimates" size="md" background="#72be5d" color="#fff"></pi-icon>
+                </div>
+                <div class="notification-detail">
+                    <div class="job-info">
+                        <div class="user text-ellipsis">{{notify.jobs_no}}</div>
+                    </div>
+                    <div class="info">
+                        <div class="plain">{{notify.subject}}</div>
+                        <div class="time" matTooltip={{notify.thread_created_date}}>{{notify.thread_created_date | fromNow}}</div>
+                    </div>
+                    <div class="action-by">
+                        <pi-avatar size="xs" [user]="notify.user_info" appearance="circle"></pi-avatar>
+                        <div class="user text-ellipsis">{{notify.thread_created}}</div>
+                    </div>
+                    <ul>
+                            <li *ngFor="let tags of notify.body_tags">
+                        <a (click)="closeNotifyWindow()" [attr.href]="tags.redirecUrl">
+                            <div class="notification-info">
+                                <div class="notification-data-name" >
+                                    <i class="pixel-icons icon-pn-estimates"></i><span>{{tags.estimateNo}}</span>                                    
+                                </div>
+                                
+                               <div class="notification-data-info" >
+                                     <span *ngIf="notify.sub_category_new_id!=11 && notify.sub_category_new_id!=12  && notify.sub_category_new_id!=13">${{tags?.total_amount}}</span> <!--*ngIf="notify.sub_category_new_id!=11" -->
+                                    <span class="redirec_icon" (click)="closeNotifyWindow()" [attr.href]="tags.redirecUrl"><i class="pixel-icons icon-arrow-right"></i></span>
+                                </div>
+                            </div>
+                        </a>
+                    </li></ul>
+
+                </div>
+            </div>
+
+            <!--code for Bid Code-->
+            <div class="notification-item" *ngIf="notify.category_new_id==3">
+                <span class="unread active" *ngIf="notify?.read == false"><i></i></span>
+                <span class="" *ngIf="notify?.is_flag">
+                    <i class="pixel-icons icon-flag"></i>
+                </span>
+                <div class="notification-client">
+                    <pi-icon name="icon-post-bids" size="md" background="#ff9800" color="#fff"></pi-icon>
+                </div>
+                <div class="notification-detail">
+                    <div class="job-info">
+                        <div class="user text-ellipsis">{{notify.jobs_no}}</div>
+                    </div>
+                    <div class="info">
+                        <div class="plain">{{notify.subject}}</div>
+                        <div class="time" matTooltip={{notify.thread_created_date}}>{{notify.thread_created_date | fromNow}}</div>
+                    </div>
+                    <div class="action-by">
+                        <pi-avatar size="xs" [user]="notify.user_info" appearance="circle"></pi-avatar>
+                        <div class="user text-ellipsis">{{notify.thread_created}}</div>
+                    </div>
+                    <ul>
+                        <li *ngFor="let tags of notify.body_tags">
+                            <a (click)="closeNotifyWindow()" [attr.href]="tags.redirecUrl">
+                                <div class="notification-info">
+                                    <div class="notification-data-name">
+                                            <i class="pixel-icons icon-vendor-shape"></i><span style="padding-left: 5px;">{{tags.vendors_name}}</span>                                     
+                                    </div>
+                                    
+                                    <div class="notification-data-info" >
+                                        <!-- <span>product service</span> -->
+                                        <span class="redirec_icon"><i class="pixel-icons icon-arrow-right"></i></span>
+                                    </div>
+                                </div>                               
+                            </a>
+                        </li>
+                    </ul>
+                   
+
+                </div>
+            </div>
+
+            <!--code for PO Code-->
+            <div class="notification-item" *ngIf="notify.category_new_id==5">
+                <span class="unread active" *ngIf="notify?.read == false"><i></i></span>
+                <span class="" *ngIf="notify?.is_flag">
+                    <i class="pixel-icons icon-flag"></i>
+                </span>
+                <div class="notification-client">
+                    <pi-icon name="icon-pn-purchase-orders" size="md" background="#e6753d" color="#fff"></pi-icon>
+                </div>
+                <div class="notification-detail">
+                    <div class="job-info">
+                        <div class="user text-ellipsis">{{notify.jobs_no}}</div>
+                    </div>
+                    <div class="info">
+                        <div class="plain">{{notify.subject}}</div>
+                        <div class="time" matTooltip={{notify.thread_created_date}}>{{notify.thread_created_date | fromNow}}</div>
+                    </div>
+                    <div class="action-by">
+                        <pi-avatar size="xs" [user]="notify.user_info" appearance="circle"></pi-avatar>
+                        <div class="user text-ellipsis">{{notify.thread_created}}</div>
+                    </div>
+                    <ul>
+                    <li *ngFor="let tags of notify.body_tags">
+                        <a (click)="closeNotifyWindow()" [attr.href]="tags.redirecUrl">
+                            <div class="notification-info">
+                                <div class="notification-data-name">
+                                    <i class="pixel-icons icon-pn-purchase-orders"></i><span style="padding-left: 5px;">{{tags.poNo}}</span>                                    
+                                </div>
+                                <div class="notification-data-info">
+                                   <span><span>$</span>{{tags.total_amount?tags.total_amount:0}}</span>
+                                    <span class="redirec_icon"><i class="pixel-icons icon-arrow-right"></i></span>
+                                   
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+
+                </div>
+            </div>
+    </div>
+</ng-template>
+
+
+<div class="notifications-wrapper-ui" style="display: flex;flex-direction: column;height: calc(100vh - 156px);overflow: auto;">
+    <div class="notifications-wrapper" *ngIf="from=='notification'">
+        <ng-container *ngTemplateOutlet="notificationTemplate;context:{notifications: notifications}">
+        </ng-container>
+    </div>
+    <div class="notifications-wrapper" *ngIf="from=='jobstories'">
+        <div class="notifications-list-wrapper" *ngFor="let notification of notifications">
+            <span class="notification-date">{{notification.date}}</span>
+            <ng-container *ngTemplateOutlet="notificationTemplate;context:{notifications: notification.stories}">
+            </ng-container>
+        </div>
+    </div>
+</div>

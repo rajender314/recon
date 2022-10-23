@@ -1,0 +1,29 @@
+<div class="primary-layout">
+    <pi-master-detail-view class="details-wrapper">
+
+        <pi-detail-view class="pi-detail-view">
+          <section class="primary-layout-detail">
+            <header>
+              <div class="w-100 d-flex align-items-center justify-content-between">
+                <aside class="left-header d-flex flex-width"><h1>Perferences</h1></aside>
+              </div>
+            </header>
+            <div class="primary-layout-detail-body flex-column padding-20">
+              <div class="primary-max-screen-width">
+                  <ng-container *ngIf="!state.detailsLoader">
+                      <app-perferences [id]="state.userId" [preferences]="state.preferences">
+                      </app-perferences>
+                    </ng-container>
+              </div>
+            </div>
+          </section>
+          
+      
+      
+       
+      
+          <mat-spinner diameter="45" class="md" *ngIf="state.detailsLoader"></mat-spinner>
+      
+        </pi-detail-view>
+      </pi-master-detail-view>
+</div>

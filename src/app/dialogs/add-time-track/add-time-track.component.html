@@ -1,0 +1,104 @@
+<div>
+	<div class="field-wrapper" [formGroup]="trackTimeForm">
+		<ng-container *ngIf="!config.isProject">
+			<div class="fields fx-100 m-t-15">
+				<span class="field-name">Project</span>
+				<div class="edit-field-wrapper">
+					<pi-select #piSelectInput [label]=" " formControlName="jobs_id" [disabled]="config.disableProject" [options]="state.dropdowns.jobs" nameKey="name"
+						[multi]="false"></pi-select>
+					<div class="msgs">
+						<div class="pi-error"
+							*ngIf="trackTimeForm.controls['jobs_id'].hasError('required') && state.submitted">
+							Please Select Project
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="fields fx-100 m-t-15">
+				<span class="field-name">Task</span>
+				<div class="edit-field-wrapper">
+					<pi-select #piSelectInput [label]=" " formControlName="jobs_tasks_id" nameKey="task_name"
+						[options]="state.dropdowns.tasks" [multi]="false" [disabled]="config.disableTaskType"></pi-select>
+					<div class="msgs">
+						<div class="pi-error"
+							*ngIf="trackTimeForm.controls['jobs_tasks_id'].hasError('required') && state.submitted">
+							Please Select Task
+						</div>
+					</div>
+				</div>
+			</div>
+		</ng-container>
+
+		<div class="fields fx-100 m-t-15">
+			<span class="field-name">Date</span>
+			<div class="edit-field-wrapper">
+				<pi-form-field [label]=" " class="date-field">
+					<input [class.is-focus]="date.opened" pi-input matInput [max]="state.maxDate" [matDatepicker]="date"
+						(focus)="date.open()" formControlName="date" placeholder="Choose a date" readonly>
+					<mat-datepicker-toggle matSuffix [for]="date">
+						<i class="pixel-icons icon-calendar" matDatepickerToggleIcon></i>
+					</mat-datepicker-toggle>
+					<mat-datepicker #date></mat-datepicker>
+					<div class="msgs">
+						<div class="pi-error" *ngIf="trackTimeForm.controls['date'].hasError('required') && state.submitted">
+							Please Select Date
+						</div>
+					</div>
+				</pi-form-field>
+			</div>
+		</div>
+		<div class="fields fx-100 m-t-15">
+			<ng-container *ngIf="!config.isProject && !config.disableProject">
+				<ng5-slider formControlName="range" [options]="options"></ng5-slider>
+			</ng-container>
+			<ng-container *ngIf="(config.isProject || config.disableProject) && state.showRange">
+				<ng5-slider formControlName="range" [options]="options"></ng5-slider>
+			</ng-container>
+			<pi-form-field>
+				<input pi-input type="text" formControlName="track_time" readonly>
+			</pi-form-field>
+		</div>
+
+		<div class="fields fx-100 m-t-15">
+			<span class="field-name">Description</span>
+			<div class="edit-field-wrapper">
+				<pi-form-field [label]=" ">
+					<textarea pi-input formControlName="description"></textarea>
+				</pi-form-field>
+			</div>
+		</div>
+
+
+	</div>
+
+	<!-- Products -->
+	<div class="panel-container" *ngIf="!config.isProject">
+		<virtual-scroller style="height: 100%;" [scrollAnimationTime]="1000"
+			[useMarginInsteadOfTranslate]="true" [bufferAmount]="2" #scroll [items]="state.dropdowns.products"
+			[enableUnequalChildrenSizes]="true">
+			<div class="panel-item" *ngFor="let product of scroll.viewPortItems;trackBy:index; let i = index">
+				<div class="parent has-chk-box">
+					<pi-form-field label="<i class='pixel-icons icon-products'></i> {{product.name}}"
+						class="selected-product">
+						<input type="checkbox" pi-input (change)="checkProduct(product)" [(ngModel)]="product.is_checked" />
+					</pi-form-field>
+				</div>
+
+				<ul *ngIf="product.services && product.services.length">
+					<li class="service has-chk-box" *ngFor="let service of product.services">
+						<pi-form-field label="<i class='pixel-icons icon-orders'></i> {{service.name}}"
+							class="selected-service">
+							<input type="checkbox" (change)="checkService(service, product)" pi-input
+								[(ngModel)]="service.is_checked" />
+						</pi-form-field>
+					</li>
+				</ul>
+			</div>
+		</virtual-scroller>
+	</div>
+</div>
+
+<div class="footer m-t-15 m-b-15">
+	<button pi-button (click)="resetForm()" class="m-r-15">Cancel</button>
+	<button pi-button color="primary" [disabled]="trackTimeForm?.pristine" (click)="addTime(trackTimeForm)">Save</button>
+</div>

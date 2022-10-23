@@ -1,0 +1,47 @@
+<div class="project-content">
+	<div class="centralise">
+		<div class="sticky-section">
+			<div class="header">
+				<a routerLink="/projects/all"><i class="pixel-icons icon-arrow"></i></a>
+				<h3>Add New Project</h3>
+			</div>
+
+			<!-- <div class="progress-indicator">
+				<div class="indicator-line"></div>
+				<ul class="progressbar">
+					<li class="first active current"  (click)="onChangeStepper('project')" [class.active]="state.activeStepper == 'project'">
+						<div class="sonar-emitter">
+							<div class="sonar-wave"></div><div class="sonar-wave-2"></div>
+						</div>
+						Project Info
+					</li>
+					<li class="second" (click)="onChangeStepper('product')" [class.active]="state.activeStepper == 'product'">
+						<div class="sonar-emitter">
+							<div class="sonar-wave"></div><div class="sonar-wave-2"></div>
+						</div>
+						Add Products & Services
+					</li>
+					<!-- <li class="third" (click)="onChangeStepper('spec')">
+						<div class="sonar-emitter">
+							<div class="sonar-wave"></div><div class="sonar-wave-2"></div>
+						</div>
+						Specs
+					</li> -->
+					<!-- <li class="fourth" (click)="onChangeStepper('review')" [class.active]="state.activeStepper == 'review'">
+						<div class="sonar-emitter">
+							<div class="sonar-wave"></div><div class="sonar-wave-2"></div>
+						</div>
+						Review & Submit
+					</li>
+				</ul>
+				
+			</div> -->
+			<hr>
+		</div>
+
+		<div class="content-wrapper">
+			<router-outlet></router-outlet>
+		</div>
+
+	</div>
+</div>

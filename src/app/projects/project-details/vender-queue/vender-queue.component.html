@@ -1,0 +1,67 @@
+<section class="primary-layout-detail" *ngIf="!state.loader && state.vendorQueue.length">
+	<!-- [ngClass]="{'hide-ag':state.loader || !state.vendorQueue.length}"> -->
+	<header>
+		<div class="w-100 d-flex justify-content-center flex-column">
+			<app-breadcrumb [list]="state.breadcrumbs"></app-breadcrumb>
+			<div class="w-100 d-flex align-items-center justify-content-between ">
+					<aside class="left-header d-flex flex-width">
+						<!-- <i class="pixel-icons icon-arrow" (click)="changeMasterView()"></i> -->
+						
+						<!-- <i class="pixel-icons icon-arrow" (click)="changeMasterView()"></i> -->
+						<h1 [innerHtml]="state.title"></h1>
+					</aside>
+					<aside>
+						<div class="d-flex">
+							<div class="multiple-switch all-select">
+								<pi-form-field [label]="view.label" *ngFor="let view of state.gridViewList"
+									[class.active]="view.value == state.gridView">
+									<input type="radio" pi-input name="nav_tab" [(ngModel)]="state.gridView"
+										[value]="view.value" (change)="changeGrid(state.gridView)" />
+								</pi-form-field>
+							</div>
+							<app-search (onSearch)="onSearch($event)"></app-search>
+						</div>
+					</aside>
+				</div>
+		</div>		
+	</header>
+	<div class="primary-layout-detail-body flex-column padding-20">
+		<div class="global-grid  bid-grid vendor-queue-grid with-out-margin actions-grid with-check-boxs ag-no-striped ag-full-width-grid">
+			<ag-grid-angular [ngStyle]="{'visibility': isVisible ? 'visible' : 'hidden'}" style="height: calc(100vh - 120px);"
+				class="ag-theme-balham" [gridOptions]="gridOptions"></ag-grid-angular>
+		</div>
+	</div>
+	<div class="animated-footer padding-20" *ngIf="APP.permissions.job_access.vendor_queue=='edit'" style="border-top: 2px #ececec solid;">
+		<div class="justify-content-between d-flex w-100 align-items-center ">
+			<div class="vendor-count">Selected: <span [innerHtml]="gridApi?.getSelectedRows().length || 0"></span></div>
+			<div class="d-flex">
+				<button class="m-l-15" pi-button [disabled]="!gridApi?.getSelectedRows()?.length"
+					(click)="deleteBids()">Delete</button>
+				<button class="m-l-15" pi-button [disabled]="!gridApi?.getSelectedRows()?.length"
+					(click)="skipExportRequestBids()">Skip Export</button>
+				<button class="m-l-15" pi-button color="primary" (click)="requestBids()"
+					*ngIf="APP.permissions.job_access.request_bids_from_vendors=='yes'"
+					[disabled]="!gridApi?.getSelectedRows()?.length">Request
+					Bids</button>
+			</div>
+		</div>
+
+	</div>
+</section>
+
+<div class="no-data-screen" *ngIf="!state.loader && !state.vendorQueue.length">
+	<div class="empty-screen">
+		<div class="icon-info-holder">
+			<div class="icon"><i class="pixel-icons icon-vendor-shape"></i></div>
+			<p class="alert-message">No Vendors in Queue</p>
+
+		</div>
+	</div>
+</div>
+
+<div class="spinner-view" *ngIf="state.loader || !isVisible ">
+	<div class="empty-screen">
+		<mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+	</div>
+</div>
+<!-- <app-ag-grid-placeloader ></app-ag-grid-placeloader> -->

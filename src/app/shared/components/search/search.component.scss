@@ -1,0 +1,44 @@
+::ng-deep.search{
+    display: flex;
+    flex-shrink: 0;
+    .pi-form-field{
+        margin: 0;
+        width: 100%;
+        > label{display: none;}
+        .pi-field {
+            /*pi-icon{bottom: 0;}*/
+            .icon-search, .icon-close-slim{
+                width: 16px;
+                height: 16px;
+                font-size: 16px !important;
+                line-height: 16px !important;
+            }
+            :nth-child(1){
+                bottom: 0;
+            }
+            :nth-child(3){
+                cursor: pointer;bottom: 0;
+                &:hover{
+                    color: #8b8f9a;
+                }
+            }
+            .ak-field-text{
+                padding: 5px 28px;
+            }
+        }
+    }
+    .mat-spinner{position: absolute;right: 8px;top: 7px;}
+    &.msg-search{
+        .pi-form-field .pi-field .ak-field-text{
+            background: #F5F6F8;
+            border: 1px solid #E6E8EB;
+            border-radius: 4px;
+            border-radius: 4px;
+        }
+        .pi-form-field .pi-field .icon-search{
+            color: #5C5F73;
+        }
+    }
+}
+
+

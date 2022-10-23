@@ -1,0 +1,126 @@
+<div class="primary-layout-detail job-notification-page" style="min-height: calc(100vh - 56px); "> 
+  <header class="" style="border-bottom: solid 2px #f0f0f4;">
+    <div class="w-100 d-flex align-items-center justify-content-between ">
+      <aside class="left-header d-flex flex-width">
+        <!-- <i class="pixel-icons icon-arrow" (click)="changeMasterView()"></i> -->
+        <pi-breadcrumb>
+          <ng-container *ngFor="let item of state.breadcrumbs">
+            <!-- <pi-breadcrumb-item *ngIf="item.type == 'link'" label="Projects" [routerLink]="item.route" ></pi-breadcrumb-item>-->
+            <pi-breadcrumb-item *ngIf="item.type != 'link'" [innerHtml]="item.label"></pi-breadcrumb-item>
+          </ng-container>
+        </pi-breadcrumb>
+        <h1 style="font-size:16px;">Project Activity</h1>
+      </aside>
+      <aside class="d-flex right-header flex-width justify-content-end">
+        <!-- <app-search></app-search> -->
+        <button pi-icon-button color="primary" *ngIf="isOldJobStories" (click)="oldactivity()">Project Old Activity</button>
+      </aside>
+    </div>
+  </header>
+  <div class="primary-layout-detail-body flex-column">
+    <section class="page-sub-header sticky-header">
+      <nav mat-tab-nav-bar [disableRipple]="true">
+        <div class="tab-group">
+          <div>
+            <a mat-tab-link class="h-34" (click)="jobStoriesChange(link.type,link.categery_id)" *ngFor="let link of state.jobStoriesTabs"
+              [active]="link.type==state.activeTab">
+              <i class="pixel-icons job-icons icon-{{link.icon}}" *ngIf="link.type != 0"></i> {{link.label}} </a>
+          </div>
+        </div>
+
+      </nav>
+    </section>
+    <!-- <mat-spinner diameter="45" class="md" *ngIf="isLoading;"></mat-spinner> --> 
+    <div class="p-0 full-notifications">
+      <ng-container *ngIf="state.activeTab == 6">
+        <mat-accordion>
+          <ng-container *ngFor="let each of jobStories">
+            <mat-expansion-panel>
+              <mat-expansion-panel-header collapsedHeight='40px' expandedHeight='40px'>
+                <mat-panel-title>File Import:{{each?.filename + ' (' + each?.sheetname + ')'}}<span  class="p-l-15" style="font-size: 14px;
+                  opacity: .5; display: flex; align-items: center;"><img style="  width: 20px; height: 20px; background: #9a9a9e; border-radius: 50%; border: none; overflow: hidden;
+                  outline: none; margin-right: 6px;" src={{each?.user_img}} /> <span>{{each?.user}}</span><span class="p-l-15">{{each?.time}}</span></span></mat-panel-title>
+                
+              </mat-expansion-panel-header>
+              <div class="mio-content">
+                <ng-container *ngIf="each?.products?.length">
+                  <div class="mio-header"><i class="pixel-icons job-icons icon-products"></i> <span>{{each?.products?.length}} New Products added</span></div>
+                  <div class="" style="margin-bottom:18px; padding-left: 10px;">
+                    <div class="mio-row" *ngFor="let product of each?.products">
+                      <!-- <i class="pixel-icons job-icons icon-products"></i> -->
+                      <i class="pixel-icons job-icons icon-products"></i>
+                      <span>{{product?.label}}</span>
+                    </div>
+                  </div>
+                  <div class="mio-header"><i class="pixel-icons job-icons icon-vendor-shape"></i> Vendor Costs updated for {{each?.products?.length}} Products in internal Estimates</div>
+                  <div  style="margin-bottom:18px; padding-left: 10px;" class="">
+                    <div class="mio-row" *ngFor="let product of each?.products">
+                      <!-- <i class="pixel-icons job-icons icon-products"></i> -->
+                      <i class="pixel-icons job-icons icon-vendor-shape"></i>
+                      <span>{{product?.label}}</span>
+                      <span class="p-l-15">{{product?.vendor}}</span>
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-container>
+                  <div class="mio-header"> <i class="pixel-icons job-icons icon-products"></i> Costs posted from Internal Estimates</div>
+                  <div class=""  style="margin-bottom:18px; padding-left: 10px;">
+                    <div class="mio-row">
+                      <i class="pixel-icons job-icons icon-products"></i>
+                      <span>Notify Vendors</span>
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="each?.pos?.length">
+                  <div class="mio-header"><i class="pixel-icons job-icons icon-pn-purchase-orders"></i> PO updated</div>
+                  <div class=""  style="margin-bottom:18px; padding-left: 10px;">
+                    <div class="mio-row" *ngFor="let pos of each?.pos">
+                      <!-- <i class="pixel-icons job-icons icon-products"></i> -->
+                      <i class="pixel-icons job-icons icon-pn-purchase-orders"></i>
+                      <span>{{pos?.label}}</span>
+                    </div>
+                  </div>
+                  <div class="mio-header"><i class="pixel-icons job-icons icon-pn-purchase-orders"></i> PO Approved</div>
+                  <div class=""  style="margin-bottom:18px; padding-left: 10px;">
+                    <div class="mio-row" *ngFor="let pos of each?.pos">
+                      <!-- <i class="pixel-icons job-icons icon-products"></i> -->
+                      <i class="pixel-icons job-icons icon-pn-purchase-orders"></i>
+                      <span>{{pos?.label}}</span>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </mat-expansion-panel>
+          </ng-container>
+        </mat-accordion>
+      </ng-container>
+      <ng-container *ngIf="state.activeTab != 6">
+        <div *ngIf="jobStories.length">
+          <app-notifications [notifications]="jobStories"  from="jobstories"></app-notifications>
+      </div>
+    <!-- <div *ngIf="jobStories.length">
+    <div class="job-stories-timeline" *ngFor="let storiesInfo of jobStories">
+        <div class="date">
+          <span>{{storiesInfo.date}}</span>
+        </div>
+        <div class="d-flex align-item-baseline m-t-20 w-100">
+        <div class="title d-flex align-items-center">
+          <img src="https://reconstaging.iviesystems.com/system/cache/logos/Default_logo.png">
+      </div> 
+        <ul class="m-0"> 
+          <li *ngFor="let stories of storiesInfo.stories">
+            <div class="d-flex align-items-start line">
+              <i class="pixel-icons icon-{{stories.class}}"></i>
+              <p class="m-0" [innerHTML]="stories.body"></p></div>
+            <div class="s-date"><span [innerHTML]="stories.created_date"></span></div>
+          </li> 
+        </ul>
+      </div> 
+      </div>
+      </div> -->
+        <div *ngIf="!jobStories.length">
+          <span class="no-stories">No Items Found...!</span>
+        </div>
+      </ng-container>
+    </div>
+  </div>

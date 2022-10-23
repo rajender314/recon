@@ -1,0 +1,86 @@
+<!-- <div class="mat-dialog-heading">
+    <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+    <button mat-icon-button mat-dialog-close tabindex="-1">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <mat-dialog-content>
+    <div class="section-top">
+        <div ng2FileDrop [ngClass]="{'file-over': hasDropZoneOver}" [uploader]="uploader" class="file-drop-zone" (fileOver)="fileOverBase($event)" (onFileDrop)="fileDrop($event)">
+            <input id="edit-org-logo" type="file" ng2FileSelect [uploader]="uploader" [hidden]="true"
+                multiple/>
+            <label for="edit-org-logo" class="browse-file">
+                <a>Browse</a>
+            </label>
+        </div>
+        <div class="info">
+          <ul class="instructions">
+            <li>* Valid file formats are jpg, jpeg, png, gif.</li>
+            <li>* Max file size allowed is 1Mb.</li>
+          </ul>
+          <ul class="invalid-error" *ngIf="uploadError">
+              <li>Invalid file format.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="section-middle">
+        <div class="images" *ngIf="data.image!=''">
+            <img [src]="data.image" alt="Logo">
+        </div>
+    </div>
+    <div class="section-bottom">
+        <div class="info">
+          <ul>
+            <li>* Images will be resized to 48 X 48 px, keeping the aspect ratio.</li>
+          </ul>
+        </div>
+    </div>
+  </mat-dialog-content>
+  <div class="mat-dialog-btns">
+      <mat-dialog-actions>
+        <button pi-button (click)="remove()" color="subtle" [disabled]="data.image==''">Remove Picture</button>
+      </mat-dialog-actions>
+      <mat-dialog-actions>
+          <button pi-button (click)="close()" color="subtle">Cancel</button>
+          <button pi-button (click)="save()" color="accent" [disabled]="state.disableSave">Save</button>
+      </mat-dialog-actions>
+  </div>
+
+-->
+
+
+<div class="mat-dialog-heading">
+    <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+    <button mat-icon-button mat-dialog-close tabindex="-1">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+<mat-dialog-content>
+    <div ng2FileDrop [ngClass]="{'file-over': hasDropZoneOver, 'user': isUser, 'org': !isUser}" [uploader]="uploader" class="file-drop-zone" (fileOver)="fileOverBase($event)" (onFileDrop)="fileDrop($event)">
+        <div class="images-dropzone" *ngIf="data.image!=''">
+            <img [src]="data.image" alt="Logo">
+        </div>
+        <div class="info-label" *ngIf="data.image==''">
+            <mat-icon>account_circle</mat-icon>
+            <p>Drag and drop your image here</p>
+        </div>
+        <input id="edit-org-logo" type="file" ng2FileSelect [uploader]="uploader" [hidden]="true"/>
+        <label for="edit-org-logo" class="browse-file">
+            <p>OR</p>
+            <a>Browse</a>
+        </label>
+    </div>
+    <div class="info">
+        <p class="invalid-error" *ngIf="uploadError">Invalid file format.</p>
+        <p class="invalid-error" *ngIf="sizeError">Maximum file size(1Mb) exceeded.</p>
+        <p>Valid file formats are jpg, jpeg, png, gif<span>*</span>.</p>
+        <p>Max file size allowed is 1MB<span>*</span>.</p>
+        <p>Images will be resized to 48 X 48 px, keeping the aspect ratio.</p>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+    <button pi-button class="remove" (click)="remove()" color="subtle" [disabled]="data.image==''">Remove Picture</button>
+    <button pi-button (click)="close()" color="subtle">Cancel</button>
+    <button pi-button (click)="save()" color="primary" [disabled]="state.disableSave">Save</button>
+</mat-dialog-actions>
+

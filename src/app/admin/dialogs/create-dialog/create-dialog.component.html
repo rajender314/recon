@@ -1,0 +1,60 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <ng-container *ngIf="!ajaxSpinner">
+    <form [formGroup]="createFormGroup" class="form-flex" autocomplete="off">
+      <pi-form-field label="Cost Code Name">
+        <input type="text" pi-input id="name" name="name" formControlName="name" maxlength="64">
+        <div class="pi-error" *ngIf="f.name.hasError('required') && submitted">Please Enter Cost Code Name</div>
+        <div class="pi-error" *ngIf="!f.name.hasError('required') && duplicateError">Cost Code {{duplicateError}}</div>
+      </pi-form-field>
+      <pi-field-group>
+        <pi-select label="Status" [options]="data.dropdowns.statusList" id="status" name="status"
+          formControlName="status"></pi-select>
+        <div class="pi-error" *ngIf="f.status.hasError('required') && submitted">Please Select Status</div>
+      </pi-field-group>
+      <pi-form-field label="Description">
+        <textarea pi-input rows="3" id="description" name="description" formControlName="description"
+          maxlength="1024"></textarea>
+      </pi-form-field>
+      <pi-field-group>
+        <pi-form-field label="GL Income">
+          <input pi-input [appPhoneFormat]="true" zero="true" minlength="11" maxlength="11" type="text" placeholder="#" id="gl_income"
+            name="gl_income" formControlName="gl_income">
+            <div class="msgs">
+              <div class="pi-error" *ngIf="f.gl_income.hasError('minlength') && submitted">Please Enter Valid Format(00-000-0000)</div>
+            </div>
+        </pi-form-field>
+        <pi-form-field label="GL Expense">
+          <input pi-input [appPhoneFormat]="true" zero="true" minlength="11" maxlength="11" type="text" placeholder="#" id="gl_expense"
+            name="gl_expense" formControlName="gl_expense">
+            <div class="msgs">
+              <div class="pi-error" *ngIf="f.gl_expense.hasError('minlength') && submitted">Please Enter Valid Format(00-000-0000)</div>
+            </div>
+        </pi-form-field>
+      </pi-field-group>
+      <pi-select label="Category" [options]="data.dropdowns.categories" id="category_id" name="category_id"
+        formControlName="category_id"></pi-select>
+      <pi-field-group>
+        <pi-form-field>
+          <pi-select label="Type" id="type_id" [options]="data.dropdowns.types" name="type_id"
+            formControlName="cost_code_type"></pi-select>
+        </pi-form-field>
+        <!-- <pi-form-field>
+              <pi-select label="Tax Type" id="tax_type_id" name="tax_type_id" [options]="data.dropdowns.taxTypes"
+                formControlName="cost_code_tax_type"></pi-select>
+            </pi-form-field> -->
+      </pi-field-group>
+    </form>
+  </ng-container>
+  <app-ajax-spinner [isLoading]="ajaxSpinner" [config]="{}"></app-ajax-spinner>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+  <button pi-button (click)="closeDialog()">Cancel</button>
+  <button pi-button color="primary" (click)="saveDetails(createFormGroup)"
+    [disabled]="createFormGroup.pristine">Save</button>
+</mat-dialog-actions>

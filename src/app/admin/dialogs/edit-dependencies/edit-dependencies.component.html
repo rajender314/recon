@@ -1,0 +1,26 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <div class="dependencies-container">
+    <div class="columns">
+      <div class="one"></div>
+      <div class="two">Task</div>
+      <div class="three">Assigned To</div>
+    </div>
+    <div class="row" *ngFor="let task of data.tasks;let i = index;">
+      <div class="one">{{i+1}}</div>
+      <div class="two">
+        <mat-checkbox [(ngModel)]="task.checked" [disabled]="!task.checked && checkDependencies()" disableRipple="true" color="primary">{{task.label}}</mat-checkbox>
+      </div>
+      <div class="three">--</div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+  <button pi-button (click)="close()">Cancel</button>
+  <button pi-button color="primary" (click)="save()">Save</button>
+</mat-dialog-actions>

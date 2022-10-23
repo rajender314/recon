@@ -1,0 +1,154 @@
+<pi-master-detail-view [showDetail]="state.showDetail" class="details-wrapper">
+    <pi-master-view class="left-section">
+        <div class="left-header">
+            <span class="my-pixel-icon blue">
+                <i class="pixel-icons icon-pn-user"></i>
+            </span>
+
+            <h3 mat-button [matMenuTriggerFor]="menu">
+                <span class="detail-orgname text-ellipsis">{{state.selectedTab.label}}</span>
+                <i class="pixel-icons icon-arrow-down"></i>
+            </h3>
+
+            <mat-menu #menu="matMenu" yPosition="below" [overlapTrigger]="false" class="user-type">
+                <mat-nav-list>
+                        <ng-container *ngFor="let tab of state.tabs">
+                                <mat-list-item *ngIf="tab.show">
+                                    <a matLine href="#{{tab.route}}">
+                                        <!-- <span matListIcon class="my-pixel-icon">
+                                        <i class="pixel-icons"></i>
+                                      </span> -->
+                                        {{ tab.label }}
+                                    </a>
+                                </mat-list-item>
+                        </ng-container>
+                </mat-nav-list>
+            </mat-menu>
+
+            <!-- <div class="actions"> -->
+                <button pi-button class="icon-button-wrapper" (click)="openAddDialog()">
+                    <i class="pixel-icons icon-plus"></i>
+                </button>
+            <!-- </div> -->
+        </div>
+        <app-search [search]="state.search" (onSearch)="onSearch($event)"></app-search>
+        <div class="left-content" [class.spinner]="state.loader || !state.userRolesList?.length">
+            <div class="head">
+                <div [matBadge]="state.totalCount" matBadgeOverlap="false" matBadgePosition="before" class="mat-badge-center">
+                    <span [matMenuTriggerFor]="statusFilter">
+                        <span>{{state.statusBy}} User Roles </span>
+                        <i class="pixel-icons icon-arrow-down"></i>
+                    </span>
+                    <mat-menu #statusFilter="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+                        <button mat-menu-item *ngFor="let status of dropdowns.statusFilter" (click)="onApplyFilter('status', status)">{{status.label}}</button>
+                    </mat-menu>
+                </div>
+                <div class="sorting">
+                    <span class="sort-action {{state.sortBy | lowercase}}" (click)="onApplyFilter('sort')">{{state.sortBy}}</span>
+                </div>
+            </div>
+
+            <div class="body" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false">
+                <mat-spinner diameter="45" class="md" *ngIf="state.loader"></mat-spinner>
+
+                <div class="no-data" [hidden]="state.loader || state.userRolesList?.length">No {{state.selectedTab.displayLabel}} Found</div>
+
+                <!-- <div class="no-data" [hidden]="state.loader || (state.userRolesList?.length && !state.param.search.length)">No Search Results Found</div> -->
+
+                <mat-list *ngIf="!state.loader">
+                    <ng-container *ngFor="let list of state.userRolesList">
+                        <mat-list-item *ngIf="!list.search" [class.disable]="!list.status" [class.active]="state.selectedUserRole?._id === list._id" (click)="onSelectItem(list);changeMasterView();">
+                            <span>{{list.name}}</span>
+                        </mat-list-item>
+                    </ng-container>
+                </mat-list>
+            </div>
+        </div>
+    </pi-master-view>
+
+    <pi-detail-view class="right-section">
+        <form class="form-flex" [formGroup]="specificationsForm" autocomplete="off">
+            <div *ngIf="state.userRolesList?.length">
+                <div class="right-header" *ngIf="state.selectedUserRole">
+                     <pi-breadcrumb>
+                            <pi-breadcrumb-item label="Users" (click)="hideDetails()"></pi-breadcrumb-item>
+                            <pi-breadcrumb-item>{{ state.selectedTab.label }}</pi-breadcrumb-item>
+                        </pi-breadcrumb>
+                    <div class="info">
+                        <mat-icon class="back-link" (click)="changeMasterView()">arrow_back</mat-icon>
+                        <h2 [innerHtml]="state.selectedUserRole?.name"></h2>
+                        <mat-slide-toggle color="primary" formControlName="status" (change)="changeStatus()"></mat-slide-toggle>
+                        <!-- <h4 (click)="hideDetails()">
+                            <span (click)="hideDetails()">Users</span>
+                            <span class="slash-char">/</span>
+                            <div class="user-name-edit">
+                                {{state.selectedTab.label}}
+                            </div>
+                        </h4> -->
+                    </div>
+                </div>
+                <div class="right-content" *ngIf="state.selectedUserRole">
+                    <mat-spinner diameter="45" class="md" *ngIf="state.detailsLoader"></mat-spinner>
+                    <mat-tab-group [disableRipple]="true" [selectedIndex]="state.activeTab" (selectedIndexChange)="onTabChange($event)">
+                        <mat-tab [label]="link.label" *ngFor="let link of state.userRoleTabs">
+                            <ng-template matTabContent>
+                                <div class="content-wrapper" *ngIf="!state.detailsLoader && state.activeTab == 0">
+                                    <div class="ak-field-group">
+                                        <app-permission *ngIf="state.permissions['system_access']" prop="key" [group]="specificationsForm.controls['system_access']"
+                                            [headers]="dropdowns.headers" [data]="state.permissions['system_access'][0].items"></app-permission>
+                                    </div>
+                                </div>
+
+                                <div class="content-wrapper" *ngIf="!state.detailsLoader && state.activeTab == 1">
+                                    <div class="ak-field-group">
+                                        <app-permission *ngIf="state.permissions['job_access']" prop="key" [group]="specificationsForm.controls['job_access']" [headers]="dropdowns.jobAccess"
+                                            [data]="state.permissions['job_access'][0].items"></app-permission>
+                                    </div>
+                                    <div class="ak-field-group">
+                                        <app-permission *ngIf="state.permissions['job_access']" prop="key" [group]="specificationsForm.controls['job_access']" [headers]="dropdowns.headers"
+                                            [data]="state.permissions['job_access'][1].items"></app-permission>
+                                    </div>
+                                </div>
+
+                                <div *ngIf="!state.detailsLoader && state.activeTab == 2">
+                                    <div class="no-data" *ngIf="!state.users || !state.users.length">No Users Found.</div>
+                                    <ul *ngIf="state.users && state.users.length" class="user-roles-access-list">
+                                        <li class="users-list-company" *ngFor="let company of state.users">
+                                            <div class="company-head" style="margin-bottom:4px;">
+                                                <i *ngIf="company.users?.length" 
+                                                    (click)="toggleChild(company, $event)" 
+                                                    class="pixel-icons {{company.showChildren?'icon-arrow-right':'icon-arrow-down'}}">
+                                                </i>
+                                                <span class="company-label">{{company.label}}</span>
+                                            </div>
+                                            <ul class="company-users-list" *ngIf="company.users?.length && !company.showChildren">
+                                                <li class="access_info" *ngFor="let user of company.users">
+                                                    <label>
+                                                        <span class="lbl">{{user.label}}</span>
+                                                        <span *ngIf="user.star">*</span>
+                                                    </label>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </ng-template>
+                        </mat-tab>
+                    </mat-tab-group>
+                    <div class="footer" *ngIf="!state.detailsLoader && state.activeTab != 2">
+                        <button pi-button (click)="resetForm(state.selectedUserRole)">Cancel</button>
+                        <button pi-button color="primary" (click)="saveDetails(specificationsForm)" [disabled]="specificationsForm.pristine">Save</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="no-result-flex" *ngIf="!state.userRolesList?.length && !state.loader">
+                <p *ngIf="state.param.search?.length">No User Role found for your search string
+                    <b>'{{state.param.search}}'</b>
+                </p>
+                <p *ngIf="!state.param.search?.length">No User Role found</p>
+                <button pi-button color="primary" (click)="openAddDialog(state.param.search)">Add</button>
+            </div>
+        </form>
+    </pi-detail-view>
+</pi-master-detail-view>

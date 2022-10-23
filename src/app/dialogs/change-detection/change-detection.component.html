@@ -1,0 +1,15 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title style="text-transform: capitalize;">{{data.title}}</h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+
+<mat-dialog-content>
+	You have unsaved changes in this {{data.tab}}. Please save changes before navigating to other {{data.tab}}.
+</mat-dialog-content>
+
+<mat-dialog-actions>
+	<button pi-button color="subtle" (click)="performAction('discard')">Discard Changes</button>
+	<button pi-button color="primary" (click)="performAction('review')">Review Changes</button>
+</mat-dialog-actions>

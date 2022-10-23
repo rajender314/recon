@@ -1,0 +1,34 @@
+<div class="parent-list-items m-t-0">
+    <div class="child-list-items border-bottom {{list.isOpen ? 'active' : ''}}" *ngFor="let list of tabDetails.list; let i = index">
+        <h4 (click)="performAction($event, 'show', i)" class="hover-toggle-icons">
+            <i class="pixel-icons arrow {{list.isOpen ? 'icon-arrow-down' : 'icon-arrow-right'}}"></i>
+            <span>{{list.display_name}}</span>
+            <div *ngIf="editable">
+                <i class="pixel-icons icon-pencil {{activeEdit ? 'active_edit' : ''}}"
+                    (click)="performAction($event, 'edit', i)"></i>
+                <i class="pixel-icons icon-delete" (click)="performAction($event, 'delete', i)"></i>
+            </div>
+        </h4>
+        <div class="sub-child inline-form" *ngIf="list.isOpen && tabDetails.selected"
+            [class.show-spinner]=fetchingSpecs>
+            <mat-spinner *ngIf="fetchingSpecs" diameter="36"></mat-spinner>
+            <div *ngIf="!fetchingSpecs">
+                <div *ngFor="let form of tabDetails.selected.specs">
+                    <app-form-builder [config]="form" [form]="defaults.controls[form.id]" [disable]="defaults.disabled">
+                    </app-form-builder>
+                    <div class="error-sec">
+                        <div class="msg pi-error" *ngIf="submitted && !defaults.controls[form.id]?.valid && !defaults.disabled">
+                            Please
+                            {{form.template_id == 2 || form.template_id == 4 ? 'Enter' : 'Select'}} {{form.label}}
+                        </div>
+                    </div>
+                </div>
+                <p *ngIf="!tabDetails.selected.specs.length">No Specs Assigned to this Category</p>
+                <div class="footer" *ngIf="tabDetails.selected.specs.length">
+                    <button pi-button  (click)="reset()">Cancel</button>
+                    <button class="m-l-15" pi-button color="primary" [disabled]="defaults.pristine" (click)="save()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

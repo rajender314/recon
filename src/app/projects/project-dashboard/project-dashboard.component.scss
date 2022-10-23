@@ -1,0 +1,11 @@
+@import "../../../assets/styles/mixins";
+
+@media screen and (min-width:600px){
+    .pi-master-detail-view .pi-master-view{
+        width: 240px;
+    }
+}
+.pi-master-detail-view>.pi-detail-view.right-section{
+    background-color: #f7f8fe;
+}
+

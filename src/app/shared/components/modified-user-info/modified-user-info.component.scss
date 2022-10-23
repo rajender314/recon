@@ -1,0 +1,12 @@
+.note {
+  p {
+    color: rgba(23, 43, 77, 0.5);
+    font-size: 12px;
+    &:first-child {
+      margin-bottom: 4px;
+    }
+    &:nth-child(2) {
+      margin-top: 0px;
+    }
+  }
+}

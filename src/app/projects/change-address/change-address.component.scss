@@ -1,0 +1,80 @@
+// ::ng-deep .mat-dialog-heading{
+//     .mat-dialog-title{
+//         line-height: inherit;
+//         @media screen and (max-width: 960px){
+//             .mat-dialog-title{font-size: 16px;}
+//         }
+//     }
+// }
+
+// ::ng-deep .mat-dialog-content{
+//     ::ng-deep .mat-tab-group{
+//         padding: 10px 0;
+//         .mat-tab-labels{
+//             .mat-tab-label{
+//                 /*min-width: 30px;
+//                 height: 30px;
+//                 padding: 0;
+//                 margin-right: 20px;
+//                 font-size: 13px;
+//                 color: rgba(23, 43, 77, 0.8);*/
+//                 min-width: 40px;
+//                 height: 30px;
+//                 padding: 20px 0px;
+//                 margin: 0px 20px;
+//                 color: rgba(23, 43, 77, 0.8);
+//                 &:first-child{
+//                     margin-left: 0;
+//                 }
+//                 &.mat-tab-disabled{
+//                     opacity: 1;
+//                 }
+//             }
+//         }
+//         &.disabled-tab{
+//             .mat-tab-header{
+//                 border-bottom: none;
+//                 .mat-ink-bar{background-color: transparent;}
+//             }
+//         }
+//     }
+//     .mat-tab-body-content{height: 330px;
+//         .address-list{
+//             display: flex;flex-wrap: wrap;color: rgba(23, 43, 77, 1);padding-top:4px;
+//             & > div{
+//                 position: relative;
+//                 flex: 1 0 44%;
+//                 max-width: 252px;
+//                 border: 1px solid #ddd;
+//                 padding: 8px;
+//                 margin: 4px;
+//                 border-radius: 4px;
+//                 &.no-data{
+//                     color: rgba(23, 43, 77, 0.5);
+//                     font-size: 14px;
+//                     padding: 12px 0;
+//                     margin: 0;
+//                     border: none;
+//                 }
+//                 &:hover{
+//                     background: #eceef7;
+//                     &.no-data{background: none;}
+//                 }
+//                 &.active{
+//                     background-color:#E4EFFF;
+//                     border: 1px solid #cedcf3;
+//                     .icon-select{
+//                         position: absolute;
+//                         right: 0px;
+//                         bottom: 3px;
+//                         font-size: 18px;
+//                         color: #4680D5;
+//                     }
+//                 }
+//             }
+//             @media screen and (max-width: 960px){
+//                 flex-direction: column;
+//             }
+//         }
+//     }
+// }

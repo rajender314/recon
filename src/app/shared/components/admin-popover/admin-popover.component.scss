@@ -1,0 +1,218 @@
+@import "../../../../assets/styles/mixins";
+
+::ng-deep .left-header .info{
+    h4{
+        border-bottom: 1px solid #dde0f2;
+        display: flex;
+        width: 100%;
+        align-items: center;
+        padding: 8px 10px;
+        color: #0553cb !important;
+        @include semiBoldFont();
+        .icon-arrow{
+            border-radius: 9999px;
+            font-size: 12px;
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            color: #fff;
+            background: #0553cb;
+            font-weight: 600;
+            padding: 5px 4px;
+        }
+    }
+    .secondary-row{
+        display: flex;align-items: center;
+        padding: 8px 10px;width: 100%;
+        .my-pixel-icon{
+            width: 30px;height: 30px;flex-shrink: 0;margin-right: 8px;
+            /*i{font-size: 18px;width: 18px;height: 18px;}*/
+        }
+        h3{
+            span{font-size: 14px;}
+            i{
+                font-size: 12px;
+                width: 12px;
+                height: 12px;
+                margin-left: 4px;
+                position: relative;
+                top: 2px;
+            }
+        }
+    }
+}
+
+::ng-deep .adminNavList.mat-menu-panel{
+    margin-left: -23px;
+    margin-top: 12px;
+    max-height: 500px;
+    min-width: 345px;
+    .mat-menu-content{padding-top:0;
+        .mat-nav-list{
+            margin:0 8px;
+            .mat-subheader{
+                font-size: 13px;
+                margin: 0;
+                color: rgba(23, 43, 77, 0.8);
+                text-transform: uppercase;
+                height: auto;
+                padding-bottom: 4px;
+                padding-top: 24px;
+            }
+
+            .mat-list-item.active{background: rgba(0,0,0,.04);}
+
+            ::ng-deep .child-list{padding-top:0;
+                .mat-list-item{
+                    height: 38px;
+                    .mat-list-item-content{
+                        padding-left: 0;
+                        .mat-list-text{
+                            padding-left: 0;
+                            a{
+                                min-height: 38px;
+                                padding-left: 48px;
+                                i{
+                                    margin-right: 6px;
+                                    color: rgba(23, 43, 77, 0.6);
+                                    font-size: 13px;
+                                    height: 13px;
+                                    width: 13px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .mat-list-item{height: 42px;
+                .mat-list-item-content{padding: 0;
+                    .mat-list-text{padding-left: 0;
+                        a{
+                            min-width: 200px;
+                            display: flex;
+                            align-items: center;
+                            font-size: 14px;
+                            min-height: 56px;
+                            padding: 0 16px;
+                            color: rgba(23, 43, 77, 0.8);
+                            .my-pixel-icon{
+                                margin-right: 8px;
+                                width: 24px;
+                                height: 24px;
+                                i{
+                                    width: 14px;
+                                    height: 14px;
+                                    font-size: 14px;
+                                    &.icon-cost-codes{
+                                        width: 18px;
+                                        height: 16px;
+                                        font-size: 17px;
+                                    }
+                                    &.icon-markups{
+                                        width: 18px;
+                                        height: 20px;
+                                        font-size: 21px;
+                                        position: relative;
+                                        left: -1px;
+                                    }
+                                    &.icon-misc-expenses{
+                                        width: 16px;
+                                        height: 16px;
+                                        font-size: 16px;
+                                    }
+                                    &.icon-business-rules{
+                                        width: 18px;
+                                        height: 18px;
+                                        font-size: 18px;
+                                    }
+                                    &.icon-company-codes{
+                                        width: 16px;
+                                        height: 16px;
+                                        font-size: 16px;
+                                    }
+                                    &.icon-categories{
+                                        width: 16px;
+                                        height: 16px;
+                                        font-size: 16px;
+                                        line-height: 1.1;
+                                    }
+                                    &.icon-departments{
+                                        width: 20px;
+                                        height: 20px;
+                                        font-size: 20px;
+                                    }
+                                    &.icon-designations{
+                                        width: 19px;
+                                        height: 16px;
+                                        font-size: 18px;
+                                    }
+                                    &.icon-distribution-types{
+                                        width: 20px;
+                                        height: 18px;
+                                        font-size: 20px;    
+                                    }
+                                    &.icon-file-categories{
+                                        width: 18px;
+                                        height: 17px;
+                                        font-size: 18px;
+                                    }
+                                    &.icon-forms{
+                                        width: 16px;
+                                        height: 16px;
+                                        font-size: 16px;
+                                    }
+                                    &.icon-groups{
+                                        width: 18px;
+                                        height: 18px;
+                                        font-size: 18px;
+                                    }
+                                    &.icon-products, &.icon-services, &.icon-vendor-types{
+                                        width: 18px;
+                                        height: 18px;
+                                        font-size: 18px;
+                                    }
+                                    &.icon-specifications, &.icon-task-fill{
+                                        width: 16px;
+                                        height: 16px;
+                                        font-size: 16px;
+                                    }
+                                    &.icon-schedule-templates{
+                                        width: 18px;
+                                        height: 17px;
+                                        font-size: 17px;
+                                    }
+                                    &.icon-milestones{
+                                        width: 17px;
+                                        height: 16px;
+                                        font-size: 18px;
+                                    }
+                                    &.icon-vendor-templates{
+                                        width: 17px;
+                                        height: 16px;
+                                        font-size: 17px;
+                                    }
+                                    &.icon-capabilities{
+                                        width: 16px;
+                                        height: 16px;
+                                        font-size: 16px;
+                                    }
+                                    &.icon-equipments{
+                                        width: 17px;
+                                        height: 16px;
+                                        font-size: 17px;
+                                    }
+                                }
+                            }
+                            .icon-arrow-up, .arrow{
+                                font-size: 11px;
+                                width: 11px;
+                                height: 11px;
+                                margin-left: auto; /*16px;*/
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

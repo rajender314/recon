@@ -1,0 +1,36 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title style="text-transform: capitalize;">{{data.title}}</h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+
+<mat-dialog-content>
+	<p style="margin: 0; opacity: .8;">There are some Tasks/Milestones dependent on this Task.</p>
+	<p style="margin: 0; opacity: .8;">Editing Due Date will update their Activation & Due dates.</p>
+	
+	<div class="edit-due-date-table">
+		<div class="t-header" style="display: flex;align-items: center;justify-content: space-between;">
+				<span class="t-cell">Task/Milestone</span>
+				<span class="t-cell">Custom Dates</span>
+				<span class="t-cell">New Dates</span>
+		</div>
+		<div class="t-row" *ngFor="let item of list">
+			<div  class="t-cell" [innerHtml]="item.task_name">Delivery Due Date</div>
+			<div  class="t-cell" style="display: flex;flex-direction: column;">
+				<span *ngIf="item.start_date">A: {{item.start_date}}</span>
+				<span *ngIf="item.due_date">D: {{item.due_date}}</span>
+			</div>
+			<div class="t-cell new-date" style="display: flex;flex-direction: column;">
+				<span *ngIf="item.start_date">A: {{item.new_start_date}}</span>
+				<span *ngIf="item.due_date">D: {{item.new_due_date}}</span>
+			</div>
+		</div>
+	</div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+	<button pi-button color="subtle" (click)="closeDialog()">Cancel</button>
+	<button pi-button color="primary" (click)="save()" style="text-transform: capitalize;">Save & Update
+		Dates</button>
+</mat-dialog-actions>

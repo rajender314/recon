@@ -1,0 +1,52 @@
+<div class="info">
+	<a class="back-link" (click)="goBack()"> <i class="pixel-icons icon-arrow"></i> <span>{{heading}}</span></a>
+
+	<div class="secondary-row">
+		<span [class]="'my-pixel-icon ' + bgColor">
+			<i [class]="'pixel-icons  ' + icon"></i>
+		</span>
+		<h3 [matMenuTriggerFor]="adminMenu" (click)="resetDropdown()" (menuOpened)="menuOpen()">
+			<span [title]="subHeading" class="detail-name text-ellipsis">{{subHeading}}</span>
+			<!-- <mat-icon>keyboard_arrow_down</mat-icon> -->
+			<i class="pixel-icons icon-arrow-down"></i>
+		</h3>
+	</div>
+</div>
+<mat-menu #adminMenu="matMenu" class="adminNavList" [overlapTrigger]="false" yPosition="below">
+	<mat-nav-list>
+		<div *ngFor="let admin of adminDashboard">
+			<ng-container *ngIf="admin.show">
+				<h3 matSubheader [innerHtml]="admin.name"></h3>
+				<div [id]="item.id" *ngFor="let item of admin.items">
+					<ng-container *ngIf="item.show">
+						<mat-list-item *ngIf="!item.children" [class.active]="item.id == activeItem">
+							<a matLine href="#{{item.route}}">
+								<span matListIcon class="my-pixel-icon {{item.bgColor}}">
+									<i class="pixel-icons {{item.icon}}"></i>
+								</span>
+								{{ item.name }}
+							</a>
+						</mat-list-item>
+						<mat-list-item *ngIf="item.children">
+							<a matLine (click)="dropdownTrigger($event, item)">
+								<span matListIcon class="my-pixel-icon {{item.bgColor}}">
+									<i class="pixel-icons {{item.icon}}"></i>
+								</span>
+								{{ item.name }}
+								<i class="pixel-icons arrow {{item.isOpen ? 'icon-arrow-up' : 'icon-arrow-down'}}"></i>
+							</a>
+						</mat-list-item>
+						<mat-list class="child-list" *ngIf="item.children && item.isOpen">
+							<mat-list-item *ngFor="let child of item.children" [class.active]="item.id + '_' + child.value == activeItem">
+								<a matLine href="#{{item.route}}?type={{child.value}}">
+									<i class="pixel-icons icon-sub-organisations"></i>
+									{{ child.name }}
+								</a>
+							</mat-list-item>
+						</mat-list>
+					</ng-container>
+				</div>
+			</ng-container>
+		</div>
+	</mat-nav-list>
+</mat-menu>

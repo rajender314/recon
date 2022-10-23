@@ -1,0 +1,45 @@
+pi-master-detail-view {
+    cursor: pointer;
+    .primary-layout .component-menu .header-row  {
+        padding: 16px 30px;
+    }
+.head-section {
+    padding: 10px 24px;
+    border-bottom: 2px solid #eee;
+    h1{
+        margin: 0;
+        font-weight: 300;
+        font-family: sans-serif;
+    }
+}
+pi-master-detail-view h1 {
+    margin: 11px;
+}
+.active{
+    background: #eceef7; 
+    border: none;
+}
+ .mat-list-item:hover {
+    background: #eceef7;
+    color: #0747a6;
+  }
+ .header-row span{
+    color: #0747a6;
+    font-size: 16px;
+    font-weight: bold;
+ }
+}
+app-super-admin{
+    .component-menu{
+        .menu-container{
+            overflow: auto;
+            .mat-list{
+                .mat-list-item{
+                    &:focus{
+                        outline: 0px;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,132 @@
+<div class="h-100 p-t-15">
+    <mat-spinner *ngIf="state.loader" diameter="36"></mat-spinner>
+    <ng-container *ngIf="!state.loader">
+        <!-- <div class="center-line"></div>    -->
+        <form [formGroup]="othersForm" class="form-flex view-edit-fields-form" autocomplete="off">
+            <div class="split-screen">
+                <aside class="split-part {{i==0 ? 'left': 'right'}}" *ngFor="let section of state.list; let i = index">
+                    <div class="field-wrapper" *ngFor="let group of section">
+                        <div class="fields">
+                            <div class="view-fields-wrapper" *ngIf="!group.edit">
+                                <ng-container *ngFor="let field of group.section">
+                                    <div *ngIf="field.addMore" class="title-sec">
+                                        <span>Bookkeeper</span>
+                                        <ng-container *ngIf="field.type=='select' && state.editable">
+                                            <button pi-icon-button (click)="editSectionValuePop(field)" *ngIf="(!othersForm.controls['show_'+field.name].value && group.is_editable && field.addMore)">Edit</button>
+                                        </ng-container>
+                                    </div>
+                                    <div class="view-section">
+                                        <label class="label" *ngIf="!field.addMore">{{field.label}}</label>
+                                        <div *ngIf="field.addMore" class="label-container">
+                                            <label class="label">{{field.label}}</label>
+                                            <label class="label" *ngIf="field.label == 'Bookkeeper'">Company code</label>
+                                        </div>
+                                        <div class="value" [ngClass]="{'smal-custom-input':field.suggestion}" *ngIf="field.type!='select' && field.type!='currency'">
+                                            <span class="field-val">{{(othersForm.controls[field.name].value?othersForm.controls[field.name].value:'--')}}
+                                            </span>
+                                            <span *ngIf="field.suggestion" class="input-suggestion">{{field.suggestion}}</span>
+                                            <i class="pixel-icons icon-pencil" *ngIf="(!othersForm.controls['show_'+field.name].value && group.is_editable) && state.editable"
+                                                (click)="editSectionValue(group,field.name)"></i>
+                                        </div>
+                                        <div class="value" *ngIf="field.type=='currency'">
+                                            <span class="field-val">${{((othersForm.controls[field.name].value=='' ||
+                                                !othersForm.controls[field.name].value)?'0.00':othersForm.controls[field.name].value)}}
+                                            </span>
+                                            <i class="pixel-icons icon-pencil" *ngIf="(!othersForm.controls['show_'+field.name].value && group.is_editable) && state.editable"
+                                                (click)="editSectionValue(group,field.name)"></i>
+                                        </div>
+                                        <div class="value" *ngIf="field.type=='select'">
+                                            <div [ngClass]="{'custom-label-container': field.addMore}">
+                                                <!-- <span class="dummy-element"></span> -->
+                                                <span class="field-val" [ngClass]="{'custom-label': field.addMore}">{{(getSelectionData(field.options,
+                                                    othersForm.controls[field.name].value)?.name?getSelectionData(field.options,
+                                                    othersForm.controls[field.name].value)?.name:'--')}}
+                                                </span>
+                                                <i class="pixel-icons icon-pencil" *ngIf="(!othersForm.controls['show_'+field.name].value && group.is_editable && !field.addMore) && state.editable"
+                                                    (click)="editSectionValue(group,field.name)"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="scroll-container">
+                                    <ng-container *ngIf="field.addMore">
+                                        <div class="field-groups-2 flex-field" *ngFor="let list of field.selectors">
+                                            <div *ngFor="let row of list.options" class="flex-field-left">
+                                                <!-- <label class="label">{{getSelectionLable(row.type)}}</label> -->
+                                                <div class="value">{{getSelectionData(row.type, row.value,
+                                                    row.type)?.name}}</div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                                </ng-container>
+                            </div>
+                            <div class="edit-field-wrapper" *ngIf="group.edit">
+                                <ng-container *ngFor="let field of group.section">
+                                    <pi-form-field>
+                                        <span class="label">{{field.label}}</span>
+                                        <div class="value" *ngIf="field.type=='readonly'">{{field.value}}</div>
+                                        <input type="text" pi-input *ngIf="field.type=='text' && field.name=='job_no_prefix'"
+                                            (input)="checkAlphaNumeric(field.name)" maxlength="8" [name]="field.name"
+                                            formControlName="{{field.name}}">
+                                        <input type="text" pi-input *ngIf="field.type=='text' && field.name!='job_no_prefix'"
+                                            [name]="field.name" formControlName="{{field.name}}">
+                                        <input type="text" pi-input [class]="{'smal-custom-input':field.suggestion}" *ngIf="field.type=='number'" [appPriceFormat]="numberConfig"
+                                            [name]="field.name" formControlName="{{field.name}}">
+                                        <span *ngIf="field.suggestion" class="input-suggestion">{{field.suggestion}}</span>
+                                        <input type="text" pi-input *ngIf="field.type=='currency'" [appPriceFormat]="priceConfig"
+                                            [name]="field.name" formControlName="{{field.name}}">
+                                    </pi-form-field>
+                                    <div class="actions" *ngIf="field.addMore">
+                                        <button mat-icon-button (click)="addBookKeeper()" class="array-button green">
+                                            <i class="pixel-icons icon-plus"></i>
+                                        </button>
+                                    </div>
+                                    <pi-field-group *ngIf="field.type=='select'" class="custom-select-group">
+                                        <pi-select [options]="state[field.options]" [formControlName]="field.name"></pi-select>
+                                    </pi-field-group>
+                                    <div class="actions" [ngClass]="{'custom-type-field': (field.type=='text') || (field.type=='number') || (field.type=='currency')}">
+                                        <button pi-icon-button *ngIf="othersForm.controls['show_'+field.name].value"
+                                            (click)="save(othersForm, field.name)"><i class="pixel-icons icon-select"
+                                                color=""></i></button>
+                                        <button pi-icon-button *ngIf="othersForm.controls['show_'+field.name].value"
+                                            (click)="cancelChanges(group)"><i class="pixel-icons icon-close-slim"></i></button>
+                                        <!-- <button pi-icon-button *ngIf="othersForm.controls['show_'+field.name].value && field.name=='final_bill_due_date'"
+                                            (click)="resetFinalDueDate(othersForm, field)"><i class="pixel-icons icon-recents"></i></button> -->
+                                    </div>
+
+                                    <!-- <ng-container formArrayName="{{field.name+'_array'}}" *ngIf="field.addMore">
+                                        <div class="field-groups-2" *ngFor="let list of state[field.name+'_array'].controls;let i = index"
+                                            [formGroupName]="i">
+
+                                            <button mat-icon-button (click)="removeBookKeeper(i)" class="array-button red">
+                                                <mat-icon>remove</mat-icon>
+                                            </button>
+
+                                            <button mat-icon-button (click)="addBookKeeper()" class="array-button green">
+                                                <i class="pixel-icons icon-plus"></i>
+                                            </button>
+
+                                            <div class="ak-field-group" *ngFor="let row of field.dataObj">
+                                                <select type="text" *ngIf="field.type=='select'" class="ak-field-select"
+                                                    formControlName="{{row}}">
+                                                    <ng-container *ngFor="let option of state[row]">
+                                                        <option *ngIf="true" [value]="option.id">{{option.label}}</option>
+                                                    </ng-container>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </ng-container> -->
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+            <div class="auto-save-section">
+                <pi-form-field label="{{attr.name}}" *ngFor="let attr of state.attributes">
+                    <input type="checkbox" pi-input (change)="save(othersForm)" formControlName="attributes[{{attr.id}}]" />
+                </pi-form-field>
+            </div>
+        </form>
+    </ng-container>
+</div> 

@@ -1,0 +1,84 @@
+<section class="primary-layout-detail">
+
+        <header class="tab-header">
+            <div class="w-100 d-flex justify-content-center flex-column">
+                    <pi-breadcrumb>
+                            <ng-container *ngFor="let item of state.breadcrumbs">
+                                <pi-breadcrumb-item *ngIf="item.type == 'link'" label="Projects" [routerLink]="item.route">
+                                </pi-breadcrumb-item>
+                                <pi-breadcrumb-item *ngIf="item.type != 'link'" [innerHtml]="item.label"></pi-breadcrumb-item>
+                            </ng-container>
+                        </pi-breadcrumb>
+                        <div class="d-flex align-items-center">
+                                <h1>Tasks</h1>
+                            </div> 
+
+                    <div class="w-100 d-flex align-items-center justify-content-between ">
+                            <aside class="left-header flex-column d-flex flex-width">                                    
+                                    <nav mat-tab-nav-bar class="nav-bar" [disableRipple]="true">
+                                            <div class="tab-group">
+                                                    <ng-container *ngFor="let option of state.filterBy">
+                                                    <a mat-tab-link (click)="performActions('filter', option)" *ngIf="option.show" [active]="option.key == state.selectedFilter.key">
+                                                      {{option.label}} </a>
+                                                    </ng-container>
+                                            </div>
+                                    </nav> 
+                                 </aside>
+                            <aside class="d-flex right-header flex-width justify-content-end" style="margin-bottom: 8px;" >
+                                
+                                <ng-container *ngFor="let action of state.actions" class="">
+                                     <button class="m-l-15 large-desktop" pi-button *ngIf="action.type == 'button' && action.show" color="primary"
+                                    [innerHtml]="action.label" (click)="performActions('task', action)"></button>
+
+                                    <app-search class="m-l-15" *ngIf="action.type == 'search'"
+                                        (onSearch)="performActions('task', action, $event)"></app-search>
+                                    <div class="m-l-15 btn-group basic-group-btns " mat-button
+                                        [matMenuTriggerFor]="menu" *ngIf="action.type == 'group'">
+                                        <button class="first-child" [innerHtml]="state.selectedGroup.label"></button>
+                                        <div class="btn-group">
+                                            <button class="last-child">
+                                                <i class="pixel-icons icon-arrow-down" style="position: relative; top: 2px;"></i>
+                                            </button>
+                                            <mat-menu #menu="matMenu" xPosition="before" class="drop-menu-ui">
+                                                <a *ngFor="let option of action.options" [innerHtml]="option.label"
+                                                    [class.active]="option.key == state.selectedGroup.key"
+                                                    (click)="performActions('task', option)"></a>
+                                            </mat-menu>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <span class="small-desktop">
+                                <div class="colored-group-btn m-l-15 btn-group basic-group-btns " mat-button  >
+                                <button class="first-child" [matMenuTriggerFor]="menu">Add </button>
+                                <!-- (click)="performActions('task', { key: 'new', type: 'button', label: 'New Task' })" -->
+                                <div class="btn-group">
+                                    <button class="last-child"  [matMenuTriggerFor]="menu">
+                                        <i class="pixel-icons icon-arrow-down" style="position: relative; top: 2px;"></i>
+                                    </button>
+                                    <mat-menu #menu="matMenu" xPosition="before" class="drop-menu-ui"> 
+                                        <span *ngFor="let action of state.actions" >                                           
+                                        <a  *ngIf="action.type == 'button' && action.show" 
+                                        [innerHtml]="action.label" (click)="performActions('task', action)"></a>
+                                    </span>
+                                    </mat-menu>
+                                </div>
+                            </div>
+                        </span>
+                            </aside>
+                        </div>
+            </div>
+        
+       
+    </header>
+    <div class="custom-tabing-page padding-20" style="height: calc(100vh - 71px);">
+        
+        <router-outlet></router-outlet>
+    </div>
+</section>
+<div class="spinner-view" *ngIf="state.isLoading">
+    <div class="empty-screen">
+        <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+    </div>
+</div>
+<no-data-screen *ngIf="!state.isLoading && !state.list.length && state.flag == 'init'" [config]="noDataConfig" (onAdd)="addTask()">
+</no-data-screen>

@@ -1,0 +1,16 @@
+<div *ngIf="!isLoading" class="m-t-15 preview-wrapper">
+	<div class="invoice-notifications alert-holders" style="max-width: 960px;margin: 0 auto;margin-bottom: 20px;">
+		<div *ngFor="let msg of invoiceNotifications" class="new-alert-notifications error">
+			<p>{{msg.message}}</p>
+		</div>
+	</div>
+	<div #safeHtml [innerHtml]="htmlContent | safeHtml: 'html'"></div>
+</div>
+
+<div class="spinner-view" *ngIf="isLoading">
+	<div class="empty-screen">
+		<div class="icon-info-holder">
+			<mat-spinner diameter="34" class="md"></mat-spinner>
+		</div>
+	</div>
+</div>

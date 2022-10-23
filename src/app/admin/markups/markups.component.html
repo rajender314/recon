@@ -1,0 +1,278 @@
+<pi-master-detail-view class="recon-admin-layout" [showDetail]="showView">
+  <pi-master-view class="admin-sidebar">
+    <div class="sidebar-header">
+      <div class="page-breadcrumb"><app-admin-popover class="left-hdr-comp" class="align-items" [bgColor]="'pink'" [icon]="'icon-markups'" [primary]="'Admin'" [secondary]="'Markups'" [data]="adminDashboard"></app-admin-popover></div>
+      <app-search (onSearch)="onSearch($event)"></app-search>
+    </div>
+    <div class="head">
+      <div matBadgeOverlap="false" matBadgePosition="before" class="mat-badge-center">
+        <span [matMenuTriggerFor]="statusFilter">
+          <span>{{totalCount}}</span>
+          <span>{{statusBy+(totalCount==1?" Markup":" Markups")}}</span>
+          <mat-icon>expand_more</mat-icon>
+        </span>
+        <mat-menu #statusFilter="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="status-dropdown">
+          <button mat-menu-item *ngFor="let status of dropdowns.statusFilter" (click)="onApplyFilter('status', status)">{{status.label}}</button>
+        </mat-menu>
+      </div>
+      <div class="sorting">
+        <span class="sort-action {{sortBy | lowercase}}" (click)="onApplyFilter('sort')">{{sortBy}}</span>
+      </div>     
+    </div>
+    <div class="head company-code" style="border-top: none; ">
+      <h3 mat-button [matMenuTriggerFor]="companyCodesMenu" class="d-flex">
+        <span class="detail-orgname text-ellipsis">{{selectedCompanyCode?.name}}</span>
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </h3>
+      <mat-menu #companyCodesMenu="matMenu" yPosition="below" [overlapTrigger]="false" class="dropdown-list">
+        <button mat-menu-item (click)="changeCompanyCode(list)" *ngFor="let list of companyCodesList">
+          {{ list.name }}
+        </button>
+      </mat-menu>     
+    </div>
+
+    <div class="sidebar-body">
+        <div class="d-flex align-center justify-content-center w-100" *ngIf="isLoading" style="height: 80%;flex: 1;justify-content: center;align-items: center;">
+            <mat-spinner diameter="24" class="md" ></mat-spinner>
+        </div>
+      <div class="sidebar-content" [class.spinner]="isLoading || !markupsList?.length">
+        <div class="body">          
+          <div class="no-data" [hidden]="isLoading || markupsList?.length">
+            <div class="d-flex align-center justify-content-center w-100" style="min-height: 300px;flex: 1;justify-content: center;align-items: center;">
+              No Cost Code Found
+            </div> 
+          </div>
+			<div class="menu-container nested-menu">
+            <ul class="has-sub-list" *ngIf="!isLoading">
+              <li [class.default]="'0' == product?.id" *ngFor="let product of markupsList" [class.test]="product.children?.length && !product.showChildren">
+                <div (click)="onSelectItem(product);changeMasterView()" class="parent item-list" [class.active]="product.id == selectedService?.id">
+                  <i *ngIf="(product.children && product.children.length)" (click)="toggleChildCompanyCodes(product, $event)"
+                    class="pixel-icons {{product.showChildren?'icon-arrow-right':'icon-arrow-down'}}"> </i>
+                  <span *ngIf="!(product.children && product.children.length)" class="no-children"></span>
+                  <span class="markup-txt" title="{{product.name}}">
+                    <i class="pixel-icons icon-company-codes"></i><span>{{product.name}}</span>
+                  </span>
+                  <span class="reset-action" (click)="$event.stopPropagation();resetDefaults()"><i class="pixel-icons icon-reload"></i></span>
+                </div>
+                <ul *ngIf="product.children?.length && !product.showChildren" class="test00">
+                  <li *ngFor="let service of product.children"> 
+                    <!-- <span [innerHtml]="service.name"></span> -->
+                    <div (click)="onSelectItem(service);changeMasterView()" class="parent item-list" [class.active]="service.id == selectedService?.id">
+                      <i *ngIf="(service.children && service.children.length)" (click)="toggleChildCompanyCodes(service, $event)"
+                        class="pixel-icons {{service.showChildren?'icon-arrow-right':'icon-arrow-down'}}">
+                      </i>
+                      <span *ngIf="!(service.children && service.children.length)" class="no-children"></span>
+                      <span class="markup-txt" title="{{service.name}}">
+                        <i class="pixel-icons icon-sub-organisations"></i><span>{{service.name}}</span>                        
+                      </span>
+                      <span class="reset-action" (click)="$event.stopPropagation();resetDefaults()"><i class="pixel-icons icon-reload"></i></span>
+                    </div>
+                    <ul *ngIf="service.children?.length && !service.showChildren">
+                      <li *ngFor="let subOrg of service.children" [class.active]="subOrg.id == selectedService?.id" (click)="onSelectItem(subOrg);changeMasterView()">
+                        <span class="no-children"></span>
+                        <span class="markup-txt item-list" title="{{subOrg.name}}">
+                          <i class="pixel-icons icon-sub-organisations"></i><span>{{subOrg.name}}</span>
+                          
+                        </span>
+                        <span class="reset-action" (click)="$event.stopPropagation();resetDefaults()"><i class="pixel-icons icon-reload"></i></span>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <div class="no-data" [hidden]="isLoading || markupsList?.length>1">No Organizations Found</div>       
+        </div>
+        </div>
+      </div>
+    </div> 
+  </pi-master-view>
+  <pi-detail-view class="admin-content">
+    <section class="admin-fixed-layout">
+        <div class="spinner-view"  *ngIf="detailsLoader">
+            <div class="empty-screen">
+              <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>				
+            </div>
+        </div>
+    <header class=" header tab-header"  *ngIf="selectedService?.id && !isLoading">
+      <div class="w-100 d-flex justify-content-center flex-column">
+          <app-breadcrumb [list]="breadcrumbs"></app-breadcrumb>
+          <div class="d-flex align-items-center">
+              <h1 [innerHtml]="selectedService?.name"></h1>
+          </div>
+          <div class="w-100 d-flex align-items-center justify-content-between ">
+            <aside class="left-header flex-column d-flex flex-width">
+                <nav *ngIf="selectedService?.id && !isLoading" mat-tab-nav-bar class="nav-bar" [disableRipple]="true">
+                    <div class="tab-group">
+                      <a mat-tab-link (click)="setActiveTab(link)" *ngFor="let link of state.tabs" [active]="link.type==state.activeTab.type">
+                        {{link.label}} </a>
+                    </div>            
+                  </nav>
+            </aside>
+            <aside class="d-flex right-header flex-width justify-content-end" style="margin-bottom: 8px;">
+                <div class="d-flex w-100 tab-actions justify-content-end" *ngIf="state.activeTab.type=='markups'"> 
+                    <app-search (onSearch)="searchProducts($event)"></app-search>
+                    <button class="m-l-8 btn-switching-icon"  #noteMenuTrigger="matMenuTrigger" [matMenuTriggerFor]="notes"><i class="pixel-icons icon-notes"></i></button>       
+                    
+                    <mat-menu #notes="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="note-menu">
+                      <div (click)="$event.stopPropagation()">
+                        <div class="header">Notes</div>
+                        <div class="content">
+                          <textarea pi-input [formControl]="noteFormControl"></textarea>
+                        </div>
+                        <div class="footer">
+                          <button pi-button (click)="noteMenuTrigger.closeMenu();resetMarkupNote()">cancel</button>
+                          <button pi-button color="primary" (click)="saveMarkupNotes();noteMenuTrigger.closeMenu()">save</button>
+                        </div>
+                      </div>
+                    </mat-menu>          
+                    <button class="m-l-8 btn-switching-icon" *ngIf="this.gridApi?.getSelectedRows()?.length" (click)="editServices()">Edit</button>
+                    
+                    <!-- <a class="show-default" (click)="showDefault()">{{showDefaultValues?"Hide Default":"Show Default"}}</a>
+                    <span (click)="performAction('import')">Import</span>
+                    <span (click)="performAction('export')">Export</span> -->
+          
+                    <button class="m-l-8  drop-down-btn"  pi-button color="default" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="category">
+                      Categories
+                      <i class="pixel-icons icon-arrow-down"></i>
+                    </button>
+                    <mat-menu #category="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="catg-menu">
+                      <div (click)="$event.stopPropagation()">
+                        <div class="header">Categories</div>
+                        <div class="content">
+                          <div class="hdr-actions">
+                            <pi-form-field [label]="'Select All'">
+                              <input type="checkbox" pi-input [(ngModel)]="checkAll" [(indeterminate)]="indeterminate" (change)="selectAll()" />
+                            </pi-form-field>
+                            <span class="clear-all" (click)="menuActions('clear')">Clear All</span>
+                          </div>
+                          <div class="content-list" [formGroup]="categoryForm">
+                            <pi-form-field [label]="ctg.name" *ngFor="let ctg of categories">
+                              <input type="checkbox" pi-input [formControlName]="ctg.id" (change)="changeCategory()" />
+                            </pi-form-field>
+                          </div>
+                        </div>
+                        <div class="footer">
+                          <button pi-button color="subtle" (click)="menuActions('cancel');menuTrigger.closeMenu();">Cancel</button>
+                          <button pi-button color="primary" (click)="menuActions('apply');menuTrigger.closeMenu();" [disabled]="categoryForm.pristine">Apply</button>
+                        </div>
+                      </div>
+                    </mat-menu>
+          
+                   
+          
+                    <button class="m-l-8 btn-switching-icon" [matMenuTriggerFor]="settings">
+                        <!-- {{state.activeSetting.label}}
+                        <i class="pixel-icons icon-arrow-down"></i> -->
+
+                        <i class="pixel-icons icon-more-horizontal"></i>
+                      </button>
+                      <mat-menu #settings="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before" class="more-actions">
+                        <ng-container *ngFor="let item of state.settings">
+                            <button mat-menu-item *ngIf="item.show" (click)="changeSettings(item)">{{item.label}}</button>
+                        </ng-container>
+                        <button mat-menu-item (click)="showDefault()">{{showDefaultValues?"Hide Default":"Show Default"}}</button>
+                        <button mat-menu-item (click)="performAction('import')">Import</button>
+                        <button mat-menu-item (click)="performAction('export')">Export</button>
+                      </mat-menu>
+                  
+          
+                  <!-- <button pi-button (click)="addOrganization()">Categories</button> -->
+          
+                </div>
+                <div class="tab-actions d-flex w-100 justify-content-end" *ngIf="state.activeTab.type=='cost_templates'">
+                    <button pi-button (click)="addCostCodes()">Add Cost Codes</button>
+                    <mat-menu #settings="matMenu">
+                      <button mat-menu-item *ngFor="let item of state.settings" (click)="changeSettings(item)">{{item.label}}</button>
+                    </mat-menu>
+                  </div>
+            </aside>
+          </div>
+          
+      </div>
+     
+      </header>
+    <!--  <section class="header-actions" >
+     <div class="markup-actions">
+        <a *ngIf="this.gridApi?.getSelectedRows()?.length" (click)="editServices()">Edit</a>
+        <a class="show-default" [class.active]="showDefaultValues == true" (click)="showDefault()">Show Default</a>
+        <app-search (onSearch)="searchProducts($event)"></app-search>
+        <button mat-button [matMenuTriggerFor]="settings">{{state.activeSetting.label}}</button>
+        <mat-menu #settings="matMenu" class="dropdown-list">
+          <button mat-menu-item *ngFor="let item of state.settings" (click)="changeSettings(item)">{{item.label}}</button>
+        </mat-menu>
+      </div> 
+    </section>-->
+
+    <div class="scroll-body" *ngIf="selectedService?.id && !isLoading && !detailsLoader">
+      <div class="w-100">
+      <ng-container *ngIf="showDefaultValues && !detailsLoader && state.activeTab.type=='markups'">
+        <div class="default-title">
+          Default Values
+          <i title="Edit Default Values" class="pixel-icons icon-pencil edit" (click)="editDefaultValues()"></i>
+        </div>
+        <div class="default-values-container">
+          <div class="item">
+            <label>Markups</label>
+            <span title="defaultValues.markup">{{defaultValues.markup}}%</span>
+          </div>
+          <div class="item">
+            <label>Recovery</label>
+            <span>{{defaultValues.recover}}%</span>
+          </div>
+          <div class="item">
+            <label>Include Net</label>
+            <span>{{defaultValues.count_net == 1 ? 'Y' : 'N'}}</span>
+          </div>
+          <div class="item">
+            <label>XR Applicable</label>
+            <span>{{defaultValues.xr_applicable == 1 ? 'Y' : 'N'}}</span>
+          </div>
+          <div class="item catg">
+            <label>Category</label>
+            <span title="{{defaultValues.category_name}}">{{defaultValues.category_name}}</span>
+          </div>
+          <div class="item">
+            <label>Min</label>
+            <span>{{defaultValues.min_net}}</span>
+          </div>
+          <div class="item">
+            <label>Max</label>
+            <span>{{defaultValues.max_applied}}</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="state.activeTab.type=='markups'">
+        <div class="grid-container" *ngIf="gridOptions.rowData?.length">
+          <div class="global-grid admin-markups with-table-gaps with-out-margin actions-grid with-check-boxs ag-no-striped ag-full-width-grid">
+          <ag-grid-angular class="ag-theme-balham" style="height: calc(100vh - 98px) !important;" [gridOptions]="gridOptions"></ag-grid-angular>
+        </div>
+        </div>
+        <div *ngIf="!gridOptions.rowData?.length">No Services Found</div>
+      </ng-container>
+
+      <ng-container *ngIf="state.activeTab.type=='cost_templates'">
+        <div class="cost-codes-container">
+          <div class="header" style="padding: 0; height: 40px; min-height: 40px;">
+            <div>Cost Codes</div>
+            <div>Name</div>
+            <div>Percentage</div>
+            <div></div>
+            <div></div>
+          </div>
+          <div class="row" *ngFor="let item of costTemplates">
+            <div>{{item.cost_code_name}}</div>
+            <div>{{item.name}}</div>
+            <div>{{item.percentage}}</div>
+            <div (click)="addCostCodes(item)"><i class="pixel-icons icon-pencil"></i></div>
+            <div (click)="deleteCostCode(item)"><i class="pixel-icons icon-delete"></i></div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+    </div>
+  </section>
+  </pi-detail-view>
+
+</pi-master-detail-view>

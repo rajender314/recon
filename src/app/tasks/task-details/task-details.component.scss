@@ -1,0 +1,17 @@
+:host {
+    height: 100%;
+}
+.task-breadcrumb{
+    a{    
+    display: inline-flex;
+    color: #6b778c;
+    flex-wrap: wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    &:hover{
+        color:#0747a6;
+        cursor: pointer;
+    }
+}
+}

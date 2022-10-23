@@ -1,0 +1,72 @@
+<div class="primary-layout-detail">
+    <header class="w-100 d-flex align-items-center justify-content-between" *ngIf="state.poList.length">
+        <div class="w-100 d-flex align-items-center justify-content-center flex-column">
+            <div class="w-100">
+                    <pi-breadcrumb>
+                            <ng-container *ngFor="let item of state.breadcrumbs">
+                                <pi-breadcrumb-item *ngIf="item.type == 'link'" label="Projects" [routerLink]="item.route">
+                                </pi-breadcrumb-item>
+                                <pi-breadcrumb-item *ngIf="item.type != 'link'" [innerHtml]="item.label"></pi-breadcrumb-item>
+                            </ng-container>
+                        </pi-breadcrumb>
+            </div>
+            <div class="w-100 d-flex align-items-center justify-content-between ">
+                    <aside class="left-header d-flex flex-width"><h1>Purchase Orders</h1> </aside>
+                    <aside class="d-flex right-header flex-width justify-content-end" *ngIf="!state.loader">
+                        <app-search (onSearch)="onSearch($event)" ></app-search>
+                        <button pi-button color="primary" class="m-l-15" (click)="addPo()" *ngIf="state.allowEditable">Add</button>
+                        <!-- <button class="m-l-15" *ngIf="gridApi?.getSelectedRows().length" pi-icon-button color="subtle"
+                            [matMenuTriggerFor]="menu">
+                            <i class="pixel-icons icon-more-horizontal"></i>
+                        </button>
+                        <mat-menu #menu="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="before"
+                            class="more-actions">
+                            <ng-container *ngFor="let action of state.POActions">
+                                <button mat-menu-item *ngIf="action.show" (click)="performActions(action)" [innerHtml]="action.label"></button>
+                            </ng-container>
+                        </mat-menu> -->
+                    </aside>
+            </div>
+            
+        </div>
+    </header>
+    <div class="primary-layout-detail-body flex-column padding-20">
+        <div *ngIf="!state.loader && state.poList.length">
+            <section [ngStyle]="{'height': gridApi?.getSelectedRows()?.length && state.allowEditable && (APP.permissions.job_access.approve_all_pos=='yes') ? 'calc(100vh - 120px)' : 'calc(100vh - 74px)' }" class="primary-max-screen-width global-grid with-table-gaps  with-out-margin actions-grid with-check-boxs ag-no-striped ag-full-width-grid">
+                <!-- *ngIf="!state.preview" -->
+                <ag-grid-angular style="height: 100%;" [ngStyle]="{'visibility': isVisible ? 'visible' : 'hidden'}" class="purchase-orders-list ag-theme-balham" [gridOptions]="gridOptions">
+                </ag-grid-angular>
+            </section>
+        </div>
+
+        <div class="no-data-screen" *ngIf="!state.poList.length && !state.loader">
+            <div class="empty-screen">
+                <div class="icon-info-holder">
+                    <div class="icon">
+                        <i class="pixel-icons icon-pn-purchase-orders"></i>
+                    </div>
+                    <p class="alert-message">No Purchase Orders Found</p>
+
+                </div>
+                <button pi-button color="primary" (click)="addPo()">+ Add Purchase Order</button>
+            </div>
+        </div>
+
+    </div>
+    <div class="animated-footer padding-20" *ngIf="gridApi?.getSelectedRows()?.length && state.allowEditable && (APP.permissions.job_access.approve_all_pos=='yes')">
+        <div class="primary-max-screen-width justify-content-end d-flex">
+            <ng-container *ngFor="let action of state.POActions">
+                <button class="m-l-15" pi-button color="primary" *ngIf="action.show" [innerHtml]="action.label" (click)="performActions(action.key)"></button>
+            </ng-container>
+                <!-- <button class="m-l-15" pi-button color="primary" *ngIf="enableHold">Hold</button>
+                <button class="m-l-15" pi-button color="primary" *ngIf="enableHold || enableApprove">Approve</button> -->
+        </div>
+    </div>
+</div>
+<div class="spinner-view" *ngIf="state.loader">
+    <div class="empty-screen">
+        <div class="icon-info-holder">
+            <mat-spinner diameter="38" class="md"></mat-spinner>
+        </div>
+    </div>
+</div>

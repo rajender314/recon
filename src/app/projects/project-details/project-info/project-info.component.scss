@@ -1,0 +1,289 @@
+// @import "../../../../assets/styles/mixins";
+// :host {
+//     width: 100%;
+//     display: flex;
+//     overflow: auto;
+//     flex-direction: column;
+//     .right-header {
+//         margin: 0 15px 0 15px;
+//         border-bottom: 2px solid #D7DDE7;
+//         flex-shrink: 0;
+//         position: sticky;
+//         background: #fff;
+//         top: 0px;
+//         z-index: 1;
+//         ::ng-deep ul.breadcrumb {
+//             margin: 15px 0 0;
+//         }
+//         .info {
+//             flex-wrap: wrap;
+//             align-items: center;
+//             h2 {
+//                 padding: 0 0 8px 0;
+//                 min-height: 42px;
+//                 align-items: center;
+//                 display: flex;
+//                 @include semiBoldFont();
+//                 font-size: 18px;
+//                 color: #172B4D;
+//             }
+//             .back-link {
+//                 font-size: 16px;
+//                 width: 16px;
+//                 height: 16px;
+//                 margin-right: 6px;
+//                 display: inline-flex;
+//                 @media screen and (min-width: 960px) {
+//                     display: none;
+//                 }
+//             }
+//         }
+//     }
+//     .right-content {
+//         padding: 15px 30px 0;
+//         overflow: initial;
+//         max-width: 980px;
+//         margin: 0 auto;
+//         width: 980px;
+//         /*height: 100%;*/
+//         .project-info {
+//             // overflow: auto;
+//             // height: 100%;
+//             margin-bottom: 30px;
+//         }
+//         h2 {
+//             /*padding: 4px 0;margin: 0 0 4px;color: rgba(23, 43, 77, 0.8);
+//             font-size: 16px;text-transform: uppercase;@include semiBoldFont();*/
+//             padding: 6px 4px;
+//             margin: 0 0 10px;
+//             color: rgba(23, 43, 77, 0.8);
+//             font-size: 14px;
+//             text-transform: uppercase;
+//             @include semiBoldFont();
+//             /*background: #eceef7;*/
+//             border-bottom: 1px solid #D7DDE7;
+//         }
+//         .field-name {
+//             color: rgba(23, 43, 77, 0.6);
+//             display: block;
+//             font-size: 14px;
+//             font-weight: 400;
+//             padding: 0;
+//         }
+//         .icon-pencil {
+//             @include iconSize(14px);
+//             color: rgba(23, 43, 77, 0.8);
+//             cursor: pointer;
+//             margin-left: 10px;
+//             display: none;
+//             &:hover {
+//                 color: rgba(23, 43, 77, 1);
+//             }
+//         }
+//         .field-wrapper {
+//             display: flex;
+//             flex-wrap: wrap;
+//         }
+//         .fields {
+//             margin-bottom: 10px;
+//             padding-left: 4px;
+//             flex: 1 0 44%;
+//             margin-right: 30px;
+//             margin-top: 8px;
+//             @media screen and (min-width: 960px) {
+//                 flex: 0 0 44%;
+//             }
+//             &:hover .view-field-wrapper .icon-pencil {
+//                 display: inline-flex;
+//             }
+//         }
+//         .view-field-wrapper {
+//             display: flex;
+//             align-items: center;
+//             margin: 6px 0 13px;
+//         }
+//         .edit-field-wrapper {
+//             position: relative;
+//             max-width: 490px;
+//             .pi-form-field {
+//                 margin-top: 0;
+//                 ::ng-deep .pi-field {
+//                     .pi-select-input {
+//                         pi-icon {
+//                             i {
+//                                 @include iconSize(12px);
+//                                 line-height: 12px !important;
+//                             }
+//                         }
+//                     }
+//                     .mat-datepicker-toggle {
+//                         position: absolute;
+//                         right: 0;
+//                         i {
+//                             @include iconSize(14px);
+//                             line-height: 14px;
+//                         }
+//                     }
+//                 }
+//             }
+//             .actions {
+//                 position: absolute;
+//                 right: 0;
+//                 margin-top: 2px;
+//                 button {
+//                     width: 25px;
+//                     height: 25px;
+//                     min-width: auto;
+//                     margin: 0 2px;
+//                     color: rgba(23, 43, 77, 0.6);
+//                     i {
+//                         @include iconSize(14px);
+//                     }
+//                 }
+//             }
+//         }
+//         .address-section {
+//             display: flex;
+//             margin-top: 30px;
+//             flex-direction: column;
+//             ::ng-deep .no-label {
+//                 .pi-form-field>label {
+//                     display: none;
+//                 }
+//             }
+//             .address-wrapper {
+//                 flex: 1 0 50%;
+//                 &.inline-form{
+//                     flex: 0 0 44%;
+//                 }
+//                 .header {
+//                     border-bottom: 1px solid #e1e4eb;
+//                     margin: 24px 0 0;
+//                     color: rgba(23, 43, 77, 0.8);
+//                     font-size: 16px;
+//                     &:hover .icon-pencil {
+//                         display: inline-flex;
+//                     }
+//                 }
+//                 div.header {
+//                     padding-top: 4px;
+//                     padding-bottom: 4px;
+//                     margin-top: 8px;
+//                 }
+//                 .address-info>div {
+//                     &.address-actions {
+//                         display: flex;
+//                         align-items: center;
+//                         justify-content: space-between;
+//                         padding: 0;
+//                     }
+//                     display: flex;
+//                     padding: 18px 0;
+//                     border-bottom: 1px solid #e1e4eb;
+//                     svg {
+//                         margin: 0 26px;
+//                         // @include iconSize(50px);
+//                         // color: #837ED4;
+//                     }
+//                     div>p {
+//                         margin: 0 0 5px;
+//                         color: rgba(23, 43, 77, 0.6);
+//                     }
+//                 }
+//                 &:last-child {
+//                     padding-left: 0;
+//                     .custom-wrap {
+//                         position: relative;
+//                         &:hover .icon-pencil {
+//                             display: inline-flex;
+//                             position: absolute;
+//                             top: 7px;
+//                             left: 170px;
+//                         }
+//                     }
+//                 }
+//                 .blue-link {
+//                     // border-bottom: 2px solid #e1e4eb;
+//                     color: #174ea8;
+//                     cursor: pointer;
+//                     display: flex;
+//                     font-weight: 600;
+//                     padding: 10px 0;
+//                     &:hover {
+//                         color: #2262ca;
+//                     }
+//                 }
+//                 .pi-form-field {
+//                     margin-top: 8px;
+//                     ::ng-deep .pi-field {
+//                         .pi-select-input {
+//                             pi-icon {
+//                                 i {
+//                                     @include iconSize(12px);
+//                                     line-height: 12px !important;
+//                                 }
+//                             }
+//                         }
+//                         label {
+//                             margin-bottom: 0;
+//                             color: rgba(23, 43, 77, 0.8);
+//                         }
+//                         .mat-datepicker-toggle {
+//                             position: absolute;
+//                             right: 0;
+//                             i {
+//                                 @include iconSize(14px);
+//                                 line-height: 14px;
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//             .brdr-btm {
+//                 border-top: 1px solid #ddd;
+//                 border-bottom: 1px solid #ddd;
+//                 margin-top: 8px;
+//                 padding: 8px 0;
+//                 .pi-form-field {
+//                     margin-top: 0;
+//                 }
+//             }
+//             @media screen and (min-width: 960px) {
+//                 flex-direction: row;
+//                 .address-wrapper:last-child {
+//                     padding-left: 34px;
+//                 }
+//             }
+//         }
+//         .no-data {
+//             text-align: left;
+//             padding: 20px;
+//             color: rgba(23, 43, 77, 0.5);
+//             /*#777;*/
+//         }
+//     }
+// }
+// .footer{
+//     display: flex;
+//     flex-shrink: 0;
+//     flex-direction: row;
+//     padding: 16px 0;
+//     justify-content: flex-end;
+//     bottom: 0;
+//     position: sticky;
+//     background: #fff;
+//     border-top: 2px solid #dce3ee;
+//     background-color: #f7f7f7;
+//     .wrapper{
+//         width: 980px;
+//         max-width: 980px;
+//         margin: 0 auto;
+//         padding: 0 30px;
+//         text-align: right;
+//         button{
+//             &:last-child{
+//                 margin-left: 16px;
+//             }
+//         }
+//     }
+// }

@@ -1,0 +1,21 @@
+<div class="box">
+	<mat-checkbox disableRipple="true" color="primary" [disabled]="readonly" [(ngModel)]="checkAll" [(indeterminate)]="indeterminate" (change)="selectAll()">Select All</mat-checkbox>
+	<div [formGroup]="group">
+		<mat-checkbox *ngFor="let department of data" [disabled]="readonly" [formControlName]="department.id" disableRipple="true" color="primary" (change)="selectDepartment()">{{department.name}}</mat-checkbox>
+	</div>
+</div>
+
+
+<!-- <div class="box">
+
+	<mat-checkbox disableRipple="true" color="primary" [(ngModel)]="checkAll" [(indeterminate)]="indeterminate" (change)="selectAll()">Select All</mat-checkbox>
+	
+	<div [formGroup]="group" class="ak-field-group">
+		<div class="ak-field-checkbox" *ngFor="let department of data" (change)="selectDepartment()">
+			<input type="checkbox" [formControlName]="department.id" [id]="department.id" [value]="department.name" />
+			<label [htmlFor]="department.id">{{department.name}}</label>
+		</div>
+
+	</div>
+	
+</div> -->

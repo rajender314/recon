@@ -1,0 +1,15 @@
+<!-- <pi-select label="" *ngIf="(params?.data?.cost_type && params.data.cost_type=='Misc' && params.data.user_type=='1')" [minSearchLength]='3' [options]="params.ivieUsers"
+    idKey="id" nameKey="name" (onChange)="userOptionChange($event)" [(ngModel)]="params.data.users_id"></pi-select> -->
+<!-- <pi-select label="" *ngIf="(params?.data?.cost_type && params.data.cost_type=='Misc' && params.data.user_type=='2')" [minSearchLength]='3' [options]="params.otherUsers"
+    idKey="id" nameKey="name" (onChange)="userOptionChange($event)" [(ngModel)]="params.data.users_id"></pi-select> -->
+<!-- <mat-select placeholder="" *ngIf="(params?.data?.cost_type && params.data.cost_type=='Misc' && params.data.user_type=='1')" (selectionChange)="userOptionChange($event)" [(ngModel)]="params.data.users_id">
+    <mat-optgroup *ngFor="let dept of params.ivieUsers" [label]="dept.name">
+        <mat-option *ngFor="let user of dept.children" [value]="user.id">
+            {{user.user_name}}
+        </mat-option>
+    </mat-optgroup>
+</mat-select> -->
+<!-- <div *ngIf="((params?.data?.cost_type && params.data.cost_type!='Misc') || (params?.data?.cost_type && params.data.cost_type=='Misc' && params.data.user_type=='1'))">{{params.value}}</div> -->
+<div>{{(params.value=='')?'--':params.value}}</div>
+
+<!-- [class.]="(params?.data?.cost_type && params.data.cost_type == 'Misc' && (params.data.user_type=='2' || params.data.user_type=='2') && params.data.estimates_expense_id==0)" -->

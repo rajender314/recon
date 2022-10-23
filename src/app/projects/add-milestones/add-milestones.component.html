@@ -1,0 +1,52 @@
+<div class="mat-dialog-heading" style="padding: 0;">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <div class="milestones-container">
+    <div class="primary-max-screen-width ">
+      <nav mat-tab-nav-bar class="nav-bar" [disableRipple]="true">
+        <div class="tab-group">
+          <div>
+            <a mat-tab-link (click)="setActiveTab(link)" *ngFor="let link of state.links" [active]="link.type==state.activeTab.type">
+              {{link.label}} </a>
+          </div>
+
+        </div>
+      </nav>
+      <!-- <app-search (onSearch)="search($event)" *ngIf="!loader"></app-search>
+      <div class="list-view global-grid with-footer ag-no-striped with-table-gaps">
+        <ag-grid-angular class="ag-theme-balham" [class.invisible]="loader" [gridOptions]="gridOptions"></ag-grid-angular>
+      </div> -->
+    </div>
+    <!-- [linear]="isLinear" -->
+    <mat-horizontal-stepper #stepper style="height: 100%;" class="custom-stepper">
+      <mat-step>
+        <div [hidden]="!(stepper.selectedIndex == 0)">
+          <div class="list-view global-grid with-footer ag-no-striped with-table-gaps" *ngIf="!loader">
+            <ag-grid-angular [ngStyle]="{'visibility': visibility ? 'visible' : 'hidden'}" class="ag-theme-balham" [class.invisible]="loader" [gridOptions]="gridOptions"></ag-grid-angular>
+          </div>
+        </div>
+      </mat-step>
+      <mat-step>
+        <div [hidden]="!(stepper.selectedIndex == 1)">
+          <div class="list-view global-grid with-footer ag-no-striped with-table-gaps" *ngIf="!loader">
+            <ag-grid-angular [ngStyle]="{'visibility': visibility ? 'visible' : 'hidden'}" class="ag-theme-balham" [class.invisible]="loader" [gridOptions]="vendorGridOptions"></ag-grid-angular>
+          </div>
+        </div>
+      </mat-step>
+    </mat-horizontal-stepper>
+    
+  </div>
+  <div class="spinner-view" *ngIf="loader">
+    <div class="empty-screen">
+      <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+  <button pi-button (click)="closeDialog()">Cancel</button>
+  <button pi-button color="primary" (click)="addMilestones()" [disabled]="loader || !(jobsGridApi?.getSelectedRows()?.length || vendorsGridApi?.getSelectedRows()?.length)">Add Selected</button>
+</mat-dialog-actions>

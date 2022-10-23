@@ -1,0 +1,22 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="createFormGroup" *ngIf="!loader" class="form-flex" autocomplete="off">
+    <pi-form-field label="Description">
+      <textarea pi-input rows="3" formControlName="description" maxlength="1024"></textarea>
+    </pi-form-field>
+  </form>
+  <div class="spinner-view" *ngIf="loader">
+      <div class="empty-screen">
+          <mat-spinner diameter="34" class="md parent-spinner"></mat-spinner>
+      </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+  <button pi-button (click)="closeDialog()">Cancel</button>
+  <button pi-button color="primary" (click)="saveDetails(createFormGroup)" [disabled]="createFormGroup?.pristine || loader">Save</button>
+</mat-dialog-actions>

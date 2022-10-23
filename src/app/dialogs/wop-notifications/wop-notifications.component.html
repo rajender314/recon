@@ -1,0 +1,61 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button (click)="close()" tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+<mat-dialog-content class="dialog-form-ui">
+
+<ng-container>
+  <div [formGroup]="forms" style="border-top: solid 1px #dfe1e6; padding-top: 16px; margin-top: 5px;">
+    <div formGroupName="defaults" class="column-ui-row">
+      <div *ngFor="let spec of data.selectedMsg.html_code.specDt" class="dynamic-col">
+        <app-form-builder [config]="spec.spectDt" [form]="defaults.controls[spec.spectDt.id]"></app-form-builder>
+      </div>
+    </div>
+  </div>
+
+  <div class="create-task-adress" >
+    <p>	Address where files will be sent:</p>			
+    <div style="flex: 0 0 50%" [formGroup]="editAddressForm" class="no-label">
+      <div class="column-ui-row">
+        <div class="col">
+          <pi-form-field label=" ">
+            <input type="text" pi-input placeholder="Address 1" [formControlName]="'address1'" />
+          </pi-form-field>
+        </div>
+        <div class="col">
+          <pi-form-field label=" ">
+            <input type="text" pi-input placeholder="Address 2" [formControlName]="'address2'" />
+          </pi-form-field>
+        </div>
+      </div>
+      <div class="column-ui-row">
+          <div class="col"><pi-form-field label=" ">
+              <input type="text" pi-input placeholder="City" [formControlName]="'city'" />
+            </pi-form-field></div>
+          <div class="col"><pi-select [label]=" " [options]="dropdowns.countries" [multi]="false" [formControlName]="'country_id'">
+            </pi-select></div>
+          
+      </div>
+      <div class="column-ui-row">
+          <div class="col"><pi-select [label]=" " [options]="dropdowns.states" [multi]="false" [formControlName]="'state_id'">
+            </pi-select></div>
+            <div class="col">
+                <pi-form-field label=" ">
+                    <input type="text" placeholder="Postal Code" pi-input [formControlName]="'postal_code'" />
+                  </pi-form-field>
+            </div> 
+          </div>
+
+      
+      
+      
+    </div>
+  </div>
+</ng-container>
+</mat-dialog-content>
+<mat-dialog-actions class="mat-footer">
+	<button pi-button color="subtle" (click)="close()">Cancel</button>
+	<button pi-button color="primary" (click)="save()">Save</button>
+</mat-dialog-actions>

@@ -1,0 +1,24 @@
+<div class="mat-dialog-heading">
+	<h2 mat-dialog-title [innerHtml]="data.title"></h2>
+	<button mat-icon-button mat-dialog-close tabindex="-1">
+		<mat-icon>close</mat-icon>
+	</button>
+</div>
+<mat-dialog-content>
+	<form [formGroup]="createFormGroup" class="form-flex" autocomplete="off">
+		<p class="pi-error" [innerHtml]="serverError"></p>
+		<div *ngFor="let form of formConfig">
+			<ng-container *ngIf="form.type == 'select'">
+				<pi-select [label]="form.label" [options]="data.dropdowns[form.options]" [multi]="form.multi" [formControlName]="form.key"></pi-select>
+				<div class="msgs">
+					<div class="pi-error" *ngIf="createFormGroup.controls[form.key].hasError('required') && submitted">Please Select
+						{{form.label}}</div>
+				</div>
+			</ng-container>
+		</div>
+	</form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-t-25">
+	<button pi-button (click)="closeDialog()">Cancel</button>
+	<button pi-button color="primary" (click)="saveDetails(createFormGroup)" [disabled]="createFormGroup.pristine">Save</button>
+</mat-dialog-actions>
